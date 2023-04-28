@@ -1,0 +1,105 @@
+[
+  {
+    "version": "1.11.0",
+    "date": "2022-07-12",
+    "items": [
+      {
+        "type": "new",
+        "title": "Daten Synchronisierung",
+        "text": "GridScore kann jetzt Daten von verschiedenen Geräten im gleichen Versuch synchronisieren. Daten werden priorisiert nach dem neuesten Änderungsdatum."
+      },
+      {
+        "type": "new",
+        "title": "Germinate-Export",
+        "text": "Beim Exportieren von Daten in Germinate Datenvorlagen die Mehrfachmerkmale enthalten muss eine Aggregierungsmethode pro Merkmal gewählt werden."
+      },
+      {
+        "type": "new",
+        "title": "Studien",
+        "text": "GridScore unterstützt jetzt einen weiteren Typen an Datensatz: Studien. Diese sind für die freie Sammlung von Daten geeignet die sich nicht an eine Rasteranordnung halten."
+      },
+      {
+        "type": "new",
+        "title": "Datensatzkommentare",
+        "text": "Es ist jetzt möglich allgemeine Kommentare zum gesamten Versuch hinzuzufügen. Dazu wird das kleine Kommentar-Symbol neben dem Versuchsnamen auf dem Datenbildschirm genutzt."
+      },
+      {
+        "type": "update",
+        "title": "Datenkreise",
+        "text": "Die Merkmalskreise für Mehrfachmerkmale zeigen nun einen half-gefüllten Kreis wenn ein Mehrfachmerkmal mindestens einmal bewertet wurde."
+      },
+      {
+        "type": "bugfix",
+        "title": "Sprachsynthese",
+        "text": "Behebt einen Fehler bei der Sprachsynthese wo in bestimmten Fällen Text verloren geht."
+      }
+    ]
+  }, {
+    "version": "1.12.0",
+    "date": "2022-08-12",
+    "items": [
+      {
+        "type": "new",
+        "title": "Einzel-Merkmal Wertedarstellung",
+        "text": "GridScore kann jetzt die Werte für ein einzelnes Merkmal für alle Pflanzen/Beete direkt in der Datenansicht anzeigen. Um dies zu nutzen, klicke auf 'Merkmalssichtbarkeit' und dann auf 'Einzelner Wert'. Jetzt kann zwischen einzelnen Merkmalen gewechselt werden um deren Werte direkt im Feldplan anzuzeigen."
+      },
+      {
+        "type": "update",
+        "title": "Besseres Scannen von QR-Codes/Barcodes",
+        "text": "Wir haben Programmbibliotheken für das Scannen von QR-Codes/Barcodes gewechselt. Die neue Bibliothek unterstützt mehrere Typen an Codes und sollte auch schneller beim Scannen sein als die alte Bibliothek."
+      },
+      {
+        "type": "new",
+        "title": "Mehrere Einträge zu einer Studie hinzufügen",
+        "text": "Es ist jetzt möglich mehrere Einträge auf einmal zu einer Studie hinzuzufügen statt dies einzeln zu tun."
+      },
+      {
+        "type": "bugfix",
+        "title": "Fehlerbehebung beim Sammeln von Mehrfachmarkmalsdaten",
+        "text": "In vorherigen Versionen war ein Fehler enthalten der auftrat wenn ein Mehrfachmerkmal bewertet wurde während gleichzeitig andere Merkmale ausgeblendet waren. Dies resultierte in korrupten Daten, wurde aber hiermit behoben."
+      }
+    ]
+  },
+  {
+    "version": "1.13.0",
+    "date": "2022-11-14",
+    "items": [
+      {
+        "type": "new",
+        "title": "Rep-Unterstützung",
+        "text": "GridScore unterstützt jetzt Rep-Nummern. Dafür wurde eine neue Schaltfläche zum Setup hinzugefügt in dem die Keimplasmaidentifikatoren und Rep-Nummern definiert werden. Reps sind optional außer wenn sie nötig sind um zwischen Beeten mit gleichem Keimplasmaidentifikator zu unterscheiden."
+      },
+      {
+        "type": "new",
+        "title": "Shapefile-Export",
+        "text": "Falls die Versuchseckpunkte definiert sind kann GridScore jetzt ein Germinate-kompatibles Shapefile generieren. Dieses kann dann direkt zu Germinate hochgeladen werden um die einzelnen Beetformen zu definieren."
+      },
+      {
+        "type": "new",
+        "title": "Visualisierung von numerischen Mehrfach-Merkmalen",
+        "text": "Eine neue Visualisierung für numerische Mehrfach-Merkmale wurde hinzugefügt um die Entwicklung der Merkmalswerte über die Zeit darzustellen. Dies ist besonders nützlich um den Einfluss der Zeitkomponente auf die Werte von Merkmalen wie Krankheitsresistenz, Pflanzengröße und Ertrag zu erkennen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Entfernen von numerischen Merkmalswerten",
+        "text": "Es war zuvor nicht möglich den Wert eines numerischen Merkmals komplett zu entfernen. Dies wurde in dieser Version behoben."
+      }
+    ]
+  },
+  {
+    "version": "1.14.0",
+    "date": "2023-01-24",
+    "items": [
+      {
+        "type": "new",
+        "title": "Nicht zusammengerechnete Mehrfachmessungen für Export zu Germinate",
+        "text": "Bisher musst beim Exportieren von Mehrfachmessungen in die Germinate Datenvorlagen immer eine Zusammenrechnungsmethode gewählt werden. Dies musste eine dieser Optionen sein: Durchschnitt, Summe oder zuletzt gemessener Wert. Jetzt können alle aufgezeichneten Werte individuell exportiert werden durch das Abwählen einer Zusammenrechnungsmethode. Dies resultiert in einer Datei die alle einzelnen Messungen enthält."
+      },
+      {
+        "type": "new",
+        "title": "Heatmap-Zeitreihen-Diagramm",
+        "text": "Für Mehrfachmessungen ist es jetzt möglich sich alle aufgezeichneten Werte über die Zeit in Form einer Heatmap anzeigen zu lassen. Um dies zu erreichen haben wir eine neue Darstellungsoption hinzugefügt die 'Zeitreihe' heißt. Diese aktiviert einen Zeit-Schieberegler um den dargestellten Zeitpunkt zu ändern und zu sehen wie die Mehrfachmessungen sich über die Zeit verhalten."
+      }
+    ]
+  }
+]

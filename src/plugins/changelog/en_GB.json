@@ -1,0 +1,116 @@
+[
+  {
+    "version": "1.11.0",
+    "date": "2022-07-12",
+    "items": [
+      {
+        "type": "new",
+        "title": "Data synchronization",
+        "text": "GridScore is now able to synchronize data collected on different devices for the same trial. Data will be joined by prioritizing data with a newer recording date."
+      },
+      {
+        "type": "new",
+        "title": "Germinate export",
+        "text": "When exporting data containing multi-traits to Germinate Data Templates, an aggregation method has to be chosen per trait."
+      },
+      {
+        "type": "new",
+        "title": "Surveys",
+        "text": "GridScore now supports another type of dataset, namely Surveys. These are designed to support free data collection which is not physically located in a grid-like fashion."
+      },
+      {
+        "type": "new",
+        "title": "Dataset comments",
+        "text": "It's now possible to add general comments to the whole trial. Use the wee comment icon next to the trial name on the data screen."
+      },
+      {
+        "type": "update",
+        "title": "Data circles",
+        "text": "Trait data circles for multi-traits now show a half-filled circle when the trait has been scored at least once."
+      },
+      {
+        "type": "bugfix",
+        "title": "Speech synthesis",
+        "text": "Fixed a bug with the speech synthesis which would sometimes cause text to be skipped."
+      }
+    ]
+  }, {
+    "version": "1.12.0",
+    "date": "2022-08-12",
+    "items": [
+      {
+        "type": "new",
+        "title": "Single trait value display",
+        "text": "GridScore can now show you the value of a single trait for all plants/plots right in the data view. To try this out, select the 'Trait visibility' dropdown menu and then select 'Single value'. You are then able to switch between individual traits to see their values right in the field plan."
+      },
+      {
+        "type": "update",
+        "title": "Better QR-code/barcode scanning",
+        "text": "We switched to a new library for QR-code/barcode scanning. This new library has better support for a variety of barcodes and should also scan codes quicker than the old library."
+      },
+      {
+        "type": "new",
+        "title": "Adding multiple entries to a survey",
+        "text": "You'll now be able to add multiple entries to a survey at the same time rather than adding them individually."
+      },
+      {
+        "type": "bugfix",
+        "title": "Bug fix for multi-trait scoring",
+        "text": "In previous versions there was a bug that happened when scoring multi-traits while also having some traits toggled. This would result in corrupted data and has now been corrected."
+      }
+    ]
+  },
+  {
+    "version": "1.13.0",
+    "date": "2022-11-14",
+    "items": [
+      {
+        "type": "new",
+        "title": "Rep support",
+        "text": "GridScore now supports rep numbers in the trial setup. For this purpose, a new germplasm identifier and rep screen has been added. Reps are completely optional unless the same germplasm identifier has been used multiple times, in which case the rep needs to be used to differentiate between them."
+      },
+      {
+        "type": "new",
+        "title": "Shapefile export",
+        "text": "If the corner points of a trial have been defined, GridScore can generate a Germinate-compatible Shapefile which can then be directly uploaded to Germinate to define the individual plot shapes."
+      },
+      {
+        "type": "new",
+        "title": "Numeric multi-trait visualization",
+        "text": "A new visualization for numeric multi-traits has been added that shows the value development over time. This is particularly useful to see if there are any temporal effects on trait values like disease resistance, plant height or yield."
+      },
+      {
+        "type": "bugfix",
+        "title": "Numeric data point removal",
+        "text": "It was previously impossible to remove the value of a numeric trait. This has been fixed in this release."
+      }
+    ]
+  },
+  {
+    "version": "1.14.0",
+    "date": "2023-01-24",
+    "items": [
+      {
+        "type": "new",
+        "title": "Non-aggregated multi-trait export to Germinate",
+        "text": "Until now whenever exporting multi-trait data into the Germinate data templates, an aggregation method per multi-trait had to be selected. This was one of these options: average, sum or last recorded value. You can now export all individual data points for a multi-trait by de-selecting the aggregation during export. This will result in a file containing all individual measurements."
+      },
+      {
+        "type": "new",
+        "title": "Heatmap timeline chart",
+        "text": "For multi-traits it's now possible to to look at all recorded values over time in the form of a heatmap. For this purpose, we added a new visualization option called 'Show timeline' which will activate a time slider to move through time and see how the multi-trait changed over time."
+      }
+    ]
+  },
+  {
+    "version": "1.15.0",
+    "date": "2023-02-10",
+    "items": [
+      {
+        "type": "new",
+        "title": "BrAPI export to Germinate",
+        "text": "GridScore now supports export of trials data to Germinate via BrAPI. To use this feature, go to the export section of a trial and then select the 'BrAPI' tab. You'll need to have a valid Germinate API token to upload data and you have to have at least 'Data Curator' permissions."
+      }
+    ]
+  }
+]
