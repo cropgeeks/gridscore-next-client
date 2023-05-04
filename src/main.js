@@ -4,7 +4,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import { i18n } from '@/plugins/i18n.js'
-import { BadgePlugin, ButtonGroupPlugin, ButtonPlugin, ButtonToolbarPlugin, CardPlugin, DropdownPlugin, FormCheckboxPlugin, FormDatepickerPlugin, FormFilePlugin, FormGroupPlugin, FormInputPlugin, FormPlugin, FormSelectPlugin, FormTextareaPlugin, ImagePlugin, InputGroupPlugin, LayoutPlugin, ListGroupPlugin, ModalPlugin, NavbarPlugin, PopoverPlugin, SidebarPlugin, SpinnerPlugin, TabsPlugin, TooltipPlugin } from 'bootstrap-vue'
+import { BadgePlugin, ButtonGroupPlugin, ButtonPlugin, ButtonToolbarPlugin, CardPlugin, DropdownPlugin, FormCheckboxPlugin, FormDatepickerPlugin, FormFilePlugin, FormGroupPlugin, FormInputPlugin, FormPlugin, FormRadioPlugin, FormSelectPlugin, FormTextareaPlugin, ImagePlugin, InputGroupPlugin, LayoutPlugin, ListGroupPlugin, ModalPlugin, NavbarPlugin, PopoverPlugin, SidebarPlugin, SpinnerPlugin, TabsPlugin, TooltipPlugin } from 'bootstrap-vue'
 
 Vue.use(BadgePlugin)
 Vue.use(ButtonPlugin)
@@ -18,6 +18,7 @@ Vue.use(FormDatepickerPlugin)
 Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormFilePlugin)
+Vue.use(FormRadioPlugin)
 Vue.use(FormSelectPlugin)
 Vue.use(FormTextareaPlugin)
 Vue.use(ImagePlugin)

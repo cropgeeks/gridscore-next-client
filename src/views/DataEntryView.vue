@@ -50,12 +50,20 @@ export default {
     ...mapGetters([
       'storeSelectedTrial',
       'storeHiddenTraits',
-      'storeNavigationMode'
+      'storeNavigationMode',
+      'storeVoiceFeedbackEnabled'
     ])
   },
   watch: {
     storeSelectedTrial: function () {
       this.loadTrial()
+    },
+    storeVoiceFeedbackEnabled: function (newValue) {
+      if (newValue && window.speechSynthesis) {
+        this.textSynth = window.speechSynthesis
+      } else {
+        this.textSynth = null
+      }
     },
     isFullscreen: function (newValue) {
       if (newValue) {
@@ -91,6 +99,17 @@ export default {
     }
   },
   methods: {
+    tts: function (text, interruptPrev = true) {
+      if (this.textSynth) {
+        if (interruptPrev) {
+          this.textSynth.cancel()
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text)
+        // utterance.rate = 1.2
+        this.textSynth.speak(utterance)
+      }
+    },
     toggleFullscreen: function () {
       this.isFullscreen = !this.isFullscreen
     },
@@ -117,12 +136,18 @@ export default {
       this.loadTrial()
     }
 
+    if (this.storeVoiceFeedbackEnabled && window.speechSynthesis) {
+      this.textSynth = window.speechSynthesis
+    }
+
     emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.trialPropertiesChanged)
+    emitter.on('tts', this.tts)
   },
   beforeDestroy: function () {
     emitter.off('show-trial-comments', this.showTrialComments)
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)
+    emitter.off('tts', this.tts)
   }
 }
 </script>

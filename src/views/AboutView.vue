@@ -25,7 +25,7 @@
       </b-row>
     </b-container>
     <b-container class="py-5">
-      <div class="about-header bg-light p-5 mb-4 border rounded-lg">
+      <div class="about-header bg-light p-5 mb-4 border">
         <b-row>
           <b-col cols=12 md=4 class="text-center text-md-right" order="1" order-md="2">
             <b-img fluid src="img/gridscore-next-text.svg" alt="GridScore logo" />
@@ -101,11 +101,6 @@ export default {
           name: 'Norwegian Ministry of Foreign Affairs',
           href: 'https://www.regjeringen.no/en/dep/ud/id833/',
           logo: 'norwegian-ministry-of-foreign-affairs.svg'
-        },
-        {
-          name: 'Biotechnology and Biological Sciences Research Council',
-          href: 'https://bbsrc.ukri.org/',
-          logo: 'bbsrc.svg'
         },
         {
           name: 'The Scottish Government',

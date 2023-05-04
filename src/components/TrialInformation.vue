@@ -51,7 +51,7 @@ export default {
   computed: {
     hasTimeframe: function () {
       if (this.trial && this.trial.traits) {
-        return this.trial.traits.filter(t => t.timeframe)
+        return this.trial.traits.filter(t => t.timeframe).length > 0
       } else {
         return false
       }
