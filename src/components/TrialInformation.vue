@@ -9,7 +9,7 @@
       <b-card-text><BIconLayoutThreeColumns /> {{ $tc('widgetTrialSelectorColumns', trial.layout.columns) }}</b-card-text>
       <b-card-text><BIconTags />&nbsp;
         <span>{{ $tc('widgetTrialSelectorTraits', trial.traits.length) }}</span>
-        <span class="ml-2" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
+        <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
       </b-card-text>
       <b-card-text>
         <BIconChatLeftText />&nbsp;

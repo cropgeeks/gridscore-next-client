@@ -12,11 +12,11 @@
 }
 
 .dark-mode .text-info {
-  color: rgb(81, 212, 233) !important;
+  color: rgb(66, 238, 232) !important;
 }
 
 .dark-mode .text-danger {
-  color: rgb(255, 102, 237) !important;
+  color: rgb(236, 52, 59) !important;
 }
 
 .dark-mode .text-muted {
@@ -106,22 +106,22 @@
 
 .dark-mode .btn-danger {
   color: rgb(232, 230, 227);
-  background-color: rgb(116, 0, 102);
-  border-color: rgb(212, 0, 187);
+  background-color: rgb(166, 16, 21);
+  border-color: rgb(160, 15, 20);
 }
 
 .dark-mode .btn-outline-danger:hover {
   color: rgb(232, 230, 227);
-  background-color: rgb(116, 0, 102);
-  border-color: rgb(212, 0, 187);
+  background-color: rgb(166, 16, 21);
+  border-color: rgb(160, 15, 20);
 }
 
 .dark-mode .btn-danger:not(:disabled):not(.disabled):active,
 .dark-mode .btn-danger:not(:disabled):not(.disabled).active,
 .dark-mode .show>.btn-danger.dropdown-toggle {
   color: rgb(232, 230, 227);
-  background-color: rgb(116, 0, 102);
-  border-color: rgb(212, 0, 187);
+  background-color: rgb(166, 16, 21);
+  border-color: rgb(160, 15, 20);
 }
 
 .dark-mode .btn-danger:not(:disabled):not(.disabled):active:focus,
@@ -131,22 +131,22 @@
 }
 
 .dark-mode .btn-outline-danger {
-  color: rgb(255, 102, 237);
-  border-color: rgb(212, 0, 187);
+  color: rgb(236, 52, 59);
+  border-color: rgb(160, 15, 20);
 }
 
 .dark-mode .btn-outline-danger:hover {
   color: rgb(232, 230, 227);
-  background-color: rgb(116, 0, 102);
-  border-color: rgb(212, 0, 187);
+  background-color: rgb(166, 16, 21);
+  border-color: rgb(160, 15, 20);
 }
 
 .dark-mode .btn-outline-danger:not(:disabled):not(.disabled):active,
 .dark-mode .btn-outline-danger:not(:disabled):not(.disabled).active,
 .dark-mode .show>.btn-outline-danger.dropdown-toggle {
   color: rgb(232, 230, 227);
-  background-color: rgb(116, 0, 102);
-  border-color: rgb(212, 0, 187);
+  background-color: rgb(166, 16, 21);
+  border-color: rgb(160, 15, 20);
 }
 
 .dark-mode .btn-outline-danger:not(:disabled):not(.disabled):active:focus,
@@ -157,14 +157,14 @@
 
 .dark-mode .btn-success {
   color: rgb(232, 230, 227);
-  background-color: rgb(45, 144, 59);
-  border-color: rgb(44, 140, 58);
+  background-color: rgb(102, 120, 31);
+  border-color: rgb(112, 141, 37);
 }
 
 .dark-mode .btn-success:hover {
   color: rgb(232, 230, 227);
-  background-color: rgb(38, 121, 50);
-  border-color: rgb(47, 152, 63);
+  background-color: rgb(112, 140, 37);
+  border-color: rgb(122, 153, 40);
 }
 
 .dark-mode .btn-success:not(:disabled):not(.disabled):active,
@@ -251,7 +251,7 @@
 
 .dark-mode .was-validated .custom-select:valid,
 .dark-mode .custom-select.is-valid {
-  border-color: rgb(44, 140, 58);
+  border-color: rgb(112, 141, 37);
   background-color: rgb(24, 26, 27);
 }
 
@@ -472,11 +472,11 @@
 }
 
 .dark-mode .invalid-feedback {
-  color: rgb(255, 102, 237);
+  color: rgb(236, 52, 59);
 }
 
 .dark-mode .was-validated .form-control:invalid,
 .dark-mode .form-control.is-invalid {
-  border-color: rgb(212, 0, 187);
+  border-color: rgb(160, 15, 20);
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiPjxkZWZzPjxmaWx0ZXIgaWQ9ImRhcmtyZWFkZXItaW1hZ2UtZmlsdGVyIj48ZmVDb2xvck1hdHJpeCB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMC4yNDkgLTAuNjE0IC0wLjY3MiAwLjAwMCAxLjAzNSAtMC42NDYgMC4yODggLTAuNjY0IDAuMDAwIDEuMDIwIC0wLjYzNiAtMC42MDkgMC4yNTAgMC4wMDAgMC45OTQgMC4wMDAgMC4wMDAgMC4wMDAgMS4wMDAgMC4wMDAiIC8+PC9maWx0ZXI+PC9kZWZzPjxpbWFnZSB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbHRlcj0idXJsKCNkYXJrcmVhZGVyLWltYWdlLWZpbHRlcikiIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM2NzdmcgeG1sbnM9JTI3aHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmclMjcgd2lkdGg9JTI3MTIlMjcgaGVpZ2h0PSUyNzEyJTI3IGZpbGw9JTI3bm9uZSUyNyBzdHJva2U9JTI3JTIzOTEwMDgwJTI3IHZpZXdCb3g9JTI3MCAwIDEyIDEyJTI3JTNlJTNjY2lyY2xlIGN4PSUyNzYlMjcgY3k9JTI3NiUyNyByPSUyNzQuNSUyNy8lM2UlM2NwYXRoIHN0cm9rZS1saW5lam9pbj0lMjdyb3VuZCUyNyBkPSUyN001LjggMy42aC40TDYgNi41eiUyNy8lM2UlM2NjaXJjbGUgY3g9JTI3NiUyNyBjeT0lMjc4LjIlMjcgcj0lMjcuNiUyNyBmaWxsPSUyNyUyMzkxMDA4MCUyNyBzdHJva2U9JTI3bm9uZSUyNy8lM2UlM2Mvc3ZnJTNlIiAvPjwvc3ZnPg==);
 }

@@ -126,13 +126,37 @@ export default {
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
         xaxis: {
-          title: { text: this.$t('widgetCharTraitTimeframeAxisTitleTime'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
+          title: { text: this.$t('widgetChartTraitTimeframeAxisTitleTime'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
           tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
         },
         yaxis: {
-          title: { text: this.$t('widgetCharTraitTimeframeAxisTitleTrait'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
+          title: { text: this.$t('widgetChartTraitTimeframeAxisTitleTrait'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
           tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
-        }
+        },
+        shapes: [{
+          type: 'line',
+          yref: 'paper',
+          x0: new Date().toISOString(),
+          y0: 0,
+          x1: new Date().toISOString(),
+          y1: 1,
+          line: {
+            color: this.storeDarkMode ? '#ecf0f1' : '#2c3e50',
+            width: 1.5,
+            dash: 'dot'
+          }
+        }],
+        annotations: [{
+          type: 'line',
+          yref: 'paper',
+          x: new Date().toISOString(),
+          y: 1.2,
+          showarrow: false,
+          text: this.$t('widgetChartTraitTimeframeToday'),
+          font: {
+            color: this.storeDarkMode ? '#ecf0f1' : '#2c3e50'
+          }
+        }]
       }
 
       Plotly.newPlot(this.$refs.timeframeChart, data, layout, {

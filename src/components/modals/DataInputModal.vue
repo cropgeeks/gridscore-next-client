@@ -1,6 +1,6 @@
 <template>
   <b-modal :cancel-title="$t('buttonCancel')"
-           :ok-title="$t('buttonSave')"
+           :ok-title="$t(isEditable ? 'buttonSave' : 'buttonClose')"
            no-close-on-backdrop
            no-close-on-esc
            @ok.prevent="validate"
@@ -14,35 +14,42 @@
       <h5 class="modal-title text-truncate">{{ displayName }}</h5>
 
       <b-button-group id="data-entry-header">
-        <b-button @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-lg-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
-        <b-button :pressed="cell.isMarked" @click="toggleMarked">
+        <b-button @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
+        <b-button :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
           <template v-if="cell.isMarked">
-            <BIconBookmarkCheckFill /> {{ $t('buttonUnbookmarkCell') }}
+            <BIconBookmarkCheckFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonUnbookmarkCell') }}</span>
           </template>
           <template v-else>
-            <BIconBookmark /> {{ $t('buttonBookmarkCell') }}
+            <BIconBookmark /> <span class="d-none d-xl-inline-block"> {{ $t('buttonBookmarkCell') }}</span>
           </template>
         </b-button>
-        <b-button @click="onShowPhotoModal(null)"><BIconCameraFill /></b-button>
+        <b-button @click="onShowPhotoModal(null)"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
+        <b-button @click="$refs.guidedWalkModal.show()"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
       </b-button-group>
 
       <button class="close ml-0" @click="close()">×</button>
     </template>
     <div v-if="cell && trial">
       <b-tabs v-model="traitGroupTabIndex">
-        <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst">
+        <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
+          :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
+          :title-link-class="(tabStates && tabStates[groupIndex] === false) ? 'text-white bg-danger' : null">
           <template #title>
             {{ group.name }} ({{ group.traits.length }})
+
+            <BIconCheck class="text-success" v-if="tabStates && tabStates[groupIndex] === true" />
+            <BIconX class="text-white" v-else-if="tabStates && tabStates[groupIndex] === false" />
           </template>
 
           <div class="mt-3 trait-group-tab-content">
-            <TraitInputSection :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            <TraitInputSection :editable="trial.editable" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
           </div>
         </b-tab>
       </b-tabs>
 
-      <PlotCommentModal :cell="cell" ref="commentModal" />
+      <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" />
       <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" />
+      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" />
     </div>
   </b-modal>
 </template>
@@ -52,9 +59,10 @@ import Vue from 'vue'
 import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
+import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
 import { getCell, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
-import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill } from 'bootstrap-vue'
+import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -63,10 +71,14 @@ export default {
     ImageModal,
     TraitInputSection,
     PlotCommentModal,
+    GuidedWalkSelectorModal,
     BIconChatRightTextFill,
     BIconBookmarkCheckFill,
     BIconBookmark,
-    BIconCameraFill
+    BIconCameraFill,
+    BIconCheck,
+    BIconX,
+    BIconSignpostSplitFill
   },
   props: {
     trial: {
@@ -78,7 +90,8 @@ export default {
     return {
       cell: null,
       traitGroupTabIndex: 0,
-      selectedTrait: null
+      selectedTrait: null,
+      tabStates: null
     }
   },
   computed: {
@@ -86,8 +99,17 @@ export default {
       'storeSelectedTrial',
       'storeHiddenTraits'
     ]),
+    isEditable: function () {
+      if (this.trial) {
+        return this.trial.editable
+      } else {
+        return true
+      }
+    },
     traitsByGroup: function () {
-      if (this.trial && this.trial.traits) {
+      let groups = []
+
+      if (this.trial && this.trial.traits && this.cell) {
         const result = {}
 
         this.trial.traits.forEach((t, i) => {
@@ -109,15 +131,15 @@ export default {
           result[group] = groupTraits
         })
 
-        return Object.keys(result).map(k => {
+        groups = Object.keys(result).map(k => {
           return {
             name: k,
             traits: result[k]
           }
         })
-      } else {
-        return []
       }
+
+      return groups
     },
     displayName: function () {
       if (this.cell) {
@@ -128,8 +150,12 @@ export default {
     }
   },
   watch: {
-    watch: function () {
-      this.update()
+    traitsByGroup: function (newValue) {
+      if (newValue) {
+        this.tabStates = newValue.map(t => null)
+      } else {
+        this.tabStates = null
+      }
     }
   },
   methods: {
@@ -183,16 +209,22 @@ export default {
     updateCellComments: function (row, column, trialId, cell) {
       if (this.trial && this.cell && this.storeSelectedTrial === trialId && this.cell.row === row && this.cell.column === column) {
         Vue.set(this.cell, 'comments', cell.comments)
-        // TODO: Others?
       }
     },
     update: function () {
       // TODO
     },
     validate: function () {
-      this.trial.traits.forEach(t => {
-        this.$refs[`trait-section-${t.id}`][0].validate()
+      this.tabStates = this.traitsByGroup.map(g => {
+        const traitStates = g.traits.map(t => this.$refs[`trait-section-${t.id}`][0].validate())
+        console.log(g, traitStates)
+        return traitStates.every(t => t)
       })
+
+      if (this.tabStates.every(t => t)) {
+        // All valid!
+        // TODO
+      }
     },
     /**
      * Shows and resets modal dialog

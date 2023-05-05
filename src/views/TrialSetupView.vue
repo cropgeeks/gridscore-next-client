@@ -142,7 +142,7 @@
         </div>
       </template>
       <div class="px-3 py-2">
-        <TraitDefinitionComponent ref="traitDefinition" @change="updateTraitDefinitions" />
+        <TraitDefinitionComponent ref="traitDefinition" @finished="updateTraitDefinitions" />
       </div>
     </b-sidebar>
 

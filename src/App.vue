@@ -225,10 +225,10 @@ $primary: #3498db;
 $secondary: #bdc3c7;
 $dark: #2c3e50;
 // $info: #60a3bc;
-$success: #5ec418;
-$info: #00a0f1;
-$warning: #ff7c00;
-$danger: #910080;
+$success: #A3CB38;
+$info: #12CBC4;
+$warning: #FFC312;
+$danger: #EA2027;
 
 @import '~bootswatch/dist/cosmo/variables';
 @import '~bootstrap/scss/bootstrap';

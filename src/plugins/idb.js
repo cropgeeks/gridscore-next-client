@@ -59,10 +59,18 @@ const getTrials = async () => {
     .then(trials => {
       if (trials) {
         trials.forEach(trial => {
-          if (trial && trial.traits) {
-            trial.traits.forEach((t, i) => {
-              t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
-            })
+          if (trial) {
+            if (trial.traits) {
+              trial.traits.forEach((t, i) => {
+                t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
+              })
+            }
+
+            if (trial.shareCodes) {
+              trial.editable = (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) || (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null)
+            } else {
+              trial.editable = true
+            }
           }
         })
       }
@@ -99,10 +107,18 @@ const getTrialById = async (localId) => {
 
   return db.get('trials', localId)
     .then(trial => {
-      if (trial && trial.traits) {
-        trial.traits.forEach((t, i) => {
-          t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
-        })
+      if (trial) {
+        if (trial.traits) {
+          trial.traits.forEach((t, i) => {
+            t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
+          })
+        }
+
+        if (trial.shareCodes) {
+          trial.editable = (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) || (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null)
+        } else {
+          trial.editable = true
+        }
       }
 
       if (trial) {
@@ -269,6 +285,48 @@ const deleteTrialComment = async (trialId, comment) => {
     }
 
     return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
+const addTrialTraits = async (trialId, traits) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = {
+        trialId: trialId,
+        operation: 'trial-traits-added',
+        content: traits,
+        timestamp: new Date().toISOString()
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    traits.forEach(t => {
+      trial.traits.push(t)
+    })
+    trial.updatedOn = new Date().toISOString()
+
+    await db.put('trials', trial)
+
+    let cursor = await db.transaction('data', 'readwrite').store.openCursor(IDBKeyRange.bound([trial.localId, 0, 0], [trial.localId, trial.layout.rows, trial.layout.columns]))
+
+    while (cursor) {
+      if (cursor.value && cursor.value.measurements) {
+        traits.forEach(t => {
+          cursor.value.measurements[t.id] = []
+        })
+
+        cursor = await cursor.continue()
+      }
+    }
+
+    return new Promise(resolve => resolve(trial))
   } else {
     return new Promise(resolve => resolve(trial))
   }
@@ -458,5 +516,6 @@ export {
   addTrialComment,
   setPlotMarked,
   updateTrial,
-  updateTrialBrapiConfig
+  updateTrialBrapiConfig,
+  addTrialTraits
 }

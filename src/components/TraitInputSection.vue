@@ -13,7 +13,7 @@
     <p class="text-muted" v-if="trait.description">{{ trait.description }}</p>
 
     <b-form-group :label="$t('formLabelMeasurementSet', { position: index })" v-for="index in (trait.setSize || 1)" :key="`${trait.id}-${index}`" :label-for="`${trait.id}-${index}`">
-      <TraitInput :trait="trait" :id="`${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
+      <TraitInput :editable="editable" :trait="trait" :id="`${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
   </section>
 </template>
@@ -34,6 +34,10 @@ export default {
     trait: {
       type: Object,
       default: () => null
+    },
+    editable: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
@@ -51,9 +55,12 @@ export default {
       }
     },
     validate: function () {
+      let valid = true
       for (let i = 0; i < (this.trait.setSize || 1); i++) {
-        this.$refs[`${this.trait.id}-${i + 1}`][0].validate()
+        valid &&= this.$refs[`${this.trait.id}-${i + 1}`][0].validate()
       }
+
+      return valid
     }
   }
 }

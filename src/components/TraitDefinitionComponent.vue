@@ -246,6 +246,11 @@ export default {
       traitsToExport: null
     }
   },
+  watch: {
+    traits: function (newValue) {
+      this.$emit('change', newValue)
+    }
+  },
   computed: {
     timeframeCollapseVisible: function () {
       return this.newTrait.timeframe !== null
@@ -558,7 +563,7 @@ export default {
         })
     },
     emitData: function () {
-      this.$emit('change', this.traits)
+      this.$emit('finished', this.traits)
     }
   }
 }
