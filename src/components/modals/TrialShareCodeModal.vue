@@ -69,9 +69,7 @@ export default {
     getShareCodes: function () {
       shareTrial(this.trial.localId)
         .catch(error => {
-          if (error && error.status) {
-            console.error(error)
-          }
+          console.error(error)
         })
     },
     /**

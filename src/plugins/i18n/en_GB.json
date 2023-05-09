@@ -248,6 +248,8 @@
   "modalTextGuidedWalk": "A guided walk will take you through the trial plot by plot on a specific route. Select the order in which to navigate from the current plot below, then start the walk. You can navigate between plots using the 'Next' and 'Back' buttons at the bottom.",
   "modalTitleAddTrait": "Add trait",
   "modalTextAddTrait": "You can add traits even after a trial has been created. Use the form below to add one or more traits in the same way as you did during setup.",
+  "modalTextSearchMatchRow": "Row: {row}",
+  "modalTextSearchMatchColumn": "Column: {column}",
   "pageAboutChangelog": "View Changelog Information",
   "pageAboutVersion": "Version {version}",
   "pageAboutGitHubLink": "The source code of GridScore is available on <a href='https://github.com/cropgeeks/gridscore/'>GitHub</a>.",
@@ -319,6 +321,7 @@
   "pageVisualizationMapTitle": "Geographic information",
   "pageVisualizationMapText": "This map shows any available field layout information as well as the locations where data has been collected.",
   "pageVisualizationMapPlotInfo": "Row: {row}, Column: {column}",
+  "pageVisualizationMapNoTraitData": "No data for this trait found.",
   "pageVisualizationStatisticsTitle": "Data statistics",
   "pageVisualizationStatisticsText": "This page shows overview statistics for each trait. Numeric and date traits are visualized in a box plot while text and categorical traits are shown in bar charts.",
   "pageVisualizationHeatmapTitle": "Data heatmaps",
@@ -375,6 +378,9 @@
   "tooltipDataEntryDateToday": "Set as today",
   "tooltipDataEntryDatePlusOne": "Add one day",
   "tooltipDataEntryDateReset": "Reset date to null",
+  "tooltipTraitAllowRepeatsTrue": "Allow repeated measurements",
+  "tooltipTraitAllowRepeatsFalse": "No repeated measurements",
+  "tooltipTraitSetSize": "Set size",
   "traitTypeCategorical": "Category",
   "traitTypeDate": "Date",
   "traitTypeFloat": "Decimal number (e.g. 2.1, 3.5, 200.5)",
@@ -425,5 +431,7 @@
   "widgetGuideOrderRightDown": "Right, down, left, down",
   "widgetGuideOrderRightUp": "Right, up, left, up",
   "widgetGuideOrderUturnLeft": "Make a U-turn to your left",
-  "widgetGuideOrderUturnRight": "Make a U-turn to your right"
+  "widgetGuideOrderUturnRight": "Make a U-turn to your right",
+  "widgetTraitInputPreviousMeasures": "Previous measurement ({date}): <span style='color: {color}'>{values}</span>",
+  "widgetTraitInputCurrentMeasures": "Current measurement ({date}): <span style='color: {color}'>{values}</span>"
 }

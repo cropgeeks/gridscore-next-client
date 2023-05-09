@@ -4,6 +4,8 @@
            @ok.prevent="addTraits"
            :ok-disabled="!traits || traits.length < 1"
            no-fade
+           no-close-on-backdrop
+           no-close-on-esc
            size="xl"
            ref="addTraitsModal">
     <div v-if="trial">

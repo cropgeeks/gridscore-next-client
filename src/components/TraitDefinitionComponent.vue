@@ -66,7 +66,7 @@
           </b-row>
           <b-form-group :description="$t('formDescriptionTraitSetSize')" label-for="trait-set-size" :state="formState.setSize">
             <template #label>
-              <BIconSegmentedNav /> {{ $t('formLabelTraitSetSize') }}
+              <BIconSegmentedNav :rotate="90" /> {{ $t('formLabelTraitSetSize') }}
             </template>
             <b-input type="number" :step="1" number :min="1" required v-model="newTrait.setSize" id="trait-set-size" :state="formState.setSize" />
           </b-form-group>

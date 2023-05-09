@@ -16,7 +16,7 @@
           <h5 class="mb-1 mr-3">
             <span :style="{ color: trait.color }"><BIconCircleFill /> {{ trait.name }}</span>
           </h5>
-          <b-list-group class="map-measurement-list" v-if="selectedFeature.measurements[traitId]">
+          <b-list-group class="map-measurement-list" v-if="selectedFeature.measurements[traitId] && selectedFeature.measurements[traitId].length > 0">
             <b-list-group-item class="flex-column align-items-start" v-for="(measure, index) in selectedFeature.measurements[traitId]" :key="`selected-measure-${traitId}-${index}`">
               <div class="d-flex w-100 justify-content-between align-items-center">
                 <template v-if="trait.dataType === 'categorical'">
@@ -29,6 +29,7 @@
               </div>
             </b-list-group-item>
           </b-list-group>
+          <p v-else>{{ $t('pageVisualizationMapNoTraitData') }}</p>
         </section>
       </div>
     </div>

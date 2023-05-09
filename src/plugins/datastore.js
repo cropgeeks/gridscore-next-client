@@ -43,11 +43,32 @@ const init = () => {
   }
 }
 
+const getGermplasmMatches = (searchTerm) => {
+  if (trialData && searchTerm && searchTerm !== '') {
+    const lower = searchTerm.toLowerCase()
+
+    return Object.values(trialData).filter(c => {
+      return c.germplasm.toLowerCase() === lower || c.displayName.toLowerCase() === lower
+    }).map(c => {
+      return {
+        name: c.germplasm,
+        rep: c.rep,
+        displayName: c.displayName,
+        row: c.row,
+        column: c.column
+      }
+    })
+  } else {
+    return []
+  }
+}
+
 const getTrialDataCached = () => {
   return trialData
 }
 
 export {
   init,
-  getTrialDataCached
+  getTrialDataCached,
+  getGermplasmMatches
 }

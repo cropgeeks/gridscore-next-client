@@ -223,6 +223,7 @@ export default {
 <style lang="scss">
 $primary: #3498db;
 $secondary: #bdc3c7;
+$light: #ecf0f1;
 $dark: #2c3e50;
 // $info: #60a3bc;
 $success: #A3CB38;

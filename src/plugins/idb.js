@@ -261,7 +261,7 @@ const deleteTrialComment = async (trialId, comment) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor([trialId, 'trial-comment-added', comment.timestamp])
+      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor([trialId, 'TRIAL_COMMENT_ADDED', comment.timestamp])
 
       let matchFound = false
       while (cursor) {
@@ -275,7 +275,7 @@ const deleteTrialComment = async (trialId, comment) => {
       if (!matchFound) {
         const transaction = {
           trialId: trial.localId,
-          operation: 'trial-comment-deleted',
+          operation: 'TRIAL_COMMENT_DELETED',
           content: comment,
           timestamp: new Date().toISOString()
         }
@@ -299,7 +299,7 @@ const addTrialTraits = async (trialId, traits) => {
     if (logTransactions(trial)) {
       const transaction = {
         trialId: trialId,
-        operation: 'trial-traits-added',
+        operation: 'TRIAL_TRAITS_ADDED',
         content: traits,
         timestamp: new Date().toISOString()
       }
@@ -352,7 +352,7 @@ const addTrialComment = async (trialId, commentContent) => {
     if (logTransactions(trial)) {
       const transaction = {
         trialId: trialId,
-        operation: 'trial-comment-added',
+        operation: 'TRIAL_COMMENT_ADDED',
         content: newComment,
         timestamp: newComment.timestamp
       }
@@ -380,7 +380,7 @@ const setPlotMarked = async (trialId, row, column, isMarked) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor(IDBKeyRange.bound([trialId, 'plot-marked-changed', '1990-01-01T00:00:00.000Z'], [trialId, 'plot-marked-changed', '2999-12-31T23:59:59.999Z']))
+      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor(IDBKeyRange.bound([trialId, 'PLOT_MARKED_CHANGED', '1990-01-01T00:00:00.000Z'], [trialId, 'PLOT_MARKED_CHANGED', '2999-12-31T23:59:59.999Z']))
 
       let matchFound = false
       while (cursor) {
@@ -395,7 +395,7 @@ const setPlotMarked = async (trialId, row, column, isMarked) => {
       if (!matchFound) {
         const transaction = {
           trialId: trialId,
-          operation: 'plot-marked-changed',
+          operation: 'PLOT_MARKED_CHANGED',
           content: {
             row: cell.row,
             column: cell.column,
@@ -426,7 +426,7 @@ const deletePlotComment = async (trialId, row, column, comment) => {
       copy.row = row
       copy.column = column
 
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor([trialId, 'plot-comment-added', comment.timestamp])
+      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor([trialId, 'PLOT_COMMENT_ADDED', comment.timestamp])
 
       let matchFound = false
       while (cursor) {
@@ -440,7 +440,7 @@ const deletePlotComment = async (trialId, row, column, comment) => {
       if (!matchFound) {
         const transaction = {
           trialId: trialId,
-          operation: 'plot-comment-deleted',
+          operation: 'PLOT_COMMENT_DELETED',
           content: copy,
           timestamp: new Date().toISOString()
         }
@@ -480,7 +480,7 @@ const addPlotComment = async (trialId, row, column, commentContent) => {
 
       const transaction = {
         trialId: trialId,
-        operation: 'plot-comment-added',
+        operation: 'PLOT_COMMENT_ADDED',
         content: copy,
         timestamp: newComment.timestamp
       }

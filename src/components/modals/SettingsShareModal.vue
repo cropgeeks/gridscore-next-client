@@ -8,7 +8,7 @@
     <div>
       <p>{{ $t('modalTextSettingsShare') }}</p>
 
-      <b-tabs>
+      <b-tabs justified>
         <b-tab>
           <template #title>
             <BIconBoxArrowInUpRight /> {{ $t('tabTitleSettingsShareExport') }}

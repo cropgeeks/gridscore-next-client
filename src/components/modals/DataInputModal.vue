@@ -42,7 +42,7 @@
           </template>
 
           <div class="mt-3 trait-group-tab-content">
-            <TraitInputSection :editable="trial.editable" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            <TraitInputSection :editable="trial.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
           </div>
         </b-tab>
       </b-tabs>
