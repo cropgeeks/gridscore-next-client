@@ -60,7 +60,7 @@ import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
-import { getCell, setPlotMarked } from '@/plugins/idb'
+import { addTrialData, getCell, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
 import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX } from 'bootstrap-vue'
 
@@ -223,7 +223,26 @@ export default {
 
       if (this.tabStates.every(t => t)) {
         // All valid!
-        // TODO
+        // TODO#
+        const mapping = []
+        this.trial.traits.forEach(t => {
+          const values = this.$refs[`trait-section-${t.id}`][0].getValues()
+
+          if (!values.every(v => v === undefined || v === null || v === '')) {
+            mapping.push({
+              traitId: t.id,
+              values: values,
+              timestamp: new Date().toISOString()
+            })
+          }
+        })
+
+        if (mapping.length > 0) {
+          addTrialData(this.trial.localId, this.cell.row, this.cell.column, mapping)
+            .then(() => {
+              // TODO
+            })
+        }
       }
     },
     /**

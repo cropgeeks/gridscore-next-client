@@ -109,6 +109,13 @@ export default {
     }
   },
   methods: {
+    getValue: function () {
+      if (this.value === undefined || this.value === null || this.value === '') {
+        return null
+      } else {
+        return this.value
+      }
+    },
     focus: function () {
       if (this.$refs.input && this.$refs.input.focus) {
         this.$refs.input.focus()
@@ -151,10 +158,10 @@ export default {
       return true
     },
     validate: function () {
-      if (this.value === '') {
+      if (this.value === null || this.value === '') {
         this.value = null
         this.formState = true
-        return false
+        return true
       } else {
         const trimmed = (typeof this.value === 'string') ? this.value.trim() : this.value
 

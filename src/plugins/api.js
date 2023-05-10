@@ -111,9 +111,8 @@ const getTrialByCode = (shareCode) => {
   return axiosCall(`trial/${shareCode}`, null, 'get')
 }
 
-const synchronizeTrial = (localId, shareCode) => {
-  // TODO: Implement
-  return new Promise(resolve => resolve(localId))
+const synchronizeTrial = (shareCode, transactions) => {
+  return axiosCall(`trial/${shareCode}/transaction`, transactions, 'post')
 }
 
 const exportToGerminate = (shareCode) => {

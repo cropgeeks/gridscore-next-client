@@ -55,7 +55,7 @@ const getDb = async () => {
 const getTrials = async () => {
   const db = await getDb()
 
-  return db.getAll('trials')
+  const trials = await db.getAll('trials')
     .then(trials => {
       if (trials) {
         trials.forEach(trial => {
@@ -77,6 +77,14 @@ const getTrials = async () => {
 
       return trials
     })
+
+  return Promise.all(trials.map(t => {
+    return db.countFromIndex('transactions', 'trialId', t.localId)
+      .then(count => {
+        t.transactionCount = count
+        return t
+      })
+  }))
 }
 
 const updateTrial = async (localId, updatedTrial) => {
@@ -105,7 +113,7 @@ const updateTrialBrapiConfig = async (localId, brapiConfig) => {
 const getTrialById = async (localId) => {
   const db = await getDb()
 
-  return db.get('trials', localId)
+  const trial = await db.get('trials', localId)
     .then(trial => {
       if (trial) {
         if (trial.traits) {
@@ -127,6 +135,59 @@ const getTrialById = async (localId) => {
 
       return trial
     })
+
+  return db.countFromIndex('transactions', 'trialId', trial.localId)
+    .then(count => {
+      trial.transactionCount = count
+      return trial
+    })
+}
+
+const getTransactionsForTrial = async (localId) => {
+  const db = await getDb()
+
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    return db.getAllFromIndex('transactions', 'trialId', localId)
+  } else {
+    return new Promise(resolve => resolve([]))
+  }
+}
+
+const addTrialData = async (localId, row, column, data) => {
+  const db = await getDb()
+
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    const cell = await getCell(localId, row, column)
+
+    if (!cell.measurements) {
+      cell.measurement = {}
+
+      trial.traits.forEach(t => {
+        cell.measurements[t.id] = []
+      })
+    }
+
+    data.forEach(d => {
+      // TODO: Handle single measurement traits!!!
+      cell.measurements[d.traitId].push({
+        values: d.values,
+        timestamp: d.timestamp
+      })
+    })
+
+    // TODO: Transactions
+
+    // Remove this as it was only added temporarily
+    delete cell.displayName
+
+    return db.put('data', cell)
+  } else {
+    return new Promise(resolve => resolve())
+  }
 }
 
 const deleteTrial = async (localId) => {
@@ -517,5 +578,7 @@ export {
   setPlotMarked,
   updateTrial,
   updateTrialBrapiConfig,
-  addTrialTraits
+  addTrialTraits,
+  getTransactionsForTrial,
+  addTrialData
 }

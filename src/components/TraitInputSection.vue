@@ -12,8 +12,8 @@
         <b-badge class="mx-1" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
           <BIconArrowRepeat v-if="trait.allowRepeats" />
           <BIconstack v-else>
-            <BIconArrowRepeat />
-            <BIconX :scale="0.7" />
+            <BIconArrowRepeat stacked />
+            <BIconX stacked :scale="0.7" />
           </BIconstack>
         </b-badge>
 
@@ -112,6 +112,15 @@ export default {
       }
 
       return valid
+    },
+    getValues: function () {
+      const values = []
+
+      for (let i = 0; i < (this.trait.setSize || 1); i++) {
+        values.push(this.$refs[`${this.trait.id}-${i + 1}`][0].getValue())
+      }
+
+      return values
     }
   }
 }

@@ -30,13 +30,13 @@ export default {
       this.hide()
     },
     /**
-     * Shows the modal dialog and resets it to its initial state
+     * Shows the modal dialog
      */
     show: function () {
       this.$nextTick(() => this.$refs.searchMatchModal.show())
     },
     /**
-     * Hides the modal dialog
+     * Hides the modal dialog and resets it to its initial state
      */
     hide: function () {
       this.$nextTick(() => this.$refs.searchMatchModal.hide())
