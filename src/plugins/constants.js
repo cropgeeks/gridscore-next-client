@@ -12,7 +12,13 @@ const TRAIT_TIMEFRAME_TYPE_SUGGEST = 'SUGGEST'
 const TRAIT_TIMEFRAME_TYPE_ENFORCE = 'ENFORCE'
 
 const TRANSACTION_TYPES = {
-  TRIAL_TRAITS_ADDED: 'transactionTypeTraitsAdded'
+  TRIAL_TRAITS_ADDED: 'transactionTypeTraitsAdded',
+  PLOT_COMMENT_ADDED: 'transactionTypePlotCommentAdded',
+  PLOT_COMMENT_DELETED: 'transactionTypePlotCommentDeleted',
+  PLOT_MARKED_CHANGED: 'transactionTypePlotMarkedChanged',
+  TRIAL_COMMENT_ADDED: 'transactionTypeTrialCommentAdded',
+  TRIAL_COMMENT_DELETED: 'transactionTypeTrialCommentDeleted',
+  TRAIT_DATA_CHANGED: 'transactionTypeTraitDataChanged'
 }
 
 export {

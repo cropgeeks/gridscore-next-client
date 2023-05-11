@@ -4,12 +4,13 @@
            no-fade
            size="lg"
            @shown="guidedWalkVisible = true"
+           @ok.prevent="onSubmit"
            @hidden="guidedWalkVisible = false"
            ref="guidedWalkModal">
     <div v-if="cell && trialLayout">
       <p>{{ $t('modalTextGuidedWalk') }}</p>
 
-      <GuideOrderSelector :row="cell.row" :column="cell.column" :trialLayout="trialLayout" :visible="guidedWalkVisible" @order-selected="e => $emit('order-selected', e)"/>
+      <GuideOrderSelector :row="cell.row" :column="cell.column" :trialLayout="trialLayout" :visible="guidedWalkVisible" ref="guideOrderSelector" />
     </div>
   </b-modal>
 </template>
@@ -37,6 +38,11 @@ export default {
     }
   },
   methods: {
+    onSubmit: function () {
+      this.$emit('change', this.$refs.guideOrderSelector.getOrder())
+
+      this.$nextTick(() => this.hide())
+    },
     /**
      * Shows and resets modal dialog
      */

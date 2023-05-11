@@ -37,6 +37,7 @@ const init = () => {
   emitter.on('trial-selected', loadTrialData)
   emitter.on('plot-comments-changed', updateCellCache)
   emitter.on('plot-marked-changed', updateCellCache)
+  emitter.on('plot-data-changed', updateCellCache)
 
   if (store.getters.storeSelectedTrial) {
     loadTrialData()

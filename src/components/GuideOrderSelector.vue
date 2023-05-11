@@ -54,9 +54,9 @@ export default {
       selectedOrder: null
     }
   },
-  watch: {
-    selectedOrder: function (newValue) {
-      this.$emit('order-selected', newValue)
+  methods: {
+    getOrder: function () {
+      return this.selectedOrder
     }
   }
 }

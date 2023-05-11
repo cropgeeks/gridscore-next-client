@@ -1,8 +1,12 @@
 <template>
-  <b-modal :cancel-title="$t('buttonCancel')"
-           :ok-title="$t(isEditable ? 'buttonSave' : 'buttonClose')"
+  <b-modal :cancel-title="$t(isGuidedWalk ? 'buttonPrevious' : 'buttonCancel')"
+           :ok-title="$t(isEditable ? (isGuidedWalk ? 'buttonNext' : 'buttonSave') : 'buttonClose')"
+           ok-variant="primary"
+           :cancel-variant="isGuidedWalk ? 'primary' : null"
+           :cancel-disabled="cancelDisabled"
            no-close-on-backdrop
            no-close-on-esc
+           @cancel.prevent="onCancel"
            @ok.prevent="validate"
            @hidden="reset"
            @shown="autofocusFirst"
@@ -24,12 +28,30 @@
           </template>
         </b-button>
         <b-button @click="onShowPhotoModal(null)"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
-        <b-button @click="$refs.guidedWalkModal.show()"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
+        <b-button @click="$refs.guidedWalkModal.show()" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
       </b-button-group>
 
       <button class="close ml-0" @click="close()">×</button>
     </template>
     <div v-if="cell && trial">
+      <b-row v-if="guidedWalk">
+        <b-col cols=4>
+          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: guidedWalk.prev.column + 1, row: guidedWalk.prev.row + 1 })" v-if="guidedWalk.prev" />
+        </b-col>
+        <b-col cols=4>
+          <b-card class="text-center h-100">
+            <b-card-title>
+              <BIconChevronDoubleLeft :class="guidedWalk.prev ? null : 'text-muted'" /> <BIconGeoAltFill class="mx-2" /> <BIconChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
+            </b-card-title>
+            <b-card-sub-title>
+              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: cell.column + 1, row: cell.row + 1 }) }}
+            </b-card-sub-title>
+          </b-card>
+        </b-col>
+        <b-col cols=4>
+          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: guidedWalk.next.column + 1, row: guidedWalk.next.row + 1 })" v-if="guidedWalk.next" />
+        </b-col>
+      </b-row>
       <b-tabs v-model="traitGroupTabIndex">
         <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
           :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
@@ -49,7 +71,7 @@
 
       <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" />
       <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" />
-      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" />
+      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" @change="onSelectGuidedWalk" />
     </div>
   </b-modal>
 </template>
@@ -62,7 +84,8 @@ import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
 import { addTrialData, getCell, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
-import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX } from 'bootstrap-vue'
+import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX, BIconChevronDoubleLeft, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
+import { guideOrderTypes } from '@/plugins/guidedwalk'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -78,7 +101,10 @@ export default {
     BIconCameraFill,
     BIconCheck,
     BIconX,
-    BIconSignpostSplitFill
+    BIconSignpostSplitFill,
+    BIconChevronDoubleLeft,
+    BIconGeoAltFill,
+    BIconChevronDoubleRight
   },
   props: {
     trial: {
@@ -91,7 +117,8 @@ export default {
       cell: null,
       traitGroupTabIndex: 0,
       selectedTrait: null,
-      tabStates: null
+      tabStates: null,
+      guidedWalk: null
     }
   },
   computed: {
@@ -99,6 +126,16 @@ export default {
       'storeSelectedTrial',
       'storeHiddenTraits'
     ]),
+    cancelDisabled: function () {
+      if (this.isGuidedWalk) {
+        return this.guidedWalk.index === 0
+      } else {
+        return false
+      }
+    },
+    isGuidedWalk: function () {
+      return this.guidedWalk !== undefined && this.guidedWalk !== null
+    },
     isEditable: function () {
       if (this.trial) {
         return this.trial.editable
@@ -156,9 +193,41 @@ export default {
       } else {
         this.tabStates = null
       }
+    },
+    'guidedWalk.index': function (newValue) {
+      if (this.guidedWalk) {
+        const nextCoords = newValue < this.guidedWalk.order.length - 1 ? this.guidedWalk.order[newValue + 1] : null
+        const prevCoords = newValue > 0 ? this.guidedWalk.order[newValue - 1] : null
+        if (nextCoords !== null) {
+          getCell(this.trial.localId, nextCoords.y, nextCoords.x)
+            .then(next => {
+              this.guidedWalk.next = next
+            })
+        } else {
+          this.guidedWalk.next = null
+        }
+        if (prevCoords !== null) {
+          getCell(this.trial.localId, prevCoords.y, prevCoords.x)
+            .then(prev => {
+              this.guidedWalk.prev = prev
+            })
+        } else {
+          this.guidedWalk.prev = null
+        }
+      }
     }
   },
   methods: {
+    onSelectGuidedWalk: function (typeName) {
+      const match = guideOrderTypes.find(g => g.name === typeName)
+
+      this.guidedWalk = {
+        order: match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout),
+        index: 0,
+        prev: null,
+        next: null
+      }
+    },
     onShowPhotoModal: function (selectedTrait) {
       this.selectedTrait = selectedTrait
 
@@ -211,19 +280,21 @@ export default {
         Vue.set(this.cell, 'comments', cell.comments)
       }
     },
-    update: function () {
-      // TODO
+    onCancel: function () {
+      if (this.isGuidedWalk) {
+        this.validate(false)
+      } else {
+        this.hide()
+      }
     },
-    validate: function () {
+    validate: function (forward = true) {
       this.tabStates = this.traitsByGroup.map(g => {
         const traitStates = g.traits.map(t => this.$refs[`trait-section-${t.id}`][0].validate())
-        console.log(g, traitStates)
         return traitStates.every(t => t)
       })
 
       if (this.tabStates.every(t => t)) {
         // All valid!
-        // TODO#
         const mapping = []
         this.trial.traits.forEach(t => {
           const values = this.$refs[`trait-section-${t.id}`][0].getValues()
@@ -237,11 +308,29 @@ export default {
           }
         })
 
+        const delta = forward ? 1 : -1
+
         if (mapping.length > 0) {
           addTrialData(this.trial.localId, this.cell.row, this.cell.column, mapping)
             .then(() => {
-              // TODO
+              if (this.isGuidedWalk) {
+                this.guidedWalk.index = Math.max(0, Math.min(this.guidedWalk.order.length - 1, this.guidedWalk.index + delta))
+                const next = this.guidedWalk.order[this.guidedWalk.index]
+                this.updateCell(next.y, next.x)
+              } else {
+                this.hide()
+              }
+
+              this.$nextTick(() => emitter.emit('plot-data-changed', this.cell.row, this.cell.column, this.trial.localId))
             })
+        } else {
+          if (this.isGuidedWalk) {
+            this.guidedWalk.index = Math.max(0, Math.min(this.guidedWalk.order.length - 1, this.guidedWalk.index + delta))
+            const next = this.guidedWalk.order[this.guidedWalk.index]
+            this.updateCell(next.y, next.x)
+          } else {
+            this.hide()
+          }
         }
       }
     },
@@ -260,6 +349,7 @@ export default {
     reset: function () {
       this.traitGroupTabIndex = 0
       this.cell = null
+      this.guidedWalk = null
     }
   },
   created: function () {

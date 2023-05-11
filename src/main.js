@@ -4,7 +4,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import { i18n } from '@/plugins/i18n.js'
-import { BadgePlugin, ButtonGroupPlugin, ButtonPlugin, ButtonToolbarPlugin, CardPlugin, DropdownPlugin, FormCheckboxPlugin, FormDatepickerPlugin, FormFilePlugin, FormGroupPlugin, FormInputPlugin, FormPlugin, FormRadioPlugin, FormSelectPlugin, FormTextareaPlugin, ImagePlugin, InputGroupPlugin, LayoutPlugin, ListGroupPlugin, ModalPlugin, NavbarPlugin, PopoverPlugin, SidebarPlugin, SpinnerPlugin, TabsPlugin, TooltipPlugin } from 'bootstrap-vue'
+import { BadgePlugin, ButtonGroupPlugin, ButtonPlugin, ButtonToolbarPlugin, CardPlugin, DropdownPlugin, FormCheckboxPlugin, FormDatepickerPlugin, FormFilePlugin, FormGroupPlugin, FormInputPlugin, FormPlugin, FormRadioPlugin, FormSelectPlugin, FormTextareaPlugin, ImagePlugin, InputGroupPlugin, LayoutPlugin, ListGroupPlugin, ModalPlugin, NavbarPlugin, PaginationPlugin, PopoverPlugin, SidebarPlugin, SpinnerPlugin, TabsPlugin, TooltipPlugin } from 'bootstrap-vue'
 
 Vue.use(BadgePlugin)
 Vue.use(ButtonPlugin)
@@ -27,6 +27,7 @@ Vue.use(LayoutPlugin)
 Vue.use(ListGroupPlugin)
 Vue.use(ModalPlugin)
 Vue.use(NavbarPlugin)
+Vue.use(PaginationPlugin)
 Vue.use(PopoverPlugin)
 Vue.use(SidebarPlugin)
 Vue.use(SpinnerPlugin)

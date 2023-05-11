@@ -41,7 +41,10 @@ const getDb = async () => {
 
             transactions = db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true })
             transactions.createIndex('trialId', 'trialId', { unique: false })
+            transactions.createIndex('row', 'row', { unique: false })
+            transactions.createIndex('column', 'column', { unique: false })
             transactions.createIndex('operation', 'operation', { unique: false })
+            transactions.createIndex('trialId-operation-row-column', ['trialId', 'operation', 'row', 'column'], { unique: false })
             transactions.createIndex('trialId-operation-timestamp', ['trialId', 'operation', 'timestamp'], { unique: false })
             transactions.createIndex('content', 'content', { unique: false })
             transactions.createIndex('timestamp', 'timestamp', { unique: false })
@@ -155,13 +158,11 @@ const getTransactionsForTrial = async (localId) => {
   }
 }
 
-const addTrialData = async (localId, row, column, data) => {
-  const db = await getDb()
-
-  const trial = await getTrialById(localId)
+const addTrialData = async (trialId, row, column, data) => {
+  const trial = await getTrialById(trialId)
 
   if (trial) {
-    const cell = await getCell(localId, row, column)
+    const cell = await getCell(trialId, row, column)
 
     if (!cell.measurements) {
       cell.measurement = {}
@@ -172,17 +173,95 @@ const addTrialData = async (localId, row, column, data) => {
     }
 
     data.forEach(d => {
-      // TODO: Handle single measurement traits!!!
-      cell.measurements[d.traitId].push({
-        values: d.values,
-        timestamp: d.timestamp
-      })
-    })
+      const trait = trial.traits.find(t => t.id === d.traitId)
 
-    // TODO: Transactions
+      if (trait.allowRepeats) {
+        // If repeats are allowed, simply append to the end
+        cell.measurements[d.traitId].push({
+          values: d.values,
+          timestamp: d.timestamp
+        })
+      } else {
+        // Else, search for a match for this trait (the first entry)
+        const match = cell.measurements[d.traitId].length > 0 ? cell.measurements[d.traitId][0] : null
+
+        if (match) {
+          // If it exists, update it
+          match.values = d.values
+          match.timestamp = d.timestamp
+        } else {
+          // If not, create a new one
+          cell.measurements[d.traitId].push({
+            values: d.values,
+            timestamp: d.timestamp
+          })
+        }
+      }
+    })
 
     // Remove this as it was only added temporarily
     delete cell.displayName
+
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      let singleMeasurements = data.filter(d => trial.traits.find(t => t.id === d.traitId && !t.allowRepeats))
+      const multiMeasurements = data.filter(d => trial.traits.find(t => t.id === d.traitId && t.allowRepeats))
+
+      if (singleMeasurements.length > 0) {
+        let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-row-column').openCursor([trialId, 'TRAIT_DATA_CHANGED', row, column])
+        // Find ones that already have transactions, then update
+        while (cursor) {
+          const content = cursor.value.content
+
+          // For all measurements in this old transaction
+          let changed = false
+          for (const m of content.measurements) {
+            // Check if any of the new measurements are for the same trait
+            const same = singleMeasurements.map(sm => sm.traitId === m.traitId)
+
+            for (const [index, b] of same.entries()) {
+              // If some are, update the old measurement with the new one
+              if (b) {
+                m.values = singleMeasurements[index].values
+                m.timestamp = singleMeasurements[index].timestamp
+                changed = true
+              }
+            }
+
+            // Remove all the ones that have been updated
+            singleMeasurements = singleMeasurements.filter((m, i) => !same[i])
+          }
+
+          if (changed) {
+            // Write them back
+            await cursor.update(cursor.value)
+          }
+
+          cursor = await cursor.continue()
+        }
+
+        // For all remaining, add to new transaction
+        const joined = [].concat(singleMeasurements).concat(multiMeasurements)
+
+        if (joined.length > 0) {
+          const transaction = {
+            trialId: trialId,
+            operation: 'TRAIT_DATA_CHANGED',
+            row: row,
+            column: column,
+            content: {
+              row: row,
+              column: column,
+              measurements: joined
+            },
+            timestamp: new Date().toISOString()
+          }
+
+          await db.put('transactions', transaction)
+        }
+      }
+    }
 
     return db.put('data', cell)
   } else {
@@ -329,6 +408,7 @@ const deleteTrialComment = async (trialId, comment) => {
         if (cursor.value.content.content === comment.content) {
           cursor.delete()
           matchFound = true
+          break
         }
         cursor = await cursor.continue()
       }
@@ -375,14 +455,18 @@ const addTrialTraits = async (trialId, traits) => {
 
     await db.put('trials', trial)
 
+    // Get all data items belonging to this trial so we can add the new trait information
     let cursor = await db.transaction('data', 'readwrite').store.openCursor(IDBKeyRange.bound([trial.localId, 0, 0], [trial.localId, trial.layout.rows, trial.layout.columns]))
 
     while (cursor) {
-      if (cursor.value && cursor.value.measurements) {
+      const cell = cursor.value
+      if (cell && cell.measurements) {
         traits.forEach(t => {
-          cursor.value.measurements[t.id] = []
+          cell.measurements[t.id] = []
         })
 
+        // Write it back to the database
+        await cursor.update(cell)
         cursor = await cursor.continue()
       }
     }

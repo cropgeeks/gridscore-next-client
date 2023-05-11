@@ -1,6 +1,6 @@
 <template>
   <b-modal :title="$t('modalTitleTrialSynchronization')"
-           :ok-title="$t('buttonUpload')"
+           :ok-title="$t('Synchronize')"
            :cancel-title="$t('buttonCancel')"
            @ok.prevent="synchronize"
            no-fade
@@ -8,6 +8,8 @@
            ref="trialSynchronizationModal">
     <div v-if="trial">
       <div v-if="transactions && transactions.length > 0">
+        <h4><strong>{{ $tc('modalTextTrialSynchronizationCount', transactions.length) }}</strong></h4>
+
         <b-list-group>
           <b-list-group-item v-for="tr in visibleTransactions" :key="`transaction-${tr.timestamp}`">
             <template v-if="tr.operation === 'TRIAL_TRAITS_ADDED'">
@@ -17,8 +19,24 @@
               </div>
 
               <p class="mb-1">
-                {{ tr.content.map(t => t.name).join(', ') }}
+                <TraitHeading :trait="trait" v-for="trait in tr.content" :key="`trait-${trait.id}`" />
               </p>
+            </template>
+            <template v-if="tr.operation === 'TRAIT_DATA_CHANGED'">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
+                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
+              </div>
+
+              <p class="mb-1">
+                {{ $tc('modalTextTrialSynchronizationMeasurementCount', tr.content.measurements.length) }}
+              </p>
+            </template>
+            <template v-if="tr.operation === 'PLOT_COMMENT_ADDED' || tr.operation === 'PLOT_COMMENT_DELETED' || tr.operation === 'TRIAL_COMMENT_ADDED' || tr.operation === 'TRIAL_COMMENT_DELETED' || tr.operation === 'PLOT_MARKED_CHANGED'">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
+                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
+              </div>
             </template>
           </b-list-group-item>
         </b-list-group>
@@ -33,6 +51,8 @@
 </template>
 
 <script>
+import TraitHeading from '@/components/TraitHeading'
+
 import { addTrial, deleteTrial, getTransactionsForTrial } from '@/plugins/idb'
 import { TRANSACTION_TYPES } from '@/plugins/constants'
 import { synchronizeTrial } from '@/plugins/api'
@@ -41,6 +61,7 @@ const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
+    TraitHeading
   },
   props: {
     trial: {
@@ -108,6 +129,7 @@ export default {
     show: function () {
       getTransactionsForTrial(this.trial.localId)
         .then(transactions => {
+          transactions.sort((a, b) => b.timestamp.localeCompare(a.timestamp))
           this.transactions = transactions
         })
 
