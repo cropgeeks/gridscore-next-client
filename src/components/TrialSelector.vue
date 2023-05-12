@@ -12,7 +12,7 @@
           <TrialInformation :trial="trial" />
           <b-card-footer class="d-flex justify-content-between">
             <b-button @click="loadTrial(trial)" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
-            <b-dropdown>
+            <b-dropdown right>
               <template #button-content>
                 <BIconGear />
               </template>
