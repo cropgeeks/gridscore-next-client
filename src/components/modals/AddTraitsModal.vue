@@ -58,6 +58,7 @@ export default {
       addTrialTraits(this.trial.localId, this.traits)
         .then(() => {
           emitter.emit('trials-updated')
+          emitter.emit('plausible-event', { key: 'traits-added', props: { count: this.traits.length } })
           this.hide()
         })
     },

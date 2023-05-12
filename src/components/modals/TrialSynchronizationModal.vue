@@ -112,6 +112,7 @@ export default {
                     this.$store.dispatch('setSelectedTrial', localId)
                     emitter.emit('trials-updated')
                     emitter.emit('show-loading', false)
+                    emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.transactions.length } })
                   })
                   .catch(() => {
                     emitter.emit('show-loading', false)

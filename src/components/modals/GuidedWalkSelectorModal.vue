@@ -18,6 +18,8 @@
 <script>
 import GuideOrderSelector from '@/components/GuideOrderSelector'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     GuideOrderSelector
@@ -39,7 +41,10 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      this.$emit('change', this.$refs.guideOrderSelector.getOrder())
+      const order = this.$refs.guideOrderSelector.getOrder()
+      this.$emit('change', order)
+
+      emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: order } })
 
       this.$nextTick(() => this.hide())
     },

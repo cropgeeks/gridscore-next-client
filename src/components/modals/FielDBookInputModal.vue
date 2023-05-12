@@ -59,6 +59,8 @@
 import { tsvParse, csvParse, autoType } from 'd3-dsv'
 import { BIconLayoutTextSidebar } from 'bootstrap-vue'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconLayoutTextSidebar
@@ -214,6 +216,8 @@ export default {
       this.reset()
 
       this.hide()
+
+      emitter.emit('plausible-event', { key: 'load-layout', props: { type: 'FielDBook' } })
     },
     loadInputFile: function () {
       const reader = new FileReader()

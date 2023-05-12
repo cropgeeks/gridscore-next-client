@@ -158,6 +158,8 @@ import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import { addTrial } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconTextareaT,
@@ -374,6 +376,17 @@ export default {
             createdOn: now,
             lastSyncedOn: null
           }
+
+          emitter.emit('plausible-event', {
+            key: 'trial-created',
+            props: {
+              rows: finalTrial.layout.rows,
+              columns: finalTrial.layout.columns,
+              traits: finalTrial.traits.length,
+              markers: finalTrial.layout.markers !== null,
+              corners: finalTrial.layout.corners !== null
+            }
+          })
 
           addTrial(finalTrial).then(trialId => {
             this.newTrialCreatedSuccessfully = true

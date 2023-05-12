@@ -94,6 +94,8 @@ export default {
 
       this.$emit('change', gridData)
       this.reset()
+
+      emitter.emit('plausible-event', { key: 'load-layout', props: { type: 'tab' } })
     },
     loadInputFile: function () {
       const reader = new FileReader()

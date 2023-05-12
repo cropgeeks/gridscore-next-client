@@ -30,6 +30,8 @@ import { mapGetters } from 'vuex'
 import exifr from 'exifr/dist/lite.umd.js'
 import { BIconCalendar3 } from 'bootstrap-vue'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconCalendar3
@@ -160,7 +162,7 @@ export default {
             }
           })
 
-        // this.plausibleEvent('data-input', { type: 'image' })
+        emitter.emit('plausible-event', { key: 'data-input', props: { type: 'image' } })
       }
     }
   },

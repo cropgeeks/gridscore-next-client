@@ -68,6 +68,7 @@ export default {
   methods: {
     getShareCodes: function () {
       shareTrial(this.trial.localId)
+        .then(() => emitter.emit('plausible-event', { key: 'trial-shared' }))
         .catch(error => {
           console.error(error)
         })

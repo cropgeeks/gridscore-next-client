@@ -107,6 +107,7 @@ export default {
       deleteTrialComment(this.trial.localId, comment)
         .then(() => {
           emitter.emit('trial-properties-changed', this.trial.localId)
+          emitter.emit('plausible-event', { key: 'trial-comment', props: { type: 'deleted' } })
           this.update()
         })
     },
@@ -116,6 +117,7 @@ export default {
           this.newCommentContent = null
           this.commentFormVisible = false
           emitter.emit('trial-properties-changed', this.trial.localId)
+          emitter.emit('plausible-event', { key: 'trial-comment', props: { type: 'added' } })
           this.update()
         })
     }

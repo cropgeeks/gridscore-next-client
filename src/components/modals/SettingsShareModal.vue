@@ -42,6 +42,8 @@ import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER
 import StyledQRCode from '@/components/StyledQRCode'
 import BarcodeScanner from '@/components/BarcodeScanner'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BarcodeScanner,
@@ -72,7 +74,6 @@ export default {
   },
   methods: {
     onDecode: function (code) {
-      console.log(code)
       try {
         const parsed = JSON.parse(code)
 
@@ -131,6 +132,8 @@ export default {
         this.$emit('change')
 
         this.hide()
+
+        emitter.emit('plausible-event', { key: 'settings-shared', props: { type: 'load' } })
       } catch {
         this.errorMessage = 'errorMessageInvalidSettingsQR'
       }
@@ -153,6 +156,8 @@ export default {
         nm: this.storeNavigationMode === NAVIGATION_MODE_DRAG ? 1 : 0,
         tc: this.storeTraitColors.map(c => c.replace('#', '')).join(',')
       })
+
+      emitter.emit('plausible-event', { key: 'settings-shared', props: { type: 'share' } })
     },
     /**
      * Hides the modal dialog

@@ -113,6 +113,11 @@ export default {
 
       return valid
     },
+    reset: function () {
+      for (let i = 0; i < (this.trait.setSize || 1); i++) {
+        this.$refs[`${this.trait.id}-${i + 1}`][0].reset()
+      }
+    },
     getValues: function () {
       const values = []
 

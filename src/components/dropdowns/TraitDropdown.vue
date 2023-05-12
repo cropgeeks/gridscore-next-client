@@ -93,6 +93,7 @@ export default {
       })
 
       this.$store.dispatch('setHiddenTraits', [...distinct])
+      emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'group' } })
     },
     toggleTraitVisibility: function (trait) {
       const isHide = !this.storeHiddenTraits.includes(trait.id)
@@ -106,6 +107,7 @@ export default {
       }
 
       this.$store.dispatch('setHiddenTraits', [...distinct])
+      emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'individual' } })
     },
     toggleVisibilityAll: function (select) {
       if (select) {
@@ -113,6 +115,7 @@ export default {
       } else {
         this.$store.dispatch('setHiddenTraits', this.traits.map(t => t.id))
       }
+      emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'all' } })
     }
   }
 }

@@ -38,6 +38,7 @@ export default {
   methods: {
     moveTowards: function (corner) {
       emitter.emit('move-to-corner', corner)
+      emitter.emit('plausible-event', { key: 'data-view-jump', props: { type: corner } })
     }
   }
 }

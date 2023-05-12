@@ -157,6 +157,10 @@ export default {
 
       return true
     },
+    reset: function () {
+      this.value = null
+      this.formState = null
+    },
     validate: function () {
       if (this.value === null || this.value === '') {
         this.value = null

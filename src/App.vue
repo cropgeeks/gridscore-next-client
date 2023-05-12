@@ -18,7 +18,7 @@
             </template>
             <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-timeline' }"><BIconGraphUp /> {{ $t('menuVisualizationTimeline') }}</b-dropdown-item>
             <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-heatmap' }"><BIconGridFill /> {{ $t('menuVisualizationHeatmap') }}</b-dropdown-item>
-            <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-scatter' }"><BIconDice3 flip-h /> {{ $t('menuVisualizationScatter') }}</b-dropdown-item>
+            <!-- <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-scatter' }"><BIconDice3 flip-h /> {{ $t('menuVisualizationScatter') }}</b-dropdown-item> -->
             <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-statistics' }"><BIconBarChartSteps /> {{ $t('menuVisualizationStatistics') }}</b-dropdown-item>
             <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-map' }"><BIconPinMapFill /> {{ $t('menuVisualizationMap') }}</b-dropdown-item>
           </b-nav-item-dropdown>
@@ -76,7 +76,7 @@ import Vue from 'vue'
 import { getServerSettings } from '@/plugins/api'
 import { updateTrialBrapiConfig } from '@/plugins/idb'
 
-import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconDice3, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
+import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -89,7 +89,6 @@ export default {
     BIconUiChecksGrid,
     BIconGraphUp,
     BIconGridFill,
-    BIconDice3,
     BIconBarChartSteps,
     BIconEasel,
     BIconMoon,
@@ -196,8 +195,8 @@ export default {
     if (!this.storePlausible || !this.storePlausible.plausibleDomain) {
       getServerSettings()
         .then(result => {
-          if (result && result.data) {
-            this.$store.commit('ON_PLAUSIBLE_CHANGED', result.data)
+          if (result) {
+            this.$store.commit('ON_PLAUSIBLE_CHANGED', result)
             this.enablePlausible()
           }
         })

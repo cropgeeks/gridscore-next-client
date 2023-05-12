@@ -104,6 +104,7 @@ export default {
       deletePlotComment(this.cell.trialId, this.cell.row, this.cell.column, comment)
         .then(() => {
           emitter.emit('plot-comments-changed', this.cell.row, this.cell.column, this.cell.trialId)
+          emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'deleted' } })
         })
     },
     createComment: function () {
@@ -112,6 +113,7 @@ export default {
           this.newCommentContent = null
           this.commentFormVisible = false
           emitter.emit('plot-comments-changed', this.cell.row, this.cell.column, this.cell.trialId)
+          emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'added' } })
         })
     }
   }
