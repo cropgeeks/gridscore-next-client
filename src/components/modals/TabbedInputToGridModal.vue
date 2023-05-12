@@ -29,6 +29,8 @@
 <script>
 import { getId } from '@/plugins/id'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   props: {
     label: {

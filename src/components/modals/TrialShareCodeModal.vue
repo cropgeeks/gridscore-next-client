@@ -49,6 +49,8 @@ import { BIconEye, BIconPencilSquare } from 'bootstrap-vue'
 
 import StyledQRCode from '@/components/StyledQRCode'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconEye,

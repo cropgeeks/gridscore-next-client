@@ -28,6 +28,8 @@
 import { mapGetters } from 'vuex'
 import { BIconCircleHalf, BIconCircleFill, BIconCircle } from 'bootstrap-vue'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconCircleHalf,

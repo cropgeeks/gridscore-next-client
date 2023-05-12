@@ -3,7 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   pwa: {
-    name: 'GridScore',
+    name: 'GridScore NEXT',
     themeColor: '#325D88',
     msTileColor: '#000000',
     appleMobileWebAppCapable: 'yes',
