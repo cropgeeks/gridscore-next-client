@@ -5,12 +5,12 @@ LABEL maintainer="sebastian.raubach@hutton.ac.uk"
 ARG BRANCH=master
 
 # Force docker to not cache the next line
-ADD https://api.github.com/repos/cropgeeks/gridscore-next-client/git/refs/heads/master version.json
+ADD https://api.github.com/repos/cropgeeks/gridscore-next-client/git/refs/heads/main version.json
 # Clone the GridScore server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
-    if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-server.git /opt/gridscore-server ; fi && \
-    git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-client.git /opt/gridscore-client
+    if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; fi && \
+    if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-client.git /opt/gridscore-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-client.git /opt/gridscore-client
 
 # Build the client code
 WORKDIR /opt/gridscore-client
