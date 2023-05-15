@@ -208,13 +208,15 @@ export default {
 
     emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.trialPropertiesChanged)
-    emitter.on('plot-data-changed', this.updateTraitProgress)
+    emitter.on('plot-cache-changed', this.updateTraitProgress)
+    emitter.on('trial-data-loaded', this.updateTraitProgress)
     emitter.on('tts', this.tts)
   },
   beforeDestroy: function () {
     emitter.off('show-trial-comments', this.showTrialComments)
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)
-    emitter.off('plot-data-changed', this.updateTraitProgress)
+    emitter.off('plot-cache-changed', this.updateTraitProgress)
+    emitter.off('trial-data-loaded', this.updateTraitProgress)
     emitter.off('tts', this.tts)
   }
 }
