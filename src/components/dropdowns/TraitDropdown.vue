@@ -18,6 +18,10 @@
                                 :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
                                 @click.native.capture.stop="toggleTraitVisibility(trait)">
           <span :style="{ color: trait.visible ? trait.color : 'lightgray' }"><BIconCircleFill /> {{ trait.name }}</span>
+
+          <b-progress class="trait-progress" height="3px">
+            <b-progress-bar :value="trait.progress" :style="{ backgroundColor: trait.visible ? trait.color : 'lightgray' }"/>
+          </b-progress>
         </b-dropdown-item-button>
       </b-dropdown-group>
     </div>
@@ -26,7 +30,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCircleHalf, BIconCircleFill, BIconCircle } from 'bootstrap-vue'
+import { BIconCircleHalf, BIconCircleFill, BIconCircle, BProgress, BProgressBar } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -34,7 +38,9 @@ export default {
   components: {
     BIconCircleHalf,
     BIconCircleFill,
-    BIconCircle
+    BIconCircle,
+    BProgress,
+    BProgressBar
   },
   props: {
     traits: {
@@ -56,6 +62,7 @@ export default {
             id: t.id,
             name: t.name,
             color: t.color,
+            progress: t.progress,
             visible: !this.storeHiddenTraits.includes(t.id)
           }
 
@@ -127,5 +134,10 @@ export default {
 .trait-dropdown-list {
   max-height: 66vh;
   overflow-y: auto;
+}
+.trait-progress {
+  position: absolute;
+  right: 0;
+  left: 0;
 }
 </style>

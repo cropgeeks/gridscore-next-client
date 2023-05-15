@@ -7,6 +7,7 @@
            size="lg"
            ref="trialSynchronizationModal">
     <div v-if="trial">
+      <p>{{ $t('modalTextTrialSynchronization') }}</p>
       <div v-if="transactions && transactions.length > 0">
         <h4><strong>{{ $tc('modalTextTrialSynchronizationCount', transactions.length) }}</strong></h4>
 

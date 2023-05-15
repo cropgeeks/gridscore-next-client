@@ -6,6 +6,21 @@
     <b-tabs v-if="trial">
       <b-tab>
         <template #title>
+          <BIconFileEarmarkSpreadsheet /> {{ $t('pageExportTabTitleTab') }}
+        </template>
+
+        <p class="mt-3" v-html="$t('pageExportTrialFormatTab')" />
+
+        <b-row>
+          <b-col cols=12 md=6>
+            <b-card class="mb-3" :title="$t('pageExportTrialFormatTabDataCardTitle')" :sub-title="$t('pageExportTrialFormatTabDataCardSubtitle')">
+              <b-button @click="exportDataTab" variant="primary"><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-tab>
+      <b-tab>
+        <template #title>
           <IconGerminate /> Germinate
         </template>
 
@@ -26,7 +41,7 @@
           </b-col>
         </b-row>
       </b-tab>
-      <b-tab>
+      <b-tab disabled>
         <template #title>
           <IconBrapi /> Breeding API
         </template>
@@ -43,6 +58,7 @@ import { synchronizeTrial, exportToGerminate, exportToShapefile, shareTrial } fr
 import IconGerminate from '@/components/icons/IconGerminate'
 import IconBrapi from '@/components/icons/IconBrapi'
 import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload } from 'bootstrap-vue'
+import { downloadText } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -100,6 +116,97 @@ export default {
           })
           .catch(() => emitter.emit('show-loading', false))
       }
+    },
+    exportDataTab: function () {
+      emitter.emit('show-loading', true)
+
+      const data = getTrialDataCached()
+      // Header row
+      let result = `Line/Trait\tRep\tRow\tColumn\tDate\t${this.trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
+
+      Object.values(data).forEach(v => {
+        if (v.measurements) {
+          const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${v.row + 1}\t${v.column + 1}`
+
+          const dates = new Set()
+          Object.values(v.measurements).forEach(td => {
+            td.forEach(dp => dates.add(dp.timestamp.split('T')[0]))
+          })
+
+          const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
+
+          dateArray.forEach(date => {
+            result += `\n${germplasmMeta}\t${date}`
+
+            this.trial.traits.forEach(t => {
+              const td = v.measurements[t.id]
+
+              if (td) {
+                const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
+
+                if (onDate.length > 0) {
+                  if (t.dataType === 'float' || t.dataType === 'int') {
+                    result += `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
+                  } else if (t.dataType === 'categorical') {
+                    result += `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`
+                  } else {
+                    result += `\t${onDate[onDate.length - 1]}`
+                  }
+                } else {
+                  result += '\t'
+                }
+              } else {
+                result += '\t'
+              }
+            })
+
+            if (v.geography) {
+              if (v.geography.center) {
+                result += `\t${v.geography.center.lat || ''}\t${v.geography.center.lng || ''}`
+              } else if (v.geography.corners) {
+                let latverage = 0
+                let lngverage = 0
+                let count = 0
+
+                if (v.geography.corners.topLeft) {
+                  latverage += v.geography.corners.topLeft.lat || 0
+                  lngverage += v.geography.corners.topLeft.lng || 0
+                  count++
+                }
+                if (v.geography.corners.topRight) {
+                  latverage += v.geography.corners.topRight.lat || 0
+                  lngverage += v.geography.corners.topRight.lng || 0
+                  count++
+                }
+                if (v.geography.corners.bottomLeft) {
+                  latverage += v.geography.corners.bottomLeft.lat || 0
+                  lngverage += v.geography.corners.bottomLeft.lng || 0
+                  count++
+                }
+                if (v.geography.corners.bottomRight) {
+                  latverage += v.geography.corners.bottomRight.lat || 0
+                  lngverage += v.geography.corners.bottomRight.lng || 0
+                  count++
+                }
+
+                if (count) {
+                  result += `\t${latverage / count}\t${lngverage / count}`
+                } else {
+                  result += '\t\t'
+                }
+              } else {
+                result += '\t\t'
+              }
+            }
+          })
+        }
+      })
+
+      const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
+
+      downloadText(href, 'gridscore.txt')
+
+      emitter.emit('show-loading', false)
     },
     exportDataGerminate: function () {
       emitter.emit('show-loading', true)

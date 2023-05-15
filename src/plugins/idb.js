@@ -66,6 +66,7 @@ const getTrials = async () => {
             if (trial.traits) {
               trial.traits.forEach((t, i) => {
                 t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
+                t.progress = 0
               })
             }
 
@@ -113,6 +114,27 @@ const updateTrialBrapiConfig = async (localId, brapiConfig) => {
   }
 }
 
+const getTrialValidPlots = async (trialId) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+    const range = IDBKeyRange.bound([trialId, 0, 0], [trialId, trial.layout.rows, trial.layout.columns])
+    return db.getAll('data', range)
+      .then(grid => {
+        const result = []
+        if (grid) {
+          grid.forEach(c => {
+            result.push(`${c.row}|${c.column}`)
+          })
+        }
+        return result
+      })
+  } else {
+    return new Promise(resolve => resolve([]))
+  }
+}
+
 const getTrialById = async (localId) => {
   const db = await getDb()
 
@@ -122,6 +144,7 @@ const getTrialById = async (localId) => {
         if (trial.traits) {
           trial.traits.forEach((t, i) => {
             t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
+            t.progress = 0
           })
         }
 
@@ -174,6 +197,10 @@ const addTrialData = async (trialId, row, column, data) => {
 
     data.forEach(d => {
       const trait = trial.traits.find(t => t.id === d.traitId)
+
+      if (!cell.measurements[d.traitId]) {
+        cell.measurements[d.traitId] = []
+      }
 
       if (trait.allowRepeats) {
         // If repeats are allowed, simply append to the end
@@ -351,13 +378,15 @@ const getCell = async (trialId, row, column) => {
 
   return db.get('data', [trialId, row, column])
     .then(c => {
-      let displayName = c.germplasm
+      if (c) {
+        let displayName = c.germplasm
 
-      if (c.rep) {
-        displayName += '-' + c.rep
+        if (c.rep) {
+          displayName += '-' + c.rep
+        }
+
+        c.displayName = displayName
       }
-
-      c.displayName = displayName
 
       return c
     })
@@ -664,5 +693,6 @@ export {
   updateTrialBrapiConfig,
   addTrialTraits,
   getTransactionsForTrial,
-  addTrialData
+  addTrialData,
+  getTrialValidPlots
 }

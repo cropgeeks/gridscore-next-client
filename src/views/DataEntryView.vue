@@ -9,7 +9,7 @@
       </b-button>
       <b-input-group class="ml-auto flex-grow-1 flex-sm-grow-0">
         <b-input-group-prepend>
-          <b-button>
+          <b-button @click="$refs.scanQrCodeModal.show()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5ZM4 4h1v1H4V4Z"/><path d="M7 2H2v5h5V2ZM3 3h3v3H3V3Zm2 8H4v1h1v-1Z"/><path d="M7 9H2v5h5V9Zm-4 1h3v3H3v-3Zm8-6h1v1h-1V4Z"/><path d="M9 2h5v5H9V2Zm1 1v3h3V3h-3ZM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8H8Zm2 2H9V9h1v1Zm4 2h-1v1h-2v1h3v-2Zm-4 2v-1H8v1h2Z"/><path d="M12 9h2V8h-2v1Z"/></svg>
           </b-button>
         </b-input-group-prepend>
@@ -29,6 +29,8 @@
     <DataInputModal :trial="trial" ref="dataInputModal" />
 
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
+
+    <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
   </b-container>
 </template>
 
@@ -39,13 +41,14 @@ import TrialInformationDropdown from '@/components/dropdowns/TrialInformationDro
 import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import DataInputModal from '@/components/modals/DataInputModal'
 import SearchMatchModal from '@/components/modals/SearchMatchModal'
+import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal'
 import DataViewJumpControl from '@/components/DataViewJumpControl'
 import JumpToDropdown from '@/components/dropdowns/JumpToDropdown'
 import { getTrialById } from '@/plugins/idb'
 import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { BIconFullscreen, BIconFullscreenExit, BIconSearch } from 'bootstrap-vue'
-import { getGermplasmMatches } from '@/plugins/datastore'
+import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -59,6 +62,7 @@ export default {
     SearchMatchModal,
     DataInputModal,
     DataViewJumpControl,
+    ScanQRCodeModal,
     BIconSearch,
     BIconFullscreen,
     BIconFullscreenExit
@@ -121,6 +125,11 @@ export default {
     }
   },
   methods: {
+    searchCodeScanned: function (code) {
+      this.searchTerm = code
+
+      this.initSearch()
+    },
     initSearch: function () {
       this.searchMatches = []
 
@@ -155,7 +164,25 @@ export default {
     loadTrial: function () {
       getTrialById(this.storeSelectedTrial).then(trial => {
         this.trial = trial
+
+        this.updateTraitProgress()
       })
+    },
+    updateTraitProgress: function () {
+      const data = getTrialDataCached()
+
+      if (data) {
+        this.trial.traits.forEach(t => {
+          const total = Object.values(data).length
+          let count = 0
+          Object.values(data).forEach(c => {
+            if (c.measurements && c.measurements[t.id] && c.measurements[t.id].length > 0) {
+              count++
+            }
+          })
+          t.progress = 100.0 * count / total
+        })
+      }
     },
     showTrialComments: function (trial) {
       this.selectedTrial = trial
@@ -181,11 +208,13 @@ export default {
 
     emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.trialPropertiesChanged)
+    emitter.on('plot-data-changed', this.updateTraitProgress)
     emitter.on('tts', this.tts)
   },
   beforeDestroy: function () {
     emitter.off('show-trial-comments', this.showTrialComments)
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)
+    emitter.off('plot-data-changed', this.updateTraitProgress)
     emitter.off('tts', this.tts)
   }
 }

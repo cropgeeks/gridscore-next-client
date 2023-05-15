@@ -21,6 +21,20 @@ const getTraitTypeText = (trait, short = false) => {
   }
 }
 
+const downloadText = (text, filename) => {
+  const downloadLink = document.createElement('a')
+  downloadLink.href = text
+  downloadLink.target = '_blank'
+  downloadLink.rel = 'noopener noreferrer'
+  if (filename) {
+    downloadLink.download = filename
+  }
+  document.body.appendChild(downloadLink)
+  downloadLink.click()
+  document.body.removeChild(downloadLink)
+}
+
 export {
-  getTraitTypeText
+  getTraitTypeText,
+  downloadText
 }

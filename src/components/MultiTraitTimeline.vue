@@ -170,7 +170,8 @@ export default {
           date.setHours(0, 0, 0, 0)
           const time = date.getTime()
 
-          const avg = m.values.reduce((a, b) => (+a) + (+b)) / m.values.length
+          const existingValues = m.values.filter(v => v !== undefined && v !== null)
+          const avg = existingValues.length > 0 ? existingValues.reduce((acc, val) => acc + (+val), 0) / existingValues.length : 0
           // Update statistics
           mins.forEach((m, i) => {
             if (sortedDates[i] === time) {

@@ -52,7 +52,8 @@
     <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > 3" ref="input" :state="formState"
                     v-model="value"
                     :readonly="!editable"
-                    :options="[{ value: null, text: $t('formSelectCategory') }, ...trait.restrictions.categories]" @change="tts" />
+                    :options="traitOptionsSelect"
+                    @change="tts" />
     <!-- Else show a button group for easier selection -->
     <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= 3" ref="input" :state="formState"
                         buttons
@@ -60,7 +61,7 @@
                         @change="event => { value = event; tts() }"
                         :checked="value"
                         :disabled="!editable"
-                        :options="[...trait.restrictions.categories, { value: null, text: '⦸' }]" />
+                        :options="traitOptionsButtons" />
     <b-form-input :id="id" v-else v-model="value" :state="formState" ref="input" trim @change="tts" :readonly="!editable"/>
 
     <b-input-group-append v-if="trait.dataType === 'date' || trait.dataType === 'int'">
@@ -99,6 +100,9 @@ export default {
     id: {
       type: String,
       default: null
+    },
+    currentValue: {
+      default: null
     }
   },
   data: function () {
@@ -106,6 +110,40 @@ export default {
       value: null,
       formState: null,
       dateInput: ''
+    }
+  },
+  watch: {
+    currentValue: {
+      immediate: true,
+      handler: function (newValue) {
+        this.value = newValue
+      }
+    }
+  },
+  computed: {
+    traitOptionsSelect: function () {
+      if (this.trait && this.trait.dataType === 'categorical') {
+        return [{ value: null, text: this.$t('formSelectCategory') }, ...this.trait.restrictions.categories.map((c, i) => {
+          return {
+            value: i,
+            text: c
+          }
+        })]
+      } else {
+        return []
+      }
+    },
+    traitOptionsButtons: function () {
+      if (this.trait && this.trait.dataType === 'categorical') {
+        return [...this.trait.restrictions.categories.map((c, i) => {
+          return {
+            value: i,
+            text: c
+          }
+        }), { value: null, text: '⦸' }]
+      } else {
+        return []
+      }
     }
   },
   methods: {

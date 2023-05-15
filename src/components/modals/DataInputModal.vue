@@ -36,7 +36,7 @@
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: guidedWalk.prev.column + 1, row: guidedWalk.prev.row + 1 })" v-if="guidedWalk.prev" />
+          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: storeDisplayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.prev.column) : (guidedWalk.prev.column + 1), row: storeDisplayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.prev.row) : (guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
         </b-col>
         <b-col cols=4>
           <b-card class="text-center h-100">
@@ -44,12 +44,12 @@
               <BIconChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <BIconGeoAltFill class="mx-2" /> <BIconChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
             </b-card-title>
             <b-card-sub-title>
-              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: cell.column + 1, row: cell.row + 1 }) }}
+              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: storeDisplayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - cell.column) : (cell.column + 1), row: storeDisplayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - cell.row) : (cell.row + 1) }) }}
             </b-card-sub-title>
           </b-card>
         </b-col>
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: guidedWalk.next.column + 1, row: guidedWalk.next.row + 1 })" v-if="guidedWalk.next" />
+          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: storeDisplayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.next.column) : (guidedWalk.next.column + 1), row: storeDisplayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.next.row) : (guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
       <b-tabs v-model="traitGroupTabIndex">
@@ -64,7 +64,7 @@
           </template>
 
           <div class="mt-3 trait-group-tab-content">
-            <TraitInputSection :editable="trial.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            <TraitInputSection :trial="trial" :editable="trial.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
           </div>
         </b-tab>
       </b-tabs>
@@ -82,10 +82,11 @@ import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
-import { addTrialData, getCell, setPlotMarked } from '@/plugins/idb'
+import { addTrialData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
 import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -113,6 +114,10 @@ export default {
   },
   data: function () {
     return {
+      DISPLAY_ORDER_BOTTOM_TO_TOP,
+      DISPLAY_ORDER_LEFT_TO_RIGHT,
+      DISPLAY_ORDER_RIGHT_TO_LEFT,
+      DISPLAY_ORDER_TOP_TO_BOTTOM,
       cell: null,
       traitGroupTabIndex: 0,
       selectedTrait: null,
@@ -123,12 +128,14 @@ export default {
   computed: {
     ...mapGetters([
       'storeSelectedTrial',
-      'storeHiddenTraits'
+      'storeHiddenTraits',
+      'storeDisplayRowOrder',
+      'storeDisplayColumnOrder'
     ]),
     okTitle: function () {
       if (this.isEditable) {
         if (this.isGuidedWalk) {
-          if (this.guidedWalk.next) {
+          if (this.guidedWalk.index < this.guidedWalk.order.length - 1) {
             return this.$t('buttonNext')
           } else {
             return this.$t('buttonFinish')
@@ -235,12 +242,16 @@ export default {
     onSelectGuidedWalk: function (typeName) {
       const match = guideOrderTypes.find(g => g.name === typeName)
 
-      this.guidedWalk = {
-        order: match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout),
-        index: 0,
-        prev: null,
-        next: null
-      }
+      getTrialValidPlots(this.trial.localId).then(validCells => {
+        const order = match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout).filter(c => validCells.includes(`${c.y}|${c.x}`))
+
+        this.guidedWalk = {
+          order: order,
+          index: 0,
+          prev: null,
+          next: null
+        }
+      })
     },
     onXClicked: function () {
       if (this.guidedWalk) {
@@ -380,6 +391,11 @@ export default {
         if (mapping.length > 0) {
           addTrialData(this.trial.localId, this.cell.row, this.cell.column, mapping)
             .then(() => {
+              // Take copies for the emitter later
+              const row = this.cell.row
+              const column = this.cell.column
+              const trialId = this.trial.localId
+
               if (this.isGuidedWalk) {
                 if (this.guidedWalk.next) {
                   this.guidedWalk.index = Math.max(0, Math.min(this.guidedWalk.order.length - 1, this.guidedWalk.index + delta))
@@ -392,7 +408,7 @@ export default {
                 this.hide()
               }
 
-              this.$nextTick(() => emitter.emit('plot-data-changed', this.cell.row, this.cell.column, this.trial.localId))
+              this.$nextTick(() => emitter.emit('plot-data-changed', row, column, trialId))
             })
         } else {
           if (this.isGuidedWalk) {

@@ -21,7 +21,10 @@
           <BIconSegmentedNav :rotate="90" /> {{ trait.setSize || 1 }}
         </b-badge>
       </span>
-      <b-button @click="$emit('photo-clicked')"><BIconCameraFill /></b-button>
+      <span>
+        <b-button @click="showHistoryModal" :disabled="!hasHistoricData"><BIconClockHistory /></b-button>
+        <b-button @click="$emit('photo-clicked')"><BIconCameraFill /></b-button>
+      </span>
     </h3>
     <p class="text-muted" v-if="trait.description">{{ trait.description }}</p>
 
@@ -34,26 +37,35 @@
       </template>
       <TraitInput :editable="editable" :trait="trait" :id="`${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
+
+    <TraitDataHistoryModal :trial="trial" :trait="trait" :cell="cell" ref="traitDataHistoryModal" v-if="hasHistoricData && historyModalShown" @hidden="historyModalShown = false" />
   </section>
 </template>
 
 <script>
 import TraitInput from '@/components/TraitInput'
+import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal'
 
 import { getTraitTypeText } from '@/plugins/misc'
-import { BIconCircleFill, BIconCameraFill, BIconArrowRepeat, BIconSegmentedNav, BIconX, BIconstack } from 'bootstrap-vue'
+import { BIconCircleFill, BIconCameraFill, BIconArrowRepeat, BIconClockHistory, BIconSegmentedNav, BIconX, BIconstack } from 'bootstrap-vue'
 
 export default {
   components: {
     BIconstack,
+    BIconClockHistory,
     BIconCircleFill,
     BIconCameraFill,
     BIconArrowRepeat,
     BIconX,
     BIconSegmentedNav,
-    TraitInput
+    TraitInput,
+    TraitDataHistoryModal
   },
   props: {
+    trial: {
+      type: Object,
+      default: () => null
+    },
     trait: {
       type: Object,
       default: () => null
@@ -69,10 +81,14 @@ export default {
   },
   data: function () {
     return {
-      values: []
+      values: [],
+      historyModalShown: false
     }
   },
   computed: {
+    hasHistoricData: function () {
+      return this.cell && this.trait && this.cell.measurements && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0
+    },
     description: function () {
       if (this.trait && this.cell && this.cell.measurements) {
         const traitMeasures = this.cell.measurements[this.trait.id]
@@ -98,6 +114,10 @@ export default {
   },
   methods: {
     getTraitTypeText,
+    showHistoryModal: function () {
+      this.historyModalShown = true
+      this.$nextTick(() => this.$refs.traitDataHistoryModal.show())
+    },
     handleTraverse: function (index) {
       if (index === this.trait.setSize) {
         this.$emit('traverse')

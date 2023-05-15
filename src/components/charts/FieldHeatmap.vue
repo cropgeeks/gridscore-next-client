@@ -191,8 +191,10 @@ export default {
 
                 if (this.selectedTrait.dataType === 'int' || this.selectedTrait === 'float') {
                   m.values.forEach(v => {
-                    minValue = Math.min(minValue, +v)
-                    maxValue = Math.max(maxValue, +v)
+                    if (v !== undefined && v !== null) {
+                      minValue = Math.min(minValue, +v)
+                      maxValue = Math.max(maxValue, +v)
+                    }
                   })
                 }
               })
@@ -206,10 +208,13 @@ export default {
                   rowCustomdata.push(restrictions.categories[finalValue.values[finalValue.values.length - 1]])
                 } else {
                   // Take the average
-                  const value = finalValue.values.map(v => +v).reduce((a, b) => a + b) / finalValue.values.length
+                  const validValues = finalValue.values.filter(v => v !== undefined && v !== null)
+                  const value = validValues.length > 0 ? validValues.map(v => +v).reduce((acc, val) => acc + val) / validValues.length : null
 
-                  minValue = Math.min(minValue, value)
-                  maxValue = Math.max(maxValue, value)
+                  if (value) {
+                    minValue = Math.min(minValue, value)
+                    maxValue = Math.max(maxValue, value)
+                  }
                   rowData.push(value)
                   rowCustomdata.push(null)
                 }
