@@ -6,24 +6,32 @@
            @hidden="$emit('hidden')"
            no-fade
            ref="traitDataHistoryModal">
-    <div v-if="trial && cell && trait">
+    <div v-if="trial && measurements && trait">
       <p>{{ $t('modalTextTraitDataHistory') }}</p>
-      <b-form-datepicker :date-disabled-fn="isDateDisabled"
+      <b-input-group class="mb-3">
+        <b-input-group-prepend>
+          <b-button @click="nudgeDate(false)"><BIconChevronLeft /></b-button>
+        </b-input-group-prepend>
+        <b-form-datepicker :date-disabled-fn="isDateDisabled"
                           :date-info-fn="dateStyle"
                           :start-weekday="1"
                           :min="minDate"
                           :max="maxDate"
                           v-model="currentDate" />
+        <b-input-group-append>
+          <b-button @click="nudgeDate(true)"><BIconChevronRight /></b-button>
+        </b-input-group-append>
+      </b-input-group>
 
       <section v-for="(traitValues, tvIndex) in dataForDate" :key="`trait-values-${currentDate}-${tvIndex}`">
         <b-form-group :label="$t('formLabelMeasurementSet', { position: index })"
                       v-for="index in (trait.setSize || 1)"
                       :key="`${trait.id}-${index}`"
-                      :label-for="`${trait.id}-${index}`">
+                      :label-for="`history-${trait.id}-${index}`">
           <TraitInput :editable="true"
                       :trait="trait"
                       :currentValue="dataForDate[tvIndex].values[index - 1]"
-                      :id="`${trait.id}-${index}`"
+                      :id="`history-${trait.id}-${index}`"
                       :ref="`${trait.id}-${index}`" />
         </b-form-group>
       </section>
@@ -33,19 +41,23 @@
 
 <script>
 import TraitInput from '@/components/TraitInput'
+import { BIconChevronLeft, BIconChevronRight } from 'bootstrap-vue'
+
 // const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
-    TraitInput
+    TraitInput,
+    BIconChevronLeft,
+    BIconChevronRight
   },
   props: {
     trial: {
       type: Object,
       default: () => null
     },
-    cell: {
-      type: Object,
+    measurements: {
+      type: Array,
       default: () => null
     },
     trait: {
@@ -68,12 +80,15 @@ export default {
           this.currentDate = null
         }
       }
+    },
+    currentDate: function (newValue) {
+      // TODO: Check for changes, validate them and store them back in the measurements array
     }
   },
   computed: {
     dataForDate: function () {
-      if (this.cell && this.cell.measurements && this.trait && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0) {
-        return this.cell.measurements[this.trait.id].filter(td => td.timestamp.split('T')[0] === this.currentDate)
+      if (this.measurements && this.measurements.length > 0) {
+        return this.measurements.filter(td => td.timestamp.split('T')[0] === this.currentDate)
       } else {
         return null
       }
@@ -93,10 +108,10 @@ export default {
       }
     },
     allDates: function () {
-      if (this.cell && this.cell.measurements && this.trait && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0) {
+      if (this.measurements && this.measurements.length > 0) {
         const dates = new Set()
 
-        this.cell.measurements[this.trait.id].forEach(td => {
+        this.measurements.forEach(td => {
           dates.add(td.timestamp.split('T')[0])
         })
 
@@ -107,6 +122,15 @@ export default {
     }
   },
   methods: {
+    nudgeDate: function (increase) {
+      const index = this.allDates.indexOf(this.currentDate)
+
+      if (increase && index < this.allDates.length - 1) {
+        this.currentDate = this.allDates[index + 1]
+      } else if (!increase && index > 0) {
+        this.currentDate = this.allDates[index - 1]
+      }
+    },
     dateStyle: function (ymd, date) {
       if (this.isDateDisabled(ymd)) {
         return null

@@ -31,14 +31,14 @@
     <b-form-group :label="$t('formLabelMeasurementSet', { position: index })"
                   v-for="index in (trait.setSize || 1)"
                   :key="`${trait.id}-${index}`"
-                  :label-for="`${trait.id}-${index}`">
+                  :label-for="`trait-input-${trait.id}-${index}`">
       <template #description>
         <span v-html="description ? description[index - 1] : null" />
       </template>
-      <TraitInput :editable="editable" :trait="trait" :id="`${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
+      <TraitInput :editable="editable" :trait="trait" :id="`trait-input-${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
 
-    <TraitDataHistoryModal :trial="trial" :trait="trait" :cell="cell" ref="traitDataHistoryModal" v-if="hasHistoricData && historyModalShown" @hidden="historyModalShown = false" />
+    <TraitDataHistoryModal :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
   </section>
 </template>
 
@@ -82,7 +82,7 @@ export default {
   data: function () {
     return {
       values: [],
-      historyModalShown: false
+      cellTraitMeasurements: null
     }
   },
   computed: {
@@ -115,7 +115,7 @@ export default {
   methods: {
     getTraitTypeText,
     showHistoryModal: function () {
-      this.historyModalShown = true
+      this.cellTraitMeasurements = JSON.parse(JSON.stringify(this.cell.measurements[this.trait.id]))
       this.$nextTick(() => this.$refs.traitDataHistoryModal.show())
     },
     handleTraverse: function (index) {
