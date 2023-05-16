@@ -22,11 +22,15 @@
         </b-badge>
       </span>
       <span>
-        <b-button @click="showHistoryModal" :disabled="!hasHistoricData"><BIconClockHistory /></b-button>
+        <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData"><BIconClockHistory /></b-button>
         <b-button @click="$emit('photo-clicked')"><BIconCameraFill /></b-button>
       </span>
     </h3>
-    <p class="text-muted" v-if="trait.description">{{ trait.description }}</p>
+    <div v-if="trait.restrictions">
+      <b-badge class="mr-2" v-if="trait.restrictions.min !== undefined && trait.restrictions.min !== null">&gt; {{ trait.restrictions.min }}</b-badge>
+      <b-badge class="mr-2" v-if="trait.restrictions.max !== undefined && trait.restrictions.max !== null">&lt; {{ trait.restrictions.max }}</b-badge>
+    </div>
+    <p class="text-muted trait-description" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
     <b-form-group :label="$t('formLabelMeasurementSet', { position: index })"
                   v-for="index in (trait.setSize || 1)"
@@ -38,7 +42,7 @@
       <TraitInput :editable="editable" :trait="trait" :id="`trait-input-${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
 
-    <TraitDataHistoryModal :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
+    <TraitDataHistoryModal :row="cell.row" :column="cell.column" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
   </section>
 </template>
 
@@ -87,6 +91,7 @@ export default {
   },
   computed: {
     hasHistoricData: function () {
+      // Check if there's at least one measurement for the trait id
       return this.cell && this.trait && this.cell.measurements && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0
     },
     description: function () {
@@ -94,11 +99,23 @@ export default {
         const traitMeasures = this.cell.measurements[this.trait.id]
 
         if (traitMeasures && traitMeasures.length > 0) {
-          traitMeasures.concat().sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+          // Sort them by date
+          const sorted = traitMeasures.concat().sort((a, b) => a.timestamp.localeCompare(b.timestamp))
 
-          const last = traitMeasures[traitMeasures.length - 1]
-          const values = this.trait.dataType === 'categorical' ? last.values.map(v => this.trait.restrictions.categories[v]) : last.values
+          // Get the newest one
+          const last = sorted[sorted.length - 1]
+          let values
 
+          // Determine the values for display purposes
+          if (this.trait.dataType === 'categorical') {
+            values = last.values.map(v => (v !== undefined && v !== null) ? this.trait.restrictions.categories[v] : null)
+          } else if (this.trait.dataType === 'date') {
+            values = last.values.map(v => (v !== undefined && v !== null) ? new Date(v).toLocaleDateString() : null)
+          } else {
+            values = last.values
+          }
+
+          // Create the description
           if (this.trait.allowRepeats) {
             return values.map(v => this.$t('widgetTraitInputPreviousMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color }))
           } else {
@@ -115,6 +132,7 @@ export default {
   methods: {
     getTraitTypeText,
     showHistoryModal: function () {
+      // Take a copy of the current values and open the modal
       this.cellTraitMeasurements = JSON.parse(JSON.stringify(this.cell.measurements[this.trait.id]))
       this.$nextTick(() => this.$refs.traitDataHistoryModal.show())
     },
@@ -151,6 +169,14 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.trait-description {
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  max-width: 100%;
+}
 </style>

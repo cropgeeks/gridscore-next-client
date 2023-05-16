@@ -23,7 +23,6 @@
                   @wheel="$event.target.blur()"
                   type="number"
                   v-model="value"
-                  number
                   trim
                   :readonly="!editable"
                   @change="tts"
@@ -39,7 +38,6 @@
                   @wheel="$event.target.blur()"
                   type="number"
                   v-model="value"
-                  number
                   trim
                   :readonly="!editable"
                   @change="tts"
@@ -263,7 +261,7 @@ export default {
 
       let newValue
       if (this.value !== null && this.value !== '') {
-        newValue = this.value + delta
+        newValue = (+this.value) + delta
       } else {
         newValue = delta
       }
@@ -279,7 +277,8 @@ export default {
         }
       }
 
-      this.value = newValue
+      // Convert back to string
+      this.value = '' + newValue
 
       emitter.emit('tts', newValue)
     },

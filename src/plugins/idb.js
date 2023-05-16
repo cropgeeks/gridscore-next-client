@@ -203,11 +203,18 @@ const addTrialData = async (trialId, row, column, data) => {
       }
 
       if (trait.allowRepeats) {
-        // If repeats are allowed, simply append to the end
-        cell.measurements[d.traitId].push({
-          values: d.values,
-          timestamp: d.timestamp
-        })
+        const match = cell.measurements[d.traitId].find(cm => cm.timestamp === d.timestamp)
+
+        if (match) {
+          // Update the values
+          match.values = d.values
+        } else {
+          // If no match is found, simply append to the end
+          cell.measurements[d.traitId].push({
+            values: d.values,
+            timestamp: d.timestamp
+          })
+        }
       } else {
         // Else, search for a match for this trait (the first entry)
         const match = cell.measurements[d.traitId].length > 0 ? cell.measurements[d.traitId][0] : null
@@ -232,61 +239,67 @@ const addTrialData = async (trialId, row, column, data) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      let singleMeasurements = data.filter(d => trial.traits.find(t => t.id === d.traitId && !t.allowRepeats))
-      const multiMeasurements = data.filter(d => trial.traits.find(t => t.id === d.traitId && t.allowRepeats))
+      const traitMap = {}
 
-      if (singleMeasurements.length > 0) {
-        let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-row-column').openCursor([trialId, 'TRAIT_DATA_CHANGED', row, column])
-        // Find ones that already have transactions, then update
-        while (cursor) {
-          const content = cursor.value.content
+      trial.traits.forEach(t => {
+        traitMap[t.id] = t
+      })
 
-          // For all measurements in this old transaction
-          let changed = false
-          for (const m of content.measurements) {
-            // Check if any of the new measurements are for the same trait
-            const same = singleMeasurements.map(sm => sm.traitId === m.traitId)
+      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-row-column').openCursor([trialId, 'TRAIT_DATA_CHANGED', row, column])
+      // Find ones that already have transactions, then update
+      while (cursor && data.length > 0) {
+        const content = cursor.value.content
 
-            for (const [index, b] of same.entries()) {
-              // If some are, update the old measurement with the new one
-              if (b) {
-                m.values = singleMeasurements[index].values
-                m.timestamp = singleMeasurements[index].timestamp
-                changed = true
-              }
+        // For all measurements in this old transaction
+        let changed = false
+        for (const m of content.measurements) {
+          // Check if any of the new measurements are for the same trait
+          const same = data.map(sm => {
+            const sameTrait = sm.traitId === m.traitId
+
+            if (traitMap[m.traitId].allowRepeats) {
+              return sameTrait && sm.timestamp === m.timestamp
+            } else {
+              return sameTrait
             }
+          })
 
-            // Remove all the ones that have been updated
-            singleMeasurements = singleMeasurements.filter((m, i) => !same[i])
+          for (const [index, b] of same.entries()) {
+            // If some are, update the old measurement with the new one
+            if (b) {
+              m.values = data[index].values
+              m.timestamp = data[index].timestamp
+              changed = true
+            }
           }
 
-          if (changed) {
-            // Write them back
-            await cursor.update(cursor.value)
-          }
-
-          cursor = await cursor.continue()
+          // Remove all the ones that have been updated
+          data = data.filter((m, i) => !same[i])
         }
 
-        // For all remaining, add to new transaction
-        const joined = [].concat(singleMeasurements).concat(multiMeasurements)
+        if (changed) {
+          // Write them back
+          await cursor.update(cursor.value)
+        }
 
-        if (joined.length > 0) {
-          const transaction = {
-            trialId: trialId,
-            operation: 'TRAIT_DATA_CHANGED',
+        cursor = await cursor.continue()
+      }
+
+      if (data.length > 0) {
+        const transaction = {
+          trialId: trialId,
+          operation: 'TRAIT_DATA_CHANGED',
+          row: row,
+          column: column,
+          content: {
             row: row,
             column: column,
-            content: {
-              row: row,
-              column: column,
-              measurements: joined
-            },
-            timestamp: new Date().toISOString()
-          }
-
-          await db.put('transactions', transaction)
+            measurements: data
+          },
+          timestamp: new Date().toISOString()
         }
+
+        await db.put('transactions', transaction)
       }
     }
 

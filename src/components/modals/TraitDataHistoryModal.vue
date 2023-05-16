@@ -2,24 +2,25 @@
   <b-modal :title="$t('modalTitleTraitDataHistory')"
            :ok-title="$t('buttonClose')"
            @ok.prevent="validate"
-           ok-only
            @hidden="$emit('hidden')"
            no-fade
            ref="traitDataHistoryModal">
-    <div v-if="trial && measurements && trait">
+    <div v-if="trial && localMeasurements && trait">
       <p>{{ $t('modalTextTraitDataHistory') }}</p>
       <b-input-group class="mb-3">
         <b-input-group-prepend>
-          <b-button @click="nudgeDate(false)"><BIconChevronLeft /></b-button>
+          <b-button @click="nudgeDate(false)" :disabled="prevDisabled"><BIconChevronLeft /></b-button>
         </b-input-group-prepend>
         <b-form-datepicker :date-disabled-fn="isDateDisabled"
                           :date-info-fn="dateStyle"
                           :start-weekday="1"
+                          readonly
                           :min="minDate"
                           :max="maxDate"
-                          v-model="currentDate" />
+                          :value="currentDate"
+                          @input="handleDateChange" />
         <b-input-group-append>
-          <b-button @click="nudgeDate(true)"><BIconChevronRight /></b-button>
+          <b-button @click="nudgeDate(true)" :disabled="nextDisabled"><BIconChevronRight /></b-button>
         </b-input-group-append>
       </b-input-group>
 
@@ -27,12 +28,12 @@
         <b-form-group :label="$t('formLabelMeasurementSet', { position: index })"
                       v-for="index in (trait.setSize || 1)"
                       :key="`${trait.id}-${index}`"
-                      :label-for="`history-${trait.id}-${index}`">
+                      :label-for="`history-${tvIndex}-${trait.id}-${index}`">
           <TraitInput :editable="true"
                       :trait="trait"
                       :currentValue="dataForDate[tvIndex].values[index - 1]"
-                      :id="`history-${trait.id}-${index}`"
-                      :ref="`${trait.id}-${index}`" />
+                      :id="`history-${tvIndex}-${trait.id}-${index}`"
+                      :ref="`history-${tvIndex}-${trait.id}-${index}`" />
         </b-form-group>
       </section>
     </div>
@@ -40,10 +41,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import TraitInput from '@/components/TraitInput'
 import { BIconChevronLeft, BIconChevronRight } from 'bootstrap-vue'
+import { addTrialData } from '@/plugins/idb'
 
-// const emitter = require('tiny-emitter/instance')
+const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
@@ -56,6 +59,14 @@ export default {
       type: Object,
       default: () => null
     },
+    row: {
+      type: Number,
+      default: 0
+    },
+    column: {
+      type: Number,
+      default: 0
+    },
     measurements: {
       type: Array,
       default: () => null
@@ -67,10 +78,18 @@ export default {
   },
   data: function () {
     return {
-      currentDate: null
+      currentDate: null,
+      localMeasurements: null,
+      transactions: []
     }
   },
   watch: {
+    measurements: {
+      immediate: true,
+      handler: function (newValue) {
+        this.localMeasurements = JSON.parse(JSON.stringify(newValue))
+      }
+    },
     allDates: {
       immediate: true,
       handler: function (newValue) {
@@ -80,18 +99,17 @@ export default {
           this.currentDate = null
         }
       }
-    },
-    currentDate: function (newValue) {
-      // TODO: Check for changes, validate them and store them back in the measurements array
     }
   },
   computed: {
+    prevDisabled: function () {
+      return !this.allDates || this.allDates.length < 1 || this.allDates.indexOf(this.currentDate) === 0
+    },
+    nextDisabled: function () {
+      return !this.allDates || this.allDates.length < 1 || this.allDates.indexOf(this.currentDate) === this.allDates.length - 1
+    },
     dataForDate: function () {
-      if (this.measurements && this.measurements.length > 0) {
-        return this.measurements.filter(td => td.timestamp.split('T')[0] === this.currentDate)
-      } else {
-        return null
-      }
+      return this.getDataForDate(this.currentDate)
     },
     minDate: function () {
       if (this.allDates && this.allDates.length > 0) {
@@ -108,10 +126,10 @@ export default {
       }
     },
     allDates: function () {
-      if (this.measurements && this.measurements.length > 0) {
+      if (this.localMeasurements && this.localMeasurements.length > 0) {
         const dates = new Set()
 
-        this.measurements.forEach(td => {
+        this.localMeasurements.forEach(td => {
           dates.add(td.timestamp.split('T')[0])
         })
 
@@ -122,13 +140,50 @@ export default {
     }
   },
   methods: {
+    handleDateChange: function (newValue, setCurrentDate = true) {
+      const oldData = this.getDataForDate(this.currentDate)
+
+      let valid = true
+      for (let s = 0; s < oldData.length; s++) {
+        for (let i = 0; i < (this.trait.setSize || 1); i++) {
+          valid &&= this.$refs[`history-${s}-${this.trait.id}-${i + 1}`][0].validate()
+        }
+      }
+
+      if (valid) {
+        for (let s = 0; s < oldData.length; s++) {
+          for (let i = 0; i < (this.trait.setSize || 1); i++) {
+            let newData = this.$refs[`history-${s}-${this.trait.id}-${i + 1}`][0].getValue()
+
+            if (newData === '') {
+              newData = null
+            }
+
+            Vue.set(oldData[s].values, i, newData)
+          }
+        }
+
+        if (setCurrentDate) {
+          this.currentDate = newValue
+        }
+      }
+
+      return valid
+    },
+    getDataForDate: function (date) {
+      if (this.localMeasurements && this.localMeasurements.length > 0) {
+        return this.localMeasurements.filter(td => td.timestamp.split('T')[0] === date)
+      } else {
+        return null
+      }
+    },
     nudgeDate: function (increase) {
       const index = this.allDates.indexOf(this.currentDate)
 
       if (increase && index < this.allDates.length - 1) {
-        this.currentDate = this.allDates[index + 1]
+        this.handleDateChange(this.allDates[index + 1])
       } else if (!increase && index > 0) {
-        this.currentDate = this.allDates[index - 1]
+        this.handleDateChange(this.allDates[index - 1])
       }
     },
     dateStyle: function (ymd, date) {
@@ -146,7 +201,41 @@ export default {
       }
     },
     validate: function () {
-      // TODO
+      // Run validation again
+      const valid = this.handleDateChange(this.currentDate, false)
+
+      if (!valid) {
+        return
+      }
+
+      // Then check what actually changed
+      const changes = []
+      for (let i = 0; i < this.localMeasurements.length; i++) {
+        let changed = false
+        for (let s = 0; s < (this.trait.setSize || 1); s++) {
+          if (this.localMeasurements[i].values[s] !== this.measurements[i].values[s]) {
+            changed = true
+          }
+        }
+
+        if (changed) {
+          changes.push({
+            traitId: this.trait.id,
+            values: this.localMeasurements[i].values,
+            timestamp: this.localMeasurements[i].timestamp
+          })
+        }
+      }
+
+      if (changes.length > 0) {
+        addTrialData(this.trial.localId, this.row, this.column, changes)
+          .then(() => {
+            this.$nextTick(() => {
+              emitter.emit('plot-data-changed', this.row, this.column, this.trial.localId)
+              emitter.emit('plot-clicked', this.row, this.column)
+            })
+          })
+      }
 
       this.hide()
     },
