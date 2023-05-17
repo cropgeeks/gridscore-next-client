@@ -181,7 +181,7 @@ const getTransactionsForTrial = async (localId) => {
   }
 }
 
-const addTrialData = async (trialId, row, column, data) => {
+const changeTrialsData = async (trialId, row, column, data) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -202,33 +202,45 @@ const addTrialData = async (trialId, row, column, data) => {
         cell.measurements[d.traitId] = []
       }
 
-      if (trait.allowRepeats) {
-        const match = cell.measurements[d.traitId].find(cm => cm.timestamp === d.timestamp)
-
-        if (match) {
-          // Update the values
-          match.values = d.values
+      if (d.delete) {
+        if (trait.allowRepeats) {
+          // Remove any with the same timestamp
+          cell.measurements[d.traitId] = cell.measurements[d.traitId].filter(cm => cm.timestamp !== d.timestamp)
         } else {
-          // If no match is found, simply append to the end
-          cell.measurements[d.traitId].push({
-            values: d.values,
-            timestamp: d.timestamp
-          })
+          if (cell.measurements[d.traitId].length > 0) {
+            // Remove any value that may exist
+            cell.measurements[d.traitId] = []
+          }
         }
       } else {
-        // Else, search for a match for this trait (the first entry)
-        const match = cell.measurements[d.traitId].length > 0 ? cell.measurements[d.traitId][0] : null
+        if (trait.allowRepeats) {
+          const match = cell.measurements[d.traitId].find(cm => cm.timestamp === d.timestamp)
 
-        if (match) {
-          // If it exists, update it
-          match.values = d.values
-          match.timestamp = d.timestamp
+          if (match) {
+            // Update the values
+            match.values = d.values
+          } else {
+            // If no match is found, simply append to the end
+            cell.measurements[d.traitId].push({
+              values: d.values,
+              timestamp: d.timestamp
+            })
+          }
         } else {
-          // If not, create a new one
-          cell.measurements[d.traitId].push({
-            values: d.values,
-            timestamp: d.timestamp
-          })
+          // Else, search for a match for this trait (the first entry)
+          const match = cell.measurements[d.traitId].length > 0 ? cell.measurements[d.traitId][0] : null
+
+          if (match) {
+            // If it exists, update it
+            match.values = d.values
+            match.timestamp = d.timestamp
+          } else {
+            // If not, create a new one
+            cell.measurements[d.traitId].push({
+              values: d.values,
+              timestamp: d.timestamp
+            })
+          }
         }
       }
     })
@@ -252,7 +264,7 @@ const addTrialData = async (trialId, row, column, data) => {
 
         // For all measurements in this old transaction
         let changed = false
-        for (const m of content.measurements) {
+        for (const [mIndex, m] of content.measurements.entries()) {
           // Check if any of the new measurements are for the same trait
           const same = data.map(sm => {
             const sameTrait = sm.traitId === m.traitId
@@ -267,8 +279,25 @@ const addTrialData = async (trialId, row, column, data) => {
           for (const [index, b] of same.entries()) {
             // If some are, update the old measurement with the new one
             if (b) {
-              m.values = data[index].values
-              m.timestamp = data[index].timestamp
+              if (!traitMap[m.traitId].allowRepeats) {
+                if (data[index].delete && !m.delete) {
+                  // If the old one isn't a delete, but the new one is, just add the delete flag
+                  m.delete = true
+                } else if (!data[index].delete && m.delete) {
+                  // If the old one is a delete, but the new one isn't, remove the delete flag
+                  delete m.delete
+                }
+                // In any case, update the values and timestamp
+                m.values = data[index].values
+                m.timestamp = data[index].timestamp
+              } else {
+                if (data[index].delete) {
+                  content.measurements[mIndex] = null
+                } else {
+                  m.values = data[index].values
+                  m.timestamp = data[index].timestamp
+                }
+              }
               changed = true
             }
           }
@@ -277,9 +306,16 @@ const addTrialData = async (trialId, row, column, data) => {
           data = data.filter((m, i) => !same[i])
         }
 
+        // Remove empty ones. These are ones that have been deleted in the previous process
+        content.measurements = content.measurements.filter(m => m !== null)
+
         if (changed) {
-          // Write them back
-          await cursor.update(cursor.value)
+          if (content.measurements.length < 1) {
+            await cursor.delete()
+          } else {
+            // Write them back
+            await cursor.update(cursor.value)
+          }
         }
 
         cursor = await cursor.continue()
@@ -706,6 +742,6 @@ export {
   updateTrialBrapiConfig,
   addTrialTraits,
   getTransactionsForTrial,
-  addTrialData,
+  changeTrialsData,
   getTrialValidPlots
 }

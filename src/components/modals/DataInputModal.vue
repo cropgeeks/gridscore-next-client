@@ -18,8 +18,8 @@
       <h5 class="modal-title text-truncate">{{ displayName }}</h5>
 
       <b-button-group id="data-entry-header" v-if="cell">
-        <b-button @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
-        <b-button :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
+        <b-button size="sm" @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
+        <b-button size="sm" :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
           <template v-if="cell.isMarked">
             <BIconBookmarkCheckFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonUnbookmarkCell') }}</span>
           </template>
@@ -27,8 +27,8 @@
             <BIconBookmark /> <span class="d-none d-xl-inline-block"> {{ $t('buttonBookmarkCell') }}</span>
           </template>
         </b-button>
-        <b-button @click="onShowPhotoModal(null)"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
-        <b-button @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
+        <b-button size="sm" @click="onShowPhotoModal(null)"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
+        <b-button size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
       </b-button-group>
 
       <button class="close ml-0" @click="onXClicked">×</button>
@@ -82,7 +82,7 @@ import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
-import { addTrialData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
+import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
 import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
@@ -389,7 +389,7 @@ export default {
         const delta = forward ? 1 : -1
 
         if (mapping.length > 0) {
-          addTrialData(this.trial.localId, this.cell.row, this.cell.column, mapping)
+          changeTrialsData(this.trial.localId, this.cell.row, this.cell.column, mapping)
             .then(() => {
               // Take copies for the emitter later
               const row = this.cell.row

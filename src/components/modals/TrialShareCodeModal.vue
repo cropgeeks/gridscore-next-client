@@ -69,11 +69,13 @@ export default {
   },
   methods: {
     getShareCodes: function () {
+      emitter.emit('show-loading', true)
       shareTrial(this.trial.localId)
         .then(() => emitter.emit('plausible-event', { key: 'trial-shared' }))
         .catch(error => {
           console.error(error)
         })
+        .finally(() => emitter.emit('show-loading', false))
     },
     /**
      * Shows and resets modal dialog

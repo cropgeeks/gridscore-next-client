@@ -115,11 +115,11 @@ export default {
                     emitter.emit('show-loading', false)
                     emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.transactions.length } })
                   })
-                  .catch(() => {
+                  .finally(() => {
                     emitter.emit('show-loading', false)
                   })
               })
-              .catch(() => {
+              .finally(() => {
                 emitter.emit('show-loading', false)
               })
           }
