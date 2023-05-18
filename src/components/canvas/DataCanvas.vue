@@ -152,7 +152,7 @@ export default {
       }
     },
     reset: function () {
-      if (this.isResetting) {
+      if (this.isResetting || !this.trial) {
         return
       }
       this.isResetting = true

@@ -330,24 +330,26 @@ export default {
       }
     },
     updateCell: function (row, column) {
-      getCell(this.storeSelectedTrial, row, column)
-        .then(cell => {
-          this.cell = cell
-          this.show()
+      if (this.trial) {
+        getCell(this.storeSelectedTrial, row, column)
+          .then(cell => {
+            this.cell = cell
+            this.show()
 
-          this.$nextTick(() => {
-            this.tabStates = null
-            this.traitGroupTabIndex = 0
+            this.$nextTick(() => {
+              this.tabStates = null
+              this.traitGroupTabIndex = 0
 
-            this.trial.traits.forEach(t => {
-              if (this.storeHiddenTraits.includes(t.id)) {
-                return
-              }
+              this.trial.traits.forEach(t => {
+                if (this.storeHiddenTraits.includes(t.id)) {
+                  return
+                }
 
-              this.$refs[`trait-section-${t.id}`][0].reset()
+                this.$refs[`trait-section-${t.id}`][0].reset()
+              })
             })
           })
-        })
+      }
     },
     updateCellComments: function (row, column, trialId, cell) {
       if (this.trial && this.cell && this.storeSelectedTrial === trialId && this.cell.row === row && this.cell.column === column) {

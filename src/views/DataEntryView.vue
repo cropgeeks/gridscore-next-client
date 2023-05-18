@@ -171,7 +171,7 @@ export default {
     updateTraitProgress: function () {
       const data = getTrialDataCached()
 
-      if (data) {
+      if (data && this.trial) {
         this.trial.traits.forEach(t => {
           const total = Object.values(data).length
           let count = 0

@@ -192,7 +192,7 @@ export default {
      * Downloads the image as a file attachment
      */
     downloadImage: async function () {
-      if (this.imageFile) {
+      if (this.trial && this.imageFile) {
         const filename = `${this.getDateTime(this.imageDate)}_${this.displayName}_${this.row + 1}_${this.column + 1}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}.${this.imageFile.name.split('.').pop()}`
         if (this.supportsSaving) {
           // create a new handle
