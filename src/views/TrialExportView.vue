@@ -47,6 +47,8 @@
         </template>
       </b-tab>
     </b-tabs>
+
+    <TrialSynchronizationModal :trial="trial" ref="traitSyncModal" v-if="trial && trial.transactionCount > 0" />
   </b-container>
 </template>
 
@@ -54,9 +56,10 @@
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { synchronizeTrial, exportToGerminate, exportToShapefile, shareTrial } from '@/plugins/api'
+import { exportToGerminate, exportToShapefile, shareTrial } from '@/plugins/api'
 import IconGerminate from '@/components/icons/IconGerminate'
 import IconBrapi from '@/components/icons/IconBrapi'
+import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
 import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload } from 'bootstrap-vue'
 import { downloadText } from '@/plugins/misc'
 
@@ -68,7 +71,8 @@ export default {
     BIconFileEarmarkSpreadsheet,
     BIconDownload,
     IconGerminate,
-    IconBrapi
+    IconBrapi,
+    TrialSynchronizationModal
   },
   data: function () {
     return {
@@ -87,7 +91,6 @@ export default {
   },
   methods: {
     exportShapefileGerminate: function () {
-      emitter.emit('show-loading', true)
       this.exportedFiles.shapefile = null
 
       let shareCode = null
@@ -96,16 +99,19 @@ export default {
       }
 
       if (shareCode) {
-        synchronizeTrial(this.trial.localId, shareCode)
-          .then(() => {
-            return exportToShapefile(shareCode)
-          })
-          .then(uuid => {
-            this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
-            emitter.emit('show-loading', false)
-          })
-          .catch(() => emitter.emit('show-loading', false))
+        if (this.trial.transactionCount > 0) {
+          this.$refs.traitSyncModal.show()
+        } else {
+          emitter.emit('show-loading', true)
+          exportToShapefile(shareCode)
+            .then(uuid => {
+              this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
+              emitter.emit('show-loading', false)
+            })
+            .catch(() => emitter.emit('show-loading', false))
+        }
       } else {
+        emitter.emit('show-loading', true)
         shareTrial(this.trial.localId)
           .then(() => {
             return getTrialById(this.trial.localId)
@@ -209,7 +215,6 @@ export default {
       emitter.emit('show-loading', false)
     },
     exportDataGerminate: function () {
-      emitter.emit('show-loading', true)
       this.exportedFiles.germinate = null
 
       let shareCode = null
@@ -218,16 +223,19 @@ export default {
       }
 
       if (shareCode) {
-        synchronizeTrial(this.trial.localId, shareCode)
-          .then(() => {
-            return exportToGerminate(shareCode)
-          })
-          .then(uuid => {
-            this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
-            emitter.emit('show-loading', false)
-          })
-          .catch(() => emitter.emit('show-loading', false))
+        if (this.trial.transactionCount > 0) {
+          this.$refs.traitSyncModal.show()
+        } else {
+          emitter.emit('show-loading', true)
+          exportToGerminate(shareCode)
+            .then(uuid => {
+              this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
+              emitter.emit('show-loading', false)
+            })
+            .catch(() => emitter.emit('show-loading', false))
+        }
       } else {
+        emitter.emit('show-loading', true)
         shareTrial(this.trial.localId)
           .then(() => {
             return getTrialById(this.trial.localId)
