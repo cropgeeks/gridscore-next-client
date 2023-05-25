@@ -29,6 +29,7 @@ import { mapGetters } from 'vuex'
 
 import { BIconCardChecklist, BIconCircleFill, BIconCardList, BIconHr, BIconPlusSquareFill } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
+import { toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -262,7 +263,7 @@ export default {
         responsive: true,
         toImageButtonOptions: {
           format: 'png',
-          filename: `timeline-${this.safeTrialName}-${this.trait.name}-${new Date().toISOString().split('T')[0]}`,
+          filename: `timeline-${this.safeTrialName}-${this.trait.name}-${toLocalDateString(new Date())}`,
           width: 1280,
           height: 720
         },

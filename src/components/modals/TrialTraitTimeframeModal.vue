@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { toLocalDateString, toLocalDateTimeString } from '@/plugins/misc'
 import { mapGetters } from 'vuex'
 const Plotly = require('plotly.js/lib/core')
 
@@ -136,9 +137,9 @@ export default {
         shapes: [{
           type: 'line',
           yref: 'paper',
-          x0: new Date().toISOString(),
+          x0: toLocalDateString(new Date()),
           y0: 0,
-          x1: new Date().toISOString(),
+          x1: toLocalDateString(new Date()),
           y1: 1,
           line: {
             color: this.storeDarkMode ? '#ecf0f1' : '#2c3e50',
@@ -149,7 +150,7 @@ export default {
         annotations: [{
           type: 'line',
           yref: 'paper',
-          x: new Date().toISOString(),
+          x: toLocalDateString(new Date()),
           y: 1.2,
           showarrow: false,
           text: this.$t('widgetChartTraitTimeframeToday'),
@@ -163,7 +164,7 @@ export default {
         responsive: true,
         toImageButtonOptions: {
           format: 'png',
-          filename: `trait-timeline-${this.safeTrialName}-${new Date().toISOString().split('T')[0]}`
+          filename: `trait-timeline-${this.safeTrialName}-${toLocalDateTimeString(new Date())}`
         },
         displaylogo: false
       })

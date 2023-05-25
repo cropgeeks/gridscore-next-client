@@ -29,6 +29,7 @@ import { mapGetters } from 'vuex'
 
 import exifr from 'exifr/dist/lite.umd.js'
 import { BIconCalendar3 } from 'bootstrap-vue'
+import { toLocalDateTimeString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -185,8 +186,7 @@ export default {
      * @param date The date to convert
      */
     getDateTime: function (date) {
-      const dateString = date.toISOString().split('T')
-      return `${dateString[0]}_${dateString[1].split('.')[0].replace(/:/g, '-')}`
+      return toLocalDateTimeString(date)
     },
     /**
      * Downloads the image as a file attachment

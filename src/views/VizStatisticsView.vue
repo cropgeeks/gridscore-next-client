@@ -32,6 +32,7 @@ import TraitHeading from '@/components/TraitHeading'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { BIconArrowClockwise } from 'bootstrap-vue'
 import { getTrialById } from '@/plugins/idb'
+import { toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -237,7 +238,7 @@ export default {
             responsive: true,
             toImageButtonOptions: {
               format: 'png',
-              filename: `stats-${this.safeTrialName}-${filename}-${new Date().toISOString().split('T')[0]}`,
+              filename: `stats-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`,
               width: 1280,
               height: 720
             },

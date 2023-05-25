@@ -29,6 +29,7 @@
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -121,7 +122,7 @@ export default {
           tp.sort((a, b) => a - b)
 
           const set = new Set()
-          tp.forEach(dp => set.add(new Date(dp).toISOString()))
+          tp.forEach(dp => set.add(toLocalDateString(new Date(dp))))
 
           this.timepoints = [...set]
         }
@@ -317,7 +318,7 @@ export default {
           responsive: true,
           toImageButtonOptions: {
             format: 'png',
-            filename: `field-heatmap-${this.safeTrialName}-${filename}-${new Date().toISOString().split('T')[0]}`
+            filename: `field-heatmap-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`
           },
           displaylogo: false
         })

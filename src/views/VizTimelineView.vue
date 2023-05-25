@@ -29,6 +29,7 @@ import TraitHeading from '@/components/TraitHeading'
 import MultiTraitTimeline from '@/components/MultiTraitTimeline'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
+import { toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -177,7 +178,7 @@ export default {
           responsive: true,
           toImageButtonOptions: {
             format: 'png',
-            filename: `timeline-${this.safeTrialName}-${new Date().toISOString().split('T')[0]}`,
+            filename: `timeline-${this.safeTrialName}-${toLocalDateString(new Date())}`,
             width: 1280,
             height: 720
           },

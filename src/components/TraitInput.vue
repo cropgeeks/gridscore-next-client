@@ -76,6 +76,7 @@
 
 <script>
 import { BIconCaretLeftFill, BIconCalendar3, BIconCaretRightFill, BIconSlashCircle } from 'bootstrap-vue'
+import { toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -164,7 +165,7 @@ export default {
         const current = this.getToday()
         current.setDate(current.getDate() + number)
 
-        this.value = current.toISOString().split('T')[0]
+        this.value = toLocalDateString(current)
 
         this.dateInput = ''
 
@@ -296,7 +297,7 @@ export default {
 
       current.setDate(current.getDate() - 1)
 
-      this.value = current.toISOString().split('T')[0]
+      this.value = toLocalDateString(current)
 
       const diffDays = Math.floor((new Date() - current) / (1000 * 60 * 60 * 24))
       if (diffDays > -14 && diffDays < 0) {
@@ -304,7 +305,7 @@ export default {
       } else if (diffDays < 14) {
         emitter.emit('tts', this.$tc('ttsDaysAgo', Math.abs(diffDays)))
       } else {
-        emitter.emit('tts', current.toISOString().split('T')[0])
+        emitter.emit('tts', toLocalDateString(current))
       }
     },
     setDateToday: function () {
@@ -330,7 +331,7 @@ export default {
 
       current.setDate(current.getDate() + 1)
 
-      this.value = current.toISOString().split('T')[0]
+      this.value = toLocalDateString(current)
 
       const diffDays = Math.floor((new Date() - current) / (1000 * 60 * 60 * 24))
       if (diffDays > -14 && diffDays < 0) {
@@ -338,7 +339,7 @@ export default {
       } else if (diffDays < 14) {
         emitter.emit('tts', this.$tc('ttsDaysAgo', Math.abs(diffDays)))
       } else {
-        emitter.emit('tts', current.toISOString().split('T')[0])
+        emitter.emit('tts', toLocalDateString(current))
       }
     },
     tts: function () {

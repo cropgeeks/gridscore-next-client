@@ -26,6 +26,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
+import { toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -120,7 +121,7 @@ export default {
           tp.sort((a, b) => a - b)
 
           const set = new Set()
-          tp.forEach(dp => set.add(new Date(dp).toISOString()))
+          tp.forEach(dp => set.add(toLocalDateString(new Date(dp))))
 
           this.timepoints = [...set]
         }
@@ -312,7 +313,7 @@ export default {
           responsive: true,
           toImageButtonOptions: {
             format: 'png',
-            filename: `germplasm-heatmap-${this.safeTrialName}-${filename}-${new Date().toISOString().split('T')[0]}`
+            filename: `germplasm-heatmap-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`
           },
           displaylogo: false
         })

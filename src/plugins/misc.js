@@ -34,7 +34,39 @@ const downloadText = (text, filename) => {
   document.body.removeChild(downloadLink)
 }
 
+const padZerosTo = (str, length) => {
+  while (str.length < length) {
+    str = '0' + str
+  }
+
+  return str
+}
+
+const toLocalDateString = (date) => {
+  const d = new Date(date)
+  const month = padZerosTo('' + (d.getMonth() + 1), 2)
+  const day = padZerosTo('' + d.getDate(), 2)
+  const year = d.getFullYear()
+
+  return [year, month, day].join('-')
+}
+
+const toLocalDateTimeString = (str) => {
+  const date = toLocalDateString(str)
+  const d = new Date(str)
+
+  const hours = padZerosTo('' + d.getHours(), 2)
+  const minutes = padZerosTo('' + d.getMinutes(), 2)
+  const seconds = padZerosTo('' + d.getSeconds(), 2)
+
+  const time = [hours, minutes, seconds].join('-')
+
+  return date + '_' + time
+}
+
 export {
   getTraitTypeText,
-  downloadText
+  downloadText,
+  toLocalDateString,
+  toLocalDateTimeString
 }
