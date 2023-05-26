@@ -50,6 +50,8 @@
   "buttonFinish": "Beenden",
   "buttonUndeleteTimepointData": "Datenpunkt nicht löschen",
   "buttonDeleteTimepointData": "Datenpunkt löschen",
+  "buttonGridScoreVersionCurrent": "Aktuell",
+  "buttonGridScoreVersionLegacy": "Veraltet",
   "dropdownOptionTraitNoGroup": "Ungruppierte Merkmale",
   "dropdownImportGermplasmGrid": "Keimplasma Gitter/Tabelle importieren",
   "dropdownImportRepGrid": "Rep Gitter/Tabelle importieren",

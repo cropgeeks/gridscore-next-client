@@ -12,7 +12,7 @@ const acceptableStatusCodes = [400, 401, 403, 404, 409]
  * @param {String} method (Optional) REST method (default: `'get'`)
  * @returns Promise
  */
-const axiosCall = (url, params = null, method = 'get', ignoreErrors = false) => {
+const axiosCall = ({ baseUrl = null, url = null, params = null, method = 'get', ignoreErrors = false }) => {
   let requestData = null
   let requestParams = null
 
@@ -27,7 +27,7 @@ const axiosCall = (url, params = null, method = 'get', ignoreErrors = false) => 
 
   return new Promise((resolve, reject) => {
     axios({
-      baseURL: store.getters.storeServerUrl,
+      baseURL: baseUrl || store.getters.storeServerUrl,
       url: url,
       params: requestParams,
       data: requestData,
@@ -76,7 +76,7 @@ const axiosCall = (url, params = null, method = 'get', ignoreErrors = false) => 
 }
 
 const getServerSettings = () => {
-  return axiosCall('settings', null, 'get', true)
+  return axiosCall({ url: 'settings', method: 'get', ignoreErrors: true })
 }
 
 const shareTrial = async (localId) => {
@@ -88,7 +88,7 @@ const shareTrial = async (localId) => {
         const copy = JSON.parse(JSON.stringify(trial))
         copy.data = data
 
-        return axiosCall('trial/share', copy, 'post')
+        return axiosCall({ url: 'trial/share', params: copy, method: 'post' })
       })
       .then(result => {
         if (result) {
@@ -108,19 +108,32 @@ const shareTrial = async (localId) => {
 }
 
 const getTrialByCode = (shareCode) => {
-  return axiosCall(`trial/${shareCode}`, null, 'get')
+  return axiosCall({ url: `trial/${shareCode}`, method: 'get' })
+}
+
+const getLegacyTrialByCode = (url, shareCode) => {
+  if (url.endsWith('/#/')) {
+    url = url.substring(0, url.length - 2)
+  }
+  if (!url.endsWith('/')) {
+    url += '/'
+  }
+  if (!url.endsWith('api/')) {
+    url += 'api/'
+  }
+  return axiosCall({ baseUrl: url, url: `config/${shareCode}`, method: 'get' })
 }
 
 const synchronizeTrial = (shareCode, transactions) => {
-  return axiosCall(`trial/${shareCode}/transaction`, transactions, 'post')
+  return axiosCall({ url: `trial/${shareCode}/transaction`, params: transactions, method: 'post' })
 }
 
 const exportToGerminate = (shareCode) => {
-  return axiosCall(`trial/${shareCode}/export/g8`, null, 'get')
+  return axiosCall({ url: `trial/${shareCode}/export/g8`, method: 'get' })
 }
 
 const exportToShapefile = (shareCode) => {
-  return axiosCall(`trial/${shareCode}/export/shapefile`, null, 'get')
+  return axiosCall({ url: `trial/${shareCode}/export/shapefile`, method: 'get' })
 }
 
 export {
@@ -128,6 +141,7 @@ export {
   getServerSettings,
   shareTrial,
   getTrialByCode,
+  getLegacyTrialByCode,
   synchronizeTrial,
   exportToGerminate,
   exportToShapefile

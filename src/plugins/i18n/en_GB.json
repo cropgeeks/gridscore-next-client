@@ -50,6 +50,8 @@
   "buttonFinish": "Finish",
   "buttonUndeleteTimepointData": "Don't delete data point",
   "buttonDeleteTimepointData": "Delete data point",
+  "buttonGridScoreVersionCurrent": "Current",
+  "buttonGridScoreVersionLegacy": "Legacy",
   "appTitle": "GridScore NEXT",
   "dropdownOptionTraitNoGroup": "Ungrouped traits",
   "dropdownImportGermplasmGrid": "Import Germplasm grid/table",

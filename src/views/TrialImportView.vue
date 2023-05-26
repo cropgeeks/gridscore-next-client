@@ -3,7 +3,15 @@
     <h1 class="display-4">{{ $t('pageImportTitle') }}</h1>
     <p>{{ $t('pageImportText') }}</p>
 
+    <b-button-group class="mb-3">
+      <b-button :variant="gridScoreVersion === 'current' ? 'primary' : null" @click="gridScoreVersion = 'current'">{{ $t('buttonGridScoreVersionCurrent') }}</b-button>
+      <b-button :variant="gridScoreVersion === 'legacy' ? 'primary' : null" @click="gridScoreVersion = 'legacy'">{{ $t('buttonGridScoreVersionLegacy') }}</b-button>
+    </b-button-group>
+
     <b-form @submit.prevent="checkCode">
+      <b-form-group :label="$t('formLabelTrialImportUrl')" :description="$t('formDescriptionTrialImportUrl')" label-for="url" v-if="gridScoreVersion === 'legacy'">
+        <b-form-input id="url" type="url" v-model="gridScoreUrl" required />
+      </b-form-group>
       <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
         <b-input-group>
           <b-input trim v-model="shareCode" />
@@ -27,7 +35,7 @@
         </div>
       </b-collapse>
 
-      <b-button @click="checkCode" variant="primary" :disabled="!shareCode"><BIconSearch /> {{ $t('buttonCheckShareCode') }}</b-button>
+      <b-button @click="checkCode" variant="primary" :disabled="buttonDisabled"><BIconSearch /> {{ $t('buttonCheckShareCode') }}</b-button>
 
       <p class="text-danger mt-3" v-if="serverError">{{ serverError }}</p>
     </b-form>
@@ -55,8 +63,9 @@ import TrialInformation from '@/components/TrialInformation'
 
 import { BIconSearch } from 'bootstrap-vue'
 
-import { getTrialByCode } from '@/plugins/api'
+import { getTrialByCode, getLegacyTrialByCode } from '@/plugins/api'
 import { addTrial } from '@/plugins/idb'
+import { migrateOldGridScoreTrial } from '@/plugins/misc'
 
 export default {
   components: {
@@ -69,7 +78,21 @@ export default {
       showCamera: false,
       shareCode: null,
       serverError: null,
-      trial: null
+      trial: null,
+      gridScoreVersion: 'current',
+      gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore'
+    }
+  },
+  computed: {
+    buttonDisabled: function () {
+      const shareCodeValid = this.shareCode !== undefined && this.shareCode !== null && this.shareCode !== ''
+      const urlValid = this.gridScoreUrl !== undefined && this.gridScoreUrl !== null && this.gridScoreUrl !== ''
+
+      if (this.gridScoreVersion === 'legacy') {
+        return !shareCodeValid || !urlValid
+      } else {
+        return !shareCodeValid
+      }
     }
   },
   methods: {
@@ -86,8 +109,30 @@ export default {
         })
     },
     checkCode: function () {
-      if (this.shareCode && this.shareCode !== '') {
-        this.serverError = null
+      if (this.buttonDisabled) {
+        return
+      }
+
+      this.serverError = null
+
+      if (this.gridScoreVersion === 'legacy') {
+        getLegacyTrialByCode(this.gridScoreUrl, this.shareCode)
+          .then(result => {
+            return migrateOldGridScoreTrial(result)
+          })
+          .then(result => {
+            this.trial = result
+
+            this.$nextTick(() => this.$refs.confirmationModal.show())
+          })
+          .catch(error => {
+            if (error.status === 404) {
+              this.serverError = this.$t('apiErrorTrialNotFound')
+            } else {
+              this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error) })
+            }
+          })
+      } else {
         getTrialByCode(this.shareCode)
           .then(result => {
             this.trial = result
