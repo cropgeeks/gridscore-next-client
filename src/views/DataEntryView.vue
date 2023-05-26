@@ -22,14 +22,11 @@
 
     <DataCanvas />
 
-    <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
-
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
+    <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
     <DataInputModal :trial="trial" ref="dataInputModal" />
-
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
-
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
   </b-container>
 </template>

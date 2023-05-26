@@ -13,6 +13,7 @@ const TRAIT_TIMEFRAME_TYPE_ENFORCE = 'ENFORCE'
 
 const TRANSACTION_TYPES = {
   TRIAL_TRAITS_ADDED: 'transactionTypeTraitsAdded',
+  TRIAL_GERMPLASM_ADDED: 'transactionTypeGermplasmAdded',
   PLOT_COMMENT_ADDED: 'transactionTypePlotCommentAdded',
   PLOT_COMMENT_DELETED: 'transactionTypePlotCommentDeleted',
   PLOT_MARKED_CHANGED: 'transactionTypePlotMarkedChanged',

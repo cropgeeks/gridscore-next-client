@@ -509,6 +509,60 @@ const deleteTrialComment = async (trialId, comment) => {
   }
 }
 
+const addTrialGermplasm = async (trialId, germplasm) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = {
+        trialId: trialId,
+        operation: 'TRIAL_GERMPLASM_ADDED',
+        content: germplasm,
+        timestamp: new Date().toISOString()
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    const newData = germplasm.map((g, i) => {
+      const cell = {
+        trialId: trialId,
+        row: trial.layout.rows + i,
+        column: 0,
+        germplasm: g,
+        rep: null,
+        brapiId: null,
+        measurements: {},
+        geography: {},
+        comments: []
+      }
+
+      trial.traits.forEach(t => {
+        cell.measurements[t.id] = []
+      })
+
+      return cell
+    })
+
+    trial.layout.rows += newData.length
+
+    await db.put('trials', trial)
+
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('data', 'readwrite')
+
+      Promise.all(newData.map(cell => tx.store.add(cell)))
+        .then(() => {
+          resolve()
+          return tx.done
+        })
+        .catch(e => reject(e))
+    })
+  }
+}
+
 const addTrialTraits = async (trialId, traits) => {
   const trial = await getTrialById(trialId)
 
@@ -743,5 +797,6 @@ export {
   addTrialTraits,
   getTransactionsForTrial,
   changeTrialsData,
-  getTrialValidPlots
+  getTrialValidPlots,
+  addTrialGermplasm
 }

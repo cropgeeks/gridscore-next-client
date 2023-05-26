@@ -23,6 +23,18 @@
                 <TraitHeading :trait="trait" v-for="trait in tr.content" :key="`trait-${trait.id}`" />
               </p>
             </template>
+            <template v-if="tr.operation === 'TRIAL_GERMPLASM_ADDED'">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
+                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
+              </div>
+
+              <p class="mb-1">
+                <ul>
+                  <li v-for="germplasm in tr.content" :key="`germplasm-${germplasm}`">{{ germplasm }}</li>
+                </ul>
+              </p>
+            </template>
             <template v-if="tr.operation === 'TRAIT_DATA_CHANGED'">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
