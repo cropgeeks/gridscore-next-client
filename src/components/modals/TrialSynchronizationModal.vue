@@ -30,9 +30,7 @@
               </div>
 
               <p class="mb-1">
-                <ul>
-                  <li v-for="germplasm in tr.content" :key="`germplasm-${germplasm}`">{{ germplasm }}</li>
-                </ul>
+                {{ tr.content.join(', ') }}
               </p>
             </template>
             <template v-if="tr.operation === 'TRAIT_DATA_CHANGED'">

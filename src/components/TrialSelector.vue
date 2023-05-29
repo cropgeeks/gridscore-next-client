@@ -21,8 +21,10 @@
                 <BIconCloud stacked />
                 <BIconArrowDownUp stacked :scale="0.4" />
               </BIconstack> {{ $t('buttonSynchronize') }}</b-dropdown-item>
+              <b-dropdown-item @click="duplicateTrial(trial)"><BIconJournals /> {{ $t('buttonDuplicateTrial') }}</b-dropdown-item>
+              <b-dropdown-divider v-if="trial.editable" />
               <b-dropdown-item @click="addTrait(trial)" v-if="trial.editable"><BIconTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
-              <b-dropdown-item @click="addGermplasm(trial)" v-if="trial.editable"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
+              <b-dropdown-item @click="addGermplasm(trial)" v-if="trial.editable && trial.layout.columns === 1"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
               <b-dropdown-divider />
               <b-dropdown-item variant="danger" @click="deleteTrial(trial)"><BIconTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
             </b-dropdown>
@@ -36,6 +38,7 @@
     <AddTraitsModal :trial="selectedTrial" ref="addTraitsModal" v-if="selectedTrial && selectedTrial.editable" />
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && selectedTrial.transactionCount > 0" />
+    <TrialDuplicationModal :trial="selectedTrial" ref="trialDuplicationModal" v-if="selectedTrial" />
   </div>
 </template>
 
@@ -43,12 +46,13 @@
 import TrialInformation from '@/components/TrialInformation'
 import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal'
+import TrialDuplicationModal from '@/components/modals/TrialDuplicationModal'
 import AddTraitsModal from '@/components/modals/AddTraitsModal'
 import AddGermplasmModal from '@/components/modals/AddGermplasmModal'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrials } from '@/plugins/idb'
-import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloud, BIconArrowDownUp, BIconstack, BIconNodePlus } from 'bootstrap-vue'
+import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -59,9 +63,11 @@ export default {
     TrialCommentModal,
     TrialShareCodeModal,
     TrialSynchronizationModal,
+    TrialDuplicationModal,
     AddGermplasmModal,
     BIconJournalArrowUp,
     BIconGear,
+    BIconJournals,
     BIconTrash,
     BIconTags,
     BIconCloudUploadFill,
@@ -89,6 +95,11 @@ export default {
     }
   },
   methods: {
+    duplicateTrial: function (trial) {
+      this.selectedTrial = trial
+
+      this.$nextTick(() => this.$refs.trialDuplicationModal.show())
+    },
     synchronize: function (trial) {
       this.selectedTrial = trial
 

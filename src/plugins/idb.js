@@ -409,7 +409,7 @@ const addTrial = async (trial) => {
         brapiId: cell.brapiId,
         measurements: cell.measurements,
         geography: cell.geography,
-        comments: cell.comments,
+        comments: cell.comments || [],
         isMarked: cell.isMarked
       })
     })
