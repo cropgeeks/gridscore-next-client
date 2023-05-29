@@ -36,8 +36,7 @@
 
 <script>
 import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal'
-import { getTrialDataCached } from '@/plugins/datastore'
-import { addTrialGermplasm } from '@/plugins/idb'
+import { addTrialGermplasm, getTrialData } from '@/plugins/idb'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -70,13 +69,14 @@ export default {
         germplasm: null
       }
 
-      const cachedData = getTrialDataCached()
+      getTrialData(this.trialId)
+        .then(data => {
+          this.uniqueGermplasmNames = new Set()
 
-      this.uniqueGermplasmNames = new Set()
+          Object.values(data).forEach(c => this.uniqueGermplasmNames.add(c.displayName))
 
-      Object.values(cachedData).forEach(c => this.uniqueGermplasmNames.add(c.displayName))
-
-      this.$refs.addGermplasmModal.show()
+          this.$refs.addGermplasmModal.show()
+        })
     },
     /**
      * Hides the modal dialog

@@ -4,7 +4,7 @@
            @ok.prevent="onSubmit"
            no-fade
            @hidden="$emit('hidden')"
-           size="md"
+           size="lg"
            ref="trialDuplicationModal">
     <div v-if="trial">
       <p>{{ $t('modalTextTrialDuplicate') }}</p>
