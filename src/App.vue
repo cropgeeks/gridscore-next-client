@@ -73,10 +73,13 @@ import { loadLanguageAsync } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
 import { VuePlausible } from 'vue-plausible'
 import Vue from 'vue'
-import { getServerSettings } from '@/plugins/api'
+import { axiosCall, getServerSettings } from '@/plugins/api'
 import { updateTrialBrapiConfig } from '@/plugins/idb'
+import { Detector } from '@/plugins/browser-detect'
 
 import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
+import { getId } from '@/plugins/id'
+import { gridScoreVersion } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -116,7 +119,9 @@ export default {
       'storeLocale',
       'storeDarkMode',
       'storeSelectedTrial',
-      'storePlausible'
+      'storePlausible',
+      'storeUniqueClientId',
+      'storeRunCount'
     ]),
     menuItemsDisabled: function () {
       return this.storeSelectedTrial === undefined || this.storeSelectedTrial === null
@@ -183,6 +188,33 @@ export default {
     },
     showLoading: function (visible) {
       this.loadingVisible = visible
+    },
+    handleVisibilityChange: async function () {
+      // If the apps visibility changed (tab changed or window minimized), re-aquire the lock after return
+      if (this.wakeLock !== null && document.visibilityState === 'visible') {
+        await this.toggleWakeLock(true)
+      }
+    },
+    toggleWakeLock: async function (acquire) {
+      if (this.wakeLock === null && acquire) {
+        try {
+          // Get the lock
+          this.wakeLock = await navigator.wakeLock.request()
+          // Listen for changes to it
+          this.wakeLock.addEventListener('release', () => {
+            this.wakeLock = null
+          })
+        } catch (err) {
+          this.wakeLock = null
+        }
+      } else if (this.wakeLock && !acquire) {
+        // Release it
+        this.wakeLock.release()
+        this.wakeLock = null
+      }
+    },
+    isLocalhost: function () {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === ''
     }
   },
   mounted: function () {
@@ -204,6 +236,42 @@ export default {
       this.enablePlausible()
     }
 
+    if ('wakeLock' in navigator) {
+      this.toggleWakeLock(true)
+      document.addEventListener('visibilitychange', this.handleVisibilityChange)
+    }
+
+    // Log the run
+    if (!this.isLocalhost()) {
+      let id = this.storeUniqueClientId
+      if (!id) {
+        id = getId()
+
+        this.$store.dispatch('setUniqueClientId', id)
+      }
+
+      const config = new Detector().detect()
+      if (config.os !== undefined && config.os !== null && config.os !== 'Search Bot') {
+        const data = {
+          application: 'GridScore',
+          runCount: this.storeRunCount + 1,
+          id: id,
+          version: `${gridScoreVersion}`,
+          locale: this.storeLocale,
+          os: `${config.os} ${config.osVersion}`
+        }
+        axiosCall({ baseUrl: 'https://ics.hutton.ac.uk/app-logger/', url: 'log', params: data, method: 'get', ignoreErrors: true })
+          .then(() => {
+            // If the call succeeds, reset the run count
+            this.$store.dispatch('setRunCount', 0)
+          })
+          .catch(() => {
+            // If this call fails (e.g. no internet), remember the run
+            this.$store.dispatch('setRunCount', this.storeRunCount + 1)
+          })
+      }
+    }
+
     emitter.on('plausible-event', this.plausibleEvent)
     emitter.on('api-error', this.handleApiError)
     emitter.on('show-brapi-settings', this.showBrapiSettings)
@@ -214,6 +282,12 @@ export default {
     emitter.off('api-error', this.handleApiError)
     emitter.off('show-brapi-settings', this.showBrapiSettings)
     emitter.off('show-loading', this.showLoading)
+  },
+  destroyed: function () {
+    if ('wakeLock' in navigator) {
+      this.toggleWakeLock(false)
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange)
+    }
   }
 }
 

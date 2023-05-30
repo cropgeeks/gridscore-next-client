@@ -35,6 +35,8 @@
         </div>
       </b-collapse>
 
+      <b-card bg-variant="warning" border-variant="warning" class="mb-3" v-if="gridScoreVersion === 'legacy'"><b-card-text>{{ $t('pageImportLegacyWarning') }}</b-card-text></b-card>
+
       <b-button @click="checkCode" variant="primary" :disabled="buttonDisabled"><BIconSearch /> {{ $t('buttonCheckShareCode') }}</b-button>
 
       <p class="text-danger mt-3" v-if="serverError">{{ serverError }}</p>

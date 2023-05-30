@@ -365,6 +365,7 @@
   "pageImportTrialMatchTitle": "Versuchsübereinstimmung",
   "pageImportTrialMatchInfo": "Die folgende Übereinstimmung wurde gefunden basierend auf dem angegebenen Teilungscode.",
   "pageImportTrialMatchConfirm": "Soll dieser Versuch importiert werden?",
+  "pageImportLegacyWarning": "Vor dem Importieren eines Versuchs aus der veralteten GridScore Version, bitte sicherstellen, dass alle Änderungen und neuen Daten von allen Geräten synchronisiert wurden. Sobald der Versuch nach GridScore NEXT importiert wurde, können Veränderungen und Aktualisierungen nur noch von GridScore NEXT und nicht mehr der veralteten Version gemacht werden.",
   "pageExportTitle": "Versuch exportieren",
   "pageExportText": "Auf dieser Seite kann der Versuch in einer Auswahl an Formaten exportiert werden. Nutze die Reiter unten um zwischen den verschiedenen Formaten zu wechseln und folge den Anweisungen im jeweiligen Reiter um die Daten zu exportieren.",
   "pageExportTabTitleTab": "Tabellarische Daten",

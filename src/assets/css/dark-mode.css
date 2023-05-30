@@ -1,5 +1,5 @@
 .dark-mode body {
-  color: rgb(200, 195, 188);
+  color: rgb(196, 191, 183);;
   background-color: rgb(24, 26, 27);
 }
 
@@ -17,6 +17,14 @@
 
 .dark-mode .text-danger {
   color: rgb(236, 52, 59) !important;
+}
+
+.dark-mode .border-warning {
+  border-color: rgb(173, 129, 0) !important;
+}
+
+.dark-mode .bg-warning {
+  background-color: rgb(145, 108, 0) !important;
 }
 
 .dark-mode .text-muted {

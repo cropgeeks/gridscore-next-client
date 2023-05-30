@@ -385,6 +385,7 @@
   "pageImportTrialMatchTitle": "Trial match",
   "pageImportTrialMatchInfo": "The following match has been found for the share code you provided.",
   "pageImportTrialMatchConfirm": "Would you like to import this trial?",
+  "pageImportLegacyWarning": "Before you import a trial from the legacy GridScore, make sure that any changes and new data has been synchronized from all devices. Once the trial has been imported into GridScore NEXT, changes and updates can only be made from GridScore NEXT and not the legacy version.",
   "pageExportTitle": "Export a trial",
   "pageExportText": "On this page you can export your trial in a variety of formats. Use the tabs to select the export format and then follow the instructions in the respective section to export your data.",
   "pageExportTabTitleTab": "Tabulated data",

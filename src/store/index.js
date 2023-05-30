@@ -16,6 +16,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    uniqueClientId: null,
+    runCount: 0,
     serverUrl: null,
     locale: 'en_GB',
     darkMode: false,
@@ -41,6 +43,8 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    storeUniqueClientId: (state) => state.uniqueClientId,
+    storeRunCount: (state) => state.runCount,
     storeLocale: (state) => state.locale,
     storeDarkMode: (state) => state.darkMode,
     storeHideCitationMessage: (state) => state.hideCitationMessage,
@@ -59,6 +63,12 @@ export default new Vuex.Store({
     storeBrapiConfig: (state) => state.brapiConfig
   },
   mutations: {
+    ON_UNIQUE_CLIENT_ID_CHANGED: function (state, newUniqueClientId) {
+      state.uniqueClientId = newUniqueClientId
+    },
+    ON_RUN_COUNT_CHANGED_MUTATION: function (state, newRunCount) {
+      state.runCount = newRunCount
+    },
     ON_HIDDEN_TRAITS_CHANGED: function (state, newHiddenTraits) {
       state.hiddenTraits = newHiddenTraits
     },
@@ -139,6 +149,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setUniqueClientId: function ({ commit }, uniqueClientId) {
+      commit('ON_UNIQUE_CLIENT_ID_CHANGED', uniqueClientId)
+    },
+    setRunCount: function ({ commit }, runCount) {
+      commit('ON_RUN_COUNT_CHANGED_MUTATION', runCount)
+    },
     setHiddenTraits: function ({ commit }, hiddenTraits) {
       commit('ON_HIDDEN_TRAITS_CHANGED', hiddenTraits)
     },
