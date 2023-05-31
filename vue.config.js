@@ -8,7 +8,7 @@ module.exports = defineConfig({
     msTileColor: '#000000',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
-    start_url: '/index.html',
+    start_url: '/',
     workboxOptions: {
       skipWaiting: true
     }

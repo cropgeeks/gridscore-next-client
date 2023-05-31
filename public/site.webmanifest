@@ -1,7 +1,7 @@
 {
     "name": "GridScore NEXT",
     "short_name": "GridScore NEXT",
-    "start_url": "./",
+    "start_url": "/",
     "scope": ".",
     "icons": [
         {
