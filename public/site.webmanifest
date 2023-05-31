@@ -1,8 +1,8 @@
 {
     "name": "GridScore NEXT",
     "short_name": "GridScore NEXT",
-    "start_url": "./",
-    "scope": ".",
+    "start_url": "/",
+    "scope": "/",
     "icons": [
         {
             "src": "android-chrome-192x192.png",
