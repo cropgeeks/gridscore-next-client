@@ -18,8 +18,14 @@
     "shortcuts": [
       {
         "name": "Trial setup",
-        "url": "/trial-setup",
-        "description": "This is the trial setup screen of GridScore where you can create a new trial."
+        "url": "/#/trial-setup",
+        "description": "This is the trial setup screen of GridScore where you can create a new trial.",
+        "icons": [
+          {
+            "src": "/img/shortcuts/trial-setup.png",
+            "sizes": "192x192"
+          }
+        ]
       }
     ],
     "orientation": "any",
