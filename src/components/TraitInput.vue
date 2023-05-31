@@ -69,7 +69,7 @@
         <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><BIconCaretRightFill /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetDate" :disabled="!editable"><BIconSlashCircle /></b-button>
       </template>
-      <b-button v-if="trait.dataType === 'int'" @click="nudge(1)">+</b-button>
+      <b-button v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
     </b-input-group-append>
   </b-input-group>
 </template>

@@ -26,9 +26,11 @@
         <b-button @click="$emit('photo-clicked')"><BIconCameraFill /></b-button>
       </span>
     </h3>
-    <div v-if="trait.restrictions">
-      <b-badge class="mr-2" v-if="trait.restrictions.min !== undefined && trait.restrictions.min !== null">&gt; {{ trait.restrictions.min }}</b-badge>
-      <b-badge class="mr-2" v-if="trait.restrictions.max !== undefined && trait.restrictions.max !== null">&lt; {{ trait.restrictions.max }}</b-badge>
+    <div v-if="trait.restrictions || trait.timeframe">
+      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)">&gt; {{ trait.restrictions.min }}</b-badge>
+      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)">&lt; {{ trait.restrictions.max }}</b-badge>
+      <b-badge class="mr-2" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&gt; {{ trait.timeframe.start }}</b-badge>
+      <b-badge class="mr-2" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&lt; {{ trait.timeframe.end }}</b-badge>
     </div>
     <p class="text-muted trait-description" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
@@ -42,7 +44,7 @@
       <TraitInput :editable="editable" :trait="trait" :id="`trait-input-${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
 
-    <TraitDataHistoryModal :row="cell.row" :column="cell.column" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
+    <TraitDataHistoryModal :editable="editable" :row="cell.row" :column="cell.column" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
   </section>
 </template>
 

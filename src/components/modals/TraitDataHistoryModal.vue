@@ -30,7 +30,7 @@
                         v-for="index in (trait.setSize || 1)"
                         :key="`${trait.id}-${index}`"
                         :label-for="`history-${tvIndex}-${trait.id}-${index}`">
-            <TraitInput :editable="true"
+            <TraitInput :editable="editable"
                         :trait="trait"
                         :currentValue="dataForDate[tvIndex].values[index - 1]"
                         :id="`history-${tvIndex}-${trait.id}-${index}`"
@@ -80,6 +80,10 @@ export default {
     trait: {
       type: Object,
       default: () => null
+    },
+    editable: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {

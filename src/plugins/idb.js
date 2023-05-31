@@ -1,6 +1,7 @@
 import { openDB } from 'idb'
 import { getId } from '@/plugins/id'
 import store from '@/store'
+import { TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
 
 let db
 
@@ -67,6 +68,31 @@ const getTrials = async () => {
               trial.traits.forEach((t, i) => {
                 t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
                 t.progress = 0
+                t.editable = true
+                if (t.timeframe && t.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE) {
+                  const now = new Date().toISOString()
+                  if (t.timeframe.start) {
+                    const date = new Date(t.timeframe.start)
+                    date.setHours(0)
+                    date.setMinutes(0)
+                    date.setSeconds(0)
+
+                    if (now < date.toISOString()) {
+                      t.editable = false
+                    }
+                  }
+
+                  if (t.timeframe.end) {
+                    const date = new Date(t.timeframe.end)
+                    date.setHours(23)
+                    date.setMinutes(59)
+                    date.setSeconds(59)
+
+                    if (now > date.toISOString()) {
+                      t.editable = false
+                    }
+                  }
+                }
               })
             }
 
@@ -145,6 +171,31 @@ const getTrialById = async (localId) => {
           trial.traits.forEach((t, i) => {
             t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
             t.progress = 0
+            t.editable = true
+            if (t.timeframe && t.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE) {
+              const now = new Date().toISOString()
+              if (t.timeframe.start) {
+                const date = new Date(t.timeframe.start)
+                date.setHours(0)
+                date.setMinutes(0)
+                date.setSeconds(0)
+
+                if (now < date.toISOString()) {
+                  t.editable = false
+                }
+              }
+
+              if (t.timeframe.end) {
+                const date = new Date(t.timeframe.end)
+                date.setHours(23)
+                date.setMinutes(59)
+                date.setSeconds(59)
+
+                if (now > date.toISOString()) {
+                  t.editable = false
+                }
+              }
+            }
           })
         }
 
