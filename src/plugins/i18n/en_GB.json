@@ -293,6 +293,7 @@
   "modalTextTrialDuplicate": "Here you can duplicate an existing trial. This duplicate will have the same layout and the same traits as the original. Depending on the configuration below, recorded data points can also be copied across. Please note, that any sharing codes will not be transferred to the copy, so you have to share the trial with others again using a new code.",
   "modalTextTrialDuplicateOfName": "Copy of: {original}",
   "modalTextTrialDuplicateOfDate": "Copy created on: {date}",
+  "modalTextLoading": "Loading...",
   "pageAboutChangelog": "View Changelog Information",
   "pageAboutVersion": "Version {version}",
   "pageAboutGitHubLink": "The source code of GridScore is available on <a href='https://github.com/cropgeeks/gridscore/'>GitHub</a>.",

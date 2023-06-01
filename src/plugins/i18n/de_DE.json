@@ -273,6 +273,7 @@
   "modalTextTrialDuplicate": "Hier kann ein Duplikat eines existierenden Versuchs erstellt werden. Dieses Duplikat wird die gleiche Anordnung und die gleichen Merkmale benutzen. Basierend auf der Konfiguration unten können auch die aufgezeichneten Daten kopiert werden. Bitte beachten, dass die Teilungs-QR-Codes nicht zur Kopie übertragen werden und somit der Versuch erneut geteilt werden muss.",
   "modalTextTrialDuplicateOfName": "Kopie von: {original}",
   "modalTextTrialDuplicateOfDate": "Kopie erstellt am: {date}",
+  "modalTextLoading": "Lade...",
   "pageAboutChangelog": "Changelog-Information anzeigen",
   "pageAboutVersion": "Version {version}",
   "pageAboutDocumentationLink": "Eine detaillierte Anleitung für GridScore und wie man es benutzt ist auf der <a href='https://cropgeeks.github.io/gridscore'>Dokumentationsseite<a/> verfügbar.",
