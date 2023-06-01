@@ -40,15 +40,8 @@ const getDb = async () => {
             data.createIndex('comments', 'comments', { unique: false })
             data.createIndex('isMarked', 'isMarked', { unique: false })
 
-            transactions = db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true })
-            transactions.createIndex('trialId', 'trialId', { unique: false })
-            transactions.createIndex('row', 'row', { unique: false })
-            transactions.createIndex('column', 'column', { unique: false })
-            transactions.createIndex('operation', 'operation', { unique: false })
-            transactions.createIndex('trialId-operation-row-column', ['trialId', 'operation', 'row', 'column'], { unique: false })
-            transactions.createIndex('trialId-operation-timestamp', ['trialId', 'operation', 'timestamp'], { unique: false })
+            transactions = db.createObjectStore('transactions', { keyPath: 'trialId', autoIncrement: false })
             transactions.createIndex('content', 'content', { unique: false })
-            transactions.createIndex('timestamp', 'timestamp', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -109,9 +102,21 @@ const getTrials = async () => {
     })
 
   return Promise.all(trials.map(t => {
-    return db.countFromIndex('transactions', 'trialId', t.localId)
-      .then(count => {
-        t.transactionCount = count
+    return db.get('transactions', t.localId)
+      .then(transaction => {
+        t.transactionCount = 0
+        if (transaction) {
+          // Sum up all individual transaction types
+          t.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+          t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+          t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+          t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
+          t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
+          t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
+          t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
+          t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
+        }
+
         return t
       })
   }))
@@ -213,22 +218,34 @@ const getTrialById = async (localId) => {
       return trial
     })
 
-  return db.countFromIndex('transactions', 'trialId', trial.localId)
-    .then(count => {
-      trial.transactionCount = count
+  return db.get('transactions', trial.localId)
+    .then(transaction => {
+      trial.transactionCount = 0
+      if (transaction) {
+        // Sum up all individual transaction types
+        trial.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+        trial.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+        trial.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+        trial.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
+        trial.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
+        trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
+        trial.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
+        trial.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
+      }
+
       return trial
     })
 }
 
-const getTransactionsForTrial = async (localId) => {
+const getTransactionForTrial = async (localId) => {
   const db = await getDb()
 
   const trial = await getTrialById(localId)
 
   if (trial) {
-    return db.getAllFromIndex('transactions', 'trialId', localId)
+    return db.get('transactions', localId)
   } else {
-    return new Promise(resolve => resolve([]))
+    return new Promise(resolve => resolve(null))
   }
 }
 
@@ -308,86 +325,57 @@ const changeTrialsData = async (trialId, row, column, data) => {
         traitMap[t.id] = t
       })
 
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-row-column').openCursor([trialId, 'TRAIT_DATA_CHANGED', row, column])
-      // Find ones that already have transactions, then update
-      while (cursor && data.length > 0) {
-        const content = cursor.value.content
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-        // For all measurements in this old transaction
-        let changed = false
-        for (const [mIndex, m] of content.measurements.entries()) {
-          // Check if any of the new measurements are for the same trait
-          const same = data.map(sm => {
-            const sameTrait = sm.traitId === m.traitId
+      // Create an array if it doesn't exist already
+      if (!transaction.plotTraitDataChangeTransactions[`${row}|${column}`]) {
+        transaction.plotTraitDataChangeTransactions[`${row}|${column}`] = []
+      }
 
-            if (traitMap[m.traitId].allowRepeats) {
-              return sameTrait && sm.timestamp === m.timestamp
+      // Get all trait data transactions for this plot
+      const cellDataTs = transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+
+      if (cellDataTs.length > 0) {
+        // For each new data change
+        data.forEach(d => {
+          // Check if there's an old transaction for that trait
+
+          const trait = traitMap[d.traitId]
+
+          const match = cellDataTs.find(od => {
+            if (trait.allowRepeats) {
+              return od.traitId === d.traitId && od.timestamp === d.timestamp
             } else {
-              return sameTrait
+              return od.traitId === d.traitId
             }
           })
 
-          for (const [index, b] of same.entries()) {
-            // If some are, update the old measurement with the new one
-            if (b) {
-              if (!traitMap[m.traitId].allowRepeats) {
-                if (data[index].delete && !m.delete) {
-                  // If the old one isn't a delete, but the new one is, just add the delete flag
-                  m.delete = true
-                } else if (!data[index].delete && m.delete) {
-                  // If the old one is a delete, but the new one isn't, remove the delete flag
-                  delete m.delete
-                }
-                // In any case, update the values and timestamp
-                m.values = data[index].values
-                m.timestamp = data[index].timestamp
-              } else {
-                if (data[index].delete) {
-                  content.measurements[mIndex] = null
-                } else {
-                  m.values = data[index].values
-                  m.timestamp = data[index].timestamp
-                }
-              }
-              changed = true
-            }
-          }
-
-          // Remove all the ones that have been updated
-          data = data.filter((m, i) => !same[i])
-        }
-
-        // Remove empty ones. These are ones that have been deleted in the previous process
-        content.measurements = content.measurements.filter(m => m !== null)
-
-        if (changed) {
-          if (content.measurements.length < 1) {
-            await cursor.delete()
+          if (!match) {
+            cellDataTs.push(d)
           } else {
-            // Write them back
-            await cursor.update(cursor.value)
+            if (match.delete && !d.delete) {
+              // If the old one is a delete, but the new one isn't, remove the delete flag
+              delete match.delete
+            } else if (!match.delete && d.delete) {
+              // If the old one isn't a delete, but the new one is, set the delete flag
+              match.delete = true
+            }
+
+            // In any case, update the values and timestamp
+            match.values = d.values
+            match.timestamp = d.timestamp
           }
-        }
-
-        cursor = await cursor.continue()
+        })
+      } else {
+        // Simply add them all as new items
+        transaction.plotTraitDataChangeTransactions[`${row}|${column}`].push(...data)
       }
 
-      if (data.length > 0) {
-        const transaction = {
-          trialId: trialId,
-          operation: 'TRAIT_DATA_CHANGED',
-          row: row,
-          column: column,
-          content: {
-            row: row,
-            column: column,
-            measurements: data
-          },
-          timestamp: new Date().toISOString()
-        }
-
-        await db.put('transactions', transaction)
+      if (transaction.plotTraitDataChangeTransactions[`${row}|${column}`].length < 1) {
+        delete transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
       }
+
+      await db.put('transactions', transaction)
     }
 
     return db.put('data', cell)
@@ -408,15 +396,7 @@ const deleteTrial = async (localId) => {
         return db.delete('data', range)
       })
       .then(() => {
-        db.transaction('transactions', 'readwrite').store.index('trialId').openCursor(IDBKeyRange.only(localId))
-          .then(async (cursor) => {
-            while (cursor) {
-              cursor.delete()
-              cursor = await cursor.continue()
-            }
-          })
-
-        return new Promise(resolve => resolve())
+        return db.delete('transactions', localId)
       })
   } else {
     return new Promise(resolve => resolve())
@@ -521,6 +501,20 @@ const getTrialData = async (trialId) => {
   }
 }
 
+const getEmptyTransaction = (trialId) => {
+  return {
+    trialId: trialId,
+    plotCommentAddedTransactions: {},
+    plotCommentDeletedTransactions: {},
+    plotMarkedTransactions: {},
+    plotTraitDataChangeTransactions: {},
+    trialCommentAddedTransactions: [],
+    trialCommentDeletedTransactions: [],
+    trialGermplasmAddedTransactions: [],
+    trialTraitAddedTransactions: []
+  }
+}
+
 const deleteTrialComment = async (trialId, comment) => {
   const trial = await getTrialById(trialId)
 
@@ -530,28 +524,20 @@ const deleteTrialComment = async (trialId, comment) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor([trialId, 'TRIAL_COMMENT_ADDED', comment.timestamp])
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-      let matchFound = false
-      while (cursor) {
-        if (cursor.value.content.content === comment.content) {
-          cursor.delete()
-          matchFound = true
-          break
-        }
-        cursor = await cursor.continue()
+      const match = transaction.trialCommentAddedTransactions.findIndex(c => c.content === comment.content && c.timestamp === comment.timestamp)
+
+      if (match === -1) {
+        // No match, add a new DELETE transaction
+        transaction.trialCommentDeletedTransactions.push(comment)
+      } else {
+        // Remove the match
+        transaction.trialCommentAddedTransactions.splice(match, 1)
       }
 
-      if (!matchFound) {
-        const transaction = {
-          trialId: trial.localId,
-          operation: 'TRIAL_COMMENT_DELETED',
-          content: comment,
-          timestamp: new Date().toISOString()
-        }
-
-        await db.put('transactions', transaction)
-      }
+      // Store it back
+      await db.put('transactions', transaction)
     }
 
     return db.put('trials', trial)
@@ -567,13 +553,12 @@ const addTrialGermplasm = async (trialId, germplasm) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      const transaction = {
-        trialId: trialId,
-        operation: 'TRIAL_GERMPLASM_ADDED',
-        content: germplasm,
-        timestamp: new Date().toISOString()
-      }
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
+      // Add the new ones
+      transaction.trialGermplasmAddedTransactions.push(...germplasm)
+
+      // Store it back
       await db.put('transactions', transaction)
     }
 
@@ -621,12 +606,9 @@ const addTrialTraits = async (trialId, traits) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      const transaction = {
-        trialId: trialId,
-        operation: 'TRIAL_TRAITS_ADDED',
-        content: traits,
-        timestamp: new Date().toISOString()
-      }
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialTraitAddedTransactions.push(...traits)
 
       await db.put('transactions', transaction)
     }
@@ -678,12 +660,9 @@ const addTrialComment = async (trialId, commentContent) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      const transaction = {
-        trialId: trialId,
-        operation: 'TRIAL_COMMENT_ADDED',
-        content: newComment,
-        timestamp: newComment.timestamp
-      }
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialCommentAddedTransactions.push(newComment)
 
       await db.put('transactions', transaction)
     }
@@ -708,32 +687,17 @@ const setPlotMarked = async (trialId, row, column, isMarked) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor(IDBKeyRange.bound([trialId, 'PLOT_MARKED_CHANGED', '1990-01-01T00:00:00.000Z'], [trialId, 'PLOT_MARKED_CHANGED', '2999-12-31T23:59:59.999Z']))
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-      let matchFound = false
-      while (cursor) {
-        // Search for any match based on row and column, because this is a boolean flag
-        if (cursor.value.content.row === row && cursor.value.content.column === column) {
-          cursor.delete()
-          matchFound = true
-        }
-        cursor = await cursor.continue()
+      if (transaction.plotMarkedTransactions[`${row}|${column}`] !== undefined && transaction.plotMarkedTransactions[`${row}|${column}`] !== null && transaction.plotMarkedTransactions[`${row}|${column}`] !== isMarked) {
+        // If there is a marking value and it's not the same as the new one, they cancel each other out, so remove the transaction item
+        delete transaction.plotMarkedTransactions[`${row}|${column}`]
+      } else {
+        // Else, there isn't a value OR it's the same, so just set it again
+        transaction.plotMarkedTransactions[`${row}|${column}`] = isMarked
       }
 
-      if (!matchFound) {
-        const transaction = {
-          trialId: trialId,
-          operation: 'PLOT_MARKED_CHANGED',
-          content: {
-            row: cell.row,
-            column: cell.column,
-            isMarked: isMarked
-          },
-          timestamp: cell.updatedOn
-        }
-
-        await db.put('transactions', transaction)
-      }
+      await db.put('transactions', transaction)
     }
 
     return db.put('data', cell)
@@ -750,31 +714,39 @@ const deletePlotComment = async (trialId, row, column, comment) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      const copy = JSON.parse(JSON.stringify(comment))
-      copy.row = row
-      copy.column = column
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-      let cursor = await db.transaction('transactions', 'readwrite').store.index('trialId-operation-timestamp').openCursor([trialId, 'PLOT_COMMENT_ADDED', comment.timestamp])
+      const tAdd = transaction.plotCommentAddedTransactions[`${row}|${column}`]
 
-      let matchFound = false
-      while (cursor) {
-        if (cursor.value.content.content === comment.content) {
-          cursor.delete()
-          matchFound = true
+      if (tAdd) {
+        // There are add transactions, so search them
+        const match = tAdd.findIndex(c => c.content === comment.content && c.timestamp === comment.timestamp)
+
+        if (match === -1) {
+          // No match, add a new DELETE transaction
+          if (!transaction.plotCommentDeletedTransactions[`${row}|${column}`]) {
+            transaction.plotCommentDeletedTransactions[`${row}|${column}`] = []
+          }
+
+          transaction.plotCommentDeletedTransactions[`${row}|${column}`].push(comment)
+        } else {
+          // Remove the match
+          tAdd.splice(match, 1)
         }
-        cursor = await cursor.continue()
+      } else {
+        // There aren't any add transactions, so immediately add a delete transaction
+        if (!transaction.plotCommentDeletedTransactions[`${row}|${column}`]) {
+          transaction.plotCommentDeletedTransactions[`${row}|${column}`] = []
+        }
+
+        transaction.plotCommentDeletedTransactions[`${row}|${column}`].push(comment)
       }
 
-      if (!matchFound) {
-        const transaction = {
-          trialId: trialId,
-          operation: 'PLOT_COMMENT_DELETED',
-          content: copy,
-          timestamp: new Date().toISOString()
-        }
-
-        await db.put('transactions', transaction)
+      if (transaction.plotCommentAddedTransactions[`${row}|${column}`].length < 1) {
+        delete transaction.plotCommentAddedTransactions[`${row}|${column}`]
       }
+
+      await db.put('transactions', transaction)
     }
 
     return db.put('data', cell)
@@ -802,16 +774,13 @@ const addPlotComment = async (trialId, row, column, commentContent) => {
     const db = await getDb()
 
     if (logTransactions(trial)) {
-      const copy = JSON.parse(JSON.stringify(newComment))
-      copy.row = row
-      copy.column = column
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-      const transaction = {
-        trialId: trialId,
-        operation: 'PLOT_COMMENT_ADDED',
-        content: copy,
-        timestamp: newComment.timestamp
+      if (!transaction.plotCommentAddedTransactions[`${row}|${column}`]) {
+        transaction.plotCommentAddedTransactions[`${row}|${column}`] = []
       }
+
+      transaction.plotCommentAddedTransactions[`${row}|${column}`].push(newComment)
 
       await db.put('transactions', transaction)
     }
@@ -846,7 +815,7 @@ export {
   updateTrial,
   updateTrialBrapiConfig,
   addTrialTraits,
-  getTransactionsForTrial,
+  getTransactionForTrial,
   changeTrialsData,
   getTrialValidPlots,
   addTrialGermplasm

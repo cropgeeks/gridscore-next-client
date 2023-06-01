@@ -38,8 +38,8 @@
           </b-form-group>
         </section>
       </div>
-      <b-button class="mt-2" @click="toggleDelete" variant="danger" v-if="toDelete[currentDateIndex]"><BIconTrashFill /> {{ $t('buttonUndeleteTimepointData') }}</b-button>
-      <b-button class="mt-2" @click="toggleDelete" variant="outline-danger" v-else><BIconTrash /> {{ $t('buttonDeleteTimepointData') }}</b-button>
+      <b-button class="mt-2" @click="toggleDelete" variant="danger" :disabled="!trial.editable" v-if="toDelete[currentDateIndex]"><BIconTrashFill /> {{ $t('buttonUndeleteTimepointData') }}</b-button>
+      <b-button class="mt-2" @click="toggleDelete" variant="outline-danger" :disabled="!trial.editable" v-else><BIconTrash /> {{ $t('buttonDeleteTimepointData') }}</b-button>
     </div>
   </b-modal>
 </template>

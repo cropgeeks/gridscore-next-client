@@ -8,51 +8,106 @@
            ref="trialSynchronizationModal">
     <div v-if="trial">
       <p>{{ $t('modalTextTrialSynchronization') }}</p>
-      <div v-if="transactions && transactions.length > 0">
-        <h4><strong>{{ $tc('modalTextTrialSynchronizationCount', transactions.length) }}</strong></h4>
+      <div v-if="transaction">
+        <h4><strong>{{ $tc('modalTextTrialSynchronizationCount', trial.transactionCount) }}</strong></h4>
 
         <b-list-group>
-          <b-list-group-item v-for="tr in visibleTransactions" :key="`transaction-${tr.timestamp}`">
-            <template v-if="tr.operation === 'TRIAL_TRAITS_ADDED'">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
-                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
-              </div>
+          <!-- TRAITS ADDED -->
+          <b-list-group-item v-if="transaction.trialTraitAddedTransactions && transaction.trialTraitAddedTransactions.length > 0">
+            <h5 class="mb-1"><BIconTags /> {{ $t('transactionTypeTraitsAdded') }}</h5>
 
-              <p class="mb-1">
-                <TraitHeading :trait="trait" v-for="trait in tr.content" :key="`trait-${trait.id}`" />
-              </p>
-            </template>
-            <template v-if="tr.operation === 'TRIAL_GERMPLASM_ADDED'">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
-                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
-              </div>
+            <p class="mb-1">
+              <TraitHeading :trait="trait" v-for="trait in transaction.trialTraitAddedTransactions" :key="`trait-${trait.id}`" />
+            </p>
+          </b-list-group-item>
 
-              <p class="mb-1">
-                {{ tr.content.join(', ') }}
-              </p>
-            </template>
-            <template v-if="tr.operation === 'TRAIT_DATA_CHANGED'">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
-                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
-              </div>
+          <!-- GERMPLASM ADDED -->
+          <b-list-group-item v-if="transaction.trialGermplasmAddedTransactions && transaction.trialGermplasmAddedTransactions.length > 0">
+            <h5 class="mb-1"><BIconNodePlus :rotate="270" /> {{ $t('transactionTypeGermplasmAdded') }}</h5>
 
-              <p class="mb-1">
-                {{ $tc('modalTextTrialSynchronizationMeasurementCount', tr.content.measurements.length) }}
-              </p>
-            </template>
-            <template v-if="tr.operation === 'PLOT_COMMENT_ADDED' || tr.operation === 'PLOT_COMMENT_DELETED' || tr.operation === 'TRIAL_COMMENT_ADDED' || tr.operation === 'TRIAL_COMMENT_DELETED' || tr.operation === 'PLOT_MARKED_CHANGED'">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ $t(TRANSACTION_TYPES[tr.operation]) }}</h5>
-                <small>{{ new Date(tr.timestamp).toLocaleString() }}</small>
-              </div>
-            </template>
+            <p class="mb-1">
+              {{ transaction.trialGermplasmAddedTransactions.join(', ') }}
+            </p>
+          </b-list-group-item>
+
+          <!-- PLOT COMMENT ADDED -->
+          <b-list-group-item v-if="transaction.plotCommentAddedTransactions && Object.keys(transaction.plotCommentAddedTransactions).length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconChatLeft stacked />
+                <BIconPlus stacked :scale="0.7" :shift-v="2" />
+              </BIconstack> {{ $t('transactionTypePlotCommentAdded') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypePlotCommentAddedCount', Object.keys(transaction.plotCommentAddedTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
+          <!-- PLOT COMMENT DELETED -->
+          <b-list-group-item v-if="transaction.plotCommentDeletedTransactions && Object.keys(transaction.plotCommentDeletedTransactions).length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconChatLeft stacked />
+                <BIconDash stacked :scale="0.7" :shift-v="2" />
+              </BIconstack> {{ $t('transactionTypePlotCommentDeleted') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypePlotCommentDeletedCount', Object.keys(transaction.plotCommentDeletedTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
+          <!-- PLOT TRAIT DATA CHANGED -->
+          <b-list-group-item v-if="transaction.plotTraitDataChangeTransactions && Object.keys(transaction.plotTraitDataChangeTransactions).length > 0">
+            <h5 class="mb-1">
+              <BIconUiChecksGrid /> {{ $t('transactionTypeTraitDataChanged') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypeTraitDataChangedCount', Object.keys(transaction.plotTraitDataChangeTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
+          <!-- PLOT MARKED CHANGED -->
+          <b-list-group-item v-if="transaction.plotMarkedTransactions && Object.keys(transaction.plotMarkedTransactions).length > 0">
+            <h5 class="mb-1">
+              <BIconBookmarkStar /> {{ $t('transactionTypePlotMarkedChanged') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypePlotMarkedChangedCount', Object.keys(transaction.plotMarkedTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
+          <!-- TRIAL COMMENT ADDED -->
+          <b-list-group-item v-if="transaction.trialCommentAddedTransactions && transaction.trialCommentAddedTransactions.length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconChatLeft stacked />
+                <BIconPlus stacked :scale="0.7" :shift-v="2" />
+              </BIconstack> {{ $t('transactionTypeTrialCommentAdded') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypeTrialCommentAddedCount', Object.keys(transaction.trialCommentAddedTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
+          <!-- TRIAL COMMENT DELETED -->
+          <b-list-group-item v-if="transaction.trialCommentDeletedTransactions && transaction.trialCommentDeletedTransactions.length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconChatLeft stacked />
+                <BIconDash stacked :scale="0.7" :shift-v="2" />
+              </BIconstack> {{ $t('transactionTypeTrialCommentDeleted') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypeTrialCommentDeletedCount', Object.keys(transaction.trialCommentDeletedTransactions).length) }}
+            </p>
           </b-list-group-item>
         </b-list-group>
-
-        <b-pagination :per-page="perPage" :total-rows="totalCount" v-model="page" v-if="totalCount > perPage" />
       </div>
       <div v-else>
         <p v-html="$t('modalTextTrialSynchronizationNoData')" />
@@ -64,14 +119,23 @@
 <script>
 import TraitHeading from '@/components/TraitHeading'
 
-import { addTrial, deleteTrial, getTransactionsForTrial } from '@/plugins/idb'
-import { TRANSACTION_TYPES } from '@/plugins/constants'
+import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
 import { synchronizeTrial } from '@/plugins/api'
+
+import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconTags, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
+    BIconChatLeft,
+    BIconUiChecksGrid,
+    BIconstack,
+    BIconPlus,
+    BIconDash,
+    BIconTags,
+    BIconNodePlus,
+    BIconBookmarkStar,
     TraitHeading
   },
   props: {
@@ -82,22 +146,7 @@ export default {
   },
   data: function () {
     return {
-      TRANSACTION_TYPES,
-      transactions: [],
-      page: 1,
-      perPage: 5
-    }
-  },
-  computed: {
-    totalCount: function () {
-      if (this.transactions) {
-        return this.transactions.length
-      } else {
-        return 0
-      }
-    },
-    visibleTransactions: function () {
-      return this.transactions.slice((this.page - 1) * this.perPage, this.page * this.perPage)
+      transaction: null
     }
   },
   methods: {
@@ -111,11 +160,11 @@ export default {
         .then(value => {
           if (value) {
             emitter.emit('show-loading', true)
-            synchronizeTrial(this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transactions)
+            synchronizeTrial(this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
               .then(result => {
                 result.localId = this.trial.localId
 
-                deleteTrial(this.trial.localId)
+                return deleteTrial(this.trial.localId)
                   .then(() => {
                     return addTrial(result)
                   })
@@ -123,7 +172,7 @@ export default {
                     this.$store.dispatch('setSelectedTrial', localId)
                     emitter.emit('trials-updated')
                     emitter.emit('show-loading', false)
-                    emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.transactions.length } })
+                    emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })
                   })
                   .finally(() => {
                     emitter.emit('show-loading', false)
@@ -139,10 +188,9 @@ export default {
      * Shows and resets modal dialog
      */
     show: function () {
-      getTransactionsForTrial(this.trial.localId)
-        .then(transactions => {
-          transactions.sort((a, b) => b.timestamp.localeCompare(a.timestamp))
-          this.transactions = transactions
+      getTransactionForTrial(this.trial.localId)
+        .then(transaction => {
+          this.transaction = transaction
         })
 
       this.$refs.trialSynchronizationModal.show()
@@ -151,7 +199,7 @@ export default {
      * Hides the modal dialog
      */
     hide: function () {
-      this.transactions = []
+      this.transaction = null
       this.$nextTick(() => this.$refs.trialSynchronizationModal.hide())
     }
   }

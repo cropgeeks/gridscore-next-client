@@ -33,7 +33,7 @@ export default {
     ]),
     cols: function () {
       if (this.trial) {
-        if (this.repCount > 1 && this.repCount < 16 && this.trial.layout.columns < 16) {
+        if (this.repCount > 0 && this.repCount < 16 && this.trial.layout.columns < 16) {
           return 6
         } else {
           return 12

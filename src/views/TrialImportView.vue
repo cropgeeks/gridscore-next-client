@@ -53,7 +53,7 @@
              size="md"
              ref="confirmationModal">
       <p class="text-info">{{ $t('pageImportTrialMatchInfo') }}</p>
-      <TrialInformation :showComments="false" :trial="trial" />
+      <TrialInformation :showComments="false" :trial="trial" class="border" />
       <p class="text-info">{{ $t('pageImportTrialMatchConfirm') }}</p>
     </b-modal>
   </b-container>

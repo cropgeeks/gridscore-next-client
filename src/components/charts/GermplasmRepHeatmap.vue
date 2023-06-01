@@ -1,5 +1,5 @@
 <template>
-  <div v-if="trial && reps && reps.length > 0">
+  <div v-if="trial && reps && reps.length > 1">
     <h2>{{ $t('pageVisualizationGermplasmRepHeatmapTitle') }}</h2>
     <p>{{ $t('pageVisualizationGermplasmRepHeatmapText') }}</p>
 
@@ -244,7 +244,7 @@ export default {
         }
 
         const traces = [{
-          x: this.reps,
+          x: this.reps.map((r, i) => i),
           // Y Values are the row indices
           y: Array.from(Array(this.allGermplasm.length).keys()).map(i => i + 1),
           z: z,
@@ -293,8 +293,9 @@ export default {
           xaxis: {
             showgrid: false,
             tickmode: 'array',
-            tickvals: this.reps.map(i => i + 1),
-            ticktext: this.reps,
+            zeroline: false,
+            tickvals: this.reps.map((r, i) => i),
+            ticktext: this.reps.map(r => r || this.$t('widgetChartNoRep')),
             title: { text: this.$t('widgetChartHeatmapAxisTitleRep'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
           },
@@ -307,6 +308,8 @@ export default {
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
           }
         }
+
+        console.log(layout, traces)
 
         const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
         Plotly.newPlot(this.$refs.heatmapRepCompareChart, traces, layout, {
@@ -323,18 +326,10 @@ export default {
       this.trialData = getTrialDataCached()
 
       if (this.trialData) {
-        const germplasm = new Map()
         const germplasmMap = {}
         const reps = new Set()
-        Object.keys(this.trialData).forEach(k => {
-          const cell = this.trialData[k]
-          if (germplasm.has(cell.germplasm)) {
-            const increased = germplasm.get(cell.germplasm) + 1
-            germplasm.set(cell.germplasm, increased)
-            reps.add(cell.rep)
-          } else {
-            germplasm.set(cell.germplasm, 1)
-          }
+        Object.values(this.trialData).forEach(cell => {
+          reps.add(cell.rep)
 
           if (!germplasmMap[cell.germplasm]) {
             germplasmMap[cell.germplasm] = []
@@ -347,12 +342,11 @@ export default {
           })
         })
 
-        reps.delete(null)
-        this.reps = [...reps].sort((a, b) => a.localeCompare(b))
-        this.allGermplasm = [...germplasm.keys()].sort((a, b) => a.localeCompare(b))
+        this.reps = [...reps].sort((a, b) => a ? a.localeCompare(b) : -1)
+        this.allGermplasm = [...Object.keys(germplasmMap)].sort((a, b) => a.localeCompare(b))
         this.germplasmMap = germplasmMap
 
-        this.$emit('rep-count-changed', this.reps.length)
+        this.$emit('rep-count-changed', this.reps.filter(r => r !== undefined && r !== null).length)
       }
     }
   },
