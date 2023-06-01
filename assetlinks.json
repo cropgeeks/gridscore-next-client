@@ -1,6 +1,6 @@
 [{
         "relation": ["delegate_permission/common.handle_all_urls"],
         "target" : { "namespace": "android_app", "package_name": "uk.ac.hutton.gridscore",
-                     "sha256_cert_fingerprints": ["F8:BE:51:E7:48:18:73:15:5B:97:06:B2:FC:EF:F9:AF:7A:B9:C6:C7:6F:C5:AE:CD:59:FB:FB:9B:45:2F:73:01"] }
+                     "sha256_cert_fingerprints": ["D6:36:02:19:D9:86:DA:39:C9:B1:A6:C3:6B:3C:73:0F:EE:47:8E:E9:D5:43:AB:DF:3B:E2:04:DB:CB:A8:A9:77"] }
       }
 ]
