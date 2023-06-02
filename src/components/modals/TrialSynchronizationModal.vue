@@ -12,6 +12,12 @@
         <h4><strong>{{ $tc('modalTextTrialSynchronizationCount', trial.transactionCount) }}</strong></h4>
 
         <b-list-group>
+          <!-- TRIAL EDIT -->
+          <b-list-group-item v-if="transaction.trialEditTransaction">
+            <h5 class="mb-1"><BIconPencilSquare /> {{ $t('transactionTypeTrialModified') }}</h5>
+
+            <p class="mb-1">{{ $t('transactionTypeTrialModifiedText') }}</p>
+          </b-list-group-item>
           <!-- TRAITS ADDED -->
           <b-list-group-item v-if="transaction.trialTraitAddedTransactions && transaction.trialTraitAddedTransactions.length > 0">
             <h5 class="mb-1"><BIconTags /> {{ $t('transactionTypeTraitsAdded') }}</h5>
@@ -122,7 +128,7 @@ import TraitHeading from '@/components/TraitHeading'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
 import { synchronizeTrial } from '@/plugins/api'
 
-import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconTags, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
+import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -133,6 +139,7 @@ export default {
     BIconstack,
     BIconPlus,
     BIconDash,
+    BIconPencilSquare,
     BIconTags,
     BIconNodePlus,
     BIconBookmarkStar,

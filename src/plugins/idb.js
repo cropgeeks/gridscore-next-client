@@ -1,7 +1,8 @@
 import { openDB } from 'idb'
 import { getId } from '@/plugins/id'
 import store from '@/store'
-import { TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
+import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
+import { trialLayoutToPlots } from './location'
 
 let db
 
@@ -90,9 +91,22 @@ const getTrials = async () => {
             }
 
             if (trial.shareCodes) {
-              trial.editable = (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) || (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null)
+              if (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) {
+                trial.editable = true
+                trial.shareStatus = TRIAL_STATE_OWNER
+              } else if (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null) {
+                trial.editable = true
+                trial.shareStatus = TRIAL_STATE_EDITOR
+              } else if (trial.shareCodes.viewerCode !== undefined && trial.shareCodes.viewerCode !== null) {
+                trial.editable = false
+                trial.shareStatus = TRIAL_STATE_VIEWER
+              } else {
+                trial.editable = false
+                trial.shareStatus = TRIAL_STATE_NOT_SHARED
+              }
             } else {
               trial.editable = true
+              trial.shareStatus = TRIAL_STATE_NOT_SHARED
             }
           }
         })
@@ -115,6 +129,7 @@ const getTrials = async () => {
           t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
           t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
           t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
+          t.transactionCount += transaction.trialEditTransaction ? 1 : 0
         }
 
         return t
@@ -128,6 +143,66 @@ const updateTrial = async (localId, updatedTrial) => {
   if (trial) {
     const db = await getDb()
     return db.put('trials', updatedTrial)
+  } else {
+    return new Promise(resolve => resolve())
+  }
+}
+
+const updateTrialProperties = async (localId, updates) => {
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    const db = await getDb()
+
+    const plotCorners = updates.corners ? trialLayoutToPlots(updates.corners, trial.layout.rows, trial.layout.columns) : null
+
+    trial.name = updates.name
+    trial.description = updates.description
+    trial.layout.markers = updates.markers
+    trial.layout.corners = updates.corners
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
+      transaction.trialEditTransaction = updates
+
+      if (plotCorners) {
+        const mapping = {}
+
+        for (let row = 0; row < trial.layout.rows; row++) {
+          for (let column = 0; column < trial.layout.columns; column++) {
+            mapping[`${row}|${column}`] = plotCorners[row][column]
+          }
+        }
+
+        transaction.trialEditTransaction.plotCorners = mapping
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    await db.put('trials', trial)
+
+    // Get all data items belonging to this trial so we can update the plot corners
+    let cursor = await db.transaction('data', 'readwrite').store.openCursor(IDBKeyRange.bound([trial.localId, 0, 0], [trial.localId, trial.layout.rows, trial.layout.columns]))
+
+    while (cursor) {
+      const cell = cursor.value
+
+      if (cell) {
+        if (plotCorners) {
+          cell.geography.corners = plotCorners[cell.row][cell.column]
+        } else {
+          delete cell.geography.corners
+        }
+
+        // Write it back to the database
+        await cursor.update(cell)
+      }
+
+      cursor = await cursor.continue()
+    }
+
+    return new Promise(resolve => resolve(trial))
   } else {
     return new Promise(resolve => resolve())
   }
@@ -205,9 +280,22 @@ const getTrialById = async (localId) => {
         }
 
         if (trial.shareCodes) {
-          trial.editable = (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) || (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null)
+          if (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) {
+            trial.editable = true
+            trial.shareStatus = TRIAL_STATE_OWNER
+          } else if (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null) {
+            trial.editable = true
+            trial.shareStatus = TRIAL_STATE_EDITOR
+          } else if (trial.shareCodes.viewerCode !== undefined && trial.shareCodes.viewerCode !== null) {
+            trial.editable = false
+            trial.shareStatus = TRIAL_STATE_VIEWER
+          } else {
+            trial.editable = false
+            trial.shareStatus = TRIAL_STATE_NOT_SHARED
+          }
         } else {
           trial.editable = true
+          trial.shareStatus = TRIAL_STATE_NOT_SHARED
         }
       }
 
@@ -231,6 +319,7 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
         trial.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
         trial.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
+        trial.transactionCount += transaction.trialEditTransaction ? 1 : 0
       }
 
       return trial
@@ -511,7 +600,8 @@ const getEmptyTransaction = (trialId) => {
     trialCommentAddedTransactions: [],
     trialCommentDeletedTransactions: [],
     trialGermplasmAddedTransactions: [],
-    trialTraitAddedTransactions: []
+    trialTraitAddedTransactions: [],
+    trialEditTransaction: null
   }
 }
 
@@ -814,6 +904,7 @@ export {
   setPlotMarked,
   updateTrial,
   updateTrialBrapiConfig,
+  updateTrialProperties,
   addTrialTraits,
   getTransactionForTrial,
   changeTrialsData,

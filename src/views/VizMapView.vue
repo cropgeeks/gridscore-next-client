@@ -38,7 +38,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { trialLayoutToPlots, toGeoJson, plotInfoToGeoJson } from '@/plugins/location'
+import { plotInfoToGeoJson } from '@/plugins/location'
 import { BIconCalendar3, BIconCircleFill } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
@@ -186,39 +186,6 @@ export default {
       if (bounds && bounds.isValid()) {
         this.map.fitBounds(bounds, { padding: [50, 50] })
       }
-    },
-    showExample: function () {
-      // const trialGps = {
-      //   topLeft: { lat: 52.074358, lng: 0.156727 },
-      //   topRight: { lat: 52.075281, lng: 0.159694 },
-      //   bottomRight: { lat: 52.072358, lng: 0.162083 },
-      //   bottomLeft: { lat: 52.071430, lng: 0.159125 }
-      // }
-      // const data = trialLayoutToPlots(trialGps, 14, 19)
-
-      const trialGps = {
-        topLeft: { lat: 56.48414745586802, lng: -3.1377500295639043 },
-        topRight: { lat: 56.48465544546168, lng: -3.137849271297455 },
-        bottomRight: { lat: 56.484609534145285, lng: -3.138779997825623 },
-        bottomLeft: { lat: 56.48411783527373, lng: -3.138699531555176 }
-      }
-      const data = trialLayoutToPlots(trialGps, 28, 8)
-
-      const mapping = {}
-
-      for (let row = 0; row < 28; row++) {
-        for (let col = 0; col < 8; col++) {
-          mapping[`${row}|${col}`] = data[row][col]
-        }
-      }
-
-      const polygons = [].concat(...data)
-
-      const geoJson = toGeoJson(polygons)
-
-      L.geoJSON(geoJson, {
-        weight: 1
-      }).addTo(this.map)
     },
     updateTrialDataCache: function () {
       getTrialById(this.storeSelectedTrial)

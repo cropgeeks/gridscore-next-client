@@ -167,6 +167,12 @@ export default {
           weight: 1
         })
         this.geoJsonLayer.addTo(this.map)
+
+        // Get the bounds and fit the map to them
+        const bounds = this.geoJsonLayer.getBounds()
+        if (bounds && bounds.isValid()) {
+          this.map.fitBounds(bounds, { padding: [50, 50] })
+        }
       }
     },
     setGps: function (corner) {

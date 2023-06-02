@@ -11,7 +11,7 @@
             <template v-slot:label>
               <BIconTextareaT /><span> {{ $t('formLabelTrialSetupTrialName') }}</span>
             </template>
-            <b-form-input id="trial-name" :state="formState.trialName" required autofocus v-model="trialName" />
+            <b-form-input id="trial-name" :state="formState.trialName" trim required autofocus v-model="trialName" />
           </b-form-group>
         </b-col>
         <b-col cols=12 lg=6>

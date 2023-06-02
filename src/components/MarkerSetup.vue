@@ -204,7 +204,10 @@ export default {
     },
     update: function () {
       if (this.layout && this.layout.markers) {
+        this.useMarkers = true
         this.markers = JSON.parse(JSON.stringify(this.layout.markers))
+      } else {
+        this.useMarkers = false
       }
 
       this.draw()

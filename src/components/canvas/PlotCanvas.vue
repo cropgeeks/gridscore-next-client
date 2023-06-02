@@ -77,7 +77,7 @@ export default {
       if (this.geolocation && this.gridProjection) {
         const euclideanPosition = this.gridProjection(this.geolocation.lng, this.geolocation.lat)
 
-        const highlightRow = this.trial.layout.rows - Math.ceil(this.trial.layout.rows * euclideanPosition.y / 100.0)
+        const highlightRow = this.trial.layout.rows - Math.ceil(this.trial.layout.rows * (100 - euclideanPosition.y) / 100.0)
         const highlightColumn = Math.floor(this.trial.layout.columns * euclideanPosition.x / 100.0)
 
         if (highlightRow < 0 || highlightRow > this.trial.layout.rows - 1 || highlightColumn < 0 || highlightColumn > this.trial.layout.columns - 1) {
@@ -89,9 +89,9 @@ export default {
             column: highlightColumn,
             row: highlightRow,
             x: this.origin.x + dataWidth * euclideanPosition.x / 100,
-            y: this.origin.y + dataHeight * (100 - euclideanPosition.y) / 100,
+            y: this.origin.y + dataHeight * euclideanPosition.y / 100,
             euclideanX: euclideanPosition.x,
-            euclideanY: 100 - euclideanPosition.y,
+            euclideanY: euclideanPosition.y,
             heading: this.geolocation.heading
           }
         }

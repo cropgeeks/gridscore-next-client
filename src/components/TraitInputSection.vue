@@ -2,30 +2,31 @@
   <section v-if="trait">
     <hr />
 
-    <h3 class="d-flex justify-content-between align-items-center">
+    <h4 class="d-flex justify-content-between align-items-center">
       <span class="d-flex align-items-center flex-wrap">
         <span :style="{ color: trait.color }">
           <BIconCircleFill />
           <span class="mx-1">{{ trait.name }}</span>
         </span>
-        <b-badge class="mx-1" variant="light">{{ getTraitTypeText(trait, true) }}</b-badge>
-        <b-badge class="mx-1" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
-          <BIconArrowRepeat v-if="trait.allowRepeats" />
-          <BIconstack v-else>
-            <BIconArrowRepeat stacked />
-            <BIconX stacked :scale="0.7" />
-          </BIconstack>
-        </b-badge>
-
-        <b-badge class="mx-1" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
-          <BIconSegmentedNav :rotate="90" /> {{ trait.setSize || 1 }}
-        </b-badge>
+        <span>
+          <b-badge class="mx-1" variant="light">{{ getTraitTypeText(trait, true) }}</b-badge>
+          <b-badge class="mx-1" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
+            <BIconArrowRepeat v-if="trait.allowRepeats" />
+            <BIconstack v-else>
+              <BIconArrowRepeat stacked />
+              <BIconX stacked :scale="0.7" />
+            </BIconstack>
+          </b-badge>
+          <b-badge class="mx-1" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
+            <BIconSegmentedNav :rotate="90" /> {{ trait.setSize || 1 }}
+          </b-badge>
+        </span>
       </span>
-      <span>
+      <b-button-group>
         <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData"><BIconClockHistory /></b-button>
         <b-button @click="$emit('photo-clicked')"><BIconCameraFill /></b-button>
-      </span>
-    </h3>
+      </b-button-group>
+    </h4>
     <div v-if="trait.restrictions || trait.timeframe">
       <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)">&gt; {{ trait.restrictions.min }}</b-badge>
       <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)">&lt; {{ trait.restrictions.max }}</b-badge>

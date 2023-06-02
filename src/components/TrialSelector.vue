@@ -23,6 +23,7 @@
               </BIconstack> {{ $t('buttonSynchronize') }}</b-dropdown-item>
               <b-dropdown-item @click="duplicateTrial(trial)"><BIconJournals /> {{ $t('buttonDuplicateTrial') }}</b-dropdown-item>
               <b-dropdown-divider v-if="trial.editable" />
+              <b-dropdown-item @click="showTrialEdit(trial)" v-if="trial.editable && (trial.shareStatus === TRIAL_STATE_NOT_SHARED || trial.shareStatus === TRIAL_STATE_OWNER)"><BIconPencilSquare /> {{  $t('buttonEditTrial') }}</b-dropdown-item>
               <b-dropdown-item @click="addTrait(trial)" v-if="trial.editable"><BIconTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
               <b-dropdown-item @click="addGermplasm(trial)" v-if="trial.editable && trial.layout.columns === 1"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
               <b-dropdown-divider />
@@ -39,6 +40,7 @@
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && selectedTrial.transactionCount > 0" />
     <TrialDuplicationModal :trial="selectedTrial" ref="trialDuplicationModal" v-if="selectedTrial" />
+    <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial" />
   </div>
 </template>
 
@@ -48,11 +50,13 @@ import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal'
 import TrialDuplicationModal from '@/components/modals/TrialDuplicationModal'
 import AddTraitsModal from '@/components/modals/AddTraitsModal'
+import TrialModificationModal from '@/components/modals/TrialModificationModal'
 import AddGermplasmModal from '@/components/modals/AddGermplasmModal'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
+import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrials } from '@/plugins/idb'
-import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
+import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -65,7 +69,9 @@ export default {
     TrialSynchronizationModal,
     TrialDuplicationModal,
     AddGermplasmModal,
+    TrialModificationModal,
     BIconJournalArrowUp,
+    BIconPencilSquare,
     BIconGear,
     BIconJournals,
     BIconTrash,
@@ -90,11 +96,18 @@ export default {
   },
   data: function () {
     return {
+      TRIAL_STATE_NOT_SHARED,
+      TRIAL_STATE_OWNER,
       trials: [],
       selectedTrial: null
     }
   },
   methods: {
+    showTrialEdit: function (trial) {
+      this.selectedTrial = trial
+
+      this.$nextTick(() => this.$refs.trialModificationModal.show())
+    },
     duplicateTrial: function (trial) {
       this.selectedTrial = trial
 
