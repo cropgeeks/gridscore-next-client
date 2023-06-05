@@ -20,12 +20,12 @@
       </b-input-group>
     </b-button-toolbar>
 
-    <DataCanvas />
+    <DataCanvas :geolocation="geolocation" />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
     <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
-    <DataInputModal :trial="trial" ref="dataInputModal" />
+    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
   </b-container>
@@ -66,6 +66,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'storeGpsEnabled',
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeNavigationMode',
@@ -118,7 +119,8 @@ export default {
       isFullscreen: false,
       hasFullscreenEventListener: false,
       searchTerm: null,
-      searchMatches: []
+      searchMatches: [],
+      geolocation: null
     }
   },
   methods: {
@@ -163,6 +165,8 @@ export default {
         this.trial = trial
 
         this.updateTraitProgress()
+
+        this.startGeoTracking()
       })
     },
     updateTraitProgress: function () {
@@ -192,6 +196,21 @@ export default {
       if (this.trial && this.trial.localId === trialId) {
         this.loadTrial()
       }
+    },
+    startGeoTracking: function () {
+      if (navigator.geolocation && this.storeGpsEnabled) {
+        const options = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
+        this.geolocationWatchId = navigator.geolocation.watchPosition(position => {
+          if (position && position.coords) {
+            this.geolocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+              elv: position.coords.altitude,
+              heading: position.coords.heading
+            }
+          }
+        }, null, options)
+      }
     }
   },
   mounted: function () {
@@ -215,6 +234,10 @@ export default {
     emitter.off('plot-cache-changed', this.updateTraitProgress)
     emitter.off('trial-data-loaded', this.updateTraitProgress)
     emitter.off('tts', this.tts)
+
+    if (this.geolocationWatchId && navigator.geolocation) {
+      navigator.geolocation.clearWatch(this.geolocationWatchId)
+    }
   }
 }
 </script>

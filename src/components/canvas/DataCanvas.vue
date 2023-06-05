@@ -14,7 +14,7 @@
                :markedRows="markedRows"
                @row-marked="onRowMarked"
                ref="rowHead" />
-    <PlotCanvas :dimensions="dimensions" :markedColumns="markedColumns" :markedRows="markedRows" :trial="trial" @origin-changed="setOrigin" ref="plotCanvas" />
+    <PlotCanvas :geolocation="geolocation" :dimensions="dimensions" :markedColumns="markedColumns" :markedRows="markedRows" :trial="trial" @origin-changed="setOrigin" ref="plotCanvas" />
     <VScroll :dimensions="dimensions" :y="origin.y" :rows="trial.layout.rows" ref="vScroll" />
     <div class="corner" />
     <HScroll :dimensions="dimensions" :x="origin.x" :columns="trial.layout.columns" ref="hScroll" />
@@ -41,6 +41,12 @@ export default {
     PlotCanvas,
     RowHeader,
     VScroll
+  },
+  props: {
+    geolocation: {
+      type: Object,
+      default: () => null
+    }
   },
   data: function () {
     return {

@@ -148,43 +148,46 @@ export default {
       }
 
       // Extract all the individual polygons from the data
-      const plotInfo = []
-      Object.keys(this.trialData).forEach(td => {
-        const [row, column] = td.split('|').map(c => +c)
-        if (this.trialData[td].geography && this.trialData[td].geography.corners) {
-          plotInfo.push({
-            properties: {
-              germplasm: this.trialData[td].germplasm,
-              rep: this.trialData[td].rep,
-              row: row,
-              column: column
-            },
-            corners: this.trialData[td].geography.corners
-          })
+      if (this.trialData) {
+        const plotInfo = []
+        Object.keys(this.trialData).forEach(td => {
+          const [row, column] = td.split('|').map(c => +c)
+          if (this.trialData[td].geography && (this.trialData[td].geography.corners || this.trialData[td].geography.center)) {
+            plotInfo.push({
+              properties: {
+                germplasm: this.trialData[td].germplasm,
+                rep: this.trialData[td].rep,
+                row: row,
+                column: column
+              },
+              corners: this.trialData[td].geography.corners,
+              center: this.trialData[td].geography.center
+            })
+          }
+        })
+
+        // Create the geojson and the layer, then add to the map
+        const geoJson = plotInfoToGeoJson(plotInfo)
+        this.geoJsonLayer = L.geoJSON(geoJson, {
+          fillColor: '#00a0f1',
+          color: '#00a0f1',
+          weight: 1,
+          onEachFeature: (feature, layer) => {
+            layer.bindPopup('', { maxHeight: 200 })
+            layer.on('popupopen', e => {
+              this.selectedFeature = this.trialData[`${feature.properties.row}|${feature.properties.column}`]
+
+              this.$nextTick(() => e.popup.setContent(this.$refs.popupContent))
+            })
+          }
+        })
+        this.geoJsonLayer.addTo(this.map)
+
+        // Get the bounds and fit the map to them
+        const bounds = this.geoJsonLayer.getBounds()
+        if (bounds && bounds.isValid()) {
+          this.map.fitBounds(bounds, { padding: [50, 50] })
         }
-      })
-
-      // Create the geojson and the layer, then add to the map
-      const geoJson = plotInfoToGeoJson(plotInfo)
-      this.geoJsonLayer = L.geoJSON(geoJson, {
-        fillColor: '#00a0f1',
-        color: '#00a0f1',
-        weight: 1,
-        onEachFeature: (feature, layer) => {
-          layer.bindPopup('', { maxHeight: 200 })
-          layer.on('popupopen', e => {
-            this.selectedFeature = this.trialData[`${feature.properties.row}|${feature.properties.column}`]
-
-            this.$nextTick(() => e.popup.setContent(this.$refs.popupContent))
-          })
-        }
-      })
-      this.geoJsonLayer.addTo(this.map)
-
-      // Get the bounds and fit the map to them
-      const bounds = this.geoJsonLayer.getBounds()
-      if (bounds && bounds.isValid()) {
-        this.map.fitBounds(bounds, { padding: [50, 50] })
       }
     },
     updateTrialDataCache: function () {

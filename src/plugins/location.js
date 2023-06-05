@@ -81,7 +81,7 @@ const trialLayoutToPlots = (corners, rows, cols) => {
   return result
 }
 
-const plotInfoToGeoJson = (plotInfo, points) => {
+const plotInfoToGeoJson = (plotInfo) => {
   const geoJson = {
     type: 'FeatureCollection',
     features: []
@@ -89,33 +89,31 @@ const plotInfoToGeoJson = (plotInfo, points) => {
 
   if (plotInfo) {
     plotInfo.forEach(p => {
-      geoJson.features.push({
-        properties: p.properties || {},
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[
-            [p.corners.topLeft.lng, p.corners.topLeft.lat],
-            [p.corners.topRight.lng, p.corners.topRight.lat],
-            [p.corners.bottomRight.lng, p.corners.bottomRight.lat],
-            [p.corners.bottomLeft.lng, p.corners.bottomLeft.lat],
-            [p.corners.topLeft.lng, p.corners.topLeft.lat]
-          ]]
-        }
-      })
-    })
-  }
-
-  if (points) {
-    points.forEach(p => {
-      geoJson.features.push({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [p.lng, p.lat]
-        },
-        properties: {}
-      })
+      if (p.corners) {
+        geoJson.features.push({
+          properties: p.properties || {},
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [p.corners.topLeft.lng, p.corners.topLeft.lat],
+              [p.corners.topRight.lng, p.corners.topRight.lat],
+              [p.corners.bottomRight.lng, p.corners.bottomRight.lat],
+              [p.corners.bottomLeft.lng, p.corners.bottomLeft.lat],
+              [p.corners.topLeft.lng, p.corners.topLeft.lat]
+            ]]
+          }
+        })
+      } else if (p.center) {
+        geoJson.features.push({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [p.center.lng, p.center.lat]
+          },
+          properties: p.properties || {}
+        })
+      }
     })
   }
 

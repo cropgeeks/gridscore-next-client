@@ -1,21 +1,25 @@
 <template>
   <div>
     <b-row>
-      <b-col cols=6>
+      <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: 1 })" label-for="top-left">
           <!-- Top left corner -->
           <GpsInput :currentPosition="corners.topLeft" @changed="corner => { corners.topLeft = corner }" id="top-left" />
         </b-form-group>
+      </b-col>
+      <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: 1 })" label-for="bottom-left">
           <!-- Bottom left corner -->
           <GpsInput :currentPosition="corners.bottomLeft" @changed="corner => { corners.bottomLeft = corner }" id="bottom-left" />
         </b-form-group>
       </b-col>
-      <b-col cols=6>
+      <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: columns })" label-for="top-right">
           <!-- Top right corner -->
           <GpsInput :currentPosition="corners.topRight" @changed="corner => { corners.topRight = corner }" id="top-right" />
         </b-form-group>
+      </b-col>
+      <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: columns })" label-for="bottom-right">
           <!-- Bottom right corner -->
           <GpsInput :currentPosition="corners.bottomRight" @changed="corner => { corners.bottomRight = corner }" id="bottom-right" />

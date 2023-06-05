@@ -43,6 +43,10 @@ export default {
     markedColumns: {
       type: Array,
       default: () => []
+    },
+    geolocation: {
+      type: Object,
+      default: () => null
     }
   },
   data: function () {
@@ -61,13 +65,11 @@ export default {
       origin: {
         x: 0,
         y: 0
-      },
-      geolocation: null
+      }
     }
   },
   computed: {
     ...mapGetters([
-      'storeGpsEnabled',
       'storeNavigationMode',
       'storeDarkMode',
       'storeHiddenTraits',
@@ -194,8 +196,6 @@ export default {
             { x: c.bottomRight.lng, y: c.bottomRight.lat },
             { x: c.bottomLeft.lng, y: c.bottomLeft.lat }
           ])
-
-          this.startGeoTracking()
         } else {
           this.gridProjection = null
         }
@@ -846,21 +846,6 @@ export default {
       } else {
         this.update()
       }
-    },
-    startGeoTracking: function () {
-      if (navigator.geolocation && this.storeGpsEnabled) {
-        const options = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
-        this.geolocationWatchId = navigator.geolocation.watchPosition(position => {
-          if (position && position.coords) {
-            this.geolocation = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-              elv: position.coords.altitude,
-              heading: position.coords.heading
-            }
-          }
-        }, null, options)
-      }
     }
   },
   mounted: function () {
@@ -874,10 +859,6 @@ export default {
     emitter.off('move-to-corner', this.moveInDirection)
     emitter.off('trial-data-loaded', this.reset)
     emitter.off('plot-cache-changed', this.updateCellCache)
-
-    if (this.geolocationWatchId && navigator.geolocation) {
-      navigator.geolocation.clearWatch(this.geolocationWatchId)
-    }
   }
 }
 </script>

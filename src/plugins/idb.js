@@ -338,7 +338,7 @@ const getTransactionForTrial = async (localId) => {
   }
 }
 
-const changeTrialsData = async (trialId, row, column, data) => {
+const changeTrialsData = async (trialId, row, column, data, geolocation) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -401,6 +401,24 @@ const changeTrialsData = async (trialId, row, column, data) => {
         }
       }
     })
+
+    // If there is a new geolocation
+    if (geolocation && geolocation.lat !== undefined && geolocation.lat !== null && geolocation.lng !== undefined && geolocation.lng !== null) {
+      // Check if either, there isn't a geolocation or there isn't a center or either lat or lng are missing
+      if (!cell.geography || !cell.geography.center || cell.geography.center.lat === undefined || cell.geography.lat === null || cell.geography.center.lng === undefined || cell.geography.lng === null) {
+        // Set new center as the parameter
+        cell.geography = {
+          center: {
+            lat: geolocation.lat,
+            lng: geolocation.lng
+          }
+        }
+      } else {
+        // Otherwise, take the average
+        cell.geography.lat = (cell.geography.lat + geolocation.lat) / 2
+        cell.geography.lng = (cell.geography.lng + geolocation.lng) / 2
+      }
+    }
 
     // Remove this as it was only added temporarily
     delete cell.displayName
