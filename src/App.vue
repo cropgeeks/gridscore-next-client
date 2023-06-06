@@ -80,6 +80,7 @@ import { Detector } from '@/plugins/browser-detect'
 import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
+import { isOffline } from './plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -215,6 +216,12 @@ export default {
     },
     isLocalhost: function () {
       return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === ''
+    },
+    handleOffline: function () {
+      this.$store.dispatch('setIsOffline', true)
+    },
+    handleOnline: function () {
+      this.$store.dispatch('setIsOffline', false)
     }
   },
   mounted: function () {
@@ -276,6 +283,14 @@ export default {
     emitter.on('api-error', this.handleApiError)
     emitter.on('show-brapi-settings', this.showBrapiSettings)
     emitter.on('show-loading', this.showLoading)
+    window.addEventListener('offline', this.handleOffline)
+    window.addEventListener('online', this.handleOnline)
+
+    if (isOffline()) {
+      this.handleOffline()
+    } else {
+      this.handleOnline()
+    }
   },
   beforeDestroy: function () {
     emitter.off('plausible-event', this.plausibleEvent)
@@ -354,5 +369,9 @@ body {
 .b-sidebar {
   top: 65px;
   max-height: calc(100% - 65px);
+}
+
+.modal-banner {
+  margin: -1rem -1rem 0 -1rem
 }
 </style>

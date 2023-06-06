@@ -1,5 +1,5 @@
 import store from '@/store'
-import { getTrialById, getTrialData, updateTrial } from './idb'
+import { getTrialById, getTrialData, getTrials, updateTrial } from './idb'
 
 const emitter = require('tiny-emitter/instance')
 const axios = require('axios').default
@@ -107,6 +107,17 @@ const shareTrial = async (localId) => {
   }
 }
 
+const postCheckUpdate = () => {
+  return getTrials()
+    .then(trials => {
+      const ids = trials.filter(t => t.shareCodes)
+        .map(t => {
+          return t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
+        })
+      return axiosCall({ url: 'trial/checkupdate', params: ids, method: 'post', ignoreErrors: true })
+    })
+}
+
 const getTrialByCode = (shareCode) => {
   return axiosCall({ url: `trial/${shareCode}`, method: 'get' })
 }
@@ -142,6 +153,7 @@ export {
   shareTrial,
   getTrialByCode,
   getLegacyTrialByCode,
+  postCheckUpdate,
   synchronizeTrial,
   exportToGerminate,
   exportToShapefile

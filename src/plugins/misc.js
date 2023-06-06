@@ -219,10 +219,13 @@ const migrateOldGridScoreTrial = (old) => {
   })
 }
 
+const isOffline = () => 'onLine' in navigator && !navigator.onLine
+
 export {
   getTraitTypeText,
   downloadText,
   toLocalDateString,
   toLocalDateTimeString,
-  migrateOldGridScoreTrial
+  migrateOldGridScoreTrial,
+  isOffline
 }

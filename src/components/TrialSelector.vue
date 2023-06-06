@@ -5,9 +5,15 @@
     <b-row>
       <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in sortedTrials" :key="`trial-selector-${trial.localId}`"  class="mb-3">
         <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null">
-          <a href="#" @click.prevent="synchronize(trial)" v-if="trial.transactionCount > 0">
-            <div class="card-corner" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
-            <BIconCloudUploadFill class="card-corner-icon" />
+          <a href="#" @click.prevent="synchronize(trial)" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
+            <template v-if="trial.transactionCount > 0">
+              <div class="card-corner card-corner-local" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
+              <BIconCloudUploadFill class="card-corner-icon" />
+            </template>
+            <template v-else-if="trial.hasRemoteUpdate">
+              <div class="card-corner card-corner-remote" v-b-tooltip="$t('tooltipTrialHasRemoteUpdate')" />
+              <BIconCloudDownloadFill class="card-corner-icon" />
+            </template>
           </a>
           <TrialInformation :trial="trial" />
           <b-card-footer class="d-flex justify-content-between">
@@ -38,7 +44,7 @@
     <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial" />
     <AddTraitsModal :trial="selectedTrial" ref="addTraitsModal" v-if="selectedTrial && selectedTrial.editable" />
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
-    <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && selectedTrial.transactionCount > 0" />
+    <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate)" />
     <TrialDuplicationModal :trial="selectedTrial" ref="trialDuplicationModal" v-if="selectedTrial" />
     <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial" />
   </div>
@@ -56,7 +62,8 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrials } from '@/plugins/idb'
-import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
+import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloudDownloadFill, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
+import { postCheckUpdate } from '@/plugins/api'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -77,6 +84,7 @@ export default {
     BIconTrash,
     BIconTags,
     BIconCloudUploadFill,
+    BIconCloudDownloadFill,
     BIconCloud,
     BIconArrowDownUp,
     BIconstack,
@@ -88,7 +96,21 @@ export default {
     ]),
     sortedTrials: function () {
       if (this.trials) {
-        return this.trials.concat().sort((a, b) => new Date(b.updatedOn) - new Date(a.updatedOn))
+        return this.trials.concat()
+          .sort((a, b) => new Date(b.updatedOn) - new Date(a.updatedOn))
+          .map(t => {
+            if (t.shareCodes && this.trialUpdates) {
+              const shareCode = t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
+
+              if (this.trialUpdates[shareCode] !== undefined && this.trialUpdates[shareCode] !== null) {
+                t.hasRemoteUpdate = this.trialUpdates[shareCode] > t.updatedOn
+              } else {
+                t.hasRemoteUpdate = false
+              }
+            }
+
+            return t
+          })
       } else {
         return []
       }
@@ -99,7 +121,8 @@ export default {
       TRIAL_STATE_NOT_SHARED,
       TRIAL_STATE_OWNER,
       trials: [],
-      selectedTrial: null
+      selectedTrial: null,
+      trialUpdates: null
     }
   },
   methods: {
@@ -177,6 +200,11 @@ export default {
     emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.update)
     emitter.on('trials-updated', this.update)
+
+    postCheckUpdate()
+      .then(result => {
+        this.trialUpdates = result
+      })
   },
   beforeDestroy: function () {
     emitter.off('show-trial-comments', this.showTrialComments)
@@ -194,8 +222,13 @@ export default {
   width: 50px;
   height: 50px;
   border-top: 50px solid #888;
-  border-top-color: var(--info);
   border-left: 50px solid transparent;
+}
+.card-corner-remote {
+  border-top-color: var(--warning);
+}
+.card-corner-local {
+  border-top-color: var(--info);
 }
 .card-corner-icon {
   position: absolute;

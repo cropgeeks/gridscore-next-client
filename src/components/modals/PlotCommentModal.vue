@@ -29,9 +29,9 @@
 
       <b-button class="mt-2" @click="commentFormVisible = !commentFormVisible" v-if="editable"><BIconChatRightQuoteFill /> {{ $t('buttonCreateComment') }}</b-button>
 
-      <b-collapse v-model="commentFormVisible" class="mt-2">
+      <b-collapse v-model="commentFormVisible" class="mt-2" @shown="$refs.input.focus()">
         <b-form-group :label="$t('formLabelCommentContent')" :description="$t('formDescriptionCommentContent')" label-for="comment-content">
-          <b-form-textarea id="comment-content" v-model="newCommentContent" :rows="5" />
+          <SpeechRecognitionTextarea id="comment-content" :rows="5" :tooltip="$t('tooltipDataEntryCommentMicrophone')" ref="input" @change="updateComment" />
         </b-form-group>
 
         <b-button :disabled="!newCommentContent || (newCommentContent === '')" variant="primary" @click="createComment"><BIconPlusSquare /> {{ $t('buttonAdd') }}</b-button>
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import SpeechRecognitionTextarea from '@/components/SpeechRecognitionTextarea'
 import { BIconCalendarDate, BIconTrash, BIconChatRightQuoteFill, BIconPlusSquare } from 'bootstrap-vue'
 import { deletePlotComment, addPlotComment } from '@/plugins/idb'
 
@@ -51,7 +52,8 @@ export default {
     BIconCalendarDate,
     BIconTrash,
     BIconChatRightQuoteFill,
-    BIconPlusSquare
+    BIconPlusSquare,
+    SpeechRecognitionTextarea
   },
   props: {
     cell: {
@@ -92,13 +94,18 @@ export default {
      * Shows and resets modal dialog
      */
     show: function () {
+      this.commentFormVisible = false
       this.$refs.plotCommentModal.show()
     },
     /**
      * Hides the modal dialog
      */
     hide: function () {
+      this.commentFormVisible = false
       this.$nextTick(() => this.$refs.plotCommentModal.hide())
+    },
+    updateComment: function (newValue) {
+      this.newCommentContent = newValue
     },
     deleteComment: function (comment) {
       deletePlotComment(this.cell.trialId, this.cell.row, this.cell.column, comment)

@@ -4,9 +4,9 @@
       <TraitDropdown :traits="trial.traits" />
       <TrialInformationDropdown :trial="trial" />
       <JumpToDropdown />
-      <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
+      <!-- <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
         <BIconFullscreen v-if="!isFullscreen" /><BIconFullscreenExit v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarFullscreen') }}</span>
-      </b-button>
+      </b-button> -->
       <b-input-group class="ml-auto flex-grow-1 flex-sm-grow-0">
         <b-input-group-prepend>
           <b-button @click="$refs.scanQrCodeModal.show()">
@@ -44,7 +44,8 @@ import JumpToDropdown from '@/components/dropdowns/JumpToDropdown'
 import { getTrialById } from '@/plugins/idb'
 import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
-import { BIconFullscreen, BIconFullscreenExit, BIconSearch } from 'bootstrap-vue'
+// import { BIconFullscreen, BIconFullscreenExit, BIconSearch } from 'bootstrap-vue'
+import { BIconSearch } from 'bootstrap-vue'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
 const emitter = require('tiny-emitter/instance')
@@ -60,9 +61,9 @@ export default {
     DataInputModal,
     DataViewJumpControl,
     ScanQRCodeModal,
-    BIconSearch,
-    BIconFullscreen,
-    BIconFullscreenExit
+    BIconSearch
+    // BIconFullscreen,
+    // BIconFullscreenExit
   },
   computed: {
     ...mapGetters([
@@ -153,6 +154,7 @@ export default {
         }
 
         const utterance = new SpeechSynthesisUtterance(text)
+        utterance.rate = 1.0
         // utterance.rate = 1.2
         this.textSynth.speak(utterance)
       }

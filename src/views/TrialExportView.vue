@@ -23,20 +23,23 @@
         <template #title>
           <IconGerminate /> Germinate
         </template>
+        <div v-if="storeIsOffline" class="modal-banner bg-danger text-white text-center mb-3 mt-0 p-2">
+          {{ $t('modalTextNetworkUnavailableWarning') }}
+        </div>
 
         <p class="mt-3" v-html="$t('pageExportTrialFormatGerminate')" />
 
         <b-row>
           <b-col cols=12 md=6>
             <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateDataCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateDataCardSubtitle')">
-              <b-button :href="exportedFiles.germinate" @click="exportedFiles.germinate = null" variant="success" v-if="exportedFiles.germinate"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
-              <b-button @click="exportDataGerminate" variant="primary" v-else><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
+              <b-button :disabled="storeIsOffline" :href="exportedFiles.germinate" @click="exportedFiles.germinate = null" variant="success" v-if="exportedFiles.germinate"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
+              <b-button :disabled="storeIsOffline" @click="exportDataGerminate" variant="primary" v-else><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
             </b-card>
           </b-col>
           <b-col cols=12 md=6 v-if="trial.layout && trial.layout.corners">
             <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateShapeCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateShapeCardSubtitle')">
-              <b-button :href="exportedFiles.shapefile" @click="exportedFiles.shapefile = null" variant="success" v-if="exportedFiles.shapefile"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
-              <b-button @click="exportShapefileGerminate" variant="primary" v-else><BIconGrid3x2Gap /> {{ $t('buttonExport') }}</b-button>
+              <b-button :disabled="storeIsOffline" :href="exportedFiles.shapefile" @click="exportedFiles.shapefile = null" variant="success" v-if="exportedFiles.shapefile"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
+              <b-button :disabled="storeIsOffline" @click="exportShapefileGerminate" variant="primary" v-else><BIconGrid3x2Gap /> {{ $t('buttonExport') }}</b-button>
             </b-card>
           </b-col>
         </b-row>
@@ -86,7 +89,8 @@ export default {
   computed: {
     ...mapGetters([
       'storeSelectedTrial',
-      'storeServerUrl'
+      'storeServerUrl',
+      'storeIsOffline'
     ])
   },
   methods: {

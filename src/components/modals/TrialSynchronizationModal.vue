@@ -3,9 +3,13 @@
            :ok-title="$t('Synchronize')"
            :cancel-title="$t('buttonCancel')"
            @ok.prevent="synchronize"
+           :ok-disabled="storeIsOffline"
            no-fade
            size="lg"
            ref="trialSynchronizationModal">
+    <div v-if="storeIsOffline" class="modal-banner bg-danger text-white text-center mb-3 p-2">
+      {{ $t('modalTextNetworkUnavailableWarning') }}
+    </div>
     <div v-if="trial">
       <p>{{ $t('modalTextTrialSynchronization') }}</p>
       <div v-if="transaction">
@@ -116,7 +120,9 @@
         </b-list-group>
       </div>
       <div v-else>
-        <p v-html="$t('modalTextTrialSynchronizationNoData')" />
+        <p v-html="$t('modalTextTrialSynchronizationNoData')" :class="trial.hasRemoteUpdate ? null : 'text-warning'" />
+
+        <p v-if="trial.hasRemoteUpdate" class="bg-info p-3">{{ $t('modalTextTrialSynchronizationRemoteChanges') }}</p>
       </div>
     </div>
   </b-modal>
@@ -125,6 +131,7 @@
 <script>
 import TraitHeading from '@/components/TraitHeading'
 
+import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
 import { synchronizeTrial } from '@/plugins/api'
 
@@ -150,6 +157,11 @@ export default {
       type: Object,
       default: () => null
     }
+  },
+  computed: {
+    ...mapGetters([
+      'storeIsOffline'
+    ])
   },
   data: function () {
     return {

@@ -142,6 +142,19 @@ const updateTrial = async (localId, updatedTrial) => {
 
   if (trial) {
     const db = await getDb()
+
+    // Delete and local changes that may have been made to the trial temporarily
+    delete updatedTrial.editable
+    delete updatedTrial.shareStatus
+    delete updatedTrial.transactionCount
+    if (updatedTrial.traits) {
+      updatedTrial.traits.forEach(t => {
+        delete t.color
+        delete t.editable
+        delete t.progress
+      })
+    }
+
     return db.put('trials', updatedTrial)
   } else {
     return new Promise(resolve => resolve())

@@ -240,6 +240,13 @@ export default {
           this.guidedWalk.prev = null
         }
       }
+    },
+    cell: function (newValue, oldValue) {
+      if (newValue !== undefined && newValue !== null) {
+        if (oldValue === undefined || oldValue === null || oldValue.displayName !== newValue.displayName) {
+          emitter.emit('tts', newValue.displayName)
+        }
+      }
     }
   },
   methods: {
@@ -303,6 +310,7 @@ export default {
             const traitId = this.traitsByGroup[this.traitGroupTabIndex].traits[0].id
 
             this.$refs[`trait-section-${traitId}`][0].handleTraverse(0)
+            emitter.emit('tts', this.traitsByGroup[this.traitGroupTabIndex].traits[0].name, false)
           }
         }
       })
@@ -315,6 +323,7 @@ export default {
 
         if (traitIndex !== -1 && traitIndex < group.traits.length - 1) {
           this.$refs[`trait-section-${group.traits[traitIndex + 1].id}`][0].handleTraverse(0)
+          emitter.emit('tts', group.traits[traitIndex + 1].name, false)
         }
       }
     },
@@ -351,6 +360,10 @@ export default {
 
                 this.$refs[`trait-section-${t.id}`][0].reset()
               })
+
+              if (this.isGuidedWalk) {
+                this.autofocusFirst()
+              }
             })
           })
       }

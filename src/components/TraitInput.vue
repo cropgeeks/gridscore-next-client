@@ -343,7 +343,7 @@ export default {
       }
     },
     tts: function () {
-      emitter.emit('tts', this.value)
+      emitter.emit('tts', this.trait.dataType === 'categorical' ? this.trait.restrictions.categories[this.value] : this.value)
     },
     resetDate: function () {
       this.value = null

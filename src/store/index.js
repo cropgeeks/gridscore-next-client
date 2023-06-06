@@ -16,6 +16,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    isOffline: false,
     uniqueClientId: null,
     runCount: 0,
     serverUrl: null,
@@ -43,6 +44,7 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    storeIsOffline: (state) => state.isOffline,
     storeUniqueClientId: (state) => state.uniqueClientId,
     storeRunCount: (state) => state.runCount,
     storeLocale: (state) => state.locale,
@@ -63,6 +65,9 @@ export default new Vuex.Store({
     storeBrapiConfig: (state) => state.brapiConfig
   },
   mutations: {
+    ON_IS_OFFLINE_CHANGED: function (state, newIsOffline) {
+      state.isOffline = newIsOffline
+    },
     ON_UNIQUE_CLIENT_ID_CHANGED: function (state, newUniqueClientId) {
       state.uniqueClientId = newUniqueClientId
     },
@@ -149,6 +154,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setIsOffline: function ({ commit }, isOffline) {
+      commit('ON_IS_OFFLINE_CHANGED', isOffline)
+    },
     setUniqueClientId: function ({ commit }, uniqueClientId) {
       commit('ON_UNIQUE_CLIENT_ID_CHANGED', uniqueClientId)
     },
