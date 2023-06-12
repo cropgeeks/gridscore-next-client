@@ -108,7 +108,11 @@ export default {
   },
   methods: {
     onDecode: function (shareCode) {
-      this.shareCode = shareCode
+      if (shareCode.indexOf('/') !== -1) {
+        this.shareCode = shareCode.substring(shareCode.lastIndexOf('/') + 1)
+      } else {
+        this.shareCode = shareCode
+      }
 
       this.checkCode()
     },
@@ -158,6 +162,11 @@ export default {
             }
           })
       }
+    }
+  },
+  mounted: function () {
+    if (this.$route.params) {
+      this.shareCode = this.$route.params.shareCode
     }
   }
 }
