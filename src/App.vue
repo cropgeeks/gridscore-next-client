@@ -260,7 +260,7 @@ export default {
         return
       }
       this.refreshing = true
-      // Here the actual reload of the page occurs
+      // Here the actual reload of the page occurs 
       window.location.reload(true)
     })
   },
