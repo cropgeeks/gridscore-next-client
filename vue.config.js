@@ -9,9 +9,10 @@ module.exports = defineConfig({
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
     start_url: '/',
-    workboxOptions: {
-      skipWaiting: true
-    }
+    // workboxOptions: {
+    //   skipWaiting: true,
+    //   clientsClaim: true
+    // }
   },
   configureWebpack: {
     resolve: {

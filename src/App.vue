@@ -63,6 +63,16 @@
         <p class="text-muted mt-3" v-if="$t('modalTextLoading')">{{ $t('modalTextLoading') }}</p>
       </div>
     </b-modal>
+
+    <b-modal :visible="updateExists"
+             :title="$t('modalTitleAppUpdateAvailable')"
+             :ok-title="$t('buttonUpdate')"
+             @ok="refreshApp"
+             no-close-on-esc
+             no-close-on-backdrop
+             :cancel-title="$t('buttonCancel')">
+      <p>{{ $t('modalTextAppUpdateAvailable') }}</p>
+    </b-modal>
   </div>
 </template>
 
@@ -112,7 +122,10 @@ export default {
         name: 'Deutsch - Deutschland',
         icon: '🇩🇪'
       }],
-      loadingVisible: false
+      loadingVisible: false,
+      refreshing: false,
+      registration: null,
+      updateExists: false
     }
   },
   computed: {
@@ -222,7 +235,34 @@ export default {
     },
     handleOnline: function () {
       this.$store.dispatch('setIsOffline', false)
+    },
+    updateAvailable: function (event) {
+      this.registration = event.detail
+      this.updateExists = true
+    },
+    refreshApp: function () {
+      this.updateExists = false
+      // Make sure we only send a 'skip waiting' message if the SW is waiting
+      if (!this.registration || !this.registration.waiting) {
+        return
+      }
+      // send message to SW to skip the waiting and activate the new SW
+      this.registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     }
+  },
+  created: function () {
+    // Listen for our custom event from the SW registration
+    document.addEventListener('swUpdated', this.updateAvailable, { once: true })
+
+    // Prevent multiple refreshes
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (this.refreshing) {
+        return
+      }
+      this.refreshing = true
+      // Here the actual reload of the page occurs
+      window.location.reload(true)
+    })
   },
   mounted: function () {
     loadLanguageAsync(this.storeLocale)

@@ -19,20 +19,24 @@ if (process.env.NODE_ENV === 'production') {
     updatefound () {
       console.log('New content is downloading.')
     },
-    updated () {
+    updated (registration) {
       console.log('New content is available; please refresh.')
 
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function (registrations) {
-          for (const registration of registrations) {
-            registration.update()
-          }
-        })
-      }
+      // if ('serviceWorker' in navigator) {
+      //   navigator.serviceWorker.getRegistrations().then(registrations => {
+      //     for (const registration of registrations) {
+      //       registration.update()
+      //     }
+      //   })
+      // }
 
-      setTimeout(() => {
-        window.location.reload(true)
-      }, 1000)
+      // setTimeout(() => {
+      //   window.location.reload(true)
+      // }, 1000)
+
+      document.dispatchEvent(
+        new CustomEvent('swUpdated', { detail: registration })
+      )
     },
     offline () {
       console.log('No internet connection found. App is running in offline mode.')

@@ -2,6 +2,7 @@
   <b-modal :title="$t('modalTitleTrialDuplicate')"
            :ok-title="$t('buttonDuplicateTrial')"
            @ok.prevent="onSubmit"
+           :ok-disabled="!this.nameValid || !this.traitsValid"
            no-fade
            @hidden="$emit('hidden')"
            size="lg"
@@ -13,11 +14,15 @@
 
       <b-form @submit.prevent="onSubmit">
         <b-form-group :label="$t('formLabelDuplicateTrialName')" :description="$t('formDescriptionDuplicateTrialName')" label-for="name">
-          <b-form-input id="name" v-model="newName" trim />
+          <b-form-input id="name" v-model="newName" trim :state="nameValid" />
         </b-form-group>
 
         <b-form-group :label="$t('formLabelDuplicateTrialDescription')" :description="$t('formDescriptionDuplicateTrialDescription')" label-for="description">
           <b-form-textarea id="description" v-model="newDescription" trim />
+        </b-form-group>
+
+        <b-form-group :label="$t('formLabelDuplicateTrialTraits')" :description="$t('formDescriptionDuplicateTrialTraits')" label-for="traits">
+          <b-form-select id="traits" v-model="selectedTraits" :options="allTraits" multiple :state="traitsValid" />
         </b-form-group>
 
         <b-form-group :label="$t('formLabelDuplicateTrialCopyData')" :description="$t('formDescriptionDuplicateTrialCopyData')" label-for="copyData">
@@ -31,6 +36,7 @@
 <script>
 import TrialInformation from '@/components/TrialInformation'
 import { addTrial, getTrialData } from '@/plugins/idb'
+import { getId } from '@/plugins/id'
 const emitter = require('tiny-emitter/instance')
 
 export default {
@@ -47,7 +53,25 @@ export default {
     return {
       newName: null,
       newDescription: null,
-      copyData: false
+      copyData: false,
+      selectedTraits: [],
+      allTraits: []
+    }
+  },
+  computed: {
+    nameValid: function () {
+      if (this.newName === null) {
+        return null
+      } else {
+        return this.newName !== ''
+      }
+    },
+    traitsValid: function () {
+      if (!this.allTraits || this.allTraits.length < 1) {
+        return null
+      } else {
+        return this.selectedTraits.length > 0
+      }
     }
   },
   watch: {
@@ -58,16 +82,29 @@ export default {
           this.newName = this.$t('modalTextTrialDuplicateOfName', { original: newValue.name })
           this.newDescription = this.$t('modalTextTrialDuplicateOfDate', { date: new Date().toLocaleDateString() })
           this.copyData = false
+          this.allTraits = newValue.traits.map(t => {
+            return {
+              text: t.name,
+              value: t
+            }
+          })
+          this.selectedTraits = this.allTraits.concat().map(t => t.value)
         } else {
           this.newName = null
           this.newDescription = null
           this.copyData = false
+          this.allTraits = []
+          this.selectedTraits = this.allTraits.concat().map(t => t.value)
         }
       }
     }
   },
   methods: {
     onSubmit: function () {
+      if (!this.nameValid || !this.traitsValid) {
+        return
+      }
+
       emitter.emit('show-loading', true)
 
       getTrialData(this.trial.localId)
@@ -82,20 +119,40 @@ export default {
           trialCopy.shareCodes = null
           trialCopy.data = {}
 
+          trialCopy.traits = this.selectedTraits.concat()
+
+          const newIds = {}
+
+          this.selectedTraits.forEach(t => {
+            newIds[t.id] = getId()
+          })
+
           Object.values(data).forEach(c => {
             const cellCopy = JSON.parse(JSON.stringify(c))
+            cellCopy.comments = []
+
+            const measurements = {}
+            this.selectedTraits.forEach(t => {
+              if (this.copyData) {
+                measurements[newIds[t.id]] = JSON.parse(JSON.stringify(cellCopy.measurements[t.id]))
+              } else {
+                measurements[newIds[t.id]] = []
+              }
+            })
+
+            cellCopy.measurements = measurements
+
             if (!this.copyData) {
-              cellCopy.comments = []
               delete cellCopy.isMarked
               delete cellCopy.brapiId
-
-              cellCopy.measurements = {}
-              trialCopy.traits.forEach(t => {
-                cellCopy.measurements[t.id] = []
-              })
             }
 
             trialCopy.data[`${cellCopy.row}|${cellCopy.column}`] = cellCopy
+          })
+
+          trialCopy.traits = this.selectedTraits.map(t => {
+            t.id = newIds[t.id]
+            return t
           })
 
           return addTrial(trialCopy)
