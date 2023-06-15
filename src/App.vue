@@ -237,6 +237,7 @@ export default {
       this.$store.dispatch('setIsOffline', false)
     },
     updateAvailable: function (event) {
+      console.log('swUpdated called')
       this.registration = event.detail
       this.updateExists = true
     },
@@ -256,11 +257,13 @@ export default {
 
     // Prevent multiple refreshes
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      console.log('controllerchange called')
       if (this.refreshing) {
         return
       }
       this.refreshing = true
       // Here the actual reload of the page occurs
+      console.log('reloading')
       window.location.reload(true)
     })
   },

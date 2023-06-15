@@ -22,18 +22,6 @@ if (process.env.NODE_ENV === 'production') {
     updated (registration) {
       console.log('New content is available; please refresh.')
 
-      // if ('serviceWorker' in navigator) {
-      //   navigator.serviceWorker.getRegistrations().then(registrations => {
-      //     for (const registration of registrations) {
-      //       registration.update()
-      //     }
-      //   })
-      // }
-
-      // setTimeout(() => {
-      //   window.location.reload(true)
-      // }, 1000)
-
       document.dispatchEvent(
         new CustomEvent('swUpdated', { detail: registration })
       )
