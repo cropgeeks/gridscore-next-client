@@ -90,7 +90,7 @@ import { Detector } from '@/plugins/browser-detect'
 import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
-import { isOffline } from './plugins/misc'
+import { isOffline } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -260,7 +260,7 @@ export default {
         return
       }
       this.refreshing = true
-      // Here the actual reload of the page occurs 
+      // Here the actual reload of the page occurs
       window.location.reload(true)
     })
   },
