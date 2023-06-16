@@ -408,7 +408,9 @@ export default {
         const delta = forward ? 1 : -1
 
         if (mapping.length > 0) {
-          changeTrialsData(this.trial.localId, this.cell.row, this.cell.column, mapping, this.geolocation)
+          const payload = {}
+          payload[`${this.cell.row}|${this.cell.column}`] = mapping
+          changeTrialsData(this.trial.localId, payload, this.geolocation)
             .then(() => {
               // Take copies for the emitter later
               const row = this.cell.row

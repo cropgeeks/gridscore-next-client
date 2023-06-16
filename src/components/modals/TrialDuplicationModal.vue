@@ -5,30 +5,35 @@
            :ok-disabled="!this.nameValid || !this.traitsValid"
            no-fade
            @hidden="$emit('hidden')"
-           size="lg"
+           size="xl"
            ref="trialDuplicationModal">
     <div v-if="trial">
       <p>{{ $t('modalTextTrialDuplicate') }}</p>
 
-      <TrialInformation class="border mb-3" :trial="trial" />
+      <b-row>
+        <b-col :cols=12 :lg=6>
+          <TrialInformation class="border mb-3" :trial="trial" />
+        </b-col>
+        <b-col :cols=12 :lg=6>
+          <b-form @submit.prevent="onSubmit">
+            <b-form-group :label="$t('formLabelDuplicateTrialName')" :description="$t('formDescriptionDuplicateTrialName')" label-for="name">
+              <b-form-input id="name" v-model="newName" trim :state="nameValid" />
+            </b-form-group>
 
-      <b-form @submit.prevent="onSubmit">
-        <b-form-group :label="$t('formLabelDuplicateTrialName')" :description="$t('formDescriptionDuplicateTrialName')" label-for="name">
-          <b-form-input id="name" v-model="newName" trim :state="nameValid" />
-        </b-form-group>
+            <b-form-group :label="$t('formLabelDuplicateTrialDescription')" :description="$t('formDescriptionDuplicateTrialDescription')" label-for="description">
+              <b-form-textarea id="description" v-model="newDescription" trim />
+            </b-form-group>
 
-        <b-form-group :label="$t('formLabelDuplicateTrialDescription')" :description="$t('formDescriptionDuplicateTrialDescription')" label-for="description">
-          <b-form-textarea id="description" v-model="newDescription" trim />
-        </b-form-group>
+            <b-form-group :label="$t('formLabelDuplicateTrialTraits')" :description="$t('formDescriptionDuplicateTrialTraits')" label-for="traits">
+              <b-form-select id="traits" v-model="selectedTraits" :options="allTraits" multiple :state="traitsValid" />
+            </b-form-group>
 
-        <b-form-group :label="$t('formLabelDuplicateTrialTraits')" :description="$t('formDescriptionDuplicateTrialTraits')" label-for="traits">
-          <b-form-select id="traits" v-model="selectedTraits" :options="allTraits" multiple :state="traitsValid" />
-        </b-form-group>
-
-        <b-form-group :label="$t('formLabelDuplicateTrialCopyData')" :description="$t('formDescriptionDuplicateTrialCopyData')" label-for="copyData">
-          <b-form-checkbox switch id="copyData" v-model="copyData">{{ $t(copyData ? 'genericYes' : 'genericNo') }}</b-form-checkbox>
-        </b-form-group>
-      </b-form>
+            <b-form-group :label="$t('formLabelDuplicateTrialCopyData')" :description="$t('formDescriptionDuplicateTrialCopyData')" label-for="copyData">
+              <b-form-checkbox switch id="copyData" v-model="copyData">{{ $t(copyData ? 'genericYes' : 'genericNo') }}</b-form-checkbox>
+            </b-form-group>
+          </b-form>
+        </b-col>
+      </b-row>
     </div>
   </b-modal>
 </template>

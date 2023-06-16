@@ -221,11 +221,64 @@ const migrateOldGridScoreTrial = (old) => {
 
 const isOffline = () => 'onLine' in navigator && !navigator.onLine
 
+const checkDataMatchesTraitType = (trait, value, checkDatesAndCategories = true) => {
+  const trimmed = (typeof value === 'string') ? value.trim() : value
+
+  if (trait.dataType === 'int' || trait.dataType === 'float') {
+    try {
+      const int = Number(trimmed)
+      if (isNaN(trimmed) || isNaN(int) || (trait.dataType === 'int' && !Number.isInteger(int))) {
+        return false
+      }
+
+      const r = trait.restrictions
+
+      if (r) {
+        if (r.min !== undefined && r.min !== null) {
+          if (value < r.min) {
+            return false
+          }
+        }
+        if (r.max !== undefined && r.max !== null) {
+          if (value > r.max) {
+            return false
+          }
+        }
+      }
+    } catch (err) {
+      return false
+    }
+  } else if (trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && checkDatesAndCategories) {
+    return trait.restrictions.categories.includes(value)
+  } else if (trait.dataType === 'date' && checkDatesAndCategories) {
+    return isValidDateString(value)
+  }
+
+  return true
+}
+
+const isValidDateString = (dateString) => {
+  const regEx = /^\d{4}-\d{2}-\d{2}$/
+  if (!dateString.match(regEx)) {
+    // Invalid format
+    return false
+  }
+  const d = new Date(dateString)
+  const dNum = d.getTime()
+  if (!dNum && dNum !== 0) {
+    // NaN value, Invalid date
+    return false
+  }
+  return d.toISOString().slice(0, 10) === dateString
+}
+
 export {
   getTraitTypeText,
   downloadText,
   toLocalDateString,
   toLocalDateTimeString,
   migrateOldGridScoreTrial,
-  isOffline
+  isOffline,
+  checkDataMatchesTraitType,
+  isValidDateString
 }

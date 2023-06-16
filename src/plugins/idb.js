@@ -351,154 +351,161 @@ const getTransactionForTrial = async (localId) => {
   }
 }
 
-const changeTrialsData = async (trialId, row, column, data, geolocation) => {
+const changeTrialsData = async (trialId, dataMapping, geolocation) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
-    const cell = await getCell(trialId, row, column)
-
-    if (!cell.measurements) {
-      cell.measurement = {}
-
-      trial.traits.forEach(t => {
-        cell.measurements[t.id] = []
-      })
-    }
-
-    data.forEach(d => {
-      const trait = trial.traits.find(t => t.id === d.traitId)
-
-      if (!cell.measurements[d.traitId]) {
-        cell.measurements[d.traitId] = []
-      }
-
-      if (d.delete) {
-        if (trait.allowRepeats) {
-          // Remove any with the same timestamp
-          cell.measurements[d.traitId] = cell.measurements[d.traitId].filter(cm => cm.timestamp !== d.timestamp)
-        } else {
-          if (cell.measurements[d.traitId].length > 0) {
-            // Remove any value that may exist
-            cell.measurements[d.traitId] = []
-          }
-        }
-      } else {
-        if (trait.allowRepeats) {
-          const match = cell.measurements[d.traitId].find(cm => cm.timestamp === d.timestamp)
-
-          if (match) {
-            // Update the values
-            match.values = d.values
-          } else {
-            // If no match is found, simply append to the end
-            cell.measurements[d.traitId].push({
-              values: d.values,
-              timestamp: d.timestamp
-            })
-          }
-        } else {
-          // Else, search for a match for this trait (the first entry)
-          const match = cell.measurements[d.traitId].length > 0 ? cell.measurements[d.traitId][0] : null
-
-          if (match) {
-            // If it exists, update it
-            match.values = d.values
-            match.timestamp = d.timestamp
-          } else {
-            // If not, create a new one
-            cell.measurements[d.traitId].push({
-              values: d.values,
-              timestamp: d.timestamp
-            })
-          }
-        }
-      }
-    })
-
-    // If there is a new geolocation
-    if (geolocation && geolocation.lat !== undefined && geolocation.lat !== null && geolocation.lng !== undefined && geolocation.lng !== null) {
-      // Check if either, there isn't a geolocation or there isn't a center or either lat or lng are missing
-      if (!cell.geography || !cell.geography.center || cell.geography.center.lat === undefined || cell.geography.lat === null || cell.geography.center.lng === undefined || cell.geography.lng === null) {
-        // Set new center as the parameter
-        cell.geography = {
-          center: {
-            lat: geolocation.lat,
-            lng: geolocation.lng
-          }
-        }
-      } else {
-        // Otherwise, take the average
-        cell.geography.lat = (cell.geography.lat + geolocation.lat) / 2
-        cell.geography.lng = (cell.geography.lng + geolocation.lng) / 2
-      }
-    }
-
-    // Remove this as it was only added temporarily
-    delete cell.displayName
-
     const db = await getDb()
+    const transaction = logTransactions(trial) ? ((await db.get('transactions', trialId)) || getEmptyTransaction(trialId)) : null
 
-    if (logTransactions(trial)) {
-      const traitMap = {}
+    for (const [key, data] of Object.entries(dataMapping)) {
+      const [row, column] = key.split('|').map(c => +c)
 
-      trial.traits.forEach(t => {
-        traitMap[t.id] = t
-      })
+      const cell = await getCell(trialId, row, column)
 
-      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+      if (!cell.measurements) {
+        cell.measurement = {}
 
-      // Create an array if it doesn't exist already
-      if (!transaction.plotTraitDataChangeTransactions[`${row}|${column}`]) {
-        transaction.plotTraitDataChangeTransactions[`${row}|${column}`] = []
+        trial.traits.forEach(t => {
+          cell.measurements[t.id] = []
+        })
       }
 
-      // Get all trait data transactions for this plot
-      const cellDataTs = transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+      data.forEach(d => {
+        const trait = trial.traits.find(t => t.id === d.traitId)
 
-      if (cellDataTs.length > 0) {
-        // For each new data change
-        data.forEach(d => {
-          // Check if there's an old transaction for that trait
+        if (!cell.measurements[d.traitId]) {
+          cell.measurements[d.traitId] = []
+        }
 
-          const trait = traitMap[d.traitId]
+        if (d.delete) {
+          if (trait.allowRepeats) {
+            // Remove any with the same timestamp
+            cell.measurements[d.traitId] = cell.measurements[d.traitId].filter(cm => cm.timestamp !== d.timestamp)
+          } else {
+            if (cell.measurements[d.traitId].length > 0) {
+              // Remove any value that may exist
+              cell.measurements[d.traitId] = []
+            }
+          }
+        } else {
+          if (trait.allowRepeats) {
+            const match = cell.measurements[d.traitId].find(cm => cm.timestamp === d.timestamp)
 
-          const match = cellDataTs.find(od => {
-            if (trait.allowRepeats) {
-              return od.traitId === d.traitId && od.timestamp === d.timestamp
+            if (match) {
+              // Update the values
+              match.values = d.values
             } else {
-              return od.traitId === d.traitId
+              // If no match is found, simply append to the end
+              cell.measurements[d.traitId].push({
+                values: d.values,
+                timestamp: d.timestamp
+              })
+            }
+          } else {
+            // Else, search for a match for this trait (the first entry)
+            const match = cell.measurements[d.traitId].length > 0 ? cell.measurements[d.traitId][0] : null
+
+            if (match) {
+              // If it exists, update it
+              match.values = d.values
+              match.timestamp = d.timestamp
+            } else {
+              // If not, create a new one
+              cell.measurements[d.traitId].push({
+                values: d.values,
+                timestamp: d.timestamp
+              })
+            }
+          }
+        }
+      })
+
+      // If there is a new geolocation
+      if (geolocation && geolocation.lat !== undefined && geolocation.lat !== null && geolocation.lng !== undefined && geolocation.lng !== null) {
+        // Check if either, there isn't a geolocation or there isn't a center or either lat or lng are missing
+        if (!cell.geography || !cell.geography.center || cell.geography.center.lat === undefined || cell.geography.lat === null || cell.geography.center.lng === undefined || cell.geography.lng === null) {
+          // Set new center as the parameter
+          cell.geography = {
+            center: {
+              lat: geolocation.lat,
+              lng: geolocation.lng
+            }
+          }
+        } else {
+          // Otherwise, take the average
+          cell.geography.lat = (cell.geography.lat + geolocation.lat) / 2
+          cell.geography.lng = (cell.geography.lng + geolocation.lng) / 2
+        }
+      }
+
+      // Remove this as it was only added temporarily
+      delete cell.displayName
+
+      if (logTransactions(trial)) {
+        const traitMap = {}
+
+        trial.traits.forEach(t => {
+          traitMap[t.id] = t
+        })
+
+        // Create an array if it doesn't exist already
+        if (!transaction.plotTraitDataChangeTransactions[`${row}|${column}`]) {
+          transaction.plotTraitDataChangeTransactions[`${row}|${column}`] = []
+        }
+
+        // Get all trait data transactions for this plot
+        const cellDataTs = transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+
+        if (cellDataTs.length > 0) {
+          // For each new data change
+          data.forEach(d => {
+            // Check if there's an old transaction for that trait
+
+            const trait = traitMap[d.traitId]
+
+            const match = cellDataTs.find(od => {
+              if (trait.allowRepeats) {
+                return od.traitId === d.traitId && od.timestamp === d.timestamp
+              } else {
+                return od.traitId === d.traitId
+              }
+            })
+
+            if (!match) {
+              cellDataTs.push(d)
+            } else {
+              if (match.delete && !d.delete) {
+                // If the old one is a delete, but the new one isn't, remove the delete flag
+                delete match.delete
+              } else if (!match.delete && d.delete) {
+                // If the old one isn't a delete, but the new one is, set the delete flag
+                match.delete = true
+              }
+
+              // In any case, update the values and timestamp
+              match.values = d.values
+              match.timestamp = d.timestamp
             }
           })
+        } else {
+          // Simply add them all as new items
+          transaction.plotTraitDataChangeTransactions[`${row}|${column}`].push(...data)
+        }
 
-          if (!match) {
-            cellDataTs.push(d)
-          } else {
-            if (match.delete && !d.delete) {
-              // If the old one is a delete, but the new one isn't, remove the delete flag
-              delete match.delete
-            } else if (!match.delete && d.delete) {
-              // If the old one isn't a delete, but the new one is, set the delete flag
-              match.delete = true
-            }
-
-            // In any case, update the values and timestamp
-            match.values = d.values
-            match.timestamp = d.timestamp
-          }
-        })
-      } else {
-        // Simply add them all as new items
-        transaction.plotTraitDataChangeTransactions[`${row}|${column}`].push(...data)
+        if (transaction.plotTraitDataChangeTransactions[`${row}|${column}`].length < 1) {
+          delete transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+        }
       }
 
-      if (transaction.plotTraitDataChangeTransactions[`${row}|${column}`].length < 1) {
-        delete transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+      if (transaction) {
+        await db.put('transactions', transaction)
       }
 
-      await db.put('transactions', transaction)
+      await db.put('data', cell)
     }
 
-    return db.put('data', cell)
+    return new Promise(resolve => resolve())
   } else {
     return new Promise(resolve => resolve())
   }

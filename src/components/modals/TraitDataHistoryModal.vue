@@ -221,7 +221,7 @@ export default {
         return true
       }
     },
-    validate: async function () {
+    validate: function () {
       // Run validation again
       const valid = this.handleDateChange(this.currentDate, false)
 
@@ -258,16 +258,19 @@ export default {
       }
 
       if (changes.length > 0) {
-        await changeTrialsData(this.trial.localId, this.row, this.column, changes)
+        const payload = {}
+        payload[`${this.row}|${this.column}`] = changes
+        changeTrialsData(this.trial.localId, payload)
           .then(() => {
             this.$nextTick(() => {
               emitter.emit('plot-data-changed', this.row, this.column, this.trial.localId)
               emitter.emit('plot-clicked', this.row, this.column)
             })
+            this.hide()
           })
+      } else {
+        this.hide()
       }
-
-      this.hide()
     },
     /**
      * Shows and resets modal dialog

@@ -76,7 +76,7 @@
 
 <script>
 import { BIconCaretLeftFill, BIconCalendar3, BIconCaretRightFill, BIconSlashCircle } from 'bootstrap-vue'
-import { toLocalDateString } from '@/plugins/misc'
+import { checkDataMatchesTraitType, toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -180,20 +180,6 @@ export default {
         this.dateInput += event.key
       }
     },
-    checkIfInRange: function (value, min, max) {
-      if (min !== undefined && min !== null) {
-        if (value < min) {
-          return false
-        }
-      }
-      if (max !== undefined && max !== null) {
-        if (value > max) {
-          return false
-        }
-      }
-
-      return true
-    },
     reset: function () {
       this.value = null
       this.formState = null
@@ -203,32 +189,9 @@ export default {
         this.value = null
         this.formState = true
         return true
-      } else {
-        const trimmed = (typeof this.value === 'string') ? this.value.trim() : this.value
-
-        if (this.trait.dataType === 'int' || this.trait.dataType === 'float') {
-          try {
-            const int = Number(trimmed)
-            if (isNaN(trimmed) || isNaN(int) || (this.trait.dataType === 'int' && !Number.isInteger(int))) {
-              this.formState = false
-              return false
-            }
-
-            const r = this.trait.restrictions
-
-            if (r) {
-              const valid = this.checkIfInRange(int, r.min, r.max)
-
-              if (!valid) {
-                this.formState = false
-                return false
-              }
-            }
-          } catch (err) {
-            this.formState = false
-            return false
-          }
-        }
+      } else if (!checkDataMatchesTraitType(this.trait, this.value, false)) {
+        this.formState = false
+        return false
       }
 
       this.formState = true
