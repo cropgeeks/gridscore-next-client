@@ -7,13 +7,11 @@
     <div>
       <b-card-text><BIconLayoutThreeColumns rotate="90" /> {{ $tc('widgetTrialSelectorRows', trial.layout.rows) }}</b-card-text>
       <b-card-text><BIconLayoutThreeColumns /> {{ $tc('widgetTrialSelectorColumns', trial.layout.columns) }}</b-card-text>
-      <b-card-text><BIconTags />&nbsp;
-        <span>{{ $tc('widgetTrialSelectorTraits', trial.traits.length) }}</span>
+      <b-card-text><BIconTags /> <span>{{ $tc('widgetTrialSelectorTraits', trial.traits.length) }}</span>
         <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
       </b-card-text>
       <b-card-text>
-        <BIconChatLeftText />&nbsp;
-        <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
+        <BIconChatLeftText /> <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
         <span v-else>{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</span>
       </b-card-text>
       <b-card-text v-if="trial.updatedOn"><BIconCalendarDate /> {{ new Date(trial.updatedOn).toLocaleString() }}</b-card-text>

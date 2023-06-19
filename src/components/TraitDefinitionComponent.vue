@@ -121,7 +121,7 @@
       </b-col>
       <b-col cols=12 lg=6 class="mb-3">
         <div class="d-flex align-items-center justify-content-between">
-          <h2>{{ $t('pageTrialTraitListTitle') }}</h2>
+          <h2>{{ $t('pageTrialTraitListTitle') }} <b-button :disabled="!traits || traits.length < 1" @click="clearTraits" v-b-tooltip="$t('buttonClear')"><BIconTrashFill /></b-button></h2>
           <b-dropdown :text="$t('dropdownImportExportTraits')">
             <b-dropdown-group id="import-group" :header="$t('dropdownSectionImportTraits')">
               <b-dropdown-item-button @click="importExportJson(false)">{{ $t('dropdownOptionImportTraitsJson') }}</b-dropdown-item-button>
@@ -186,7 +186,7 @@ import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExpo
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal'
 import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal'
 import { getTraitTypeText } from '@/plugins/misc'
-import { BIconstack, BIconPlusSquareFill, BIconArrowRepeat, BIconChevronBarRight, BIconChevronBarLeft, BIconCalendar, BIconCalendarRange, BIconTriangle, BIconSegmentedNav, BIconCollection, BIconBack, BIconTrash, BIconGripVertical, BIconTags, BIconPencilSquare, BIconTextarea, BIconCardText, BIconRulers, BIconChevronBarDown, BIconChevronBarUp } from 'bootstrap-vue'
+import { BIconstack, BIconPlusSquareFill, BIconArrowRepeat, BIconChevronBarRight, BIconChevronBarLeft, BIconCalendar, BIconCalendarRange, BIconTriangle, BIconSegmentedNav, BIconCollection, BIconBack, BIconTrashFill, BIconTrash, BIconGripVertical, BIconTags, BIconPencilSquare, BIconTextarea, BIconCardText, BIconRulers, BIconChevronBarDown, BIconChevronBarUp } from 'bootstrap-vue'
 import draggable from 'vuedraggable'
 import { getId } from '@/plugins/id'
 import { TRAIT_TIMEFRAME_TYPE_SUGGEST, TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
@@ -206,6 +206,7 @@ export default {
     BIconCalendarRange,
     BIconBack,
     BIconTrash,
+    BIconTrashFill,
     BIconGripVertical,
     BIconPencilSquare,
     BIconTextarea,
@@ -297,6 +298,19 @@ export default {
   },
   methods: {
     getTraitTypeText,
+    clearTraits: function () {
+      this.$bvModal.msgBoxConfirm(this.$t('modalTextDeleteTraits'), {
+        title: this.$t('modalTitleDeleteTraits'),
+        okTitle: this.$t('buttonYes'),
+        okVariant: 'danger',
+        cancelTitle: this.$t('buttonNo')
+      })
+        .then(value => {
+          if (value) {
+            this.traits = []
+          }
+        })
+    },
     importBrapiTraits: function (newTraits) {
       if (newTraits && newTraits.length > 0) {
         newTraits.forEach(t => {
