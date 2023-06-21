@@ -418,8 +418,9 @@ export default {
               const trialId = this.trial.localId
 
               if (this.isGuidedWalk) {
-                if (this.guidedWalk.next) {
-                  this.guidedWalk.index = Math.max(0, Math.min(this.guidedWalk.order.length - 1, this.guidedWalk.index + delta))
+                const index = this.guidedWalk.index + delta
+                if (index > -1 && index < this.guidedWalk.order.length) {
+                  this.guidedWalk.index = index
                   const next = this.guidedWalk.order[this.guidedWalk.index]
                   this.updateCell(next.y, next.x)
                 } else {
@@ -433,8 +434,9 @@ export default {
             })
         } else {
           if (this.isGuidedWalk) {
-            if (this.guidedWalk.next) {
-              this.guidedWalk.index = Math.max(0, Math.min(this.guidedWalk.order.length - 1, this.guidedWalk.index + delta))
+            const index = this.guidedWalk.index + delta
+            if (index > -1 && index < this.guidedWalk.order.length) {
+              this.guidedWalk.index = index
               const next = this.guidedWalk.order[this.guidedWalk.index]
               this.updateCell(next.y, next.x)
             } else {

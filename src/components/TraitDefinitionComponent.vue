@@ -219,6 +219,12 @@ export default {
     TraitImportExportGerminateModal,
     BrapiTraitImportModal
   },
+  props: {
+    trial: {
+      type: Object,
+      default: () => null
+    }
+  },
   data: function () {
     return {
       TRAIT_TIMEFRAME_TYPE_SUGGEST,
@@ -258,6 +264,14 @@ export default {
     },
     traitGroups: function () {
       const set = new Set()
+
+      if (this.trial && this.trial.traits && this.trial.traits.length > 0) {
+        this.trial.traits.forEach(t => {
+          if (t.group && t.group.name && t.group.name !== '') {
+            set.add(t.group.name)
+          }
+        })
+      }
 
       this.traits.forEach(t => {
         if (t.group && t.group !== '') {
@@ -343,11 +357,11 @@ export default {
 
           // Check if there are any value restrictions on the trait
           if (t.scale && t.scale.validValues) {
-            if (t.scale.validValues.min !== undefined && t.scale.validValues.min !== null) {
-              restrictions.min = t.scale.validValues.min
+            if (t.scale.validValues.minimumValue !== undefined && t.scale.validValues.minimumValue !== null) {
+              restrictions.min = +t.scale.validValues.minimumValue
             }
-            if (t.scale.validValues.max !== undefined && t.scale.validValues.max !== null) {
-              restrictions.max = t.scale.validValues.max
+            if (t.scale.validValues.maximumValue !== undefined && t.scale.validValues.maximumValue !== null) {
+              restrictions.max = +t.scale.validValues.maximumValue
             }
             if (t.scale.validValues.categories && t.scale.validValues.categories.length > 0) {
               restrictions.categories = t.scale.validValues.categories.map(c => c.value)

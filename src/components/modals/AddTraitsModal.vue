@@ -11,7 +11,7 @@
     <div v-if="trial">
       <p>{{ $t('modalTextAddTrait') }}</p>
 
-      <TraitDefinitionComponent @change="updateTraits" />
+      <TraitDefinitionComponent :trial="trial" @change="updateTraits" />
     </div>
   </b-modal>
 </template>

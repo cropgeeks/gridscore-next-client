@@ -202,6 +202,14 @@ export default {
       const offset = today.getTimezoneOffset()
       return new Date(today.getTime() + (offset * 60 * 1000))
     },
+    getDate: function (d) {
+      const [yyyy, mm, dd] = d.split(/[^\d]+/)
+      const date = new Date()
+      date.setUTCFullYear(+yyyy)
+      date.setUTCMonth(mm - 1)
+      date.setUTCDate(+dd)
+      return date
+    },
     getTodayString: function () {
       const date = new Date()
 
@@ -255,7 +263,7 @@ export default {
       if (current === undefined || current === null || current === '') {
         current = this.getToday()
       } else {
-        current = new Date(current)
+        current = this.getDate(current)
       }
 
       current.setDate(current.getDate() - 1)
@@ -289,7 +297,7 @@ export default {
       if (current === undefined || current === null || current === '') {
         current = this.getToday()
       } else {
-        current = new Date(current)
+        current = this.getDate(current)
       }
 
       current.setDate(current.getDate() + 1)

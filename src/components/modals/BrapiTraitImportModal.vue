@@ -115,11 +115,11 @@ export default {
               }
 
               if (t.scale.validValues) {
-                if (t.scale.validValues.min !== undefined && t.scale.validValues.min !== null) {
-                  restrictions += `<span class="badge badge-secondary ml-2">&ge;${t.scale.validValues.min}</span>`
+                if (t.scale.validValues.minimumValue !== undefined && t.scale.validValues.minimumValue !== null) {
+                  restrictions += `<span class="badge badge-secondary ml-2">&ge;${t.scale.validValues.minimumValue}</span>`
                 }
-                if (t.scale.validValues.max !== undefined && t.scale.validValues.max !== null) {
-                  restrictions += `<span class="badge badge-secondary ml-2">&le;${t.scale.validValues.max}</span>`
+                if (t.scale.validValues.maximumValue !== undefined && t.scale.validValues.maximumValue !== null) {
+                  restrictions += `<span class="badge badge-secondary ml-2">&le;${t.scale.validValues.maximumValue}</span>`
                 }
                 if (t.scale.validValues.categories) {
                   restrictions += `<span class="badge badge-secondary ml-2">${t.scale.validValues.categories.map(tr => tr.value).join(', ')}</span>`

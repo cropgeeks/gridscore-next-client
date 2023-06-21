@@ -28,10 +28,10 @@
       </b-button-group>
     </h4>
     <div v-if="trait.restrictions || trait.timeframe">
-      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)">&gt; {{ trait.restrictions.min }}</b-badge>
-      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)">&lt; {{ trait.restrictions.max }}</b-badge>
-      <b-badge class="mr-2" v-b-tooltip.bottom="$t('tooltipTraitTimeframeOutwith')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&gt; {{ trait.timeframe.start }}</b-badge>
-      <b-badge class="mr-2" v-b-tooltip.bottom="$t('tooltipTraitTimeframeOutwith')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&lt; {{ trait.timeframe.end }}</b-badge>
+      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)">&ge; {{ trait.restrictions.min }}</b-badge>
+      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)">&le; {{ trait.restrictions.max }}</b-badge>
+      <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&ge; {{ trait.timeframe.start }}</b-badge>
+      <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&le; {{ trait.timeframe.end }}</b-badge>
     </div>
     <p class="text-muted trait-description" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
