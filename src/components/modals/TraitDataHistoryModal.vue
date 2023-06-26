@@ -1,4 +1,4 @@
-<template>
+ <template>
   <b-modal :title="$t('modalTitleTraitDataHistory')"
            :ok-title="$t('buttonClose')"
            @ok.prevent="validate"
@@ -12,13 +12,13 @@
           <b-button @click="nudgeDate(false)" :disabled="prevDisabled"><BIconChevronLeft /></b-button>
         </b-input-group-prepend>
         <b-form-datepicker :date-disabled-fn="isDateDisabled"
-                          :date-info-fn="dateStyle"
-                          :start-weekday="1"
-                          readonly
-                          :min="minDate"
-                          :max="maxDate"
-                          :value="currentDate"
-                          @input="handleDateChange" />
+                           :date-info-fn="dateStyle"
+                           :start-weekday="1"
+                           readonly
+                           :min="minDate"
+                           :max="maxDate"
+                           :value="currentDate"
+                           @input="handleDateChange" />
         <b-input-group-append>
           <b-button @click="nudgeDate(true)" :disabled="nextDisabled"><BIconChevronRight /></b-button>
         </b-input-group-append>

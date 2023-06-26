@@ -48,6 +48,7 @@ export default new Vuex.Store({
     storeUniqueClientId: (state) => state.uniqueClientId,
     storeRunCount: (state) => state.runCount,
     storeLocale: (state) => state.locale,
+    storeCalendarLocale: (state) => (state.locale || 'en_GB').replace('_', '-'),
     storeDarkMode: (state) => state.darkMode,
     storeHideCitationMessage: (state) => state.hideCitationMessage,
     storeDisplayRowOrder: (state) => state.displayRowOrder,

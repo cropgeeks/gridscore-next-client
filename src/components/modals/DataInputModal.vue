@@ -18,6 +18,18 @@
       <h5 class="modal-title text-truncate">{{ displayName }}</h5>
 
       <b-button-group id="data-entry-header" v-if="cell">
+        <b-form-datepicker
+          :start-weekday="1"
+          v-b-tooltip="$t('')"
+          v-model="recordingDate"
+          button-only
+          today-button
+          value-as-date
+          :locale="storeCalendarLocale">
+          <template #button-content>
+            <BIconCalendarEvent /> <span class="d-none d-xl-inline-block"> {{ $t('buttonPickRecordingDate') }}</span>
+          </template>
+        </b-form-datepicker>
         <b-button size="sm" @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
         <b-button size="sm" :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
           <template v-if="cell.isMarked">
@@ -33,6 +45,9 @@
 
       <button class="close ml-0" @click="onXClicked">×</button>
     </template>
+    <div v-if="!isRecordingDateToday" class="modal-banner bg-info text-white text-center mb-3 p-2">
+      {{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}
+    </div>
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
@@ -84,7 +99,7 @@ import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
-import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconSignpostSplitFill, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
+import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconCalendarEvent, BIconSignpostSplitFill, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
@@ -99,6 +114,7 @@ export default {
     BIconChatRightTextFill,
     BIconBookmarkCheckFill,
     BIconBookmark,
+    BIconCalendarEvent,
     BIconCameraFill,
     BIconCheck,
     BIconX,
@@ -126,7 +142,8 @@ export default {
       traitGroupTabIndex: 0,
       selectedTrait: null,
       tabStates: null,
-      guidedWalk: null
+      guidedWalk: null,
+      recordingDate: new Date()
     }
   },
   computed: {
@@ -134,7 +151,8 @@ export default {
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeDisplayRowOrder',
-      'storeDisplayColumnOrder'
+      'storeDisplayColumnOrder',
+      'storeCalendarLocale'
     ]),
     okTitle: function () {
       if (this.isEditable) {
@@ -209,6 +227,12 @@ export default {
       } else {
         return null
       }
+    },
+    isRecordingDateToday: function () {
+      const now = new Date()
+      return now.getFullYear() === this.recordingDate.getFullYear() &&
+        now.getMonth() === this.recordingDate.getMonth() &&
+        now.getDate() === this.recordingDate.getDate()
     }
   },
   watch: {
@@ -387,6 +411,21 @@ export default {
       })
 
       if (this.tabStates.every(t => t)) {
+        const now = new Date()
+        const date = now
+
+        // If we're not using today as the recording date, then adjust to this time of day
+        if (!this.isRecordingDateToday) {
+          date.setDate(this.recordingDate.getDate())
+          date.setMonth(this.recordingDate.getMonth())
+          date.setFullYear(this.recordingDate.getFullYear())
+          console.log(date, date.toISOString())
+          date.setUTCHours(now.getUTCHours())
+          date.setUTCMinutes(now.getUTCMinutes())
+          date.setUTCSeconds(now.getUTCSeconds())
+          date.setUTCMilliseconds(now.getUTCMilliseconds())
+        }
+
         // All valid!
         const mapping = []
         this.trial.traits.forEach(t => {
@@ -400,7 +439,7 @@ export default {
             mapping.push({
               traitId: t.id,
               values: values,
-              timestamp: new Date().toISOString()
+              timestamp: date.toISOString()
             })
           }
         })

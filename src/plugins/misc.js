@@ -44,8 +44,8 @@ const padZerosTo = (str, length) => {
   return str
 }
 
-const toLocalDateString = (date) => {
-  const d = new Date(date)
+const toLocalDateString = (date = null) => {
+  const d = date === null ? new Date() : new Date(date)
   const month = padZerosTo('' + (d.getMonth() + 1), 2)
   const day = padZerosTo('' + d.getDate(), 2)
   const year = d.getFullYear()
