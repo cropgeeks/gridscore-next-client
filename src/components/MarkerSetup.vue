@@ -59,6 +59,7 @@ export default {
   watch: {
     layout: {
       deep: true,
+      immediate: true,
       handler: function () {
         this.reset()
       }
@@ -213,6 +214,10 @@ export default {
       this.draw()
     },
     reset: function () {
+      if (!this.$refs.canvasWrapper) {
+        return
+      }
+
       this.width = this.$refs.canvasWrapper.offsetWidth
       this.height = this.$refs.canvasWrapper.offsetHeight
       const cc = this.$refs.canvas

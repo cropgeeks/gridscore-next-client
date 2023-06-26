@@ -46,7 +46,6 @@
     <AddTraitsModal :trial="selectedTrial" ref="addTraitsModal" v-if="selectedTrial && selectedTrial.editable" />
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate)" />
-    <TrialDuplicationModal :trial="selectedTrial" ref="trialDuplicationModal" v-if="selectedTrial" />
     <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial" />
     <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial" />
   </div>
@@ -56,7 +55,6 @@
 import TrialInformation from '@/components/TrialInformation'
 import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal'
-import TrialDuplicationModal from '@/components/modals/TrialDuplicationModal'
 import AddTraitsModal from '@/components/modals/AddTraitsModal'
 import TrialModificationModal from '@/components/modals/TrialModificationModal'
 import TrialDataImportModal from '@/components/modals/TrialDataImportModal'
@@ -77,7 +75,6 @@ export default {
     TrialCommentModal,
     TrialShareCodeModal,
     TrialSynchronizationModal,
-    TrialDuplicationModal,
     TrialDataImportModal,
     AddGermplasmModal,
     TrialModificationModal,
@@ -142,9 +139,7 @@ export default {
       this.$nextTick(() => this.$refs.trialModificationModal.show())
     },
     duplicateTrial: function (trial) {
-      this.selectedTrial = trial
-
-      this.$nextTick(() => this.$refs.trialDuplicationModal.show())
+      this.$router.push({ name: 'trial-duplication', params: { trialId: trial.localId } })
     },
     synchronize: function (trial) {
       this.selectedTrial = trial

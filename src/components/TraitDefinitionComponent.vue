@@ -223,6 +223,10 @@ export default {
     trial: {
       type: Object,
       default: () => null
+    },
+    initialTraits: {
+      type: Array,
+      default: () => null
     }
   },
   data: function () {
@@ -256,6 +260,22 @@ export default {
   watch: {
     traits: function (newValue) {
       this.$emit('change', newValue)
+    },
+    initialTraits: {
+      immediate: true,
+      handler: function (newValue) {
+        if (newValue) {
+          this.traits = JSON.parse(JSON.stringify(newValue)).map(t => {
+            delete t.editable
+            delete t.color
+            delete t.progress
+            t.group = t.group ? t.group.name : null
+            return t
+          })
+        } else {
+          this.traits = []
+        }
+      }
     }
   },
   computed: {

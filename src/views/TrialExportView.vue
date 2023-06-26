@@ -104,7 +104,26 @@ export default {
 
       if (shareCode) {
         if (this.trial.transactionCount > 0) {
-          this.$refs.traitSyncModal.show()
+          this.$bvModal.msgBoxConfirm(this.$t('modalTextExportSynchronization'), {
+            title: this.$t('modalTitleExportSynchronization'),
+            okTitle: this.$t('buttonYes'),
+            okVariant: 'primary',
+            cancelVariant: 'primary',
+            cancelTitle: this.$t('buttonNo')
+          })
+            .then(value => {
+              if (value) {
+                this.$refs.traitSyncModal.show()
+              } else {
+                emitter.emit('show-loading', true)
+                exportToShapefile(shareCode)
+                  .then(uuid => {
+                    this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
+                    emitter.emit('show-loading', false)
+                  })
+                  .catch(() => emitter.emit('show-loading', false))
+              }
+            })
         } else {
           emitter.emit('show-loading', true)
           exportToShapefile(shareCode)
@@ -228,7 +247,26 @@ export default {
 
       if (shareCode) {
         if (this.trial.transactionCount > 0) {
-          this.$refs.traitSyncModal.show()
+          this.$bvModal.msgBoxConfirm(this.$t('modalTextExportSynchronization'), {
+            title: this.$t('modalTitleExportSynchronization'),
+            okTitle: this.$t('buttonYes'),
+            okVariant: 'primary',
+            cancelVariant: 'primary',
+            cancelTitle: this.$t('buttonNo')
+          })
+            .then(value => {
+              if (value) {
+                this.$refs.traitSyncModal.show()
+              } else {
+                emitter.emit('show-loading', true)
+                exportToGerminate(shareCode)
+                  .then(uuid => {
+                    this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
+                    emitter.emit('show-loading', false)
+                  })
+                  .catch(() => emitter.emit('show-loading', false))
+              }
+            })
         } else {
           emitter.emit('show-loading', true)
           exportToGerminate(shareCode)

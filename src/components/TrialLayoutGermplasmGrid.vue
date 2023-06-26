@@ -41,6 +41,10 @@ export default {
     columns: {
       type: Number,
       default: 1
+    },
+    initialGermplasm: {
+      type: Object,
+      default: () => null
     }
   },
   data: function () {
@@ -54,6 +58,16 @@ export default {
     },
     columns: function () {
       this.resetFormAndGermplasm()
+    },
+    initialGermplasm: {
+      immediate: true,
+      handler: function (newValue) {
+        if (newValue) {
+          this.germplasmMap = JSON.parse(JSON.stringify(newValue))
+        } else {
+          this.germplasmMap = {}
+        }
+      }
     }
   },
   methods: {

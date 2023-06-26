@@ -115,6 +115,12 @@ export default {
 
         this.updateGrid()
       }
+    },
+    layout: {
+      immediate: true,
+      handler: function () {
+        this.update()
+      }
     }
   },
   methods: {

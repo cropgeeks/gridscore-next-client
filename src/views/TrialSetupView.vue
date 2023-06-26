@@ -1,7 +1,13 @@
 <template>
   <b-container class="my-4">
-    <h1 class="display-4">{{ $t('pageTrialSetupTitle') }}</h1>
-    <p>{{ $t('pageTrialSetupText') }}</p>
+    <template v-if="trialToCopy">
+      <h1 class="display-4">{{ $t('modalTitleTrialDuplicate') }}</h1>
+      <p>{{ $t('modalTextTrialDuplicate') }}</p>
+    </template>
+    <template v-else>
+      <h1 class="display-4">{{ $t('pageTrialSetupTitle') }}</h1>
+      <p>{{ $t('pageTrialSetupText') }}</p>
+    </template>
 
     <b-form @submit.prevent="onSubmit">
       <b-row>
@@ -21,6 +27,11 @@
               <BIconCardText /><span> {{ $t('formLabelTrialSetupTrialDescription') }}</span>
             </template>
             <b-form-textarea id="trial-description" :state="formState.trialDescription" v-model="trialDescription" />
+          </b-form-group>
+        </b-col>
+        <b-col cols=12 class="mb-3">
+          <b-form-group v-if="trialToCopy" :label="$t('formLabelDuplicateTrialCopyData')" :description="$t('formDescriptionDuplicateTrialCopyData')" label-for="copyData">
+            <b-form-checkbox switch id="copyData" v-model="copyData" :disabled="layout.rows !== trialToCopy.layout.rows || layout.columns !== trialToCopy.layout.columns">{{ $t(copyData ? 'genericYes' : 'genericNo') }}</b-form-checkbox>
           </b-form-group>
         </b-col>
         <b-col cols=12 lg=6 class="mb-3">
@@ -117,7 +128,7 @@
         <b-button variant="danger" v-if="layoutFeedback && layoutFeedback.length > 0" class="align-self-center my-2" @click="$refs.layoutFeedbackModal.show()"><BIconExclamationTriangleFill /> {{ $tc('formFeedbackLayout', layoutFeedback.length) }}</b-button>
       </template>
       <div class="px-3 py-2">
-        <TrialLayoutComponent ref="trialSetupLayout" @change="updateTrialLayout" />
+        <TrialLayoutComponent :initialLayout="layout" :initialGermplasm="germplasmMap" ref="trialSetupLayout" @change="updateTrialLayout" />
       </div>
     </b-sidebar>
 
@@ -142,7 +153,7 @@
         </div>
       </template>
       <div class="px-3 py-2">
-        <TraitDefinitionComponent ref="traitDefinition" @finished="updateTraitDefinitions" />
+        <TraitDefinitionComponent :initialTraits="traits" ref="traitDefinition" @finished="updateTraitDefinitions" />
       </div>
     </b-sidebar>
 
@@ -155,7 +166,7 @@ import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconJour
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
-import { addTrial } from '@/plugins/idb'
+import { addTrial, getTrialById } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 
 const emitter = require('tiny-emitter/instance')
@@ -197,7 +208,9 @@ export default {
       layoutFeedback: null,
       layoutDataIsValid: false,
       traitFeedback: null,
-      newTrialCreatedSuccessfully: false
+      newTrialCreatedSuccessfully: false,
+      trialToCopy: null,
+      copyData: false
     }
   },
   beforeRouteLeave: function (to, from, next) {
@@ -325,6 +338,8 @@ export default {
         cancelTitle: this.$t('buttonNo')
       }).then(value => {
         if (value) {
+          const sameDimensions = this.trialToCopy ? (this.trialToCopy.layout.rows === this.layout.rows && this.trialToCopy.layout.columns === this.layout.columns) : true
+
           const data = JSON.parse(JSON.stringify(this.germplasmMap))
 
           let plotCorners = null
@@ -345,10 +360,16 @@ export default {
             }
           }
 
-          Object.values(data).forEach(c => {
+          Object.keys(data).forEach(k => {
+            const c = data[k]
             c.measurements = {}
             this.traits.forEach(t => {
-              c.measurements[t.id] = []
+              if (this.trialToCopy && this.copyData && sameDimensions) {
+                const toCopy = this.trialToCopy.data[k]
+                c.measurements[t.id] = JSON.parse(JSON.stringify(toCopy.measurements[t.id] || []))
+              } else {
+                c.measurements[t.id] = []
+              }
             })
             c.comments = []
           })
@@ -395,6 +416,32 @@ export default {
           })
         }
       })
+    }
+  },
+  mounted: function () {
+    if (this.$route.params && this.$route.params.trialId) {
+      getTrialById(this.$route.params.trialId)
+        .then(trial => {
+          if (trial) {
+            this.trialName = this.$t('modalTextTrialDuplicateOfName', { original: trial.name })
+            this.trialDescription = this.$t('modalTextTrialDuplicateOfDate', { original: trial.description, date: new Date().toLocaleDateString() })
+            this.layout = JSON.parse(JSON.stringify(trial.layout))
+            this.traits = JSON.parse(JSON.stringify(trial.traits))
+
+            if (trial.data) {
+              const copy = JSON.parse(JSON.stringify(trial.data))
+              Object.values(copy).forEach(c => {
+                delete c.isMarked
+                c.comments = []
+              })
+              this.germplasmMap = copy
+            } else {
+              this.germplasmMap = {}
+            }
+
+            this.trialToCopy = trial
+          }
+        })
     }
   }
 }

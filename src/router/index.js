@@ -56,6 +56,10 @@ const routes = [
     name: 'trial-setup',
     component: () => import('@/views/TrialSetupView.vue')
   }, {
+    path: '/trial-duplication/:trialId',
+    name: 'trial-duplication',
+    component: () => import('@/views/TrialSetupView.vue')
+  }, {
     path: '/trial-import/:shareCode',
     name: 'trial-import',
     component: () => import('@/views/TrialImportView.vue')

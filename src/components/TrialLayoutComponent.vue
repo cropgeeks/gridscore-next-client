@@ -40,7 +40,7 @@
           <BIconX class="text-danger" v-else-if="tabCorrect.germplasm === false" />
         </template>
         <p>{{ $t('pageTrialLayoutGermplasmText') }}</p>
-        <TrialLayoutGermplasmGrid ref="germplasmTable" :rows="layout.rows" :columns="layout.columns" @change="setGermplasmMap" />
+        <TrialLayoutGermplasmGrid :initialGermplasm="initialGermplasm" ref="germplasmTable" :rows="layout.rows" :columns="layout.columns" @change="setGermplasmMap" />
       </b-tab>
       <b-tab :disabled="!hasDimensions">
         <template #title>
@@ -108,6 +108,16 @@ export default {
       }
     }
   },
+  props: {
+    initialLayout: {
+      type: Object,
+      default: () => null
+    },
+    initialGermplasm: {
+      type: Object,
+      default: () => null
+    }
+  },
   computed: {
     hasDimensions: function () {
       return this.layout.rows !== null && this.layout.rows !== '' && this.layout.columns !== null && this.layout.columns !== ''
@@ -117,6 +127,31 @@ export default {
     }
   },
   watch: {
+    initialLayout: {
+      immediate: true,
+      handler: function (newValue) {
+        if (newValue) {
+          this.layout = JSON.parse(JSON.stringify(newValue))
+        } else {
+          this.layout = {
+            rows: null,
+            columns: null,
+            corners: null,
+            markers: null
+          }
+        }
+      }
+    },
+    initialGermplasm: {
+      immediate: true,
+      handler: function (newValue) {
+        if (newValue) {
+          this.germplasmMap = JSON.parse(JSON.stringify(newValue))
+        } else {
+          this.germplasmMap = {}
+        }
+      }
+    },
     tabIndex: function (newValue, oldValue) {
       if (oldValue === 1) {
         this.$refs.germplasmTable.toggleTable(false)
