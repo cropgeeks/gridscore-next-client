@@ -426,7 +426,12 @@ export default {
             this.trialName = this.$t('modalTextTrialDuplicateOfName', { original: trial.name })
             this.trialDescription = this.$t('modalTextTrialDuplicateOfDate', { original: trial.description, date: new Date().toLocaleDateString() })
             this.layout = JSON.parse(JSON.stringify(trial.layout))
-            this.traits = JSON.parse(JSON.stringify(trial.traits))
+            this.traits = JSON.parse(JSON.stringify(trial.traits)).map(t => {
+              if (t.group && t.group.name) {
+                t.group = t.group.name
+              }
+              return t
+            })
 
             if (trial.data) {
               const copy = JSON.parse(JSON.stringify(trial.data))

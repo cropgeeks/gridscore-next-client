@@ -269,7 +269,7 @@ export default {
             delete t.editable
             delete t.color
             delete t.progress
-            t.group = t.group ? t.group.name : null
+            t.timeframe = null
             return t
           })
         } else {
