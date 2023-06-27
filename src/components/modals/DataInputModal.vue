@@ -22,6 +22,8 @@
           :start-weekday="1"
           v-b-tooltip="$t('')"
           v-model="recordingDate"
+          size="sm"
+          :button-variant="isRecordingDateToday ? 'secondary' : 'warning'"
           button-only
           today-button
           value-as-date
@@ -45,7 +47,7 @@
 
       <button class="close ml-0" @click="onXClicked">×</button>
     </template>
-    <div v-if="!isRecordingDateToday" class="modal-banner bg-info text-white text-center mb-3 p-2">
+    <div v-if="!isRecordingDateToday" class="modal-banner bg-warning text-dark text-center mb-3 p-2">
       {{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}
     </div>
     <div v-if="cell && trial">
