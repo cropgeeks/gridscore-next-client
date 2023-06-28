@@ -112,5 +112,91 @@
         "text": "GridScore now supports export of trials data to Germinate via BrAPI. To use this feature, go to the export section of a trial and then select the 'BrAPI' tab. You'll need to have a valid Germinate API token to upload data and you have to have at least 'Data Curator' permissions."
       }
     ]
+  },
+  {
+    "version": "2.0.2",
+    "date": "2023-07-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "GridScore NEXT release",
+        "text": "This marks the release of the new version of GridScore called GridScore NEXT. This is a major step forwards and we have made major changes to the way GridScore operates in the background. Details on most of the changes can be found below."
+      },
+      {
+        "type": "new",
+        "title": "Trait set sizes",
+        "text": "In a lot of trial scenarios you'll be scoring multiple individuals per plot/pot. To facilitate this, we have introduced trait set sizes. The set size determines how many individual measurements per plot/pot are made within each set. So if you are scoring three plants per plot/pot, set the set size to 3."
+      },
+      {
+        "type": "new",
+        "title": "Trait time frames",
+        "text": "Often specific traits need to be or should be scored within a certain time period. To make everyone aware of this fact, we have introduced trait time frames that specify when data for a trait should or has to be scored. A helpful graph will show you the time frame of each trait."
+      },
+      {
+        "type": "new",
+        "title": "Trait groups",
+        "text": "To declutter the interface, but also to allow toggling multiple traits at the same time, trait groups have been added. These groups can be used to create sets of traits that share characteristics like the time frame when they are scored or whether they are physiological traits or any other characteristic."
+      },
+      {
+        "type": "new",
+        "title": "Sharing permissions",
+        "text": "In the old version of GridScore, once you shared a trial, everyone was able to add and change data as well as traits. In the new version when you share a trial you'll be given three different sharing codes, each one granting specific permissions on the trial. There's more information on the sharing screen, but basically, the permissions types are 'Owner', 'Editor' and 'Viewer'."
+      },
+      {
+        "type": "new",
+        "title": "Improved setup",
+        "text": "We have streamlined the process of trial creation by splitting the user interface into more digestible chunks as well as adding more functionality. Trials and traits can now have a description. Germplasm information about the trial can be imported from more formats including the output from FielDHub and other tools. Traits, once added to the setup, can be modified and reordered. The whole list of traits can now be exported and imported in GridScore and Germinate format."
+      },
+      {
+        "type": "new",
+        "title": "More example datasets",
+        "text": "To highlight the new features outlined here, we have introduced new example datasets and updated existing ones. Why not try them out by loading one of the example datasets?"
+      },
+      {
+        "type": "new",
+        "title": "Settings sharing",
+        "text": "You can now share the generic GridScore settings between devices using a QR code. This makes it easy to have the same settings setup on all devices that will be used."
+      },
+      {
+        "type": "new",
+        "title": "Editing an existing trial",
+        "text": "There is now a way to edit/change specific properties of a trial like the name, description, corner points and visual markers."
+      },
+      {
+        "type": "new",
+        "title": "Duplicate a trial",
+        "text": "If you want to create a new trial based on a different existing trial, there's now a trial duplication feature that allows you to copy (but also modify) the setup of that other trial to create a new separate trial."
+      },
+      {
+        "type": "new",
+        "title": "Replicate heatmap",
+        "text": "A new visualization has been added in the form of a replicate heatmap. If you're using a replicated trial, you can now look at the variation within a germplasm and across the reps to identify potential errors in your data."
+      },
+      {
+        "type": "new",
+        "title": "Multiple comments",
+        "text": "It is now possible to add multiple comments to the trial and each individual plot. Each comment is timestamped so you always know when something has been recorded."
+      },
+      {
+        "type": "update",
+        "title": "Import existing data",
+        "text": "The way existing data is imported into a trial has changed to offer more flexibility."
+      },
+      {
+        "type": "update",
+        "title": "Better synchronization",
+        "text": "We have invested a lot of time into improving the data synchronization between devices. We now utilise a transaction-based system where each change you make is synchronized as a distinct unit making it much easier for the server to integrate these changes. It also gives you an overview of the changes you have made before synchronising them."
+      },
+      {
+        "type": "update",
+        "title": "Version updates",
+        "text": "Whenever a new version of GridScore is released, the app will notify you of the new version and ask you to update and refresh making it more obvious that a new version is available."
+      },
+      {
+        "type": "bugfix",
+        "title": "Timezone issues",
+        "text": "Previously, due to the way the old GridScore stored dates, there were timezone issues when displaying and exporting data. These have been resolved in this version as we're now storing UTC timestamps."
+      }
+    ]
   }
 ]

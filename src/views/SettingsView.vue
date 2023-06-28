@@ -56,8 +56,7 @@
 
             <b-form-group :description="$t('formDescriptionSettingsTraitColors')" label-for="traitColors" class="settings-colors">
               <template #label>
-                <span>{{ $t('formLabelSettingsTraitColors') }}</span>
-                <b-button size="sm" variant="light" v-b-tooltip="$t('tooltipSettingsResetColors')" @click="resetColors"><BIconArrowClockwise /></b-button>
+                <span>{{ $t('formLabelSettingsTraitColors') }}</span> <b-button size="sm" variant="light" v-b-tooltip="$t('tooltipSettingsResetColors')" @click="resetColors"><BIconArrowClockwise /></b-button>
               </template>
               <b-input-group v-for="(color, index) in traitColors" :key="`color-${index}`" class="mr-2 mb-2">
                 <b-form-input type="color"  v-model="traitColors[index]"  />

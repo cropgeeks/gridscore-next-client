@@ -101,5 +101,91 @@
         "text": "Für Mehrfachmessungen ist es jetzt möglich sich alle aufgezeichneten Werte über die Zeit in Form einer Heatmap anzeigen zu lassen. Um dies zu erreichen haben wir eine neue Darstellungsoption hinzugefügt die 'Zeitreihe' heißt. Diese aktiviert einen Zeit-Schieberegler um den dargestellten Zeitpunkt zu ändern und zu sehen wie die Mehrfachmessungen sich über die Zeit verhalten."
       }
     ]
+  },
+  {
+    "version": "2.0.2",
+    "date": "2023-07-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "GridScore NEXT Veröffentlichung",
+        "text": "Hiermit veröffentlichen wir die neue Version von GridScore mit dem Namen GridScore NEXT. Dies ist ein großer Schritt voraus und wir haben einige Veränderungen vorgenommen daran wie GridScore im Hintergrund arbeitet. Mehr Informationen über die meisten Veränderungen befinden sich unten."
+      },
+      {
+        "type": "new",
+        "title": "Merkmalssatzgröße",
+        "text": "In vielen Versuchen werden mehrere Individuen pro Beet/Topf bewertet. Um dies zu ermöglichen haben wir Merkmalssatzgrößen eingeführt. Die Satzgröße bestimmt wie viele einzelne Messungen pro Beet/Topf pro Satz genommen werden. Wenn man also drei Pflanzen pro Beet/Topf bewertet, dann sollte die Satzgröße auf 3 gesetzt werden."
+      },
+      {
+        "type": "new",
+        "title": "Markmalszeitspannen",
+        "text": "Oft werden Merkmale in einem bestimmten Zeitraum aufgezeichnet. Um alle darauf hinzuweisen haben wir Merkmalszeitspannen eingeführt die angeben wann Bewertungen von bestimmten Merkmalen aufgezeichnet werden sollten oder müssen. Ein hilfreiches Diagramm weist auf die Zeitspannen hin."
+      },
+      {
+        "type": "new",
+        "title": "Merkmalsgruppierungen",
+        "text": "Um die Benutzeroberfläche klarer zu halten, aber auch um mehrere Merkmale auf einmal ein-/auszublenden haben wir Merkmalsgruppen eingeführt. Diese Gruppen können genutzte werden um Gruppierungen an Merkmalen zu erstellen die bestimmte Eigenschaften teilen, wir zum Beispiel den Zeitraum, ob sie physiologische Merkmale sind oder jegliche andere Charakteristika ."
+      },
+      {
+        "type": "new",
+        "title": "Teilungsberechtigungen",
+        "text": "Im alten GridScore durfe jeder, sobald ein Versuch geteilt wurde, diesen Versuch bearbeiten und Merkmale hinzufügen. In dieser neuen Version werden drei verschiedene Teilungs-QR-Codes angezeigt die unterschiedliche Berechtigungen erteilen. Auf der Teilungsseite gibt es mehr Informationen über die einzelnen Berechtigungen, aber kurz gezeigt sind sie: 'Besitzer', 'Editor' und 'Betrachter'."
+      },
+      {
+        "type": "new",
+        "title": "Verbesserter Versuchsaufbau",
+        "text": "Wir haben den Aufbau der Versuche verbessert indem wir die Benutzeroberfläche in kleinere Bereiche aufgeteilt haben sowie neue Funktionalitäten hinzugefügt haben. Versuche und Merkmale können jetzt Beschreibungen erhalten. Keimplasmainformationen können jetzt in mehr Formaten importiert werden inklusive des FielDHub Formats und Andere. Merkmale, sobald dem Aufbau hinzugefügt, können bearbeitet und umsortiert werden. Die gesamte Merkmalsliste kann importiert und exportiert werden im GridScore und Germinate Format."
+      },
+      {
+        "type": "new",
+        "title": "Mehr Beispieldatensätze",
+        "text": "Um die neuen Funktionalitäten hervorzuheben haben wir neue Beispieldatensätze hinzugefügt und alte aktualisiert. Versuch sie doch mal aus indem du einen der Beispieldatensätze lädst."
+      },
+      {
+        "type": "new",
+        "title": "Teilen von Einstellungen",
+        "text": "Die allgemeinen GridScore Einstellungen können jetzt mithilfe eines QR-Codes geteilt werden. Dies macht es deutlich einfacher die gleichen Einstellungen auf allen Geräten zu nutzen."
+      },
+      {
+        "type": "new",
+        "title": "Bearbeitunge existierender Versuche",
+        "text": "Es ist jetzt möglich bestimmte Eigenschaften eines existierenden Versuchs zu bearbeiten: Name, Beschreibung, Eckpunkte und visuelle Markierungen."
+      },
+      {
+        "type": "new",
+        "title": "Versuch kopieren",
+        "text": "Falls eine Kopie eines existierenden Versuches erstellt werden soll, gibt es nun die Möglichkeit einen Versuch direkt zu kopieren oder Änderungen dabei vorzunehmen um einen neuen Versuch zu erstellen."
+      },
+      {
+        "type": "new",
+        "title": "Replikat-Heatmap",
+        "text": "Eine neue Visualisierung wurde in Form eine Replikat-Heatmap hinzugefügt. Falls Replikate im Versuch vorhanden sind, kann somit die Varianz innerhalb eines Keimplasmas untersucht werden und potentielle Fehler gefunden werden."
+      },
+      {
+        "type": "new",
+        "title": "Mehrere Kommentare",
+        "text": "Es ist jetzt möglich mehrere Kommentare sowohl zum Versuch als auch einzelnen Beeten hinzuzufügen. Der Zeitpunkt des Kommentars wird dabei aufgezeichnet um immer zu wissen wann ein Kommentar hinzugefügt wurde."
+      },
+      {
+        "type": "update",
+        "title": "Existierende Daten importieren",
+        "text": "Der Vorgang des Importierens von existierenden Daten wurde angepasst um mehr Flexibilität zu bieten."
+      },
+      {
+        "type": "update",
+        "title": "Bessere Synchronisation",
+        "text": "Wir haben viel Zeit darein investiert die Synchronisation zwischen Geräten zu verbessern. Wir nutzen nun ein Transaktionssystem wo jede Veränderung als eine eigene Einheit übermittelt wird was es dem Server erleichtert diese zu synchronisieren. Dies führt auch dazu, dass wir nun eine Übersicht vor dem Synchronisieren anzeigen können."
+      },
+      {
+        "type": "update",
+        "title": "Versionsaktualisierungen",
+        "text": "Wenn eine neue Version von GridScore veröffentlicht wird, zeigt GridScore jetzt eine Benachrichtigung an und fordert zum Aktualisieren auf. Dies macht es offensichtlicher wenn eine neue Version verfügbar ist."
+      },
+      {
+        "type": "bugfix",
+        "title": "Zeitzonen-Probleme",
+        "text": "Bisher konnte es vorkommen, dass Zeitzonen-Probleme beim Darstellen oder Exportieren von Daten auftraten. Dies lag an der Art und Weise in der Daten gespeichert wurden und ist jetzt behoben dadurch, dass GridScore UTC-Zeitpunkte speichert."
+      }
+    ]
   }
 ]

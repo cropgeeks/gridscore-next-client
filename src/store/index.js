@@ -41,7 +41,8 @@ export default new Vuex.Store({
     brapiConfig: {
       url: null,
       token: null
-    }
+    },
+    changelogVersionNumber: null
   },
   getters: {
     storeIsOffline: (state) => state.isOffline,
@@ -63,7 +64,8 @@ export default new Vuex.Store({
     storeHiddenTraits: (state) => state.hiddenTraits,
     storePlausible: (state) => state.plausible,
     storeServerUrl: (state) => state.serverUrl,
-    storeBrapiConfig: (state) => state.brapiConfig
+    storeBrapiConfig: (state) => state.brapiConfig,
+    storeChangelogVersionNumber: (state) => state.changelogVersionNumber
   },
   mutations: {
     ON_IS_OFFLINE_CHANGED: function (state, newIsOffline) {
@@ -152,6 +154,13 @@ export default new Vuex.Store({
           token: null
         }
       }
+    },
+    ON_CHANGELOG_VERSION_NUMBER_CHANGED_MUTATION: function (state, newChangelogVersionNumber) {
+      if (state.changelogVersionNumber === undefined) {
+        Vue.set(state, 'changelogVersionNumber', newChangelogVersionNumber)
+      } else {
+        state.changelogVersionNumber = newChangelogVersionNumber
+      }
     }
   },
   actions: {
@@ -211,6 +220,9 @@ export default new Vuex.Store({
     },
     setBrapiConfig: function ({ commit }, brapiConfig) {
       commit('ON_BRAPI_CONFIG_CHANGED', brapiConfig)
+    },
+    setChangelogVersionNumber: function ({ commit }, changelogVersionNumber) {
+      commit('ON_CHANGELOG_VERSION_NUMBER_CHANGED_MUTATION', changelogVersionNumber)
     }
   },
   modules: {

@@ -61,11 +61,6 @@ export default {
   },
   data: function () {
     return {
-      badge: {
-        new: { variant: 'success', text: 'NEW' },
-        update: { variant: 'info', text: 'UPD' },
-        bugfix: { variant: 'warning', text: 'FIX' }
-      },
       page: 1,
       perPage: 5
     }
@@ -74,6 +69,13 @@ export default {
     ...mapGetters([
       'storeLocale'
     ]),
+    badge: function () {
+      return {
+        new: { variant: 'success', text: this.$t('changelogBadgeNew') },
+        update: { variant: 'info', text: this.$t('changelogBadgeUpdate') },
+        bugfix: { variant: 'warning', text: this.$t('changelogBadgeFix') }
+      }
+    },
     totalCount: function () {
       if (this.changelog) {
         return this.changelog.length

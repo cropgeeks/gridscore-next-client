@@ -64,6 +64,8 @@
       </div>
     </b-modal>
 
+    <ChangelogModal :prevVersion="changelogVersionNumber" ref="changelogModal" />
+
     <b-modal :visible="updateExists"
              :title="$t('modalTitleAppUpdateAvailable')"
              :ok-title="$t('buttonUpdate')"
@@ -78,6 +80,7 @@
 
 <script>
 import BrapiModal from '@/components/modals/BrapiModal'
+import ChangelogModal from '@/components/modals/ChangelogModal'
 import { mapGetters } from 'vuex'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
@@ -109,7 +112,8 @@ export default {
     BIconPinMapFill,
     BIconSun,
     BIconCloudDownload,
-    BrapiModal
+    BrapiModal,
+    ChangelogModal
   },
   data: function () {
     return {
@@ -125,7 +129,8 @@ export default {
       loadingVisible: false,
       refreshing: false,
       registration: null,
-      updateExists: false
+      updateExists: false,
+      changelogVersionNumber: null
     }
   },
   computed: {
@@ -135,7 +140,8 @@ export default {
       'storeSelectedTrial',
       'storePlausible',
       'storeUniqueClientId',
-      'storeRunCount'
+      'storeRunCount',
+      'storeChangelogVersionNumber'
     ]),
     menuItemsDisabled: function () {
       return this.storeSelectedTrial === undefined || this.storeSelectedTrial === null
@@ -320,6 +326,14 @@ export default {
             this.$store.dispatch('setRunCount', this.storeRunCount + 1)
           })
       }
+    }
+
+    this.changelogVersionNumber = this.storeChangelogVersionNumber
+    if (this.changelogVersionNumber !== null && this.changelogVersionNumber !== gridScoreVersion) {
+      this.$refs.changelogModal.show()
+      this.$store.dispatch('setChangelogVersionNumber', gridScoreVersion)
+    } else if (this.changelogVersionNumber === null) {
+      this.$store.dispatch('setChangelogVersionNumber', gridScoreVersion)
     }
 
     emitter.on('plausible-event', this.plausibleEvent)
