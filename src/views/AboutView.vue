@@ -1,31 +1,7 @@
 <template>
   <div class="about-content">
-    <!-- Hutton banner -->
-    <b-container fluid class="footer px-0">
-      <b-row class="hutton-header">
-        <b-col id="hutton-banner-hunger" />
-        <b-col id="hutton-banner-education" />
-        <b-col id="hutton-banner-water" />
-        <b-col id="hutton-banner-energy" />
-        <b-col id="hutton-banner-work" />
-        <div class="w-100 d-md-none d-lg-none d-xl-none" />
-        <b-col id="hutton-banner-industry" />
-        <b-col id="hutton-banner-consumption" />
-        <b-col id="hutton-banner-climate" />
-        <b-col id="hutton-banner-land" />
-        <b-col id="hutton-banner-partnership" />
-      </b-row>
-      <b-row class="about-footer bg-dark px-3">
-        <b-col cols=12 sm=6 class="about-logo">
-          <b-img :src="require('@/assets/img/ics-sdg.svg')" fluid class="my-5" alt="ICS logo" />
-        </b-col>
-        <b-col cols=12 sm=6 class="about-logo">
-          <b-img :src="require('@/assets/img/hutton.svg')" fluid class="my-5" alt="Hutton logo" />
-        </b-col>
-      </b-row>
-    </b-container>
-    <b-container class="py-5">
-      <div class="about-header bg-light p-5 mb-4 border">
+    <b-container>
+      <div class="about-header bg-light p-5 my-4 border">
         <b-row>
           <b-col cols=12 md=4 class="text-center text-md-right" order="1" order-md="2">
             <b-img fluid src="img/gridscore-next-text.svg" alt="GridScore logo" />
@@ -33,7 +9,7 @@
           <b-col cols=12 md=8 order="2" order-md="1">
             <h1 class="display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
             <p class="lead text-center text-md-left"><BIconTag /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
-            <p class="text-center text-md-left mb-0"><a href="#" class="text-secondary" @click="$refs.changelogModal.show()"><BIconInfoCircle /> {{ $t('pageAboutChangelog') }}</a></p>
+            <p class="text-center text-md-left mb-0"><BIconInfoCircle /> <a href="#" @click="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
           </b-col>
         </b-row>
       </div>
@@ -57,6 +33,33 @@
           </div>
         </b-col>
       </b-row>
+    </b-container>
+
+    <!-- Hutton banner -->
+    <b-container fluid>
+      <b-container fluid class="footer px-0">
+        <b-row class="about-footer bg-dark px-3">
+          <b-col cols=12 sm=6 class="about-logo">
+            <b-img :src="require('@/assets/img/ics-sdg.svg')" fluid class="my-5" alt="ICS logo" />
+          </b-col>
+          <b-col cols=12 sm=6 class="about-logo">
+            <b-img :src="require('@/assets/img/hutton.svg')" fluid class="my-5" alt="Hutton logo" />
+          </b-col>
+        </b-row>
+        <b-row class="hutton-header">
+          <b-col id="hutton-banner-hunger" />
+          <b-col id="hutton-banner-education" />
+          <b-col id="hutton-banner-water" />
+          <b-col id="hutton-banner-energy" />
+          <b-col id="hutton-banner-work" />
+          <div class="w-100 d-md-none d-lg-none d-xl-none" />
+          <b-col id="hutton-banner-industry" />
+          <b-col id="hutton-banner-consumption" />
+          <b-col id="hutton-banner-climate" />
+          <b-col id="hutton-banner-land" />
+          <b-col id="hutton-banner-partnership" />
+        </b-row>
+      </b-container>
     </b-container>
 
     <ChangelogModal ref="changelogModal" />
