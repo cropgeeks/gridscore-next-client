@@ -47,9 +47,7 @@ export default {
   computed: {
     ...mapGetters([
       'storeDarkMode',
-      'storeLocale',
-      'storeDisplayRowOrder',
-      'storeDisplayColumnOrder'
+      'storeLocale'
     ]),
     traitOptions: function () {
       if (this.trial) {

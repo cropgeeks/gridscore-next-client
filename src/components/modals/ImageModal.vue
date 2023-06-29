@@ -30,6 +30,7 @@ import { mapGetters } from 'vuex'
 import exifr from 'exifr/dist/lite.umd.js'
 import { BIconCalendar3 } from 'bootstrap-vue'
 import { toLocalDateTimeString } from '@/plugins/misc'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -193,7 +194,9 @@ export default {
      */
     downloadImage: async function () {
       if (this.trial && this.imageFile) {
-        const filename = `${this.getDateTime(this.imageDate)}_${this.displayName}_${this.row + 1}_${this.column + 1}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}.${this.imageFile.name.split('.').pop()}`
+        const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (this.row + 1) : (this.trial.layout.rows - this.row)
+        const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (this.column + 1) : (this.trial.layout.columns - this.column)
+        const filename = `${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}.${this.imageFile.name.split('.').pop()}`
         if (this.supportsSaving) {
           // create a new handle
           const newHandle = await window.showSaveFilePicker({

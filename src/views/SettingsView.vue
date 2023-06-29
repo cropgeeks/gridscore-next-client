@@ -40,20 +40,6 @@
         </b-col>
         <b-col cols=12 md=6>
           <b-card class="mb-4" :title="$t('pageSettingsCardVisualTitle')" :sub-title="$t('pageSettingsCardVisualSubtitle')">
-            <b-form-group :label="$t('formLabelSettingsRowOrder')" :description="$t('formDescriptionSettingsRowOrder')" label-for="rowOrder">
-              <b-button-group class="w-100">
-                <b-button variant="outline-secondary" :pressed="displayRowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM" @click="displayRowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM"><BIconSortNumericDown /> {{ $t('buttonTopToBottom') }}</b-button>
-                <b-button variant="outline-secondary" :pressed="displayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP" @click="displayRowOrder = DISPLAY_ORDER_BOTTOM_TO_TOP"><BIconSortNumericUpAlt /> {{ $t('buttonBottomToTop') }}</b-button>
-              </b-button-group>
-            </b-form-group>
-
-            <b-form-group :label="$t('formLabelSettingsColumnOrder')" :description="$t('formDescriptionSettingsColumnOrder')" label-for="columnOrder">
-              <b-button-group class="w-100">
-                <b-button variant="outline-secondary" :pressed="displayColumnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT" @click="displayColumnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT"><BIconSortNumericDown rotate=270 /> {{ $t('buttonLeftToRight') }}</b-button>
-                <b-button variant="outline-secondary" :pressed="displayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT" @click="displayColumnOrder = DISPLAY_ORDER_RIGHT_TO_LEFT"><BIconSortNumericUpAlt rotate=270 /> {{ $t('buttonRightToLeft') }}</b-button>
-              </b-button-group>
-            </b-form-group>
-
             <b-form-group :description="$t('formDescriptionSettingsTraitColors')" label-for="traitColors" class="settings-colors">
               <template #label>
                 <span>{{ $t('formLabelSettingsTraitColors') }}</span> <b-button size="sm" variant="light" v-b-tooltip="$t('tooltipSettingsResetColors')" @click="resetColors"><BIconArrowClockwise /></b-button>
@@ -98,7 +84,7 @@
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
 import { BIconSortNumericDown, BIconSortNumericUpAlt, BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise } from 'bootstrap-vue'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_BOTTOM_TO_TOP, NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 
 export default {
@@ -115,17 +101,11 @@ export default {
   },
   data: function () {
     return {
-      DISPLAY_ORDER_LEFT_TO_RIGHT,
-      DISPLAY_ORDER_TOP_TO_BOTTOM,
-      DISPLAY_ORDER_RIGHT_TO_LEFT,
-      DISPLAY_ORDER_BOTTOM_TO_TOP,
       NAVIGATION_MODE_JUMP,
       NAVIGATION_MODE_DRAG,
       locale: null,
       darkMode: false,
       hideCitationMessage: false,
-      displayRowOrder: null,
-      displayColumnOrder: null,
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
       gpsEnabled: true,
@@ -140,8 +120,6 @@ export default {
       'storeLocale',
       'storeDarkMode',
       'storeHideCitationMessage',
-      'storeDisplayRowOrder',
-      'storeDisplayColumnOrder',
       'storeDisplayMarkerIndicators',
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
@@ -168,12 +146,6 @@ export default {
     },
     hideCitationMessage: function (newValue) {
       this.$store.dispatch('setHideCitationMessage', newValue)
-    },
-    displayRowOrder: function (newValue) {
-      this.$store.dispatch('setDisplayRowOrder', newValue)
-    },
-    displayColumnOrder: function (newValue) {
-      this.$store.dispatch('setDisplayColumnOrder', newValue)
     },
     displayMarkerIndicators: function (newValue) {
       this.$store.dispatch('setDisplayMarkerIndicators', newValue)
@@ -211,8 +183,6 @@ export default {
       this.locale = this.storeLocale
       this.darkMode = this.storeDarkMode
       this.hideCitationMessage = this.storeHideCitationMessage
-      this.displayRowOrder = this.storeDisplayRowOrder
-      this.displayColumnOrder = this.storeDisplayColumnOrder
       this.displayMarkerIndicators = this.storeDisplayMarkerIndicators
       this.displayMinCellWidth = this.storeDisplayMinCellWidth
       this.gpsEnabled = this.storeGpsEnabled

@@ -65,6 +65,7 @@ import IconBrapi from '@/components/icons/IconBrapi'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
 import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload } from 'bootstrap-vue'
 import { downloadText } from '@/plugins/misc'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -155,7 +156,9 @@ export default {
 
       Object.values(data).forEach(v => {
         if (v.measurements) {
-          const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${v.row + 1}\t${v.column + 1}`
+          const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (v.row + 1) : (this.trial.layout.rows - v.row)
+          const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (v.column + 1) : (this.trial.layout.columns - v.column)
+          const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
 
           const dates = new Set()
           Object.values(v.measurements).forEach(td => {

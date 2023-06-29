@@ -5,6 +5,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTouchPosition } from '@/plugins/touchinput'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP } from '@/plugins/constants'
 
 export default {
   props: {
@@ -35,8 +36,7 @@ export default {
   computed: {
     /** Mapgetters exposing the store configuration */
     ...mapGetters([
-      'storeDarkMode',
-      'storeDisplayRowOrder'
+      'storeDarkMode'
     ]),
     fillStyleMarked: function () {
       return this.storeDarkMode ? '#364a5e' : '#aebfd0'
@@ -100,7 +100,7 @@ export default {
 
       this.ctx.fillRect(x, y, this.dimensions.rowHeaderWidth, this.dimensions.cellHeight)
       this.ctx.fillStyle = this.fillStyleText
-      this.ctx.fillText(this.storeDisplayRowOrder === 'BOTTOM_TO_TOP' ? (this.trial.layout.rows - row) : (row + 1), x + this.dimensions.padding, y + this.dimensions.cellHeight / 2)
+      this.ctx.fillText(this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - row) : (row + 1), x + this.dimensions.padding, y + this.dimensions.cellHeight / 2)
     },
     reset: function () {
       if (this.resizeRunning) {

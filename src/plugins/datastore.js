@@ -1,5 +1,6 @@
 import { getCell, getTrialData } from '@/plugins/idb'
 import store from '@/store'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from './constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -44,7 +45,7 @@ const init = () => {
   }
 }
 
-const getGermplasmMatches = (searchTerm) => {
+const getGermplasmMatches = (trial, searchTerm) => {
   if (trialData && searchTerm && searchTerm !== '') {
     const lower = searchTerm.toLowerCase()
 
@@ -56,7 +57,9 @@ const getGermplasmMatches = (searchTerm) => {
         rep: c.rep,
         displayName: c.displayName,
         row: c.row,
-        column: c.column
+        column: c.column,
+        displayRow: trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (c.row + 1) : (trial.layout.rows - c.row),
+        displayColumn: trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (c.column + 1) : (trial.layout.columns - c.column)
       }
     })
   } else {

@@ -37,7 +37,7 @@ import { mapGetters } from 'vuex'
 
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { BIconBoxArrowInUpRight, BIconBoxArrowDownRight } from 'bootstrap-vue'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
+import { NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 
 import StyledQRCode from '@/components/StyledQRCode'
 import BarcodeScanner from '@/components/BarcodeScanner'
@@ -62,8 +62,6 @@ export default {
       'storeLocale',
       'storeDarkMode',
       'storeHideCitationMessage',
-      'storeDisplayRowOrder',
-      'storeDisplayColumnOrder',
       'storeDisplayMarkerIndicators',
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
@@ -90,16 +88,6 @@ export default {
           this.$store.commit('ON_DARK_MODE_CHANGED', true)
         } else if (parsed.dm === 0) {
           this.$store.commit('ON_DARK_MODE_CHANGED', false)
-        }
-        if (parsed.ro === 1) {
-          this.$store.commit('ON_DISPLAY_ROW_ORDER_CHANGED', DISPLAY_ORDER_TOP_TO_BOTTOM)
-        } else if (parsed.ro === 0) {
-          this.$store.commit('ON_DISPLAY_ROW_ORDER_CHANGED', DISPLAY_ORDER_BOTTOM_TO_TOP)
-        }
-        if (parsed.co === 1) {
-          this.$store.commit('ON_DISPLAY_COLUMN_ORDER_CHANGED', DISPLAY_ORDER_LEFT_TO_RIGHT)
-        } else if (parsed.co === 0) {
-          this.$store.commit('ON_DISPLAY_COLUMN_ORDER_CHANGED', DISPLAY_ORDER_RIGHT_TO_LEFT)
         }
         if (parsed.mi === 1) {
           this.$store.commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', true)
@@ -147,8 +135,6 @@ export default {
       this.localSettings = JSON.stringify({
         lc: this.storeLocale,
         dm: this.storeDarkMode ? 1 : 0,
-        ro: this.storeDisplayRowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? 1 : 0,
-        co: this.storeDisplayColumnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,
         cw: this.storeDisplayMinCellWidth,
         ge: this.storeGpsEnabled ? 1 : 0,

@@ -168,6 +168,7 @@ import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import { addTrial, getTrialById } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -196,7 +197,9 @@ export default {
         rows: 1,
         columns: 1,
         corners: null,
-        markers: null
+        markers: null,
+        rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
       },
       germplasmMap: {},
       traits: [],

@@ -29,6 +29,22 @@
                 <b-form-input id="columns" number type="number" :min="1" required lazy v-model.number="layout.columns" />
               </b-form-group>
             </b-col>
+            <b-col cols=12 md=6>
+              <b-form-group :label="$t('formLabelSettingsRowOrder')" :description="$t('formDescriptionSettingsRowOrder')" label-for="rowOrder">
+                <b-button-group class="w-100">
+                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM" @click="layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM"><BIconSortNumericDown /> {{ $t('buttonTopToBottom') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP" @click="layout.rowOrder = DISPLAY_ORDER_BOTTOM_TO_TOP"><BIconSortNumericUpAlt /> {{ $t('buttonBottomToTop') }}</b-button>
+                </b-button-group>
+              </b-form-group>
+            </b-col>
+            <b-col cols=12 md=6>
+              <b-form-group :label="$t('formLabelSettingsColumnOrder')" :description="$t('formDescriptionSettingsColumnOrder')" label-for="columnOrder">
+                <b-button-group class="w-100">
+                  <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT" @click="layout.columnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT"><BIconSortNumericDown rotate=270 /> {{ $t('buttonLeftToRight') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT" @click="layout.columnOrder = DISPLAY_ORDER_RIGHT_TO_LEFT"><BIconSortNumericUpAlt rotate=270 /> {{ $t('buttonRightToLeft') }}</b-button>
+                </b-button-group>
+              </b-form-group>
+            </b-col>
           </b-row>
         </b-container>
       </b-tab>
@@ -40,7 +56,7 @@
           <BIconX class="text-danger" v-else-if="tabCorrect.germplasm === false" />
         </template>
         <p>{{ $t('pageTrialLayoutGermplasmText') }}</p>
-        <TrialLayoutGermplasmGrid :initialGermplasm="initialGermplasm" ref="germplasmTable" :rows="layout.rows" :columns="layout.columns" @change="setGermplasmMap" />
+        <TrialLayoutGermplasmGrid :initialGermplasm="initialGermplasm" ref="germplasmTable" :layout="layout" @change="setGermplasmMap" />
       </b-tab>
       <b-tab :disabled="!hasDimensions">
         <template #title>
@@ -74,8 +90,9 @@
 import TrialLayoutGermplasmGrid from '@/components/TrialLayoutGermplasmGrid'
 import MarkerSetup from '@/components/MarkerSetup'
 import TrialLayoutCorners from '@/components/TrialLayoutCorners'
-import { BIconLayoutThreeColumns, BIconCheck, BIconX, BIconGrid3x2Gap, BIconFlower1, BIconArrowsFullscreen, BIconBoundingBoxCircles } from 'bootstrap-vue'
+import { BIconLayoutThreeColumns, BIconCheck, BIconX, BIconGrid3x2Gap, BIconFlower1, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconSortNumericDown, BIconSortNumericUpAlt } from 'bootstrap-vue'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_BOTTOM_TO_TOP } from '@/plugins/constants'
 
 export default {
   components: {
@@ -88,16 +105,24 @@ export default {
     BIconGrid3x2Gap,
     BIconFlower1,
     BIconArrowsFullscreen,
-    BIconBoundingBoxCircles
+    BIconBoundingBoxCircles,
+    BIconSortNumericDown,
+    BIconSortNumericUpAlt
   },
   data: function () {
     return {
+      DISPLAY_ORDER_LEFT_TO_RIGHT,
+      DISPLAY_ORDER_TOP_TO_BOTTOM,
+      DISPLAY_ORDER_RIGHT_TO_LEFT,
+      DISPLAY_ORDER_BOTTOM_TO_TOP,
       tabIndex: 0,
       layout: {
         rows: null,
         columns: null,
         corners: null,
-        markers: null
+        markers: null,
+        rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
       },
       germplasmMap: {},
       tabCorrect: {
@@ -137,7 +162,9 @@ export default {
             rows: null,
             columns: null,
             corners: null,
-            markers: null
+            markers: null,
+            rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+            columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
           }
         }
       }

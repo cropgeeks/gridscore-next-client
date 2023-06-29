@@ -1,7 +1,7 @@
 import { openDB } from 'idb'
 import { getId } from '@/plugins/id'
 import store from '@/store'
-import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
+import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT } from '@/plugins/constants'
 import { trialLayoutToPlots } from './location'
 
 let db
@@ -58,6 +58,13 @@ const getTrials = async () => {
       if (trials) {
         trials.forEach(trial => {
           if (trial) {
+            if (!trial.layout.rowOrder) {
+              trial.layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM
+            }
+            if (!trial.layout.columnOrder) {
+              trial.layout.columnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT
+            }
+
             if (trial.traits) {
               trial.traits.forEach((t, i) => {
                 t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
@@ -260,6 +267,13 @@ const getTrialById = async (localId) => {
   const trial = await db.get('trials', localId)
     .then(trial => {
       if (trial) {
+        if (!trial.layout.rowOrder) {
+          trial.layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM
+        }
+        if (!trial.layout.columnOrder) {
+          trial.layout.columnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT
+        }
+
         if (trial.traits) {
           trial.traits.forEach((t, i) => {
             t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]

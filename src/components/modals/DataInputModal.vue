@@ -53,7 +53,7 @@
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: storeDisplayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.prev.column) : (guidedWalk.prev.column + 1), row: storeDisplayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.prev.row) : (guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
+          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.prev.column) : (guidedWalk.prev.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.prev.row) : (guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
         </b-col>
         <b-col cols=4>
           <b-card class="text-center h-100">
@@ -61,12 +61,12 @@
               <BIconChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <BIconGeoAltFill class="mx-2" /> <BIconChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
             </b-card-title>
             <b-card-sub-title>
-              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: storeDisplayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - cell.column) : (cell.column + 1), row: storeDisplayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - cell.row) : (cell.row + 1) }) }}
+              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - cell.column) : (cell.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - cell.row) : (cell.row + 1) }) }}
             </b-card-sub-title>
           </b-card>
         </b-col>
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: storeDisplayColumnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.next.column) : (guidedWalk.next.column + 1), row: storeDisplayRowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.next.row) : (guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
+          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.next.column) : (guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.next.row) : (guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
       <b-tabs v-model="traitGroupTabIndex">
@@ -152,8 +152,6 @@ export default {
     ...mapGetters([
       'storeSelectedTrial',
       'storeHiddenTraits',
-      'storeDisplayRowOrder',
-      'storeDisplayColumnOrder',
       'storeCalendarLocale'
     ]),
     okTitle: function () {

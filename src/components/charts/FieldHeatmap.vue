@@ -50,9 +50,7 @@ export default {
   computed: {
     ...mapGetters([
       'storeDarkMode',
-      'storeLocale',
-      'storeDisplayRowOrder',
-      'storeDisplayColumnOrder'
+      'storeLocale'
     ]),
     traitOptions: function () {
       if (this.trial) {
@@ -286,8 +284,8 @@ export default {
         }
 
         // Get the axis ticks based on inversion state
-        const xTicks = this.storeDisplayColumnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? Array.from(Array(this.trial.layout.columns).keys()).map(i => i + 1) : Array.from(Array(this.trial.layout.columns).keys()).map(i => this.trial.layout.columns - i)
-        const yTicks = this.storeDisplayRowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? Array.from(Array(this.trial.layout.rows).keys()).map(i => this.trial.layout.rows - i) : Array.from(Array(this.trial.layout.rows).keys()).map(i => i + 1)
+        const xTicks = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? Array.from(Array(this.trial.layout.columns).keys()).map(i => i + 1) : Array.from(Array(this.trial.layout.columns).keys()).map(i => this.trial.layout.columns - i)
+        const yTicks = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? Array.from(Array(this.trial.layout.rows).keys()).map(i => this.trial.layout.rows - i) : Array.from(Array(this.trial.layout.rows).keys()).map(i => i + 1)
 
         const layout = {
           margin: { autoexpand: true },

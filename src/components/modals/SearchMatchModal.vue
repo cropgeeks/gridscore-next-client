@@ -7,8 +7,8 @@
     <b-list-group v-if="searchMatches && searchMatches.length > 0">
       <b-list-group-item href="#" @click.prevent="handleClick(match)" v-for="match in searchMatches" :key="`search-match-${match.row}-${match.column}`">
         <h5>{{ match.displayName }}</h5>
-        <b-badge>{{ $t('modalTextSearchMatchRow', { row: match.row + 1 }) }}</b-badge>
-        <b-badge class="ml-2">{{ $t('modalTextSearchMatchColumn', { column: match.column + 1 }) }}</b-badge>
+        <b-badge>{{ $t('modalTextSearchMatchRow', { row: match.displayRow }) }}</b-badge>
+        <b-badge class="ml-2">{{ $t('modalTextSearchMatchColumn', { column: match.displayColumn }) }}</b-badge>
       </b-list-group-item>
     </b-list-group>
   </b-modal>

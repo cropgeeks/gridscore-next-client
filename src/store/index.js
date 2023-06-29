@@ -1,4 +1,4 @@
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -23,8 +23,6 @@ export default new Vuex.Store({
     locale: 'en_GB',
     darkMode: false,
     hideCitationMessage: false,
-    displayRowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-    displayColumnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT,
     displayMarkerIndicators: true,
     displayMinCellWidth: 4,
     gpsEnabled: true,
@@ -52,8 +50,6 @@ export default new Vuex.Store({
     storeCalendarLocale: (state) => (state.locale || 'en_GB').replace('_', '-'),
     storeDarkMode: (state) => state.darkMode,
     storeHideCitationMessage: (state) => state.hideCitationMessage,
-    storeDisplayRowOrder: (state) => state.displayRowOrder,
-    storeDisplayColumnOrder: (state) => state.displayColumnOrder,
     storeDisplayMarkerIndicators: (state) => state.displayMarkerIndicators,
     storeDisplayMinCellWidth: (state) => state.displayMinCellWidth,
     storeGpsEnabled: (state) => state.gpsEnabled,
@@ -114,12 +110,6 @@ export default new Vuex.Store({
     },
     ON_HIDE_CITATION_MESSAGE_CHANGED: function (state, newHideCitationMessage) {
       state.hideCitationMessage = newHideCitationMessage
-    },
-    ON_DISPLAY_ROW_ORDER_CHANGED: function (state, newDisplayRowOrder) {
-      state.displayRowOrder = newDisplayRowOrder
-    },
-    ON_DISPLAY_COLUMN_ORDER_CHANGED: function (state, newDisplayColumnOrder) {
-      state.displayColumnOrder = newDisplayColumnOrder
     },
     ON_DISPLAY_MARKER_INDICATORS_CHANGED: function (state, newDisplayMarkerIndicators) {
       state.displayMarkerIndicators = newDisplayMarkerIndicators
@@ -187,12 +177,6 @@ export default new Vuex.Store({
     },
     setHideCitationMessage: function ({ commit }, hideCitationMessage) {
       commit('ON_HIDE_CITATION_MESSAGE_CHANGED', hideCitationMessage)
-    },
-    setDisplayRowOrder: function ({ commit }, displayRowOrder) {
-      commit('ON_DISPLAY_ROW_ORDER_CHANGED', displayRowOrder)
-    },
-    setDisplayColumnOrder: function ({ commit }, displayColumnOrder) {
-      commit('ON_DISPLAY_COLUMN_ORDER_CHANGED', displayColumnOrder)
     },
     setDisplayMarkerIndicators: function ({ commit }, displayMarkerIndicators) {
       commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', displayMarkerIndicators)

@@ -58,6 +58,7 @@
 <script>
 import { tsvParse, csvParse, autoType } from 'd3-dsv'
 import { BIconLayoutTextSidebar } from 'bootstrap-vue'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -66,13 +67,16 @@ export default {
     BIconLayoutTextSidebar
   },
   props: {
-    rows: {
-      type: Number,
-      default: 1
-    },
-    columns: {
-      type: Number,
-      default: 1
+    layout: {
+      type: Object,
+      default: () => {
+        return {
+          rows: 1,
+          colums: 1,
+          rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+          columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+        }
+      }
     }
   },
   data: function () {
@@ -147,6 +151,20 @@ export default {
       this.fileColumns = tempColumns
 
       if (this.fileColumns.length > 1) {
+        // Naive naming
+        if (this.parsedData.columns.includes('Row')) {
+          this.columnMapping.row = 'Row'
+        }
+        if (this.parsedData.columns.includes('Column')) {
+          this.columnMapping.column = 'Column'
+        }
+        if (this.parsedData.columns.includes('Rep')) {
+          this.columnMapping.rep = 'Rep'
+        }
+        if (this.parsedData.columns.includes('Germplasm')) {
+          this.columnMapping.germplasm = 'Germplasm'
+        }
+        // FielDHub specific naming
         if (this.parsedData.columns.includes('ROW')) {
           this.columnMapping.row = 'ROW'
         }
@@ -206,7 +224,10 @@ export default {
           return
         }
 
-        mapping[`${row - 1}|${column - 1}`] = {
+        const rowIndex = this.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (row - 1) : (this.layout.rows - row)
+        const columnIndex = this.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (column - 1) : (this.layout.columns - column)
+
+        mapping[`${rowIndex}|${columnIndex}`] = {
           germplasm: germplasm,
           rep: rep
         }

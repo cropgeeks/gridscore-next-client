@@ -15,7 +15,7 @@
 
     <TabbedInputToGridModal ref="germplasmInput" label="formLabelSetupGermplasmNames" placeholder="formPlaceholderSetupGermplasmNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @change="updateTableGermplasm" />
     <TabbedInputToGridModal ref="repInput" label="formLabelSetupRepNames" placeholder="formPlaceholderSetupRepNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @change="updateTableRep" />
-    <FielDBookInputModal ref="fieldbookInput" :rows="rows" :columns="columns" @change="updateTableFieldbook" />
+    <FielDBookInputModal ref="fieldbookInput" :layout="layout" @change="updateTableFieldbook" />
   </div>
 </template>
 
@@ -24,6 +24,7 @@ import Vue from 'vue'
 import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal'
 import FielDBookInputModal from '@/components/modals/FielDBookInputModal'
 import { BIconFileEarmarkPlus, BIconTable, BIconFileEarmarkSpreadsheet } from 'bootstrap-vue'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 export default {
   components: {
@@ -34,13 +35,16 @@ export default {
     BIconFileEarmarkSpreadsheet
   },
   props: {
-    rows: {
-      type: Number,
-      default: 1
-    },
-    columns: {
-      type: Number,
-      default: 1
+    layout: {
+      type: Object,
+      default: () => {
+        return {
+          rows: 1,
+          colums: 1,
+          rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+          columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+        }
+      }
     },
     initialGermplasm: {
       type: Object,
@@ -53,11 +57,11 @@ export default {
     }
   },
   watch: {
-    rows: function () {
-      this.resetFormAndGermplasm()
-    },
-    columns: function () {
-      this.resetFormAndGermplasm()
+    layout: {
+      deep: true,
+      handler: function () {
+        this.resetFormAndGermplasm()
+      }
     },
     initialGermplasm: {
       immediate: true,
@@ -77,8 +81,8 @@ export default {
       this.$nextTick(() => this.resetTable())
     },
     updateTableGermplasm: function (parsedGrid) {
-      for (let row = 0; row < this.rows; row++) {
-        for (let column = 0; column < this.columns; column++) {
+      for (let row = 0; row < this.layout.rows; row++) {
+        for (let column = 0; column < this.layout.columns; column++) {
           const tableRep = document.querySelector(`#rep-${row}-${column}`).value
 
           if (!this.germplasmMap[`${row}|${column}`]) {
@@ -98,8 +102,8 @@ export default {
       this.$emit('change', this.germplasmMap)
     },
     updateTableRep: function (parsedGrid) {
-      for (let row = 0; row < this.rows; row++) {
-        for (let column = 0; column < this.columns; column++) {
+      for (let row = 0; row < this.layout.rows; row++) {
+        for (let column = 0; column < this.layout.columns; column++) {
           const tableGermplasm = document.querySelector(`#germplasm-${row}-${column}`).value
 
           if (!this.germplasmMap[`${row}|${column}`]) {
@@ -141,20 +145,22 @@ export default {
       this.createElement(tRow, 'th')
 
       // Column headers
-      for (let column = 0; column < this.columns; column++) {
+      for (let column = 0; column < this.layout.columns; column++) {
         const th = this.createElement(tRow, 'th')
-        th.innerHTML = column + 1
+        th.innerHTML = this.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? column + 1 : (this.layout.columns - column)
       }
 
       const tBody = this.createElement(table, 'tbody')
 
-      for (let row = 0; row < this.rows; row++) {
+      for (let row = 0; row < this.layout.rows; row++) {
         // Create a new row
         const rowElement = this.createElement(tBody, 'tr')
+        const displayRowIndex = this.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? row + 1 : (this.layout.rows - row)
         // Row header
-        this.createElement(rowElement, 'th').innerHTML = row + 1
+        this.createElement(rowElement, 'th').innerHTML = displayRowIndex
 
-        for (let column = 0; column < this.columns; column++) {
+        for (let column = 0; column < this.layout.columns; column++) {
+          const displayColumnIndex = this.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? column + 1 : (this.layout.columns - column)
           // New cell
           const cell = this.createElement(rowElement, 'td')
           cell.id = `cell-${row}-${column}`
@@ -162,7 +168,7 @@ export default {
           // Germplasm name input
           const cellId = this.createElement(cell, 'small')
           cellId.className = 'text-muted'
-          cellId.innerHTML = this.$t('pageSetupGermplasmGridTableCellRowColumn', { row: row + 1, column: column + 1 })
+          cellId.innerHTML = this.$t('pageSetupGermplasmGridTableCellRowColumn', { row: displayRowIndex, column: displayColumnIndex })
           const g = this.createElement(cell, 'input')
           g.id = `germplasm-${row}-${column}`
           if (dataCell) {
@@ -191,8 +197,8 @@ export default {
     },
     getGermplasmMap: function () {
       const tempMap = {}
-      for (let row = 0; row < this.rows; row++) {
-        for (let column = 0; column < this.columns; column++) {
+      for (let row = 0; row < this.layout.rows; row++) {
+        for (let column = 0; column < this.layout.columns; column++) {
           const germplasm = document.querySelector(`#germplasm-${row}-${column}`).value
           const rep = document.querySelector(`#rep-${row}-${column}`).value
 
