@@ -83,15 +83,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { BIconSortNumericDown, BIconSortNumericUpAlt, BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise } from 'bootstrap-vue'
+import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise } from 'bootstrap-vue'
 import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 
 export default {
   components: {
     BIconShare,
-    BIconSortNumericDown,
-    BIconSortNumericUpAlt,
     BIconHandIndex,
     BIconArrowsMove,
     BIconX,
