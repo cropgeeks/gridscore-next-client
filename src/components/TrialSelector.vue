@@ -1,8 +1,13 @@
 <template>
-  <div v-if="sortedTrials && sortedTrials.length > 0">
+  <div v-if="trials && trials.length > 0">
     <h2>{{ $t('widgetTrialSelectorTitle') }}</h2>
     <p>{{ $t('widgetTrialSelectorText') }}</p>
-    <b-row>
+
+    <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
+      <b-input v-model="searchTerm" trim id="search-term" type="search" />
+    </b-form-group>
+
+    <b-row v-if="sortedTrials && sortedTrials.length > 0">
       <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in sortedTrials" :key="`trial-selector-${trial.localId}`"  class="mb-3">
         <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null">
           <a href="#" @click.prevent="synchronize(trial)" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
@@ -40,6 +45,7 @@
         </b-card>
       </b-col>
     </b-row>
+    <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
 
     <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
     <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial" />
@@ -99,6 +105,27 @@ export default {
     sortedTrials: function () {
       if (this.trials) {
         return this.trials.concat()
+          .filter(t => {
+            if (this.searchTerm && (this.searchTerm !== '')) {
+              const lower = this.searchTerm.toLowerCase()
+              // Check if the name matches
+              if (t.name.toLowerCase().includes(lower)) {
+                return true
+              }
+              // Check if the description matches
+              if (t.description && t.description.toLowerCase().includes(lower)) {
+                return true
+              }
+              // Check if any of the trait names matches
+              if (t.traits.map(t => t.name).join('|').toLowerCase().includes(lower)) {
+                return true
+              }
+
+              return false
+            } else {
+              return true
+            }
+          })
           .sort((a, b) => new Date(b.updatedOn) - new Date(a.updatedOn))
           .map(t => {
             if (t.shareCodes && this.trialUpdates) {
@@ -124,7 +151,8 @@ export default {
       TRIAL_STATE_OWNER,
       trials: [],
       selectedTrial: null,
-      trialUpdates: null
+      trialUpdates: null,
+      searchTerm: null
     }
   },
   methods: {
