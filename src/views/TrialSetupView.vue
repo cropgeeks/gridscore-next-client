@@ -166,7 +166,7 @@ import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconJour
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
-import { addTrial, getTrialById } from '@/plugins/idb'
+import { addTrial, getTrialById, getTrialData } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
@@ -424,6 +424,19 @@ export default {
   mounted: function () {
     if (this.$route.params && this.$route.params.trialId) {
       getTrialById(this.$route.params.trialId)
+        .then(trial => {
+          if (trial) {
+            return new Promise(resolve => {
+              getTrialData(trial.localId)
+                .then(data => {
+                  trial.data = data
+                  resolve(trial)
+                })
+            })
+          } else {
+            return new Promise(resolve => resolve(null))
+          }
+        })
         .then(trial => {
           if (trial) {
             this.trialName = this.$t('modalTextTrialDuplicateOfName', { original: trial.name })
