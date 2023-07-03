@@ -201,6 +201,10 @@ const updateTrialProperties = async (localId, updates) => {
         transaction.trialEditTransaction.plotCorners = mapping
       }
 
+      if (!transaction.traitChangeTransactions) {
+        transaction.traitChangeTransactions = []
+      }
+
       updates.traits.forEach(t => {
         const match = originalTraits.find(ot => ot.id === t.id)
 
