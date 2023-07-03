@@ -41,7 +41,7 @@
             <BIconCheck class="text-success" v-if="tabCorrect.markers === true" />
             <BIconX class="text-danger" v-else-if="tabCorrect.markers === false" />
           </template>
-          <b-container>
+          <b-container class="mt-3">
             <p>{{ $t('pageTrialLayoutMarkersText') }}</p>
             <MarkerSetup ref="markerSetup" :layout="layout" @change="(markers) => { layout.markers = markers }" />
           </b-container>
@@ -53,9 +53,46 @@
             <BIconCheck class="text-success" v-if="tabCorrect.corners === true" />
             <BIconX class="text-danger" v-else-if="tabCorrect.corners === false" />
           </template>
-          <b-container>
+          <b-container class="mt-3">
             <p>{{ $t('pageTrialLayoutCornersText') }}</p>
             <TrialLayoutCorners ref="trialLayoutCorners" :layout="layout" @change="(corners) => { layout.corners = corners }" />
+          </b-container>
+        </b-tab>
+        <b-tab>
+          <template #title>
+            <BIconTags />
+            <span> {{ $t('pageTrialSetupCardTraitsTitle') }} </span>
+            <BIconCheck class="text-success" v-if="tabCorrect.traits === true" />
+            <BIconX class="text-danger" v-else-if="tabCorrect.traits === false" />
+          </template>
+          <b-container class="mt-3">
+            <p>{{ $t('pageTrialEditTraitText') }}</p>
+            <b-row>
+              <b-col class="mb-3" cols=12 md=6 v-for="trait in traits" :key="`trait-section-${trait.id}`">
+                <h4 class="d-flex justify-content-between align-items-center">
+                  <span :style="{ color: trait.color }">
+                    <BIconCircleFill />
+                    <span class="mx-1">{{ trait.name }}</span>
+                  </span>
+                </h4>
+
+                <b-form-group :label="$t('formLabelTraitName')" :description="$t('formDescriptionTraitName')" label-for="trait-name">
+                  <b-form-input required v-model="trait.name" trim id="trait-name" />
+                </b-form-group>
+
+                <b-form-group :label="$t('formLabelTraitDescription')" :description="$t('formDescriptionTraitDescription')" label-for="trait-description">
+                  <b-form-input required v-model="trait.description" trim id="trait-description" />
+                </b-form-group>
+
+                <b-form-group :label="$t('formLabelTraitGroup')" :description="$t('formDescriptionTraitGroup')" label-for="trait-group">
+                  <b-form-input list="trait-groups" trim v-model="trait.group" id="trait-group" />
+
+                  <datalist id="trait-groups">
+                    <option v-for="group in traitGroups" :key="`trait-group-${group}`">{{ group }}</option>
+                  </datalist>
+                </b-form-group>
+              </b-col>
+            </b-row>
           </b-container>
         </b-tab>
       </b-tabs>
@@ -71,7 +108,7 @@ import TrialLayoutCorners from '@/components/TrialLayoutCorners'
 import MarkerSetup from '@/components/MarkerSetup'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
-import { BIconTextareaT, BIconCardText, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconCheck, BIconX, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconCircleFill, BIconTags, BIconCheck, BIconX, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { updateTrialProperties } from '@/plugins/idb'
 
 const emitter = require('tiny-emitter/instance')
@@ -82,7 +119,9 @@ export default {
     BIconCardText,
     BIconArrowsFullscreen,
     BIconBoundingBoxCircles,
+    BIconCircleFill,
     BIconCheck,
+    BIconTags,
     BIconX,
     BIconExclamationTriangleFill,
     LayoutFeedbackModal,
@@ -94,6 +133,7 @@ export default {
       tabIndex: 0,
       trialName: null,
       trialDescription: null,
+      traits: [],
       layout: {
         rows: null,
         columns: null,
@@ -106,7 +146,8 @@ export default {
       },
       tabCorrect: {
         markers: null,
-        corners: null
+        corners: null,
+        traits: null
       },
       layoutFeedback: null
     }
@@ -115,6 +156,25 @@ export default {
     trial: {
       type: Object,
       default: () => null
+    }
+  },
+  computed: {
+    traitGroups: function () {
+      const set = new Set()
+
+      if (this.traits && this.traits.length > 0) {
+        this.traits.forEach(t => {
+          if (t.group && t.group !== '') {
+            set.add(t.group)
+          }
+        })
+      }
+
+      if (set.size > 0) {
+        return [...set].sort((a, b) => a.localeCompare(b))
+      } else {
+        return []
+      }
     }
   },
   watch: {
@@ -139,10 +199,17 @@ export default {
       if (useTrial && this.trial) {
         this.trialName = this.trial.name
         this.trialDescription = this.trial.description
+        this.traits = JSON.parse(JSON.stringify(this.trial.traits))
+        this.traits.forEach(t => {
+          if (t.group) {
+            t.group = t.group.name
+          }
+        })
         this.layout = JSON.parse(JSON.stringify(this.trial.layout))
       } else {
         this.trialName = null
         this.trialDescription = null
+        this.traits = []
       }
 
       this.formState = {
@@ -151,7 +218,8 @@ export default {
       }
       this.tabCorrect = {
         markers: null,
-        corners: null
+        corners: null,
+        traits: null
       }
     },
     updateTrial: function () {
@@ -182,14 +250,26 @@ export default {
         this.tabCorrect.markers = true
       }
 
+      this.tabCorrect.traits = this.traits.every(t => t.name !== undefined && t.name !== null && t.name !== '')
+
       this.layoutFeedback = feedback
 
-      if (this.tabCorrect.corners && this.tabCorrect.markers && this.formState.trialName && this.formState.trialDescription) {
+      if (this.tabCorrect.corners && this.tabCorrect.markers && this.tabCorrect.traits && this.formState.trialName && this.formState.trialDescription) {
+        const finalTraits = JSON.parse(JSON.stringify(this.traits))
+        finalTraits.forEach(t => {
+          if (t.group) {
+            t.group = {
+              name: t.group
+            }
+          }
+        })
+
         updateTrialProperties(this.trial.localId, {
           name: this.trialName,
           description: this.trialDescription,
           markers: this.layout.markers,
-          corners: this.layout.corners
+          corners: this.layout.corners,
+          traits: finalTraits
         }).then(() => {
           emitter.emit('trials-updated')
           this.hide()

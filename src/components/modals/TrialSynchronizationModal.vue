@@ -2,7 +2,7 @@
   <b-modal :title="$t('modalTitleTrialSynchronization')"
            :ok-title="$t('Synchronize')"
            :cancel-title="$t('buttonCancel')"
-           @ok.prevent="synchronize"
+           @ok.prevent="askToSynchronize"
            :ok-disabled="storeIsOffline"
            no-fade
            size="lg"
@@ -28,6 +28,20 @@
 
             <p class="mb-1">
               <TraitHeading :trait="trait" v-for="trait in transaction.trialTraitAddedTransactions" :key="`trait-${trait.id}`" />
+            </p>
+          </b-list-group-item>
+
+          <!-- TRAIT DETAILS CHANGED -->
+          <b-list-group-item v-if="transaction.traitChangeTransactions && transaction.traitChangeTransactions.length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconTag stacked />
+                <BIconPencilFill stacked :scale="0.3" :rotate="-90" />
+              </BIconstack> {{ $t('transactionTypeTraitsModified') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypeTraitsModifiedCount', Object.keys(transaction.traitChangeTransactions).length) }}
             </p>
           </b-list-group-item>
 
@@ -133,9 +147,9 @@ import TraitHeading from '@/components/TraitHeading'
 
 import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
-import { synchronizeTrial } from '@/plugins/api'
+import { shareTrial, synchronizeTrial } from '@/plugins/api'
 
-import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
+import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -148,6 +162,8 @@ export default {
     BIconDash,
     BIconPencilSquare,
     BIconTags,
+    BIconTag,
+    BIconPencilFill,
     BIconNodePlus,
     BIconBookmarkStar,
     TraitHeading
@@ -169,7 +185,7 @@ export default {
     }
   },
   methods: {
-    synchronize: function () {
+    askToSynchronize: function () {
       this.$bvModal.msgBoxConfirm(this.$t('modalTextSynchronizeTrial'), {
         title: this.$t('modalTitleSynchronizeTrial'),
         okTitle: this.$t('buttonYes'),
@@ -178,24 +194,63 @@ export default {
       })
         .then(value => {
           if (value) {
-            emitter.emit('show-loading', true)
-            synchronizeTrial(this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
-              .then(result => {
-                result.localId = this.trial.localId
+            this.synchronize()
+          }
+        })
+    },
+    synchronize: function () {
+      emitter.emit('show-loading', true)
+      synchronizeTrial(this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
+        .then(result => {
+          result.localId = this.trial.localId
 
-                return deleteTrial(this.trial.localId)
-                  .then(() => {
-                    return addTrial(result)
-                  })
-                  .then(localId => {
-                    this.$store.dispatch('setSelectedTrial', localId)
-                    emitter.emit('trials-updated')
-                    emitter.emit('show-loading', false)
-                    emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })
-                  })
-                  .finally(() => {
-                    emitter.emit('show-loading', false)
-                  })
+          return deleteTrial(this.trial.localId)
+            .then(() => {
+              return addTrial(result)
+            })
+            .then(localId => {
+              this.$store.dispatch('setSelectedTrial', localId)
+              emitter.emit('trials-updated')
+              emitter.emit('show-loading', false)
+              emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })
+            })
+            .finally(() => {
+              emitter.emit('show-loading', false)
+            })
+        })
+        .catch(err => {
+          console.log(err)
+          if (err && err.status === 404) {
+            if (this.trial.shareCodes && this.trial.shareCodes.ownerCode) {
+              this.shareTrialAgain()
+            } else {
+              this.tellUserToContactOwner()
+            }
+          }
+        })
+        .finally(() => {
+          emitter.emit('show-loading', false)
+        })
+    },
+    tellUserToContactOwner: function () {
+      this.$bvModal.msgBoxOk(this.$t('modalTextShareTrialContactOwner'), {
+        title: this.$t('modalTitleShareTrialContactOwner'),
+        okVariant: 'info'
+      })
+    },
+    shareTrialAgain: function () {
+      this.$bvModal.msgBoxConfirm(this.$t('modalTextShareTrialAgain'), {
+        title: this.$t('modalTitleShareTrialAgain'),
+        okTitle: this.$t('buttonYes'),
+        okVariant: 'success',
+        cancelTitle: this.$t('buttonNo')
+      })
+        .then(value => {
+          if (value) {
+            emitter.emit('show-loading', true)
+            shareTrial(this.trial.localId)
+              .then(() => {
+                this.synchronize()
               })
               .finally(() => {
                 emitter.emit('show-loading', false)

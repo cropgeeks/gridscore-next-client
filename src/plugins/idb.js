@@ -175,15 +175,19 @@ const updateTrialProperties = async (localId, updates) => {
     const db = await getDb()
 
     const plotCorners = updates.corners ? trialLayoutToPlots(updates.corners, trial.layout.rows, trial.layout.columns) : null
+    const originalTraits = JSON.parse(JSON.stringify(trial.traits))
 
     trial.name = updates.name
     trial.description = updates.description
     trial.layout.markers = updates.markers
     trial.layout.corners = updates.corners
+    trial.traits = updates.traits
 
     if (logTransactions(trial)) {
       const transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
-      transaction.trialEditTransaction = updates
+      const copy = JSON.parse(JSON.stringify(updates))
+      delete copy.traits
+      transaction.trialEditTransaction = copy
 
       if (plotCorners) {
         const mapping = {}
@@ -196,6 +200,32 @@ const updateTrialProperties = async (localId, updates) => {
 
         transaction.trialEditTransaction.plotCorners = mapping
       }
+
+      updates.traits.forEach(t => {
+        const match = originalTraits.find(ot => ot.id === t.id)
+
+        // If either the name, the description or the group has changed, then store in the transaction.
+        if (match.name !== t.name || match.description !== t.description || JSON.stringify(match.group) !== JSON.stringify(t.group)) {
+          const transMatch = transaction.traitChangeTransactions.find(tr => tr.id === t.id)
+
+          if (transMatch) {
+            // If there is an old transaction entry, update it
+            transMatch.name = t.name
+            transMatch.description = t.description
+            transMatch.group = t.group.name
+            transMatch.timestamp = new Date().toISOString()
+          } else {
+            // Else, add a new one
+            transaction.traitChangeTransactions.push({
+              id: t.id,
+              name: t.name,
+              description: t.description,
+              group: t.group.name,
+              timestamp: new Date().toISOString()
+            })
+          }
+        }
+      })
 
       await db.put('transactions', transaction)
     }
@@ -653,6 +683,7 @@ const getEmptyTransaction = (trialId) => {
     trialCommentDeletedTransactions: [],
     trialGermplasmAddedTransactions: [],
     trialTraitAddedTransactions: [],
+    traitChangeTransactions: [],
     trialEditTransaction: null
   }
 }
