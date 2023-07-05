@@ -26,7 +26,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { toLocalDateString } from '@/plugins/misc'
+import { categoryColors, toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -249,7 +249,13 @@ export default {
           text: text,
           customdata: customdata,
           type: 'heatmap',
-          colorscale: [[0, this.storeDarkMode ? '#444444' : '#dddddd'], [1, this.selectedTrait.color]],
+          colorscale: this.selectedTrait.dataType === 'categorical'
+            ? this.selectedTrait.restrictions.categories.map((_, i) => {
+              const l = this.selectedTrait.restrictions.categories.length
+              const c = categoryColors[i % categoryColors.length]
+              return [[i / l, c], [(i + 1) / l, c]]
+            }).flat()
+            : [[0, this.storeDarkMode ? '#444444' : '#dddddd'], [1, this.selectedTrait.color]],
           hoverongaps: false,
           hovertemplate: this.selectedTrait.dataType === 'categorical'
             ? `${this.$t('tooltipChartHeatmapGermplasm')}: %{y}<br>${this.$t('tooltipChartHeatmapRep')}: %{x}<br>${this.$t('tooltipChartHeatmapValue')}: %{customdata}<extra>%{text}</extra>`
@@ -263,7 +269,10 @@ export default {
                   side: 'right',
                   font: { color: this.storeDarkMode ? 'white' : 'black' }
                 },
-                tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+                tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+                autotick: false,
+                tick0: 0,
+                dtick: 1
               }
             : {
                 title: {

@@ -29,7 +29,7 @@
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { toLocalDateString } from '@/plugins/misc'
+import { categoryColors, toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -250,7 +250,13 @@ export default {
           text: text,
           customdata: customdata,
           type: 'heatmap',
-          colorscale: [[0, this.storeDarkMode ? '#444444' : '#dddddd'], [1, this.selectedTrait.color]],
+          colorscale: this.selectedTrait.dataType === 'categorical'
+            ? this.selectedTrait.restrictions.categories.map((_, i) => {
+              const l = this.selectedTrait.restrictions.categories.length
+              const c = categoryColors[i % categoryColors.length]
+              return [[i / l, c], [(i + 1) / l, c]]
+            }).flat()
+            : [[0, this.storeDarkMode ? '#444444' : '#dddddd'], [1, this.selectedTrait.color]],
           hoverongaps: false,
           hovertemplate: this.selectedTrait.dataType === 'categorical'
             ? `${this.$t('tooltipChartHeatmapRow')}: %{y}<br>${this.$t('tooltipChartHeatmapColumn')}: %{x}<br>${this.$t('tooltipChartHeatmapValue')}: %{customdata}<extra>%{text}</extra>`
@@ -264,7 +270,10 @@ export default {
                   side: 'right',
                   font: { color: this.storeDarkMode ? 'white' : 'black' }
                 },
-                tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+                tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+                autotick: false,
+                tick0: 0,
+                dtick: 1
               }
             : {
                 title: {
@@ -276,6 +285,8 @@ export default {
                 orientation: window.innerWidth < 768 ? 'h' : 'v'
               }
         }]
+
+        console.log(traces[0])
 
         if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float') {
           traces[0].zauto = false
