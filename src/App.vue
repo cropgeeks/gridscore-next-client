@@ -54,6 +54,7 @@
                 :okTitle="'buttonOk'"
                 :cancelTitle="'buttonCancel'"
                 :okDisabled="true"
+                :errorMessage="brapiErrorMessage"
                 no-fade
                 @brapi-settings-changed="onBrapiSettingsChanged" />
 
@@ -130,7 +131,8 @@ export default {
       refreshing: false,
       registration: null,
       updateExists: false,
-      changelogVersionNumber: null
+      changelogVersionNumber: null,
+      brapiErrorMessage: null
     }
   },
   computed: {
@@ -203,7 +205,8 @@ export default {
         okVariant: 'primary'
       })
     },
-    showBrapiSettings: function () {
+    showBrapiSettings: function (message = null) {
+      this.brapiErrorMessage = message
       this.$refs.brapiSettingsModal.show()
     },
     showLoading: function (visible) {

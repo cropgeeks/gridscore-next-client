@@ -45,6 +45,20 @@
             </p>
           </b-list-group-item>
 
+          <!-- BRAPI IDS CHANGED -->
+          <b-list-group-item v-if="transaction.brapiIdChangeTransaction && ((transaction.brapiIdChangeTransaction.germplasmBrapiIds && Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length > 0) || (transaction.brapiIdChangeTransaction.traitBrapiIds && Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length > 0))">
+            <h5 class="mb-1">
+              <IconBrapi /> {{ $t('transactionTypeBrapiIdsChanged') }}
+            </h5>
+
+            <p class="mb-1" v-if="transaction.brapiIdChangeTransaction.germplasmBrapiIds && Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length > 0">
+              {{ $tc('transactionTypeBrapiIdsChangedGermplasmCount', Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length) }}
+            </p>
+            <p class="mb-1" v-if="transaction.brapiIdChangeTransaction.traitBrapiIds && Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length > 0">
+              {{ $tc('transactionTypeBrapiIdsChangedTraitCount', Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length) }}
+            </p>
+          </b-list-group-item>
+
           <!-- GERMPLASM ADDED -->
           <b-list-group-item v-if="transaction.trialGermplasmAddedTransactions && transaction.trialGermplasmAddedTransactions.length > 0">
             <h5 class="mb-1"><BIconNodePlus :rotate="270" /> {{ $t('transactionTypeGermplasmAdded') }}</h5>
@@ -151,6 +165,8 @@ import { shareTrial, synchronizeTrial } from '@/plugins/api'
 
 import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
+import IconBrapi from '@/components/icons/IconBrapi'
+
 const emitter = require('tiny-emitter/instance')
 
 export default {
@@ -166,7 +182,8 @@ export default {
     BIconPencilFill,
     BIconNodePlus,
     BIconBookmarkStar,
-    TraitHeading
+    TraitHeading,
+    IconBrapi
   },
   props: {
     trial: {

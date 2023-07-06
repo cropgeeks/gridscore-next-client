@@ -419,7 +419,6 @@ export default {
           date.setDate(this.recordingDate.getDate())
           date.setMonth(this.recordingDate.getMonth())
           date.setFullYear(this.recordingDate.getFullYear())
-          console.log(date, date.toISOString())
           date.setUTCHours(now.getUTCHours())
           date.setUTCMinutes(now.getUTCMinutes())
           date.setUTCSeconds(now.getUTCSeconds())

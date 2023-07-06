@@ -26,6 +26,8 @@
 
       <!-- Button to update the BrAPI URL in the store -->
       <b-button @click="updateBrapiUrl"><BIconArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
+
+      <p class="text-danger" v-if="errorMessage">{{ $t(errorMessage) }}</p>
     </b-form>
 
     <!-- Slot that wrapping components can use to fill in their content -->
@@ -75,6 +77,10 @@ export default {
     size: {
       type: String,
       default: 'md'
+    },
+    errorMessage: {
+      type: String,
+      default: null
     }
   },
   computed: {

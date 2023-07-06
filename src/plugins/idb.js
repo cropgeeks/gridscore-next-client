@@ -137,6 +137,8 @@ const getTrials = async () => {
           t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
           t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
           t.transactionCount += transaction.trialEditTransaction ? 1 : 0
+          t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
+          t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
         }
 
         return t
@@ -381,6 +383,8 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
         trial.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
         trial.transactionCount += transaction.trialEditTransaction ? 1 : 0
+        trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
+        trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
       }
 
       return trial
@@ -688,7 +692,11 @@ const getEmptyTransaction = (trialId) => {
     trialGermplasmAddedTransactions: [],
     trialTraitAddedTransactions: [],
     traitChangeTransactions: [],
-    trialEditTransaction: null
+    trialEditTransaction: null,
+    brapiIdChangeTransaction: {
+      germplasmBrapiIds: {},
+      traitBrapiIds: {}
+    }
   }
 }
 
@@ -720,6 +728,88 @@ const deleteTrialComment = async (trialId, comment) => {
     return db.put('trials', trial)
   } else {
     return new Promise(resolve => resolve(trial))
+  }
+}
+
+const updateGermplasmBrapiIds = async (trialId, germplasmBrapiIds) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      // Add the new ones
+      if (!transaction.brapiIdChangeTransaction) {
+        transaction.brapiIdChangeTransaction = {
+          germplasmBrapiIds: {},
+          traitBrapiIds: {}
+        }
+      }
+
+      Object.entries(germplasmBrapiIds).forEach(([key, value]) => {
+        transaction.brapiIdChangeTransaction.germplasmBrapiIds[key] = value
+      })
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    // Get all data items belonging to this trial so we can add the new trait information
+    let cursor = await db.transaction('data', 'readwrite').store.openCursor(IDBKeyRange.bound([trial.localId, 0, 0], [trial.localId, trial.layout.rows, trial.layout.columns]))
+
+    while (cursor) {
+      const cell = cursor.value
+      if (cell && germplasmBrapiIds[`${cell.row}|${cell.column}`]) {
+        cell.brapiId = germplasmBrapiIds[`${cell.row}|${cell.column}`]
+
+        // Write it back to the database
+        await cursor.update(cell)
+      }
+
+      // Continue with the next one
+      cursor = await cursor.continue()
+    }
+
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
+const updateTraitBrapiIds = async (trialId, traitBrapiIds) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      // Add the new ones
+      if (!transaction.brapiIdChangeTransaction) {
+        transaction.brapiIdChangeTransaction = {
+          germplasmBrapiIds: {},
+          traitBrapiIds: {}
+        }
+      }
+
+      Object.entries(traitBrapiIds).forEach(([key, value]) => {
+        transaction.brapiIdChangeTransaction.traitBrapiIds[key] = value
+      })
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    Object.entries(traitBrapiIds).forEach(([key, value]) => {
+      const match = trial.traits.find(t => t.id === key)
+
+      if (match) {
+        match.brapiId = value
+      }
+    })
+
+    return db.put('trials', trial)
   }
 }
 
@@ -996,5 +1086,7 @@ export {
   getTransactionForTrial,
   changeTrialsData,
   getTrialValidPlots,
-  addTrialGermplasm
+  addTrialGermplasm,
+  updateTraitBrapiIds,
+  updateGermplasmBrapiIds
 }

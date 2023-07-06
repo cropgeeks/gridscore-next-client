@@ -286,8 +286,6 @@ export default {
               }
         }]
 
-        console.log(traces[0])
-
         if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float') {
           traces[0].zauto = false
           traces[0].zmin = minValue

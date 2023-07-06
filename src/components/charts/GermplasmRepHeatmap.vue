@@ -316,8 +316,6 @@ export default {
           }
         }
 
-        console.log(layout, traces)
-
         const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
         Plotly.newPlot(this.$refs.heatmapRepCompareChart, traces, layout, {
           responsive: true,

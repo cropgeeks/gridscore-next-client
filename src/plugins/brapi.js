@@ -23,14 +23,14 @@ const brapiDefaultCatchHandler = (err) => {
       case 401:
         message = i18n.t('httpErrorFourOOne')
         // We're using the emitter to show the brapi settings modal
-        updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.brapiConfig.url, token: null })
-          .then(() => emitter.emit('show-brapi-settings'))
+        updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.storeBrapiConfig.url, token: null })
+          .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionUnauthorized'))
         return
       case 403: {
         message = i18n.t('httpErrorFourOThree')
         // We're using the emitter to show the brapi settings modal
-        updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.brapiConfig.url, token: null })
-          .then(() => emitter.emit('show-brapi-settings'))
+        updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.storeBrapiConfig.url, token: null })
+          .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionForbidden'))
         break
       }
       case 404:
@@ -174,9 +174,125 @@ const brapiGetVariables = () => {
     })
 }
 
+/**
+ * Retrieves the programs on the BrAPI server
+ * @param {*} params The query parameters
+ * @returns Promise
+ */
+const brapiGetPrograms = (params) => {
+  return brapiAxios('programs', 'programs', params, 'get', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+/**
+ * Retrieves the trials on the BrAPI server
+ * @param {*} params The query parameters
+ * @returns Promise
+ */
+const brapiGetTrials = (params) => {
+  return brapiAxios('trials', 'trials', params, 'get', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+/**
+ * Retrieves the study types on the BrAPI server
+ * @param {*} params The query parameters
+ * @returns Promise
+ */
+const brapiGetStudyTypes = (params) => {
+  return brapiAxios('studytypes', 'studytypes', params, 'get', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+/**
+ * Retrieves the studies on the BrAPI server
+ * @param {*} params The query parameters
+ * @returns Promise
+ */
+const brapiGetStudies = (params) => {
+  return brapiAxios('studies', 'studies', params, 'get', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+const brapiPostGermplasmSearch = (params) => {
+  return brapiAxios('search/germplasm', 'search/germplasm', params, 'post', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+const brapiPostObservationVariableSearch = (params) => {
+  return brapiAxios('search/variables', 'search/variables', params, 'post', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+const brapiPostObservationUnits = (params) => {
+  return brapiAxios('observationunits', 'observationunits', params, 'post', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
+const brapiPostObservationVariables = (params) => {
+  return brapiAxios('variables', 'variables', params, 'post', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
 export {
   brapiAxios,
   brapiGetInfo,
   brapiGetVariables,
+  brapiGetPrograms,
+  brapiGetTrials,
+  brapiGetStudyTypes,
+  brapiGetStudies,
+  brapiPostGermplasmSearch,
+  brapiPostObservationUnits,
+  brapiPostObservationVariables,
+  brapiPostObservationVariableSearch,
   brapiDefaultCatchHandler
 }

@@ -3,7 +3,7 @@
     <h1 class="display-4">{{ $t('pageExportTitle') }}</h1>
     <p>{{ $t('pageExportText') }}</p>
 
-    <b-tabs v-if="trial">
+    <b-tabs lazy v-if="trial">
       <b-tab>
         <template #title>
           <BIconFileEarmarkSpreadsheet /> {{ $t('pageExportTabTitleTab') }}
@@ -44,10 +44,12 @@
           </b-col>
         </b-row>
       </b-tab>
-      <b-tab disabled>
+      <b-tab>
         <template #title>
           <IconBrapi /> Breeding API
         </template>
+
+        <BrapiExportSection :trial="trial" />
       </b-tab>
     </b-tabs>
 
@@ -66,6 +68,7 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload } from 'bootstrap-vue'
 import { downloadText } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import BrapiExportSection from '@/components/BrapiExportSection'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -74,6 +77,7 @@ export default {
     BIconGrid3x2Gap,
     BIconFileEarmarkSpreadsheet,
     BIconDownload,
+    BrapiExportSection,
     IconGerminate,
     IconBrapi,
     TrialSynchronizationModal
