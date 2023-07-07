@@ -55,8 +55,7 @@
                 :cancelTitle="'buttonCancel'"
                 :okDisabled="true"
                 :errorMessage="brapiErrorMessage"
-                no-fade
-                @brapi-settings-changed="onBrapiSettingsChanged" />
+                no-fade />
 
     <b-modal v-model="loadingVisible" hide-header hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
       <div class="text-center">
@@ -88,7 +87,6 @@ import { init } from '@/plugins/datastore'
 import { VuePlausible } from 'vue-plausible'
 import Vue from 'vue'
 import { axiosCall, getServerSettings } from '@/plugins/api'
-import { updateTrialBrapiConfig } from '@/plugins/idb'
 import { Detector } from '@/plugins/browser-detect'
 
 import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
@@ -155,12 +153,6 @@ export default {
     }
   },
   methods: {
-    onBrapiSettingsChanged: function (config) {
-      updateTrialBrapiConfig(this.storeSelectedTrial, config)
-        .then(() => emitter.emit('brapi-settings-changed', config))
-
-      this.$refs.brapiSettingsModal.hide()
-    },
     toggleDarkMode: function () {
       this.$store.dispatch('setDarkMode', !this.storeDarkMode)
     },

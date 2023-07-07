@@ -504,6 +504,7 @@
   "transactionTypeBrapiIdsChanged": "BrAPI ids updated",
   "transactionTypeBrapiIdsChangedGermplasmCount": "No germplasm ids updated.|One germplasm id updated.|{count} germplasm ids updated.",
   "transactionTypeBrapiIdsChangedTraitCount": "No trait ids updated.|One trait id updated.|{count} trait ids updated.",
+  "transactionTypeBrapiConfigChanged": "BrAPI configuration updated",
   "traitTypeCategorical": "Category",
   "traitTypeDate": "Date",
   "traitTypeFloat": "Decimal number (e.g. 2.1, 3.5, 200.5)",

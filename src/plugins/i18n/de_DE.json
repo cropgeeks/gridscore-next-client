@@ -498,6 +498,7 @@
   "transactionTypeBrapiIdsChanged": "BrAPI-IDs aktualisiert",
   "transactionTypeBrapiIdsChangedGermplasmCount": "Keine Keimplasma-IDs aktualisiert.|Eine Keimplasma-ID aktualisiert.|{count} Keimplasma-IDs aktualisiert.",
   "transactionTypeBrapiIdsChangedTraitCount": "Keine Merkmals-IDs aktualisiert.|Eine Merkmals-ID aktualisiert.|{count} Merkmals-IDs aktualisiert.",
+  "transactionTypeBrapiConfigChanged": "BrAPI-Konfiguration aktualisiert",
   "traitTypeCategorical": "Kategorie",
   "traitTypeDate": "Datum",
   "traitTypeFloat": "Fließkommazahl (z.B. 2.1, 3.5, 200.5)",

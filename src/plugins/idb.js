@@ -139,6 +139,7 @@ const getTrials = async () => {
           t.transactionCount += transaction.trialEditTransaction ? 1 : 0
           t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
           t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
+          t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
         }
 
         return t
@@ -269,7 +270,24 @@ const updateTrialBrapiConfig = async (localId, brapiConfig) => {
 
   if (trial) {
     trial.brapiConfig = brapiConfig
+
     const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = logTransactions(trial) ? ((await db.get('transactions', localId)) || getEmptyTransaction(localId)) : null
+
+      if (!transaction.brapiConfigChangeTransaction) {
+        transaction.brapiConfigChangeTransaction = {
+          url: null
+        }
+      }
+
+      transaction.brapiConfigChangeTransaction.url = brapiConfig ? brapiConfig.url : null
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
     return db.put('trials', trial)
   } else {
     return new Promise(resolve => resolve())
@@ -385,6 +403,7 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.trialEditTransaction ? 1 : 0
         trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
         trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
+        trial.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
       }
 
       return trial
@@ -696,6 +715,9 @@ const getEmptyTransaction = (trialId) => {
     brapiIdChangeTransaction: {
       germplasmBrapiIds: {},
       traitBrapiIds: {}
+    },
+    brapiConfigChangeTransaction: {
+      url: null
     }
   }
 }

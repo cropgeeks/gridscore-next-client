@@ -3,7 +3,6 @@
            :ok-title="$t(okTitle)"
            :cancel-title="$t(cancelTitle)"
            :ok-disabled="okDisabled"
-           @ok.prevent="$emit('submit')"
            scrollable
            no-fade
            :size="size"
@@ -40,6 +39,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { BIconArrowClockwise } from 'bootstrap-vue'
+import { updateTrialBrapiConfig } from '@/plugins/idb'
+
+const emitter = require('tiny-emitter/instance')
 
 /**
  * Base modal used to show a BrAPI URL input field at the top. Wrapping components can use the `content` slot to add their own content.
@@ -86,7 +88,8 @@ export default {
   computed: {
     /** Mapgetters exposing the store configuration */
     ...mapGetters([
-      'storeBrapiConfig'
+      'storeBrapiConfig',
+      'storeSelectedTrial'
     ])
   },
   methods: {
@@ -119,7 +122,18 @@ export default {
         token: this.brapiToken
       })
 
-      this.$nextTick(() => this.$emit('brapi-settings-changed', { url: this.brapiUrl, token: this.brapiToken }))
+      if (this.storeSelectedTrial) {
+        updateTrialBrapiConfig(this.storeSelectedTrial, {
+          url: this.brapiUrl,
+          token: this.brapiToken
+        })
+          .then(() => {
+            emitter.emit('trial-selected')
+            this.hide()
+          })
+      } else {
+        this.hide()
+      }
     }
   }
 }

@@ -59,6 +59,13 @@
             </p>
           </b-list-group-item>
 
+          <!-- BRAPI CONFIG CHANGED -->
+          <b-list-group-item v-if="transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== ''">
+            <h5 class="mb-1">
+              <IconBrapi /> {{ $t('transactionTypeBrapiConfigChanged') }}
+            </h5>
+          </b-list-group-item>
+
           <!-- GERMPLASM ADDED -->
           <b-list-group-item v-if="transaction.trialGermplasmAddedTransactions && transaction.trialGermplasmAddedTransactions.length > 0">
             <h5 class="mb-1"><BIconNodePlus :rotate="270" /> {{ $t('transactionTypeGermplasmAdded') }}</h5>

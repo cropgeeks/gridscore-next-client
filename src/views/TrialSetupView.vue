@@ -422,6 +422,8 @@ export default {
     }
   },
   mounted: function () {
+    this.$store.dispatch('setSelectedTrial', null)
+
     if (this.$route.params && this.$route.params.trialId) {
       getTrialById(this.$route.params.trialId)
         .then(trial => {
