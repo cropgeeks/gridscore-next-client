@@ -140,6 +140,7 @@ const getTrials = async () => {
           t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
           t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
           t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
+          t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
         }
 
         return t
@@ -404,6 +405,7 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
         trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
         trial.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
+        trial.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
       }
 
       return trial

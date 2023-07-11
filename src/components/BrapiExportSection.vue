@@ -1,5 +1,7 @@
 <template>
   <div>
+    <p class="mt-3">{{ $t('pageExportTrialFormatBrapi') }}</p>
+
     <b-button class="mb-3" @click="showBrapiSettings"><BIconGearFill /> {{ $t('buttonBrapiSettings') }}</b-button>
 
     <b-form @submit.prevent="onSubmit">
@@ -63,7 +65,7 @@ import { mapGetters } from 'vuex'
 
 import { BIconGearFill, BIconSearch, BIconCloudUpload, BIconCloudPlus } from 'bootstrap-vue'
 
-import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler } from '@/plugins/brapi'
+import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler, brapiPostObservationUnits } from '@/plugins/brapi'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { updateGermplasmBrapiIds, updateTraitBrapiIds } from '@/plugins/idb'
 
@@ -332,12 +334,10 @@ export default {
           }
         }
 
-        console.log(data)
-
-        // brapiPostObservationUnits(data)
-        //   .then(() =>  emitter.emit('plausible-event', { key: 'dataset-export', props: { format: 'brapi' } }))
-        //   .catch(brapiDefaultCatchHandler)
-        //   .finally(() => emitter.emit('set-loading', false))
+        brapiPostObservationUnits(data)
+          .then(() => emitter.emit('plausible-event', { key: 'dataset-export', props: { format: 'brapi' } }))
+          .catch(brapiDefaultCatchHandler)
+          .finally(() => emitter.emit('set-loading', false))
       }
     },
     updateBrapiTraitDbIdsInDatabase: function (map) {

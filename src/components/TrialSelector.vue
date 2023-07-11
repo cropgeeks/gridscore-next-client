@@ -21,6 +21,12 @@
             </template>
           </a>
           <TrialInformation :trial="trial" />
+          <div v-if="trial.showExpiryWarning === true" class="px-3 py-2 bg-danger text-white" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
+            <BIconstack>
+              <BIconCalendar stacked />
+              <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
+            </BIconstack> {{ $t('widgetTrialSelectorTrialExpiryWarning') }}
+          </div>
           <b-card-footer class="d-flex justify-content-between">
             <b-button @click="loadTrial(trial)" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
             <b-dropdown right>
@@ -69,7 +75,7 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrials } from '@/plugins/idb'
-import { BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloudDownloadFill, BIconFileEarmarkArrowUp, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
+import { BIconCalendar, BIconExclamationTriangleFill, BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloudDownloadFill, BIconFileEarmarkArrowUp, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
 const emitter = require('tiny-emitter/instance')
@@ -84,6 +90,8 @@ export default {
     TrialDataImportModal,
     AddGermplasmModal,
     TrialModificationModal,
+    BIconCalendar,
+    BIconExclamationTriangleFill,
     BIconJournalArrowUp,
     BIconFileEarmarkArrowUp,
     BIconPencilSquare,
@@ -104,7 +112,7 @@ export default {
     ]),
     sortedTrials: function () {
       if (this.trials) {
-        return this.trials.concat()
+        return JSON.parse(JSON.stringify(this.trials))
           .filter(t => {
             if (this.searchTerm && (this.searchTerm !== '')) {
               const lower = this.searchTerm.toLowerCase()
@@ -130,11 +138,19 @@ export default {
           .map(t => {
             if (t.shareCodes && this.trialUpdates) {
               const shareCode = t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
+              const timestamp = this.trialUpdates[shareCode]
 
-              if (this.trialUpdates[shareCode] !== undefined && this.trialUpdates[shareCode] !== null) {
-                t.hasRemoteUpdate = this.trialUpdates[shareCode] > t.updatedOn
+              if (timestamp !== undefined && timestamp !== null && timestamp.updatedOn !== undefined && timestamp.updatedOn !== null) {
+                t.hasRemoteUpdate = timestamp.updatedOn > t.updatedOn
               } else {
                 t.hasRemoteUpdate = false
+              }
+
+              if (timestamp !== undefined && timestamp !== null && timestamp.showExpiryWarning !== undefined && timestamp.showExpiryWarning !== null) {
+                t.showExpiryWarning = timestamp.showExpiryWarning
+                t.expiresOn = timestamp.expiresOn
+              } else {
+                t.showExpiryWarning = false
               }
             }
 
