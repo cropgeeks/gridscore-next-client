@@ -478,7 +478,7 @@
   "tooltipScanQRCodeAddGermplasm": "QR-Code/Barcode scannen um Identifikator einzufügen",
   "tooltipDataEntryCommentMicrophone": "Nutze Spracherkennungstechnologien um deine Sprache in Text zu verwandeln.",
   "tooltipSetRecordingDate": "Ändere das Datum für welches Daten aufgezeichnet werden.",
-  "tooltipTrialSelectorTrialExpiryWarning": "Dieser Versuch wird am {date} auf dem GridScore Server ablaufen und danach nicht mehr verfügbar sein. Bitte den Versuch exportieren oder lokale Veränderungen synchronisieren um Ablaufperiode zu verlängern.",
+  "tooltipTrialSelectorTrialExpiryWarning": "Das Ablaufdatum dieses Versuches auf dem GridScore Server ist {date} und es wird danach nicht mehr verfügbar sein zur Synchronisierung. Bitte den Versuch exportieren oder lokale Veränderungen synchronisieren um Ablaufperiode zu verlängern.",
   "transactionTypeTraitsAdded": "Merkmale hinzufügt",
   "transactionTypeGermplasmAdded": "Keimplasma  hinzufügt",
   "transactionTypePlotCommentAdded": "Beetkommentar hinzufügt",

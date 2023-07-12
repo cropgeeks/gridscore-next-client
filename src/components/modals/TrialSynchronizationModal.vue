@@ -168,7 +168,7 @@ import TraitHeading from '@/components/TraitHeading'
 
 import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
-import { shareTrial, synchronizeTrial } from '@/plugins/api'
+import { synchronizeTrial } from '@/plugins/api'
 
 import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
@@ -245,41 +245,11 @@ export default {
         .catch(err => {
           console.log(err)
           if (err && err.status === 404) {
-            if (this.trial.shareCodes && this.trial.shareCodes.ownerCode) {
-              this.shareTrialAgain()
-            } else {
-              this.tellUserToContactOwner()
-            }
+            // TODO: Handle missing trials
           }
         })
         .finally(() => {
           emitter.emit('show-loading', false)
-        })
-    },
-    tellUserToContactOwner: function () {
-      this.$bvModal.msgBoxOk(this.$t('modalTextShareTrialContactOwner'), {
-        title: this.$t('modalTitleShareTrialContactOwner'),
-        okVariant: 'info'
-      })
-    },
-    shareTrialAgain: function () {
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextShareTrialAgain'), {
-        title: this.$t('modalTitleShareTrialAgain'),
-        okTitle: this.$t('buttonYes'),
-        okVariant: 'success',
-        cancelTitle: this.$t('buttonNo')
-      })
-        .then(value => {
-          if (value) {
-            emitter.emit('show-loading', true)
-            shareTrial(this.trial.localId)
-              .then(() => {
-                this.synchronize()
-              })
-              .finally(() => {
-                emitter.emit('show-loading', false)
-              })
-          }
         })
     },
     /**

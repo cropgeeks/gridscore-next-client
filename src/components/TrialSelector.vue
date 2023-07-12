@@ -21,12 +21,12 @@
             </template>
           </a>
           <TrialInformation :trial="trial" />
-          <div v-if="trial.showExpiryWarning === true" class="px-3 py-2 bg-danger text-white" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
+          <b-button @click="handleTrialExpiration(trial)" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
             <BIconstack>
               <BIconCalendar stacked />
               <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
             </BIconstack> {{ $t('widgetTrialSelectorTrialExpiryWarning') }}
-          </div>
+          </b-button>
           <b-card-footer class="d-flex justify-content-between">
             <b-button @click="loadTrial(trial)" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
             <b-dropdown right>
@@ -60,6 +60,7 @@
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate)" />
     <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial" />
     <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial" />
+    <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial" />
   </div>
 </template>
 
@@ -69,6 +70,7 @@ import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal'
 import AddTraitsModal from '@/components/modals/AddTraitsModal'
 import TrialModificationModal from '@/components/modals/TrialModificationModal'
+import TrialExpirationModal from '@/components/modals/TrialExpirationModal'
 import TrialDataImportModal from '@/components/modals/TrialDataImportModal'
 import AddGermplasmModal from '@/components/modals/AddGermplasmModal'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
@@ -90,6 +92,7 @@ export default {
     TrialDataImportModal,
     AddGermplasmModal,
     TrialModificationModal,
+    TrialExpirationModal,
     BIconCalendar,
     BIconExclamationTriangleFill,
     BIconJournalArrowUp,
@@ -172,6 +175,11 @@ export default {
     }
   },
   methods: {
+    handleTrialExpiration: function (trial) {
+      this.selectedTrial = trial
+
+      this.$nextTick(() => this.$refs.trialExpirationModal.show())
+    },
     importData: function (trial) {
       this.selectedTrial = trial
 

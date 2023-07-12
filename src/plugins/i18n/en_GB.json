@@ -484,7 +484,7 @@
   "tooltipScanQRCodeAddGermplasm": "Scan a QR-code/barcode to fill in the identifier",
   "tooltipDataEntryCommentMicrophone": "Use speech-to-text technology to convert your speech into text.",
   "tooltipSetRecordingDate": "Change the date for which the data will be recorded.",
-  "tooltipTrialSelectorTrialExpiryWarning": "This trial will expire on the GridScore server on {date} and will subsequently no longer be available. Please export it now or synchronize any outstanding changes to extend the storage period.",
+  "tooltipTrialSelectorTrialExpiryWarning": "The expiry date of this trial on the GridScore server is {date} and it will subsequently no longer be available for synchronization. Please export it now or synchronize any outstanding changes to extend the storage period.",
   "transactionTypeGermplasmAdded": "Germplasm added",
   "transactionTypeTraitsAdded": "Traits added",
   "transactionTypePlotCommentAdded": "Plot comment added",
