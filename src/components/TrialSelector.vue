@@ -243,12 +243,18 @@ export default {
       }
     },
     update: function () {
-      getTrials().then(trials => {
-        this.trials = trials
-        if (this.selectedTrial) {
-          this.selectedTrial = this.trials.find(t => t.localId === this.selectedTrial.localId)
-        }
-      })
+      getTrials()
+        .then(trials => {
+          this.trials = trials
+          if (this.selectedTrial) {
+            this.selectedTrial = this.trials.find(t => t.localId === this.selectedTrial.localId)
+          }
+
+          return postCheckUpdate()
+        })
+        .then(result => {
+          this.trialUpdates = result
+        })
     }
   },
   mounted: function () {
@@ -257,11 +263,6 @@ export default {
     emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.update)
     emitter.on('trials-updated', this.update)
-
-    postCheckUpdate()
-      .then(result => {
-        this.trialUpdates = result
-      })
   },
   beforeDestroy: function () {
     emitter.off('show-trial-comments', this.showTrialComments)

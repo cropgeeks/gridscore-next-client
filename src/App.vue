@@ -65,6 +65,7 @@
     </b-modal>
 
     <ChangelogModal :prevVersion="changelogVersionNumber" ref="changelogModal" />
+    <MissingTrialModal />
 
     <b-modal :visible="updateExists"
              :title="$t('modalTitleAppUpdateAvailable')"
@@ -81,6 +82,7 @@
 <script>
 import BrapiModal from '@/components/modals/BrapiModal'
 import ChangelogModal from '@/components/modals/ChangelogModal'
+import MissingTrialModal from '@/components/modals/MissingTrialModal'
 import { mapGetters } from 'vuex'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
@@ -112,7 +114,8 @@ export default {
     BIconSun,
     BIconCloudDownload,
     BrapiModal,
-    ChangelogModal
+    ChangelogModal,
+    MissingTrialModal
   },
   data: function () {
     return {

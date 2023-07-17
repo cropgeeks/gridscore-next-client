@@ -1,22 +1,58 @@
 <template>
   <b-modal :title="$t('modalTitleTrialExpiration')"
-           :ok-title="$t('buttonOk')"
+           :ok-title="$t('buttonExtendLifetime')"
+           @ok.prevent="sendCaptcha"
+           :ok-disabled="!captcha"
            no-fade
            ref="trialExpirationModal">
-    <div>
+    <div v-if="trial">
       <p>{{ $t('modalTextTrialExpiration') }}</p>
+
+      <p class="text-danger">{{ $t('modalTextTrialExpirationDate', { date: new Date(trial.expiresOn).toLocaleDateString() }) }}</p>
+
+      <b-form-group label-for="captcha" :description="$t('formDescriptionTrialExpirationCaptcha')" v-if="captchaUrl">
+        <template #label>
+          {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><BIconArrowRepeat /></b-button>
+        </template>
+        <div class="text-center mb-3">
+          <b-img fluid :src="captchaUrl" />
+        </div>
+        <b-form-input id="captcha" v-model="captcha" required />
+      </b-form-group>
     </div>
   </b-modal>
 </template>
 
 <script>
-// const emitter = require('tiny-emitter/instance')
+import { mapGetters } from 'vuex'
+import { BIconArrowRepeat } from 'bootstrap-vue'
+import { uuidv4 } from '@/plugins/id'
+import { extendTrialPeriod } from '@/plugins/api'
+const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
+    BIconArrowRepeat
   },
   data: function () {
     return {
+      captcha: null,
+      uuid: null
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'storeServerUrl'
+    ]),
+    shareCode: function () {
+      if (this.trial && this.trial.shareCodes) {
+        return this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode
+      } else {
+        return null
+      }
+    },
+    captchaUrl: function () {
+      return `${this.storeServerUrl}trial/${this.shareCode}/captcha/${this.uuid}`
     }
   },
   props: {
@@ -26,10 +62,27 @@ export default {
     }
   },
   methods: {
+    getNewCaptcha: function () {
+      this.uuid = uuidv4()
+    },
+    sendCaptcha: function () {
+      emitter.emit('show-loading', true)
+      extendTrialPeriod(this.shareCode, this.uuid, { captcha: this.captcha })
+        .then(() => {
+          this.hide()
+          emitter.emit('trials-updated')
+        })
+        .catch(err => {
+          console.error(err)
+        })
+        .finally(() => emitter.emit('show-loading', false))
+    },
     /**
      * Shows and resets modal dialog
      */
     show: function () {
+      this.captcha = null
+      this.getNewCaptcha()
       this.$refs.trialExpirationModal.show()
     },
     /**

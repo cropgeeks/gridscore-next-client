@@ -126,7 +126,7 @@ export default {
                     this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
                     emitter.emit('show-loading', false)
                   })
-                  .catch(() => emitter.emit('show-loading', false))
+                  .catch(this.errorHandler)
               }
             })
         } else {
@@ -136,7 +136,7 @@ export default {
               this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
               emitter.emit('show-loading', false)
             })
-            .catch(() => emitter.emit('show-loading', false))
+            .catch(this.errorHandler)
         }
       } else {
         emitter.emit('show-loading', true)
@@ -148,7 +148,7 @@ export default {
             this.trial = trial
             this.exportShapefileGerminate()
           })
-          .catch(() => emitter.emit('show-loading', false))
+          .catch(this.errorHandler)
       }
     },
     exportDataTab: function () {
@@ -244,6 +244,14 @@ export default {
 
       emitter.emit('show-loading', false)
     },
+    errorHandler: function (err) {
+      console.log(err)
+      if (err && err.status === 404) {
+        // Handle missing trials
+        emitter.emit('show-missing-trial', this.trial)
+      }
+      emitter.emit('show-loading', false)
+    },
     exportDataGerminate: function () {
       this.exportedFiles.germinate = null
 
@@ -271,7 +279,7 @@ export default {
                     this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
                     emitter.emit('show-loading', false)
                   })
-                  .catch(() => emitter.emit('show-loading', false))
+                  .catch(this.errorHandler)
               }
             })
         } else {
@@ -281,7 +289,7 @@ export default {
               this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
               emitter.emit('show-loading', false)
             })
-            .catch(() => emitter.emit('show-loading', false))
+            .catch(this.errorHandler)
         }
       } else {
         emitter.emit('show-loading', true)
@@ -293,7 +301,7 @@ export default {
             this.trial = trial
             this.exportDataGerminate()
           })
-          .catch(() => emitter.emit('show-loading', false))
+          .catch(this.errorHandler)
       }
     },
     update: function () {

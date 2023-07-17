@@ -245,7 +245,8 @@ export default {
         .catch(err => {
           console.log(err)
           if (err && err.status === 404) {
-            // TODO: Handle missing trials
+            // Handle missing trials
+            emitter.emit('show-missing-trial', this.trial)
           }
         })
         .finally(() => {
