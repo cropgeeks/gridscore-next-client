@@ -144,7 +144,7 @@ export default {
             if (error.status === 404) {
               this.serverError = this.$t('apiErrorTrialNotFound')
             } else {
-              this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error) })
+              this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
             }
           })
       } else {
@@ -158,7 +158,7 @@ export default {
             if (error.status === 404) {
               this.serverError = this.$t('apiErrorTrialNotFound')
             } else {
-              this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error) })
+              this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
             }
           })
       }

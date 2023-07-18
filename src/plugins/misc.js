@@ -168,10 +168,17 @@ const migrateOldGridScoreTrial = (old) => {
             const oldIndex = old.traits.findIndex(ot => ot.name === t.name)
             newCell.measurements[t.id] = []
 
-            const values = cell.values[oldIndex]
-            const dates = cell.dates[oldIndex]
+            let values = cell.values[oldIndex]
+            let dates = cell.dates[oldIndex]
 
-            if (Array.isArray(values)) {
+            if (old.traits[oldIndex].mType === 'multi') {
+              values = JSON.parse(values)
+              dates = JSON.parse(dates)
+
+              if (values === null) {
+                return
+              }
+
               for (let i = 0; i < values.length; i++) {
                 if (values[i] === undefined || values[i] === null || values[i] === '') {
                   continue

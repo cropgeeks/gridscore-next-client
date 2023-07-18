@@ -10,15 +10,20 @@
 
       <p class="text-danger">{{ $t('modalTextTrialExpirationDate', { date: new Date(trial.expiresOn).toLocaleDateString() }) }}</p>
 
-      <b-form-group label-for="captcha" :description="$t('formDescriptionTrialExpirationCaptcha')" v-if="captchaUrl">
-        <template #label>
-          {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><BIconArrowRepeat /></b-button>
-        </template>
-        <div class="text-center mb-3">
-          <b-img fluid :src="captchaUrl" />
-        </div>
-        <b-form-input id="captcha" v-model="captcha" required />
-      </b-form-group>
+      <template v-if="trial.shareStatus === TRIAL_STATE_EDITOR || trial.shareStatus === TRIAL_STATE_OWNER">
+        <b-form-group label-for="captcha" :description="$t('formDescriptionTrialExpirationCaptcha')" v-if="captchaUrl">
+          <template #label>
+            {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><BIconArrowRepeat /></b-button>
+          </template>
+          <div class="text-center mb-3">
+            <b-img fluid :src="captchaUrl" />
+          </div>
+          <b-form-input id="captcha" v-model="captcha" required />
+        </b-form-group>
+      </template>
+      <div v-else>
+        <p class="text-warning">{{ $t('modalTextTrialExpirationNotAuthorized') }}</p>
+      </div>
     </div>
   </b-modal>
 </template>
@@ -28,6 +33,8 @@ import { mapGetters } from 'vuex'
 import { BIconArrowRepeat } from 'bootstrap-vue'
 import { uuidv4 } from '@/plugins/id'
 import { extendTrialPeriod } from '@/plugins/api'
+import { TRIAL_STATE_VIEWER, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER } from '@/plugins/constants'
+
 const emitter = require('tiny-emitter/instance')
 
 export default {
@@ -36,6 +43,9 @@ export default {
   },
   data: function () {
     return {
+      TRIAL_STATE_VIEWER,
+      TRIAL_STATE_EDITOR,
+      TRIAL_STATE_OWNER,
       captcha: null,
       uuid: null
     }

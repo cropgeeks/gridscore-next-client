@@ -195,7 +195,7 @@ export default {
       }
     },
     handleApiError: function (error) {
-      this.$bvModal.msgBoxOk(this.$t('modalTextApiError', { error: JSON.stringify(error) }), {
+      this.$bvModal.msgBoxOk(this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) }), {
         title: this.$t('modalTitleApiError'),
         okVariant: 'primary'
       })

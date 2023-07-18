@@ -21,6 +21,32 @@
       </b-tab>
       <b-tab>
         <template #title>
+          <BIconChatRightQuoteFill /> {{ $t('pageExportTabTitleComments') }}
+        </template>
+
+        <p class="mt-3" v-html="$t('pageExportTrialFormatComment')" />
+
+        <b-row>
+          <b-col cols=12 md=6>
+            <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentTrialCardTitle')" :sub-title="$t('pageExportTrialFormatCommentTrialCardSubtitle')">
+              <b-button @click="exportTrialComments" variant="primary" :disabled="!hasTrialComments">
+                <BIconstack>
+                  <BIconChatRight stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="2" />
+                </BIconstack> {{ $t('buttonExport') }}</b-button>
+            </b-card>
+          </b-col>
+          <b-col cols=12 md=6>
+            <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentPlotCardTitle')" :sub-title="$t('pageExportTrialFormatCommentPlotCardSubtitle')">
+              <b-button @click="exportPlotComments" variant="primary" :disabled="!hasPlotComments">
+                <BIconstack>
+                  <BIconChatRight stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="2" />
+                </BIconstack> {{ $t('buttonExport') }}</b-button>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-tab>
+      <b-tab>
+        <template #title>
           <IconGerminate /> Germinate
         </template>
         <div v-if="storeIsOffline" class="modal-banner bg-danger text-white text-center mb-3 mt-0 p-2">
@@ -65,8 +91,8 @@ import { exportToGerminate, exportToShapefile, shareTrial } from '@/plugins/api'
 import IconGerminate from '@/components/icons/IconGerminate'
 import IconBrapi from '@/components/icons/IconBrapi'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
-import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload } from 'bootstrap-vue'
-import { downloadText } from '@/plugins/misc'
+import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload, BIconChatRightQuoteFill, BIconstack, BIconChatRight, BIconArrowDown } from 'bootstrap-vue'
+import { downloadText, toLocalDateString } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import BrapiExportSection from '@/components/BrapiExportSection'
 
@@ -77,6 +103,10 @@ export default {
     BIconGrid3x2Gap,
     BIconFileEarmarkSpreadsheet,
     BIconDownload,
+    BIconChatRightQuoteFill,
+    BIconstack,
+    BIconChatRight,
+    BIconArrowDown,
     BrapiExportSection,
     IconGerminate,
     IconBrapi,
@@ -88,7 +118,8 @@ export default {
       exportedFiles: {
         germinate: null,
         shapefile: null
-      }
+      },
+      hasPlotComments: false
     }
   },
   computed: {
@@ -96,9 +127,51 @@ export default {
       'storeSelectedTrial',
       'storeServerUrl',
       'storeIsOffline'
-    ])
+    ]),
+    safeTrialName: function () {
+      if (this.trial) {
+        return this.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+      } else {
+        return ''
+      }
+    },
+    hasTrialComments: function () {
+      if (this.trial) {
+        return this.trial.comments && this.trial.comments.length > 0
+      } else {
+        return false
+      }
+    }
   },
   methods: {
+    exportTrialComments: function () {
+      let result = 'Date\tComment'
+
+      this.trial.comments.forEach(c => {
+        result += `\n${toLocalDateString(new Date(c.timestamp))}\t${c.content}`
+      })
+
+      const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
+
+      downloadText(href, `gridscore-trial-comments-${this.safeTrialName}.txt`)
+    },
+    exportPlotComments: function () {
+      let result = 'Germplasm\tRep\tRow\tColumn\tDate\tComment'
+
+      Object.values(this.trialData).forEach(c => {
+        if (c && c.comments && c.comments.length > 0) {
+          const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (c.row + 1) : (this.trial.layout.rows - c.row)
+          const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (c.column + 1) : (this.trial.layout.columns - c.column)
+          c.comments.forEach(cm => {
+            result += `\n${c.germplasm}\t${c.rep || ''}\t${row}\t${column}\t${toLocalDateString(new Date(cm.timestamp))}\t${cm.content}`
+          })
+        }
+      })
+
+      const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
+
+      downloadText(href, `gridscore-plot-comments-${this.safeTrialName}.txt`)
+    },
     exportShapefileGerminate: function () {
       this.exportedFiles.shapefile = null
 
@@ -240,7 +313,7 @@ export default {
 
       const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
 
-      downloadText(href, 'gridscore.txt')
+      downloadText(href, `gridscore-data-${this.safeTrialName}.txt`)
 
       emitter.emit('show-loading', false)
     },
@@ -313,6 +386,15 @@ export default {
           this.trial = trial
 
           this.trialData = getTrialDataCached()
+          let hasPlotComments = false
+          if (this.trialData) {
+            Object.values(this.trialData).forEach(c => {
+              if (c.comments && c.comments.length > 0) {
+                hasPlotComments = true
+              }
+            })
+          }
+          this.hasPlotComments = hasPlotComments
 
           if (this.trial) {
             this.$nextTick(() => this.update())
