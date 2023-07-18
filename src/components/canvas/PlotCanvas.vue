@@ -73,7 +73,8 @@ export default {
       'storeNavigationMode',
       'storeDarkMode',
       'storeHiddenTraits',
-      'storeDisplayMarkerIndicators'
+      'storeDisplayMarkerIndicators',
+      'storeRestrictInputToMarked'
     ]),
     userPosition: function () {
       if (this.geolocation && this.gridProjection) {
@@ -416,6 +417,22 @@ export default {
         const column = Math.floor((-this.origin.x + ev.x) / this.dimensions.cellWidth)
 
         if (row >= 0 && row < this.trial.layout.rows && column >= 0 && column < this.trial.layout.columns) {
+          if (this.storeRestrictInputToMarked) {
+            const anyMarked = this.markedColumns.some(c => c) || this.markedRows.some(r => r)
+
+            if (anyMarked) {
+              if (!this.markedColumns[column] && !this.markedRows[row]) {
+                this.$bvToast.toast(this.$t('toastDataInputRestrictedText'), {
+                  title: this.$t('toastDataInputRestrictedTitle'),
+                  variant: 'warning',
+                  autoHideDelay: 5000,
+                  appendToast: false
+                })
+                return
+              }
+            }
+          }
+
           const cell = this.trialData[`${row}|${column}`]
 
           if (cell) {

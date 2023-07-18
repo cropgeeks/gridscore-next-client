@@ -29,18 +29,24 @@
         <b-row>
           <b-col cols=12 md=6>
             <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentTrialCardTitle')" :sub-title="$t('pageExportTrialFormatCommentTrialCardSubtitle')">
-              <b-button @click="exportTrialComments" variant="primary" :disabled="!hasTrialComments">
+              <b-card-text :class="trialCommentCount < 1 ? 'text-danger' : null">{{ $tc('pageExportTrialFormatCommentTrialCount', trialCommentCount) }}</b-card-text>
+
+              <b-button @click="exportTrialComments" variant="primary" :disabled="trialCommentCount < 1">
                 <BIconstack>
                   <BIconChatRight stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="2" />
-                </BIconstack> {{ $t('buttonExport') }}</b-button>
+                </BIconstack> {{ $t('buttonExport') }}
+              </b-button>
             </b-card>
           </b-col>
           <b-col cols=12 md=6>
             <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentPlotCardTitle')" :sub-title="$t('pageExportTrialFormatCommentPlotCardSubtitle')">
-              <b-button @click="exportPlotComments" variant="primary" :disabled="!hasPlotComments">
+              <b-card-text :class="plotCommentCount < 1 ? 'text-danger' : null">{{ $tc('pageExportTrialFormatCommentPlotCount', plotCommentCount) }}</b-card-text>
+
+              <b-button @click="exportPlotComments" variant="primary" :disabled="plotCommentCount < 1">
                 <BIconstack>
                   <BIconChatRight stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="2" />
-                </BIconstack> {{ $t('buttonExport') }}</b-button>
+                </BIconstack> {{ $t('buttonExport') }}
+              </b-button>
             </b-card>
           </b-col>
         </b-row>
@@ -119,7 +125,7 @@ export default {
         germinate: null,
         shapefile: null
       },
-      hasPlotComments: false
+      plotCommentCount: 0
     }
   },
   computed: {
@@ -135,11 +141,11 @@ export default {
         return ''
       }
     },
-    hasTrialComments: function () {
+    trialCommentCount: function () {
       if (this.trial) {
-        return this.trial.comments && this.trial.comments.length > 0
+        return this.trial.comments ? this.trial.comments.length : 0
       } else {
-        return false
+        return 0
       }
     }
   },
@@ -386,15 +392,15 @@ export default {
           this.trial = trial
 
           this.trialData = getTrialDataCached()
-          let hasPlotComments = false
+          let plotCommentCount = 0
           if (this.trialData) {
             Object.values(this.trialData).forEach(c => {
-              if (c.comments && c.comments.length > 0) {
-                hasPlotComments = true
+              if (c.comments) {
+                plotCommentCount += c.comments.length
               }
             })
           }
-          this.hasPlotComments = hasPlotComments
+          this.plotCommentCount = plotCommentCount
 
           if (this.trial) {
             this.$nextTick(() => this.update())

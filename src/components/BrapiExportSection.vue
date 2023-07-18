@@ -7,25 +7,20 @@
     <b-form @submit.prevent="onSubmit">
       <b-row>
         <b-col cols=12 md=6 class="mb-3 d-flex flex-column align-items-start justify-content-between">
-          <div>
-            <h3>{{ $t('pageBrapiExportBrapiGermplasmIdTitle') }}</h3>
+          <b-card class="mb-3" :title="$t('pageBrapiExportBrapiGermplasmIdTitle')">
             <p :class="allGermplasmValidDbId ? 'text-success' : 'text-danger'">{{ $t('pageBrapiExportBrapiGermplasmIdText', germplasmWithBrapiDbIds) }}</p>
-          </div>
 
-          <b-button :variant="allGermplasmValidDbId ? null : 'primary'" :disabled="allGermplasmValidDbId" @click="searchBrapiGermplasmMatches"><BIconSearch /> {{ $t('buttonUpdate') }}</b-button>
+            <b-button :variant="allGermplasmValidDbId ? null : 'primary'" :disabled="allGermplasmValidDbId" @click="searchBrapiGermplasmMatches"><BIconSearch /> {{ $t('buttonUpdate') }}</b-button>
+          </b-card>
         </b-col>
         <b-col cols=12 md=6 class="mb-3 d-flex flex-column align-items-start justify-content-between">
-          <div>
-            <h3>{{ $t('pageBrapiExportBrapiTraitIdTitle') }}</h3>
+          <b-card class="mb-3" :title="$t('pageBrapiExportBrapiTraitIdTitle')">
             <p :class="allTraitsValidDbId ? 'text-success' : 'text-danger'">{{ $t('pageBrapiExportBrapiTraitIdText', traitsWithBrapiDbIds) }}</p>
-          </div>
-
-          <div>
             <b-button class="mr-2" :variant="allTraitsValidDbId ? null : 'primary'" :disabled="allTraitsValidDbId" @click="searchBrapiTraitMatches"><BIconSearch /> {{ $t('buttonUpdate') }}</b-button>
             <span v-b-tooltip="allTraitsValidDbId || traitLookupRanAtLeastOnce ? '' : $t('tooltipBrapiExportBrapiTraitRunSearch')">
               <b-button :disabled="allTraitsValidDbId || !traitLookupRanAtLeastOnce" @click="writeTraitsWithoutBrapiId"><BIconCloudPlus /> {{ $t('buttonUpload') }}</b-button>
             </span>
-          </div>
+          </b-card>
         </b-col>
       </b-row>
 

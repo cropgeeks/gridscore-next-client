@@ -66,6 +66,7 @@ export default {
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
+      'storeRestrictInputToMarked',
       'storeNavigationMode',
       'storeTraitColors'
     ])
@@ -107,6 +108,11 @@ export default {
         } else if (parsed.vf === 0) {
           this.$store.commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', false)
         }
+        if (parsed.rm === 1) {
+          this.$store.commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', true)
+        } else if (parsed.rm === 0) {
+          this.$store.commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', false)
+        }
         if (parsed.nm === 1) {
           this.$store.commit('ON_NAVIGATION_MODE_CHANGED', NAVIGATION_MODE_DRAG)
         } else if (parsed.nm === 0) {
@@ -139,6 +145,7 @@ export default {
         cw: this.storeDisplayMinCellWidth,
         ge: this.storeGpsEnabled ? 1 : 0,
         vf: this.storeVoiceFeedbackEnabled ? 1 : 0,
+        rm: this.storeRestrictInputToMarked ? 1 : 0,
         nm: this.storeNavigationMode === NAVIGATION_MODE_DRAG ? 1 : 0,
         tc: this.storeTraitColors.map(c => c.replace('#', '')).join(',')
       })

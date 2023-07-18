@@ -36,6 +36,12 @@
                 {{ voiceFeedbackEnabled ? $t('genericEnabled') : $t('genericDisabled') }}
               </b-form-checkbox>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsRestrictInputToMarked')" :description="$t('formDescriptionSettingsRestrictInputToMarked')" label-for="restrictInput">
+              <b-form-checkbox id="restrictInput" v-model="restrictInputToMarked" switch>
+                {{ restrictInputToMarked ? $t('genericEnabled') : $t('genericDisabled') }}
+              </b-form-checkbox>
+            </b-form-group>
           </b-card>
         </b-col>
         <b-col cols=12 md=6>
@@ -108,6 +114,7 @@ export default {
       displayMinCellWidth: 4,
       gpsEnabled: true,
       voiceFeedbackEnabled: false,
+      restrictInputToMarked: false,
       navigationMode: null,
       traitColors: [],
       newColor: '#000000'
@@ -122,6 +129,7 @@ export default {
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
+      'storeRestrictInputToMarked',
       'storeNavigationMode',
       'storeTraitColors'
     ]),
@@ -157,6 +165,9 @@ export default {
     voiceFeedbackEnabled: function (newValue) {
       this.$store.dispatch('setVoiceFeedbackEnabled', newValue)
     },
+    restrictInputToMarked: function (newValue) {
+      this.$store.dispatch('setRestrictInputToMarked', newValue)
+    },
     navigationMode: function (newValue) {
       this.$store.dispatch('setNavigationMode', newValue)
     },
@@ -185,6 +196,7 @@ export default {
       this.displayMinCellWidth = this.storeDisplayMinCellWidth
       this.gpsEnabled = this.storeGpsEnabled
       this.voiceFeedbackEnabled = this.storeVoiceFeedbackEnabled
+      this.restrictInputToMarked = this.storeRestrictInputToMarked
       this.navigationMode = this.storeNavigationMode
       this.traitColors = this.storeTraitColors
     }

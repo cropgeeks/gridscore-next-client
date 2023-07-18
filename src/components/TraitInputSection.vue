@@ -24,7 +24,7 @@
       </span>
       <b-button-group>
         <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData"><BIconClockHistory /></b-button>
-        <b-button @click="$emit('photo-clicked')"><BIconCameraFill /></b-button>
+        <b-button @click="$emit('photo-clicked')" :disabled="!trial.editable"><BIconCameraFill /></b-button>
       </b-button-group>
     </h4>
     <div v-if="trait.restrictions || trait.timeframe">

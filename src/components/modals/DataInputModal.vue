@@ -23,6 +23,7 @@
           v-b-tooltip="$t('')"
           v-model="recordingDate"
           size="sm"
+          :disabled="!trial.editable"
           :button-variant="isRecordingDateToday ? 'secondary' : 'warning'"
           button-only
           today-button
@@ -41,7 +42,7 @@
             <BIconBookmark /> <span class="d-none d-xl-inline-block"> {{ $t('buttonBookmarkCell') }}</span>
           </template>
         </b-button>
-        <b-button size="sm" @click="onShowPhotoModal(null)"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
+        <b-button size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
         <b-button size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
       </b-button-group>
 
@@ -49,6 +50,9 @@
     </template>
     <div v-if="!isRecordingDateToday" class="modal-banner bg-warning text-dark text-center mb-3 p-2">
       {{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}
+    </div>
+    <div v-if="trial && !trial.editable" class="modal-banner bg-warning text-dark text-center mb-3 p-2">
+      {{ $t('modalTextDataInputReadOnly') }}
     </div>
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
@@ -405,6 +409,10 @@ export default {
       }
     },
     validate: function (forward = true) {
+      if (!this.trial.editable) {
+        this.hide()
+      }
+
       this.tabStates = this.traitsByGroup.map(g => {
         const traitStates = g.traits.map(t => this.$refs[`trait-section-${t.id}`][0].validate())
         return traitStates.every(t => t)

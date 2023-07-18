@@ -27,6 +27,7 @@ export default new Vuex.Store({
     displayMinCellWidth: 4,
     gpsEnabled: true,
     voiceFeedbackEnabled: false,
+    restrictInputToMarked: false,
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     selectedTrial: null,
@@ -54,6 +55,7 @@ export default new Vuex.Store({
     storeDisplayMinCellWidth: (state) => state.displayMinCellWidth,
     storeGpsEnabled: (state) => state.gpsEnabled,
     storeVoiceFeedbackEnabled: (state) => state.voiceFeedbackEnabled,
+    storeRestrictInputToMarked: (state) => state.restrictInputToMarked,
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
     storeSelectedTrial: (state) => state.selectedTrial,
@@ -121,7 +123,14 @@ export default new Vuex.Store({
       state.gpsEnabled = newGpsEnabled
     },
     ON_VOICE_FEEDBACK_ENABLED_CHANGED: function (state, newVoiceFeedbackEnabled) {
-      state.voiceFeedbackEnabled = newVoiceFeedbackEnabled
+      if (Object.prototype.hasOwnProperty.call(state, 'voiceFeedbackEnabled')) {
+        state.voiceFeedbackEnabled = newVoiceFeedbackEnabled
+      } else {
+        Vue.set(state, 'voiceFeedbackEnabled', newVoiceFeedbackEnabled)
+      }
+    },
+    ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
+      state.restrictInputToMarked = newRestrictInputToMarked
     },
     ON_NAVIGATION_MODE_CHANGED: function (state, newNavigationMode) {
       state.navigationMode = newNavigationMode
@@ -189,6 +198,9 @@ export default new Vuex.Store({
     },
     setVoiceFeedbackEnabled: function ({ commit }, voiceFeedbackEnabled) {
       commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', voiceFeedbackEnabled)
+    },
+    setRestrictInputToMarked: function ({ commit }, restrictInputToMarked) {
+      commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', restrictInputToMarked)
     },
     setNavigationMode: function ({ commit }, navigationMode) {
       commit('ON_NAVIGATION_MODE_CHANGED', navigationMode)
