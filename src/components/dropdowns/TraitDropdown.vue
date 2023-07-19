@@ -15,11 +15,12 @@
           <b-form-checkbox :checked="group.allMarked" @change="updateHiddenTraits(group)">{{ group.name || $t('toolbarTraitGroupGeneric') }}</b-form-checkbox>
         </template>
         <b-dropdown-item-button v-for="trait in group.traits"
+                                class="position-relative"
                                 :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
                                 @click.native.capture.stop="toggleTraitVisibility(trait)">
           <span :style="{ color: trait.visible ? trait.color : 'lightgray' }"><BIconCircleFill /> {{ trait.name }}</span>
 
-          <b-progress class="trait-progress" height="3px">
+          <b-progress class="trait-progress position-absolute" height="3px">
             <b-progress-bar :value="trait.progress" :style="{ backgroundColor: trait.visible ? trait.color : 'lightgray' }"/>
           </b-progress>
         </b-dropdown-item-button>
@@ -136,7 +137,6 @@ export default {
   overflow-y: auto;
 }
 .trait-progress {
-  position: absolute;
   right: 0;
   left: 0;
 }

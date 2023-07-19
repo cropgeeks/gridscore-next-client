@@ -250,8 +250,8 @@ export default {
           customdata: customdata,
           type: 'heatmap',
           colorscale: this.selectedTrait.dataType === 'categorical'
-            ? this.selectedTrait.restrictions.categories.map((_, i) => {
-              const l = this.selectedTrait.restrictions.categories.length
+            ? restrictions.categories.map((_, i) => {
+              const l = restrictions.categories.length
               const c = categoryColors[i % categoryColors.length]
               return [[i / l, c], [(i + 1) / l, c]]
             }).flat()
@@ -289,6 +289,10 @@ export default {
           traces[0].zauto = false
           traces[0].zmin = minValue
           traces[0].zmax = maxValue
+        } else if (this.selectedTrait.dataType === 'categorical') {
+          traces[0].zauto = false
+          traces[0].zmin = -0.5
+          traces[0].zmax = restrictions.categories.length - 0.5
         }
 
         const layout = {

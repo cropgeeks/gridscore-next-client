@@ -147,8 +147,8 @@ const exportToShapefile = (shareCode) => {
   return axiosCall({ url: `trial/${shareCode}/export/shapefile`, method: 'get' })
 }
 
-const extendTrialPeriod = (shareCode, uuid, captcha) => {
-  return axiosCall({ url: `trial/${shareCode}/renew/${uuid}`, method: 'post', params: captcha })
+const extendTrialPeriod = (shareCode, captcha) => {
+  return axiosCall({ url: `trial/${shareCode}/renew`, method: 'post', params: captcha })
 }
 
 const checkTrialArchiveExists = (shareCode) => {

@@ -31,7 +31,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { BIconArrowRepeat } from 'bootstrap-vue'
-import { uuidv4 } from '@/plugins/id'
 import { extendTrialPeriod } from '@/plugins/api'
 import { TRIAL_STATE_VIEWER, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER } from '@/plugins/constants'
 
@@ -47,7 +46,7 @@ export default {
       TRIAL_STATE_EDITOR,
       TRIAL_STATE_OWNER,
       captcha: null,
-      uuid: null
+      captchaUrl: null
     }
   },
   computed: {
@@ -60,9 +59,6 @@ export default {
       } else {
         return null
       }
-    },
-    captchaUrl: function () {
-      return `${this.storeServerUrl}trial/${this.shareCode}/captcha/${this.uuid}`
     }
   },
   props: {
@@ -73,11 +69,11 @@ export default {
   },
   methods: {
     getNewCaptcha: function () {
-      this.uuid = uuidv4()
+      this.captchaUrl = `${this.storeServerUrl}trial/${this.shareCode}/captcha?ts=${new Date().getTime()}`
     },
     sendCaptcha: function () {
       emitter.emit('show-loading', true)
-      extendTrialPeriod(this.shareCode, this.uuid, { captcha: this.captcha })
+      extendTrialPeriod(this.shareCode, { captcha: this.captcha })
         .then(() => {
           this.hide()
           emitter.emit('trials-updated')
