@@ -123,7 +123,21 @@ export default {
       this.$emit('change', this.germplasmMap)
     },
     resetFormAndGermplasm: function () {
-      this.germplasmMap = {}
+      if (this.initialGermplasm) {
+        let rows = 0
+        let columns = 0
+
+        Object.keys(this.initialGermplasm).forEach(k => {
+          const [row, column] = k.split('|').map(c => +c)
+
+          rows = Math.max(rows, row + 1)
+          columns = Math.max(columns, column + 1)
+        })
+
+        if (this.layout.rows !== rows || this.layout.columns !== columns) {
+          this.germplasmMap = {}
+        }
+      }
 
       this.$refs.germplasmInput.reset()
       this.$refs.repInput.reset()
