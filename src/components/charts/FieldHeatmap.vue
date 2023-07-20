@@ -260,41 +260,49 @@ export default {
           hoverongaps: false,
           hovertemplate: this.selectedTrait.dataType === 'categorical'
             ? `${this.$t('tooltipChartHeatmapRow')}: %{y}<br>${this.$t('tooltipChartHeatmapColumn')}: %{x}<br>${this.$t('tooltipChartHeatmapValue')}: %{customdata}<extra>%{text}</extra>`
-            : `${this.$t('tooltipChartHeatmapRow')}: %{y}<br>${this.$t('tooltipChartHeatmapColumn')}: %{x}<br>${this.$t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`,
-          colorbar: this.selectedTrait.dataType === 'categorical'
-            ? {
-                tickmode: 'array',
-                tickvals: restrictions.categories.map((c, i) => i),
-                ticktext: restrictions.categories,
-                title: {
-                  side: 'right',
-                  font: { color: this.storeDarkMode ? 'white' : 'black' }
-                },
-                tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
-                autotick: false,
-                tick0: 0,
-                dtick: 1,
-                nticks: restrictions.categories.length
-              }
-            : {
-                title: {
-                  text: this.$t('widgetChartLegendDaysSinceFirstRecording'),
-                  side: 'right',
-                  font: { color: this.storeDarkMode ? 'white' : 'black' }
-                },
-                tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
-                orientation: window.innerWidth < 768 ? 'h' : 'v'
-              }
+            : `${this.$t('tooltipChartHeatmapRow')}: %{y}<br>${this.$t('tooltipChartHeatmapColumn')}: %{x}<br>${this.$t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`
         }]
 
         if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float') {
           traces[0].zauto = false
           traces[0].zmin = minValue
           traces[0].zmax = maxValue
+          traces[0].colorbar = {
+            title: {
+              side: 'right',
+              font: { color: this.storeDarkMode ? 'white' : 'black' }
+            },
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            orientation: window.innerWidth < 768 ? 'h' : 'v'
+          }
+        } else if (this.selectedTrait.dataType === 'date') {
+          traces[0].colorbar = traces[0].colorbar = {
+            title: {
+              text: this.$t('widgetChartLegendDaysSinceFirstRecording'),
+              side: 'right',
+              font: { color: this.storeDarkMode ? 'white' : 'black' }
+            },
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            orientation: window.innerWidth < 768 ? 'h' : 'v'
+          }
         } else if (this.selectedTrait.dataType === 'categorical') {
           traces[0].zauto = false
           traces[0].zmin = -0.5
           traces[0].zmax = restrictions.categories.length - 0.5
+          traces[0].colorbar = {
+            tickmode: 'array',
+            tickvals: restrictions.categories.map((c, i) => i),
+            ticktext: restrictions.categories,
+            title: {
+              side: 'right',
+              font: { color: this.storeDarkMode ? 'white' : 'black' }
+            },
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            autotick: false,
+            tick0: 0,
+            dtick: 1,
+            nticks: restrictions.categories.length
+          }
         }
 
         // Get the axis ticks based on inversion state
