@@ -2,7 +2,7 @@
 title: GridScore NEXT Collecting data
 ---
 
-<a href="index.html" class="btn">Home</a>
+<a href="index.html" class="btn btn-dark">Home</a>
 
 # Collecting data
 
