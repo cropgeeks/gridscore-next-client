@@ -11,3 +11,10 @@ $header-bg-color-secondary: #34495e;
   background-color: rgba(0, 0, 0, 0.08);
   border-color: rgba(0, 0, 0, 0.2);
 }
+
+.btn-dark:hover {
+  color: rgba(0, 0, 0, 0.8);
+  text-decoration: none;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.3);
+}
