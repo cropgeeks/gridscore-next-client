@@ -2,6 +2,8 @@
 title: GridScore NEXT Exporting data
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Exporting data
 
 Collecting your data with GridScore is an essential first step in your project. It will help you stay organized, improve the quality of your data, synchronize data collection across devices and offer advanced data visualizations on top of that.
@@ -37,3 +39,5 @@ In most cases you will need an access token for write operations to databases vi
 You will then have to use the lookup buttons to fetch the BrAPI database ids for the germplasm and traits. You can only continue if a match has been found for every single germplasm. Traits, if not found in the database, can be created after an initial lookup.
 
 GridScore will then pull all available programs, trials, study types and studies so you can select the appropriate ones and finally send your data.
+
+<a href="index.html" class="btn btn-dark">Home</a>

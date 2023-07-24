@@ -55,3 +55,5 @@ To use this feature, select a starting plot from the main data view, then select
 <img src="img/collection-guided-walk-input.png" style="max-width: 100%;" alt="Guided walk data input">
 
 After you selected the direction and clicked `Start`, you will get back to the data input screen. Now, though, the bottom buttons have been replaced with a `Previous` and a `Next` button that will take you through the trial in the pre-defined order. Also note the preview of the previous, current and next plot above the trait inputs.
+
+<a href="index.html" class="btn btn-dark">Home</a>

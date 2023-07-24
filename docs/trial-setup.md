@@ -2,6 +2,8 @@
 title: GridScore NEXT Trial setup
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Trial setup
 
 Everything in GridScore evolves around trials. They are the main data unit. At a minimum, a trial consists of a `name`, the number of `rows` and `columns`, the `germplasm identifiers` for each plot and a number of `traits`. Additionally, there are more things that can be defined to provide more information about the trial itself or to aid in the data collection. On this page you will learn how to create a new trial from scratch, what information is required, how to provide it and what formats to use.
@@ -117,3 +119,5 @@ Once you are happy with your selection, use the `Save` button in the top right c
 ## Creating the trial
 
 Once all the required information has been specified, you are able to create the trial using the `Create trial` button at the bottom of the trial metadata screen. The new trial will be added to your list of local trials and can be selected/loaded from the home screen.
+
+<a href="index.html" class="btn btn-dark">Home</a>

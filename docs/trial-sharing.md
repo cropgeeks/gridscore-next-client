@@ -2,6 +2,8 @@
 title: GridScore NEXT Data/Trial sharing
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Data/Trial sharing
 
 While a trial will always be available on your local device, it's often useful or even necessary to be able to work on the same trial on different devices. It's kind of similar to working on the same document online (Google Docs or Office 365). Sometimes you even just want to set the trial up in the comfort of your office where you can easily copy and paste information from other sources and then transfer the trial to one or more mobile devices for data collection.
@@ -95,3 +97,5 @@ If the inactive lifetime of a trial expires without being extended, the trial wi
 <img src="img/sharing-expiration-archive.png" style="max-width: 50%;" alt="Trial expiration archive">
 
 You will not be able to synchronize your trial after this date as it'll have been an extremely long time since the last time it has been active.
+
+<a href="index.html" class="btn btn-dark">Home</a>

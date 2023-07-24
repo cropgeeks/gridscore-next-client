@@ -2,6 +2,8 @@
 title: GridScore NEXT Data import
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Data import
 
 In some cases, you may have pre-existing data you want to load into GridScore to pre-populate the trial. Or maybe someone has collected some of the data by other means and you want to join it into your GridScore trial. To import data into an existing trial, go to the `Home` page and identify your trial in the trial list. Use the cog menu and select the `Import data` item.
@@ -19,3 +21,5 @@ A modal window will open asking you to provide your data in a specific format. T
 Please note, that if you're importing data for a trait with a set size of larger than 1, that all values of the set have to be provided in the `Value` column separated by commas.
 
 <img src="img/data-import.png" style="max-width: 100%;" alt="Data import">
+
+<a href="index.html" class="btn btn-dark">Home</a>

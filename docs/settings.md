@@ -2,6 +2,8 @@
 title: GridScore NEXT Settings
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Settings
 
 <img src="img/settings.png" style="max-width: 100%;" alt="Global GridScore settings">
@@ -43,3 +45,5 @@ Any settings changed on this page will only affect your local device and will no
 <img src="img/settings-share.png" style="max-width: 50%;" alt="Sharing settings using QR codes">
 
 A new window will open presenting you with the QR code that reflects your current settings. You can then show this QR code to the other person who uses the `Load other settings` tab to scan your QR code. Once they have done so, their device will use the exact same settings as yours.
+
+<a href="index.html" class="btn btn-dark">Home</a>

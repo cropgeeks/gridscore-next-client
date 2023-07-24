@@ -2,6 +2,8 @@
 title: GridScore NEXT Trial modification
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Trial modification
 
 If you are the owner of a trial or if a trial hasn't been shared yet, you can make certain changes to an existing trial. Go to the `Home` page and use the cog icon on the trial you want to modify. Select the `Edit trial` option to open the modification modal window.
@@ -22,3 +24,5 @@ Here you can make changes to trial properties. Check the <a href="trial-setup.ht
 <img src="img/trial-modification.png" style="max-width: 100%;" alt="Trial modification screen">
 
 Once you are happy with your changes, use the `Save` button at the bottom to persist your changes.
+
+<a href="index.html" class="btn btn-dark">Home</a>

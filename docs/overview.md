@@ -2,6 +2,8 @@
 title: GridScore NEXT Interface Overview
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Interface Overview
 
 <img src="img/home.png" style="max-width: 100%;" alt="Overview">
@@ -49,3 +51,5 @@ GridScore is available for free with no strings attached. You are free to use it
 Raubach, S., Schreiber, M., & Shaw, P.D., *BMC Bioinformatics* **23**, 214 (2022)
 
 <img src="img/home-publication.png" style="max-width: 100%;" alt="GridScore publication">
+
+<a href="index.html" class="btn btn-dark">Home</a>

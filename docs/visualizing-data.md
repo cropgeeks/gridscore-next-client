@@ -2,6 +2,8 @@
 title: GridScore NEXT Visualizing data
 ---
 
+<a href="index.html" class="btn btn-dark">Home</a>
+
 # Visualizing data
 
 GridScore offers a variety of specifically designed data visualizations right in the app. You don't have to export your data first before you can visualize it and they work completely offline, so you can even look at them while you're still out in the field.
@@ -43,3 +45,5 @@ For traits that allow recording data across time, GridScore will show a time sca
 The last type of visualization that's available are statistical plots like box plots and bar charts. These show the distribution of values for the selected traits and highlight potential outliers in your data. Sometimes these outliers are errors, but other times they may represent the most interesting data points in your trial. The example shows the distribution of values for the `Plant height` trait. There are 5 data points that are higher than the rest of the dataset and they represent the tallest plots in the whole trial. Depending on your trial you may be looking for those extremes and GridScore can easily highlight them for you.
 
 <img src="img/visualization-statistics.png" style="max-width: 100%;" alt="Trait statistics visualization">
+
+<a href="index.html" class="btn btn-dark">Home</a>
