@@ -167,6 +167,11 @@
         "text": "Es ist jetzt möglich mehrere Kommentare sowohl zum Versuch als auch einzelnen Beeten hinzuzufügen. Der Zeitpunkt des Kommentars wird dabei aufgezeichnet um immer zu wissen wann ein Kommentar hinzugefügt wurde."
       },
       {
+        "type": "new",
+        "title": "Versuchsarchivierung",
+        "text": "Geteilte Versuche werden vom GridScore Server nach einer Periode der Inaktivität archiviert. GridScore wird frühzeitig eine Benachrichtungung anzeigen um genug Zeit zum Exportieren oder Erneuern zu lassen. Nachdem ein Versuch archiviert wurde, kann er immernoch als Paket heruntergeladen werden."
+      },
+      {
         "type": "update",
         "title": "Existierende Daten importieren",
         "text": "Der Vorgang des Importierens von existierenden Daten wurde angepasst um mehr Flexibilität zu bieten."

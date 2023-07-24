@@ -178,6 +178,11 @@
         "text": "It is now possible to add multiple comments to the trial and each individual plot. Each comment is timestamped so you always know when something has been recorded."
       },
       {
+        "type": "new",
+        "title": "Trial archiving",
+        "text": "Shared trials will be archived by the GridScore server after a period of inactivity. GridScore will notify you well in advance of the expiration date to give you enough time to export your trial or renew the trial. Once archived, the whole trial can still be downloaded as a package."
+      },
+      {
         "type": "update",
         "title": "Import existing data",
         "text": "The way existing data is imported into a trial has changed to offer more flexibility."
