@@ -2,6 +2,8 @@
 title: GridScore NEXT Collecting data
 ---
 
+<a href="index.html" class="btn">Home</a>
+
 # Collecting data
 
 The main goal of GridScore is to collect phenotypic data. The main data view of GridScore can be reached by selecting the `Data entry` menu item at the top of the screen after you have selected a trial from the front page.
