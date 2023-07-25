@@ -172,7 +172,14 @@ export default {
           const time = date.getTime()
 
           const existingValues = m.values.filter(v => v !== undefined && v !== null)
-          const avg = existingValues.length > 0 ? existingValues.reduce((acc, val) => acc + (+val), 0) / existingValues.length : 0
+          let avg
+
+          if (this.trait.dataType === 'categorical') {
+            avg = existingValues.length > 0 ? existingValues[existingValues.length - 1] : 0
+          } else {
+            avg = existingValues.length > 0 ? existingValues.reduce((acc, val) => acc + (+val), 0) / existingValues.length : 0
+          }
+
           // Update statistics
           mins.forEach((m, i) => {
             if (sortedDates[i] === time) {
@@ -192,12 +199,14 @@ export default {
         dataPoints.sort((a, b) => a.date - b.date)
 
         if (this.plotMode === 'all' || (this.plotMode === 'selection' && this.selectedGermplasm.indexOf(c.displayName) !== -1)) {
+          console.log(c.displayName, dataPoints)
+
           traces.push({
             type: 'scatter',
             mode: 'lines+markers',
             name: c.displayName,
             x: dataPoints.map(dp => new Date(dp.date)),
-            y: dataPoints.map(dp => dp.value)
+            y: this.trait.dataType === 'categorical' ? dataPoints.map(dp => this.trait.restrictions.categories[dp.value]) : dataPoints.map(dp => dp.value)
           })
         }
       })
