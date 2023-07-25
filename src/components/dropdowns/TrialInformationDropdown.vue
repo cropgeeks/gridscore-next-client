@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown v-if="trial" :title="$t('toolbarTrialInfo')">
+  <b-dropdown v-if="trial" :title="$t('toolbarTrialInfo')" ref="dropdown" id="trial-information-dropdown">
     <template #button-content>
       <BIconInfoCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTrialInfo') }}</span>
     </template>
@@ -22,6 +22,14 @@ export default {
     trial: {
       type: Object,
       default: () => null
+    }
+  },
+  methods: {
+    show: function () {
+      this.$refs.dropdown.show()
+    },
+    hide: function () {
+      this.$refs.dropdown.hide()
     }
   }
 }

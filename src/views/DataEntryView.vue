@@ -1,9 +1,10 @@
 <template>
   <b-container fluid class="mt-3 px-0" v-if="trial" ref="dataEntryView">
     <b-button-toolbar>
-      <TraitDropdown :traits="trial.traits" />
-      <TrialInformationDropdown :trial="trial" />
-      <JumpToDropdown />
+      <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
+      <TrialInformationDropdown :trial="trial" ref="trialInfoDropdown" />
+      <JumpToDropdown :trial="trial" />
+      <b-button :title="$t('toolbarHelp')" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
       <!-- <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
         <BIconFullscreen v-if="!isFullscreen" /><BIconFullscreenExit v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarFullscreen') }}</span>
       </b-button> -->
@@ -13,14 +14,14 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5ZM4 4h1v1H4V4Z"/><path d="M7 2H2v5h5V2ZM3 3h3v3H3V3Zm2 8H4v1h1v-1Z"/><path d="M7 9H2v5h5V9Zm-4 1h3v3H3v-3Zm8-6h1v1h-1V4Z"/><path d="M9 2h5v5H9V2Zm1 1v3h3V3h-3ZM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8H8Zm2 2H9V9h1v1Zm4 2h-1v1h-2v1h3v-2Zm-4 2v-1H8v1h2Z"/><path d="M12 9h2V8h-2v1Z"/></svg>
           </b-button>
         </b-input-group-prepend>
-        <b-input v-model="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" lazy />
+        <b-input v-model="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" lazy id="germplasm-search" />
         <b-input-group-append>
           <b-button @click="initSearch"><BIconSearch /></b-button>
         </b-input-group-append>
       </b-input-group>
     </b-button-toolbar>
 
-    <DataCanvas :geolocation="geolocation" />
+    <DataCanvas :geolocation="geolocation" id="data-canvas" />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
@@ -28,6 +29,7 @@
     <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
+    <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="true" ref="dataTour" />
   </b-container>
 </template>
 
@@ -41,11 +43,12 @@ import SearchMatchModal from '@/components/modals/SearchMatchModal'
 import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal'
 import DataViewJumpControl from '@/components/DataViewJumpControl'
 import JumpToDropdown from '@/components/dropdowns/JumpToDropdown'
+import Tour from '@/components/Tour'
 import { getTrialById } from '@/plugins/idb'
 import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 // import { BIconFullscreen, BIconFullscreenExit, BIconSearch } from 'bootstrap-vue'
-import { BIconSearch } from 'bootstrap-vue'
+import { BIconSearch, BIconQuestionCircle } from 'bootstrap-vue'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
 const emitter = require('tiny-emitter/instance')
@@ -61,7 +64,9 @@ export default {
     DataInputModal,
     DataViewJumpControl,
     ScanQRCodeModal,
-    BIconSearch
+    Tour,
+    BIconSearch,
+    BIconQuestionCircle
     // BIconFullscreen,
     // BIconFullscreenExit
   },
@@ -72,7 +77,54 @@ export default {
       'storeHiddenTraits',
       'storeNavigationMode',
       'storeVoiceFeedbackEnabled'
-    ])
+    ]),
+    tourSteps: function () {
+      return [{
+        title: () => this.$t('tourTitleDataEntryStart'),
+        text: () => this.$t('tourTextDataEntryStart'),
+        target: () => '.navbar',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataEntryCanvas'),
+        text: () => this.$t('tourTextDataEntryCanvas'),
+        target: () => '#data-canvas',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataEntryTraits'),
+        text: () => this.$t('tourTextDataEntryTraits'),
+        target: () => '#trait-dropdown',
+        beforeShow: () => {
+          return new Promise(resolve => {
+            this.$refs.traitDropdown.show()
+
+            this.$nextTick(() => resolve())
+          })
+        }
+      }, {
+        title: () => this.$t('tourTitleDataEntryTrialInformation'),
+        text: () => this.$t('tourTextDataEntryTrialInformation'),
+        target: () => '#trial-information-dropdown',
+        beforeShow: () => {
+          return new Promise(resolve => {
+            this.$refs.trialInfoDropdown.show()
+
+            this.$nextTick(() => resolve())
+          })
+        }
+      }, {
+        title: () => this.$t('tourTitleDataEntryGermplasmSearch'),
+        text: () => this.$t('tourTextDataEntryGermplasmSearch'),
+        target: () => '#germplasm-search',
+        position: 'bottom',
+        beforeShow: () => {
+          return new Promise(resolve => {
+            this.$refs.trialInfoDropdown.hide()
+
+            this.$nextTick(() => resolve())
+          })
+        }
+      }]
+    }
   },
   watch: {
     searchTerm: function () {
@@ -125,6 +177,9 @@ export default {
     }
   },
   methods: {
+    startTour: function () {
+      this.$refs.dataTour.start()
+    },
     searchCodeScanned: function (code) {
       this.searchTerm = code
 

@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown :title="$t('toolbarTraitVisibility')">
+  <b-dropdown :title="$t('toolbarTraitVisibility')" ref="dropdown" id="trait-dropdown">
     <template #button-content>
       <BIconCircleHalf /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
@@ -126,6 +126,12 @@ export default {
         this.$store.dispatch('setHiddenTraits', this.traits.map(t => t.id))
       }
       emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'all' } })
+    },
+    show: function () {
+      this.$refs.dropdown.show()
+    },
+    hide: function () {
+      this.$refs.dropdown.hide()
     }
   }
 }

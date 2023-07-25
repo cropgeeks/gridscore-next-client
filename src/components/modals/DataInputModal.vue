@@ -10,6 +10,7 @@
            @ok.prevent="validate"
            @hidden="reset"
            @shown="autofocusFirst"
+           id="data-input-modal"
            no-fade
            size="xl"
            header-class="align-items-center"
@@ -19,6 +20,7 @@
 
       <b-button-group id="data-entry-header" v-if="cell">
         <b-form-datepicker
+          id="toolbar-button-pick-date"
           :start-weekday="1"
           v-b-tooltip="$t('')"
           v-model="recordingDate"
@@ -33,8 +35,8 @@
             <BIconCalendarEvent /> <span class="d-none d-xl-inline-block"> {{ $t('buttonPickRecordingDate') }}</span>
           </template>
         </b-form-datepicker>
-        <b-button size="sm" @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
-        <b-button size="sm" :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
+        <b-button id="toolbar-button-comments" size="sm" @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
+        <b-button id="toolbar-button-marking" size="sm" :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
           <template v-if="cell.isMarked">
             <BIconBookmarkCheckFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonUnbookmarkCell') }}</span>
           </template>
@@ -42,8 +44,9 @@
             <BIconBookmark /> <span class="d-none d-xl-inline-block"> {{ $t('buttonBookmarkCell') }}</span>
           </template>
         </b-button>
-        <b-button size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
-        <b-button size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
+        <b-button id="toolbar-button-camera" size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
+        <b-button id="toolbar-button-guided-walk" size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
+        <b-button size="sm" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-xl-inline-block"> {{ $t('toolbarHelp') }}</span></b-button>
       </b-button-group>
 
       <button class="close ml-0" @click="onXClicked">×</button>
@@ -73,7 +76,7 @@
           <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.next.column) : (guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.next.row) : (guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
-      <b-tabs v-model="traitGroupTabIndex">
+      <b-tabs v-model="traitGroupTabIndex" id="trait-group-tabs">
         <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
           :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
           :title-link-class="(tabStates && tabStates[groupIndex] === false) ? 'text-white bg-danger' : null">
@@ -93,6 +96,8 @@
       <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" />
       <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" />
       <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" @change="onSelectGuidedWalk" />
+
+      <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataInputTour" />
     </div>
   </b-modal>
 </template>
@@ -103,9 +108,10 @@ import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
+import Tour from '@/components/Tour'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
-import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconCalendarEvent, BIconSignpostSplitFill, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
+import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconCalendarEvent, BIconSignpostSplitFill, BIconQuestionCircle, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
@@ -117,9 +123,11 @@ export default {
     TraitInputSection,
     PlotCommentModal,
     GuidedWalkSelectorModal,
+    Tour,
     BIconChatRightTextFill,
     BIconBookmarkCheckFill,
     BIconBookmark,
+    BIconQuestionCircle,
     BIconCalendarEvent,
     BIconCameraFill,
     BIconCheck,
@@ -158,6 +166,100 @@ export default {
       'storeHiddenTraits',
       'storeCalendarLocale'
     ]),
+    tourSteps: function () {
+      return [{
+        title: () => this.$t('tourTitleDataInputStart'),
+        text: () => this.$t('tourTextDataInputStart'),
+        target: () => '#data-input-modal .modal-header',
+        position: 'bottom',
+        beforeShow: () => {
+          return new Promise(resolve => {
+            this.traitGroupTabIndex = 0
+
+            this.$nextTick(() => resolve())
+          })
+        }
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitGroups'),
+        text: () => this.$t('tourTextDataInputTraitGroups'),
+        target: () => '#trait-group-tabs ul li:first-of-type',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraits'),
+        text: () => this.$t('tourTextDataInputTraits'),
+        target: () => '.trait-group-tab-content'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitDetails'),
+        text: () => this.$t('tourTextDataInputTraitDetails'),
+        target: () => '.trait-group-tab-content .trait-section',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitName'),
+        text: () => this.$t('tourTextDataInputTraitName'),
+        target: () => '.trait-group-tab-content .trait-section .trait-name',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitDataType'),
+        text: () => this.$t('tourTextDataInputTraitDataType'),
+        target: () => '.trait-group-tab-content .trait-section .trait-data-type',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitAllowRepeats'),
+        text: () => this.$t('tourTextDataInputTraitAllowRepeats'),
+        target: () => '.trait-group-tab-content .trait-section .trait-allow-repeats',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitSetSize'),
+        text: () => this.$t('tourTextDataInputTraitSetSize'),
+        target: () => '.trait-group-tab-content .trait-section .trait-set-size',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitHistory'),
+        text: () => this.$t('tourTextDataInputTraitHistory'),
+        target: () => '.trait-group-tab-content .trait-section .trait-history',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitCamera'),
+        text: () => this.$t('tourTextDataInputTraitCamera'),
+        target: () => '.trait-group-tab-content .trait-section .trait-camera',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputTraitDataInput'),
+        text: () => this.$t('tourTextDataInputTraitDataInput'),
+        target: () => '.trait-group-tab-content .trait-section .trait-data-input',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputPickDate'),
+        text: () => this.$t('tourTextDataInputPickDate'),
+        target: () => '#data-input-modal .modal-header #toolbar-button-pick-date',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputComments'),
+        text: () => this.$t('tourTextDataInputComments'),
+        target: () => '#data-input-modal .modal-header #toolbar-button-comments',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputMarking'),
+        text: () => this.$t('tourTextDataInputMarking'),
+        target: () => '#data-input-modal .modal-header #toolbar-button-marking',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputCamera'),
+        text: () => this.$t('tourTextDataInputCamera'),
+        target: () => '#data-input-modal .modal-header #toolbar-button-camera',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputGuidedWalk'),
+        text: () => this.$t('tourTextDataInputGuidedWalk'),
+        target: () => '#data-input-modal .modal-header #toolbar-button-guided-walk',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleDataInputSave'),
+        text: () => this.$t('tourTextDataInputSave'),
+        target: () => '#data-input-modal .modal-footer button:last-of-type',
+        position: 'top'
+      }]
+    },
     okTitle: function () {
       if (this.isEditable) {
         if (this.isGuidedWalk) {
@@ -278,6 +380,9 @@ export default {
     }
   },
   methods: {
+    startTour: function () {
+      this.$refs.dataInputTour.start()
+    },
     onSelectGuidedWalk: function (typeName) {
       const match = guideOrderTypes.find(g => g.name === typeName)
 

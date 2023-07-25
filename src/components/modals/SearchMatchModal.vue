@@ -1,6 +1,7 @@
 <template>
   <b-modal :ok-title="$t('buttonClose')"
            :title="$t('modalTitleSearchMatches')"
+           @hidden="$emit('hidden')"
            ok-only
            no-fade
            ref="searchMatchModal">

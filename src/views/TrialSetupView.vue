@@ -1,13 +1,10 @@
 <template>
   <b-container class="my-4">
-    <template v-if="trialToCopy">
-      <h1 class="display-4">{{ $t('modalTitleTrialDuplicate') }}</h1>
-      <p>{{ $t('modalTextTrialDuplicate') }}</p>
-    </template>
-    <template v-else>
-      <h1 class="display-4">{{ $t('pageTrialSetupTitle') }}</h1>
-      <p>{{ $t('pageTrialSetupText') }}</p>
-    </template>
+    <div class="d-flex align-items-center justify-content-between">
+      <h1 class="display-4">{{ $t(trialToCopy ? 'modalTitleTrialDuplicate' : 'pageTrialSetupTitle') }}</h1>
+      <h4><a href="#" class="text-dark" @click="$refs.setupTour.start()"><BIconQuestionCircle /></a></h4>
+    </div>
+    <p>{{ $t(trialToCopy ? 'modalTextTrialDuplicate' : 'pageTrialSetupText') }}</p>
 
     <b-form @submit.prevent="onSubmit">
       <b-row>
@@ -35,7 +32,7 @@
           </b-form-group>
         </b-col>
         <b-col cols=12 lg=6 class="mb-3">
-          <b-card no-body class="h-100">
+          <b-card no-body class="h-100" id="layout-card">
             <b-card-body>
               <b-card-title>{{ $t('pageTrialSetupCardLayoutTitle') }}</b-card-title>
               <b-card-sub-title>{{ $t('pageTrialSetupCardLayoutSubTitle') }}</b-card-sub-title>
@@ -69,7 +66,7 @@
           </b-card>
         </b-col>
         <b-col cols=12 lg=6 class="mb-3">
-          <b-card no-body class="h-100">
+          <b-card no-body class="h-100" id="trait-card">
             <b-card-body>
               <b-card-title>{{ $t('pageTrialSetupCardTraitsTitle') }}</b-card-title>
               <b-card-sub-title>{{ $t('pageTrialSetupCardTraitsSubTitle') }}</b-card-sub-title>
@@ -158,14 +155,17 @@
     </b-sidebar>
 
     <LayoutFeedbackModal :feedback="layoutFeedback" ref="layoutFeedbackModal" />
+
+    <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="setupTour" />
   </b-container>
 </template>
 
 <script>
-import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconJournalPlus, BIconX, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
+import Tour from '@/components/Tour'
 import { addTrial, getTrialById, getTrialData } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
@@ -179,10 +179,12 @@ export default {
     BIconCheck,
     BIconPencilSquare,
     BIconX,
+    BIconQuestionCircle,
     BIconJournalPlus,
     BIconCardChecklist,
     BIconExclamationTriangleFill,
     BIconSave,
+    Tour,
     TrialLayoutComponent,
     TraitDefinitionComponent,
     LayoutFeedbackModal
@@ -234,6 +236,34 @@ export default {
     }
   },
   computed: {
+    tourSteps: function () {
+      return [{
+        title: () => this.$t('tourTitleSetupStart'),
+        text: () => this.$t('tourTextSetupStart'),
+        target: () => '.navbar',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleSetupTrialName'),
+        text: () => this.$t('tourTextSetupTrialName'),
+        target: () => '#trial-name',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleSetupTrialDescription'),
+        text: () => this.$t('tourTextSetupTrialDescription'),
+        target: () => '#trial-description',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleSetupTrialLayout'),
+        text: () => this.$t('tourTextSetupTrialLayout'),
+        target: () => '#layout-card',
+        position: 'top'
+      }, {
+        title: () => this.$t('tourTitleSetupTrialTraits'),
+        text: () => this.$t('tourTextSetupTrialTraits'),
+        target: () => '#trait-card',
+        position: 'top'
+      }]
+    },
     categoricalTraitCount: function () {
       if (this.traits) {
         return this.traits.filter(t => t.dataType === 'categorical').length

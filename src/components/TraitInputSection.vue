@@ -1,30 +1,30 @@
 <template>
-  <section v-if="trait">
+  <section v-if="trait" class="trait-section">
     <hr />
 
     <h4 class="d-flex justify-content-between align-items-center">
       <span class="d-flex align-items-center flex-wrap">
-        <span :style="{ color: trait.color }">
+        <span :style="{ color: trait.color }" class="trait-name">
           <BIconCircleFill />
           <span class="mx-1">{{ trait.name }}</span>
         </span>
         <span>
-          <b-badge class="mx-1" variant="light">{{ getTraitTypeText(trait, true) }}</b-badge>
-          <b-badge class="mx-1" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
+          <b-badge class="mx-1 trait-data-type" variant="light">{{ getTraitTypeText(trait, true) }}</b-badge>
+          <b-badge class="mx-1 trait-allow-repeats" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
             <BIconArrowRepeat v-if="trait.allowRepeats" />
             <BIconstack v-else>
               <BIconArrowRepeat stacked />
               <BIconX stacked :scale="0.7" />
             </BIconstack>
           </b-badge>
-          <b-badge class="mx-1" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
+          <b-badge class="mx-1 trait-set-size" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
             <BIconSegmentedNav :rotate="90" /> {{ trait.setSize || 1 }}
           </b-badge>
         </span>
       </span>
       <b-button-group>
-        <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData"><BIconClockHistory /></b-button>
-        <b-button @click="$emit('photo-clicked')" :disabled="!trial.editable"><BIconCameraFill /></b-button>
+        <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData" class="trait-history"><BIconClockHistory /></b-button>
+        <b-button @click="$emit('photo-clicked')" :disabled="!trial.editable" class="trait-camera"><BIconCameraFill /></b-button>
       </b-button-group>
     </h4>
     <div v-if="trait.restrictions || trait.timeframe">

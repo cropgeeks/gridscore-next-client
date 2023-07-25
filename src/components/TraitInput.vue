@@ -1,5 +1,5 @@
 <template>
-  <b-input-group>
+  <b-input-group class="trait-data-input">
     <b-input-group-prepend v-if="trait.dataType === 'int'">
       <b-button v-if="trait.dataType === 'int'" @click="nudge(-1)" :disabled="!editable">-</b-button>
     </b-input-group-prepend>
