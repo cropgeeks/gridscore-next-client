@@ -31,6 +31,8 @@
 <script>
 import { BIconCheck, BIconChevronLeft, BIconChevronRight } from 'bootstrap-vue'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconCheck,
@@ -66,13 +68,6 @@ export default {
         this.resetPopover()
       }
     },
-    $route: function () {
-      if (this.resetOnRouterNav) {
-        // Hide on page navigation
-        this.resetPopover()
-        document.body.classList.remove('overflow-hidden')
-      }
-    },
     popoverShow: function (newValue) {
       if (newValue === true) {
         document.body.classList.add('overflow-hidden')
@@ -82,6 +77,13 @@ export default {
     }
   },
   methods: {
+    handlePageNavigation: function () {
+      if (this.resetOnRouterNav) {
+        // Hide on page navigation
+        this.resetPopover()
+        document.body.classList.remove('overflow-hidden')
+      }
+    },
     next: function () {
       const currStep = this.steps[this.currentIndex]
 
@@ -172,9 +174,11 @@ export default {
   },
   mounted: function () {
     document.addEventListener('keyup', this.handleKeys)
+    emitter.on('page-navigation', this.handlePageNavigation)
   },
   destroyed: function () {
     document.removeEventListener('keyup', this.handleKeys)
+    emitter.off('page-navigation', this.handlePageNavigation)
   }
 }
 </script>

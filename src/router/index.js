@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+const emitter = require('tiny-emitter/instance')
+
 Vue.use(VueRouter)
 
 const originalReplace = VueRouter.prototype.replace
@@ -90,6 +92,12 @@ const router = new VueRouter({
   mode: 'hash',
   scrollBehavior: () => ({ y: 0 }),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  emitter.emit('page-navigation', to)
+
+  next()
 })
 
 export default router
