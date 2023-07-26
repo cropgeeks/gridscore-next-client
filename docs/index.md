@@ -52,4 +52,4 @@ There are a few sub-pages that contain specific information about how GridScore 
 
 ## GridScore NEXT website
 
-GridScore NEXT is available at https://gridscore.hutton.ac.uk
+GridScore NEXT is available at [https://gridscore.hutton.ac.uk](https://gridscore.hutton.ac.uk)
