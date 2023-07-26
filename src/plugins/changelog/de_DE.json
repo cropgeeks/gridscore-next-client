@@ -103,6 +103,17 @@
     ]
   },
   {
+    "version": "1.15.0",
+    "date": "2023-02-10",
+    "items": [
+      {
+        "type": "new",
+        "title": "BrAPI-Export nach Germinate",
+        "text": "GridScore unterstützt jetzt den Export von Versuchsdaten nach Germinate via BrAPI. Um diese Funktionalität zu nutzen, gehe zum Export-Bereich und wähle den BrAPI Reiter aus. Ein gültiges Germinate-Token ist erforderlich zum Hochladen und man muss mindestens die 'Data curator'-Berechtigungen in Germinate haben."
+      }
+    ]
+  },
+  {
     "version": "2.0.2",
     "date": "2023-07-21",
     "items": [
