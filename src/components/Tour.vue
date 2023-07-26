@@ -17,7 +17,7 @@
         <!-- Buttons -->
         <b-button-group class="d-flex">
           <!-- Back button -->
-          <b-button variant="secondary" @click="currentIndex = currentIndex - 1" :disabled="currentIndex < 1" v-if="!hideBackButton && (steps.length > 1)"><BIconChevronLeft /> {{ $t('buttonBack') }}</b-button>
+          <b-button variant="secondary" @click="prev" :disabled="currentIndex < 1" v-if="!hideBackButton && (steps.length > 1)"><BIconChevronLeft /> {{ $t('buttonBack') }}</b-button>
           <!-- Next button -->
           <b-button variant="success" @click="next" v-if="currentIndex < steps.length - 1">{{ $t('buttonNext') }} <BIconChevronRight /></b-button>
           <!-- Finish button -->
@@ -84,6 +84,28 @@ export default {
         document.body.classList.remove('overflow-hidden')
       }
     },
+    prev: function () {
+      const currStep = this.steps[this.currentIndex]
+
+      if (currStep.afterShow) {
+        currStep.afterShow().then(() => {
+          this.prevInternal()
+        })
+      } else {
+        this.prevInternal()
+      }
+    },
+    prevInternal: function () {
+      const prevStep = this.steps[this.currentIndex - 1]
+
+      if (prevStep.beforeShow) {
+        prevStep.beforeShow().then(() => {
+          this.currentIndex = this.currentIndex - 1
+        })
+      } else {
+        this.currentIndex = this.currentIndex - 1
+      }
+    },
     next: function () {
       const currStep = this.steps[this.currentIndex]
 
@@ -109,8 +131,10 @@ export default {
     updatePopover: function () {
       this.popoverShow = false
       this.$nextTick(() => {
-        if (this.currentIndex < this.steps.length) {
+        if (this.currentIndex >= 0 && this.currentIndex < this.steps.length) {
           this.popoverTarget = document.querySelector(this.steps[this.currentIndex].target())
+
+          console.log(this.popoverTarget)
 
           if (this.popoverTarget) {
             this.popoverShow = true
@@ -163,7 +187,7 @@ export default {
         } else if (e.keyCode === 37) {
           // Left
           if (!this.hideBackButton && this.currentIndex > 0) {
-            this.currentIndex--
+            this.prev()
           }
         } else if (e.keyCode === 27) {
           // Escape

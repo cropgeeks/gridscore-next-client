@@ -29,7 +29,7 @@
     <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
-    <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="true" ref="dataTour" />
+    <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataTour" />
   </b-container>
 </template>
 
@@ -92,10 +92,17 @@ export default {
       }, {
         title: () => this.$t('tourTitleDataEntryTraits'),
         text: () => this.$t('tourTextDataEntryTraits'),
-        target: () => '#trait-dropdown',
+        target: () => '#trait-dropdown .dropdown-menu',
         beforeShow: () => {
           return new Promise(resolve => {
             this.$refs.traitDropdown.show()
+
+            this.$nextTick(() => setTimeout(() => resolve(), 100))
+          })
+        },
+        afterShow: () => {
+          return new Promise(resolve => {
+            this.$refs.traitDropdown.hide()
 
             this.$nextTick(() => resolve())
           })
@@ -103,10 +110,17 @@ export default {
       }, {
         title: () => this.$t('tourTitleDataEntryTrialInformation'),
         text: () => this.$t('tourTextDataEntryTrialInformation'),
-        target: () => '#trial-information-dropdown',
+        target: () => '#trial-information-dropdown .dropdown-menu',
         beforeShow: () => {
           return new Promise(resolve => {
             this.$refs.trialInfoDropdown.show()
+
+            this.$nextTick(() => setTimeout(() => resolve(), 100))
+          })
+        },
+        afterShow: () => {
+          return new Promise(resolve => {
+            this.$refs.trialInfoDropdown.hide()
 
             this.$nextTick(() => resolve())
           })
@@ -115,14 +129,7 @@ export default {
         title: () => this.$t('tourTitleDataEntryGermplasmSearch'),
         text: () => this.$t('tourTextDataEntryGermplasmSearch'),
         target: () => '#germplasm-search',
-        position: 'bottom',
-        beforeShow: () => {
-          return new Promise(resolve => {
-            this.$refs.trialInfoDropdown.hide()
-
-            this.$nextTick(() => resolve())
-          })
-        }
+        position: 'bottom'
       }]
     }
   },
