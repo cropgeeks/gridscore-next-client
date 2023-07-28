@@ -434,6 +434,7 @@
   "pageImportCameraText": "Nutze die Kamera des Gerätes um den QR-Code zu scannen. Eventuell muss der Zugriff auf die Kamera erlaubt werden und die Kamera gewechselt werden.",
   "pageImportTitle": "Versuch importieren",
   "pageImportText": "Auf dieser Seite können Versuche die mit einem geteilt wurden importiert werden. Gib dazu den Teilungscode in das Textfeld ein oder nutze den Knopf neben dem Feld um einen QR-Code zu scannen.",
+  "pageImportSelectAppVersion": "Bitte die Version von GridScore auswählen von der der Versuch importiert werden soll.",
   "pageImportTrialMatchTitle": "Versuchsübereinstimmung",
   "pageImportTrialMatchInfo": "Die folgende Übereinstimmung wurde gefunden basierend auf dem angegebenen Teilungscode.",
   "pageImportTrialMatchConfirm": "Soll dieser Versuch importiert werden?",

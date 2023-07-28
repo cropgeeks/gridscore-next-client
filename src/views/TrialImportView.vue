@@ -6,13 +6,28 @@
     <b-container class="mt-4">
       <h1 class="display-4">{{ $t('pageImportTitle') }}</h1>
       <p>{{ $t('pageImportText') }}</p>
+      <p>{{ $t('pageImportSelectAppVersion') }}</p>
 
-      <b-button-group class="mb-3">
-        <b-button :variant="gridScoreVersion === 'current' ? 'primary' : null" @click="gridScoreVersion = 'current'">{{ $t('buttonGridScoreVersionCurrent') }}</b-button>
-        <b-button :variant="gridScoreVersion === 'legacy' ? 'primary' : null" @click="gridScoreVersion = 'legacy'">{{ $t('buttonGridScoreVersionLegacy') }}</b-button>
-      </b-button-group>
+      <b-row class="mb-3">
+        <b-col :cols=12 :md=4>
+          <b-button :variant="gridScoreVersion === 'current' ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="gridScoreVersion = 'current'">
+            <h2>
+              <b-img class="logo mt-2" fluid src="img/gridscore-next-text.svg"/>
+            </h2>
+            <span>{{ $t('appTitle') }}</span>
+          </b-button>
+        </b-col>
+        <b-col :cols=12 :md=4>
+          <b-button :variant="gridScoreVersion === 'legacy' ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="gridScoreVersion = 'legacy'">
+            <h2>
+              <b-img class="logo mt-2" fluid src="img/gridscore2.svg"/>
+            </h2>
+            <span>{{ $t('appTitleLegacy') }}</span>
+          </b-button>
+        </b-col>
+      </b-row>
 
-      <b-form @submit.prevent="checkCode">
+      <b-form @submit.prevent="checkCode" v-if="gridScoreVersion">
         <b-form-group :label="$t('formLabelTrialImportUrl')" :description="$t('formDescriptionTrialImportUrl')" label-for="url" v-if="gridScoreVersion === 'legacy'">
           <b-form-input id="url" type="url" v-model="gridScoreUrl" required />
         </b-form-group>
@@ -87,7 +102,7 @@ export default {
       shareCode: null,
       serverError: null,
       trial: null,
-      gridScoreVersion: 'current',
+      gridScoreVersion: null,
       gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore'
     }
   },
@@ -172,6 +187,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.logo {
+  max-height: 100px;
+}
 </style>
