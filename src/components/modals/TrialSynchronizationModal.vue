@@ -168,7 +168,7 @@ import TraitHeading from '@/components/TraitHeading'
 
 import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
-import { synchronizeTrial } from '@/plugins/api'
+import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
 
 import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
@@ -210,17 +210,44 @@ export default {
   },
   methods: {
     askToSynchronize: function () {
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextSynchronizeTrial'), {
-        title: this.$t('modalTitleSynchronizeTrial'),
-        okTitle: this.$t('buttonYes'),
-        okVariant: 'success',
-        cancelTitle: this.$t('buttonNo')
-      })
-        .then(value => {
-          if (value) {
-            this.synchronize()
-          }
+      if (!this.trial.shareCodes.ownerCode && !this.trial.shareCodes.editorCode) {
+        emitter.emit('show-loading', true)
+        getTrialByCode(this.trial.shareCodes.viewerCode)
+          .then(result => {
+            return deleteTrial(this.trial.localId)
+              .then(() => {
+                return addTrial(result)
+              })
+              .then(localId => {
+                this.$store.dispatch('setSelectedTrial', localId)
+                emitter.emit('trials-updated')
+                emitter.emit('show-loading', false)
+                emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })
+              })
+              .finally(() => {
+                emitter.emit('show-loading', false)
+              })
+          })
+          .catch(error => {
+            if (error.status === 404) {
+              this.serverError = this.$t('apiErrorTrialNotFound')
+            } else {
+              this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
+            }
+          })
+      } else {
+        this.$bvModal.msgBoxConfirm(this.$t('modalTextSynchronizeTrial'), {
+          title: this.$t('modalTitleSynchronizeTrial'),
+          okTitle: this.$t('buttonYes'),
+          okVariant: 'success',
+          cancelTitle: this.$t('buttonNo')
         })
+          .then(value => {
+            if (value) {
+              this.synchronize()
+            }
+          })
+      }
     },
     synchronize: function () {
       emitter.emit('show-loading', true)
