@@ -157,9 +157,7 @@ export default {
         result += `\n${toLocalDateString(new Date(c.timestamp))}\t${c.content}`
       })
 
-      const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
-
-      downloadText(href, `gridscore-trial-comments-${this.safeTrialName}.txt`)
+      downloadText(result, `gridscore-trial-comments-${this.safeTrialName}.txt`)
     },
     exportPlotComments: function () {
       let result = 'Germplasm\tRep\tRow\tColumn\tDate\tComment'
@@ -174,9 +172,7 @@ export default {
         }
       })
 
-      const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
-
-      downloadText(href, `gridscore-plot-comments-${this.safeTrialName}.txt`)
+      downloadText(result, `gridscore-plot-comments-${this.safeTrialName}.txt`)
     },
     exportShapefileGerminate: function () {
       this.exportedFiles.shapefile = null
@@ -317,9 +313,7 @@ export default {
         }
       })
 
-      const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(result)
-
-      downloadText(href, `gridscore-data-${this.safeTrialName}.txt`)
+      downloadText(result, `gridscore-data-${this.safeTrialName}.txt`)
 
       emitter.emit('show-loading', false)
     },

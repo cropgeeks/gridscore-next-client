@@ -3,6 +3,8 @@ import { getId } from '@/plugins/id'
 import { trialLayoutToPlots } from '@/plugins/location'
 import store from '@/store'
 
+import { saveAs } from 'file-saver'
+
 const categoryColors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
 /**
@@ -27,16 +29,8 @@ const getTraitTypeText = (trait, short = false) => {
 }
 
 const downloadText = (text, filename) => {
-  const downloadLink = document.createElement('a')
-  downloadLink.href = text
-  downloadLink.target = '_blank'
-  downloadLink.rel = 'noopener noreferrer'
-  if (filename) {
-    downloadLink.download = filename
-  }
-  document.body.appendChild(downloadLink)
-  downloadLink.click()
-  document.body.removeChild(downloadLink)
+  const blobby = new Blob([text], { type: 'text/plain;charset=utf-8' })
+  saveAs(blobby, filename)
 }
 
 const padZerosTo = (str, length) => {

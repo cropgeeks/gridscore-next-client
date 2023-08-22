@@ -31,6 +31,7 @@ import exifr from 'exifr/dist/lite.umd.js'
 import { BIconCalendar3 } from 'bootstrap-vue'
 import { toLocalDateTimeString } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { saveAs } from 'file-saver'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -216,10 +217,7 @@ export default {
           // close the file and write the contents to disk.
           await writableStream.close()
         } else {
-          const dl = document.createElement('a')
-          dl.setAttribute('href', this.imageData)
-          dl.setAttribute('download', filename)
-          dl.click()
+          saveAs(this.imageData, filename)
         }
       }
 
