@@ -31,6 +31,7 @@ export default new Vuex.Store({
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     selectedTrial: null,
+    mapLayer: 'theme',
     hiddenTraits: [],
     plausible: {
       plausibleDomain: null,
@@ -58,6 +59,7 @@ export default new Vuex.Store({
     storeRestrictInputToMarked: (state) => state.restrictInputToMarked,
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
+    storeMapLayer: (state) => state.mapLayer,
     storeSelectedTrial: (state) => state.selectedTrial,
     storeHiddenTraits: (state) => state.hiddenTraits,
     storePlausible: (state) => state.plausible,
@@ -106,6 +108,9 @@ export default new Vuex.Store({
     },
     ON_DARK_MODE_CHANGED: function (state, newDarkMode) {
       state.darkMode = newDarkMode
+    },
+    ON_MAP_LAYER_CHANGED: function (state, newMapLayer) {
+      state.mapLayer = newMapLayer
     },
     ON_LOCALE_CHANGED: function (state, newLocale) {
       state.locale = newLocale
@@ -180,6 +185,9 @@ export default new Vuex.Store({
     },
     setDarkMode: function ({ commit }, darkMode) {
       commit('ON_DARK_MODE_CHANGED', darkMode)
+    },
+    setMapLayer: function ({ commit }, mapLayer) {
+      commit('ON_MAP_LAYER_CHANGED', mapLayer)
     },
     setLocale: function ({ commit }, locale) {
       commit('ON_LOCALE_CHANGED', locale)

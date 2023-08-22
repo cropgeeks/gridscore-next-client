@@ -54,6 +54,7 @@
 <script>
 import GpsInput from '@/components/GpsInput'
 
+import { mapGetters } from 'vuex'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
@@ -92,6 +93,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeDarkMode',
+      'storeMapLayer'
+    ]),
     rows: function () {
       if (this.layout) {
         return this.layout.rows
@@ -121,9 +126,17 @@ export default {
       handler: function () {
         this.update()
       }
+    },
+    storeDarkMode: function () {
+      this.updateThemeLayer()
     }
   },
   methods: {
+    updateThemeLayer: function () {
+      if (this.themeLayer) {
+        this.themeLayer.setUrl(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`)
+      }
+    },
     updateGrid: function () {
       // Remove the old geojson layer if required
       if (this.geoJsonLayer) {
@@ -232,9 +245,12 @@ export default {
         maxZoom: 21,
         maxNativeZoom: 19
       })
-
-      this.map.addLayer(openstreetmap)
-
+      this.themeLayer = L.tileLayer(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`, {
+        id: this.storeDarkMode ? 'Esri Dark Gray Base' : 'Esri Light Gray Base',
+        attribution: 'Esri, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, and the GIS User Community',
+        maxZoom: 21,
+        maxNativeZoom: 15
+      })
       // Add an additional satellite layer
       const satellite = L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         id: 'Esri WorldImagery',
@@ -243,12 +259,41 @@ export default {
         maxNativeZoom: 19
       })
 
+      switch (this.storeMapLayer) {
+        case 'theme':
+          this.map.addLayer(this.themeLayer)
+          break
+        case 'satellite':
+          this.map.addLayer(satellite)
+          break
+        case 'osm':
+        default:
+          this.map.addLayer(openstreetmap)
+          break
+      }
+
       const baseMaps = {
+        'Theme-based': this.themeLayer,
         OpenStreetMap: openstreetmap,
         'Esri WorldImagery': satellite
       }
 
       L.control.layers(baseMaps).addTo(this.map)
+
+      // Listen for layer changes and store the user selection in the store
+      this.map.on('baselayerchange', e => {
+        switch (e.name) {
+          case 'Theme-based':
+            this.$store.dispatch('setMapLayer', 'theme')
+            break
+          case 'OpenStreetMap':
+            this.$store.dispatch('setMapLayer', 'osm')
+            break
+          case 'Esri WorldImagery':
+            this.$store.dispatch('setMapLayer', 'satellite')
+            break
+        }
+      })
 
       // Disable zoom until focus gained, disable when blur
       this.map.scrollWheelZoom.disable()

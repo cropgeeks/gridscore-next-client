@@ -44,7 +44,7 @@
             <template #label>
               <BIconTags /> {{ $t('formLabelTraitRestrictionsCategories') }}
             </template>
-            <b-form-textarea v-model="newTrait.restrictions.categories" required id="trait-categories" :state="formState.categories" />
+            <b-form-textarea v-model="newTrait.restrictions.categories" :rows="4" :placeholder="$t('formPlaceholderTraitRestrictionsCategories')" required id="trait-categories" :state="formState.categories" />
           </b-form-group>
           <b-row v-if="newTrait.dataType === 'int' || newTrait.dataType === 'float'">
             <b-col cols=6>
