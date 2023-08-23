@@ -12,12 +12,12 @@ Images will be stored on your local device, but they cannot currently be synchro
 
 ## Android
 
-If you're using an Android device, getting your images will be pretty straightforward. Google provides detailed instructions on how to achieve this: https://support.google.com/android/answer/9064445
+If you're using an Android device, getting your images will be pretty straightforward. Google provides detailed instructions on how to achieve this: [https://support.google.com/android/answer/9064445](https://support.google.com/android/answer/9064445)
 
 In the simplest case, plug your phone or tablet into your Windows Pc or Mac with a USB cable and follow the instructions on the link above to copy the images across. They are located in the `Downloads` folder on Android.
 
 ## iOS
 
-Transferring the images from iOS isn't quite as straightforward and may depend on whether you have access to cloud storage. Copying via a USB cable isn't easily possible. There are a number of options you can use to transfer your files as listed at the following link by Apple: https://support.apple.com/en-gb/guide/iphone/iphf2d851b9/ios
+Transferring the images from iOS isn't quite as straightforward and may depend on whether you have access to cloud storage. Copying via a USB cable isn't easily possible. There are a number of options you can use to transfer your files as listed at the following link by Apple: [https://support.apple.com/en-gb/guide/iphone/iphf2d851b9/ios](https://support.apple.com/en-gb/guide/iphone/iphf2d851b9/ios)
 
 <a href="index.html" class="btn btn-dark">Home</a>
