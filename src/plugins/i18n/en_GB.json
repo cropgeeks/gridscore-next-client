@@ -348,6 +348,7 @@
   "modalTextNotTodayWarning": "You are recording data for date: {date}",
   "modalTitleMissingTrial": "Missing trial",
   "modalTextDataInputReadOnly": "This trial is in read-only mode. You can view the data, but cannot make any changes to it.",
+  "modalTextImageTaggingIOSWarning": "On iOS, after clicking 'Save' below, make sure to properly download the image using the 'Open in...' option before you press 'Done'.",
   "pageAboutChangelog": "View Changelog Information",
   "pageAboutVersion": "Version {version}",
   "pageAboutGitHubLink": "The source code of GridScore is available on <a href='https://github.com/cropgeeks/gridscore-next-client/'>GitHub</a>.",

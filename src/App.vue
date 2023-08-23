@@ -89,12 +89,13 @@ import { init } from '@/plugins/datastore'
 import { VuePlausible } from 'vue-plausible'
 import Vue from 'vue'
 import { axiosCall, getServerSettings } from '@/plugins/api'
-import { Detector } from '@/plugins/browser-detect'
 
 import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
 import { isOffline } from '@/plugins/misc'
+
+import { UAParser } from 'ua-parser-js'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -295,6 +296,9 @@ export default {
       document.addEventListener('visibilitychange', this.handleVisibilityChange)
     }
 
+    const config = new UAParser().getResult()
+    this.$store.dispatch('setDeviceConfig', config)
+
     // Log the run
     if (!this.isLocalhost()) {
       let id = this.storeUniqueClientId
@@ -304,15 +308,14 @@ export default {
         this.$store.dispatch('setUniqueClientId', id)
       }
 
-      const config = new Detector().detect()
-      if (config.os !== undefined && config.os !== null && config.os !== 'Search Bot') {
+      if (config.os !== undefined && config.os !== null && config.os.name !== undefined && config.os.name !== null && config.os.name !== 'Search Bot') {
         const data = {
           application: 'GridScore',
           runCount: this.storeRunCount + 1,
           id: id,
           version: `${gridScoreVersion}`,
           locale: this.storeLocale,
-          os: `${config.os} ${config.osVersion}`
+          os: `${config.os.name} ${config.os.version}`
         }
         axiosCall({ baseUrl: 'https://ics.hutton.ac.uk/app-logger/', url: 'log', params: data, method: 'get', ignoreErrors: true })
           .then(() => {

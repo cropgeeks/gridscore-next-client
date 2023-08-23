@@ -42,7 +42,8 @@ export default new Vuex.Store({
       url: null,
       token: null
     },
-    changelogVersionNumber: null
+    changelogVersionNumber: null,
+    deviceConfig: null
   },
   getters: {
     storeIsOffline: (state) => state.isOffline,
@@ -65,7 +66,8 @@ export default new Vuex.Store({
     storePlausible: (state) => state.plausible,
     storeServerUrl: (state) => state.serverUrl,
     storeBrapiConfig: (state) => state.brapiConfig,
-    storeChangelogVersionNumber: (state) => state.changelogVersionNumber
+    storeChangelogVersionNumber: (state) => state.changelogVersionNumber,
+    storeDeviceConfig: (state) => state.deviceConfig
   },
   mutations: {
     ON_IS_OFFLINE_CHANGED: function (state, newIsOffline) {
@@ -165,6 +167,13 @@ export default new Vuex.Store({
       } else {
         state.changelogVersionNumber = newChangelogVersionNumber
       }
+    },
+    ON_DEVICE_CONFIG_CHANGED_MUTATION: function (state, newDeviceConfig) {
+      if (state.deviceConfig === undefined) {
+        Vue.set(state, 'deviceConfig', newDeviceConfig)
+      } else {
+        state.deviceConfig = newDeviceConfig
+      }
     }
   },
   actions: {
@@ -227,6 +236,9 @@ export default new Vuex.Store({
     },
     setChangelogVersionNumber: function ({ commit }, changelogVersionNumber) {
       commit('ON_CHANGELOG_VERSION_NUMBER_CHANGED_MUTATION', changelogVersionNumber)
+    },
+    setDeviceConfig: function ({ commit }, deviceConfig) {
+      commit('ON_DEVICE_CONFIG_CHANGED_MUTATION', deviceConfig)
     }
   },
   modules: {

@@ -340,6 +340,7 @@
   "modalTextNotTodayWarning": "Daten werden für Datum {date} aufgezeichnet",
   "modalTitleMissingTrial": "Fehlender Versuch",
   "modalTextDataInputReadOnly": "Dieser Versuch befindet sich im Lesemodus. Die Daten können betrachtet, aber nicht bearbeitet werden.",
+  "modalTextImageTaggingIOSWarning": "Auf iOS, nach Klicken auf 'Speichern', bitte sicherstellen, dass das Bild komplett heruntergeladen wird durch Klicken auf 'Öffnen in...' bevor mit 'Fertig' abgeschlossen wird.",
   "pageAboutChangelog": "Changelog-Information anzeigen",
   "pageAboutVersion": "Version {version}",
   "pageAboutDocumentationLink": "Eine detaillierte Anleitung für GridScore und wie man es benutzt ist auf der <a href='https://cropgeeks.github.io/gridscore-next-client'>Dokumentationsseite<a/> verfügbar.",

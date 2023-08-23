@@ -9,6 +9,7 @@
           <b-col cols=12 md=8 order="2" order-md="1">
             <h1 class="display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
             <p class="lead text-center text-md-left"><BIconTag /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
+            <p class="lead text-center text-md-left" v-if="storeDeviceConfigString"><BIconLaptop /> {{ storeDeviceConfigString }}</p>
             <p class="text-center text-md-left mb-0"><BIconInfoCircle /> <a href="#" @click="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
           </b-col>
         </b-row>
@@ -68,7 +69,7 @@
 
 <script>
 import ChangelogModal from '@/components/modals/ChangelogModal'
-import { BIconGithub, BIconInfoCircleFill, BIconInfoCircle, BIconNewspaper, BIconTag } from 'bootstrap-vue'
+import { BIconGithub, BIconInfoCircleFill, BIconInfoCircle, BIconNewspaper, BIconTag, BIconLaptop } from 'bootstrap-vue'
 import { mapGetters } from 'vuex'
 import { gridScoreVersion } from '@/plugins/constants'
 
@@ -78,6 +79,7 @@ export default {
     BIconInfoCircleFill,
     BIconInfoCircle,
     BIconNewspaper,
+    BIconLaptop,
     BIconTag,
     ChangelogModal
   },
@@ -121,8 +123,25 @@ export default {
   computed: {
     /** Mapgetters exposing the store configuration */
     ...mapGetters([
-      'storeDarkMode'
-    ])
+      'storeDarkMode',
+      'storeDeviceConfig'
+    ]),
+    storeDeviceConfigString: function () {
+      if (this.storeDeviceConfig) {
+        let result = ''
+
+        if (this.storeDeviceConfig.os) {
+          result += `${this.storeDeviceConfig.os.name} (${this.storeDeviceConfig.os.version || 'N/A'}); `
+        }
+        if (this.storeDeviceConfig.browser) {
+          result += `${this.storeDeviceConfig.browser.name} (${this.storeDeviceConfig.browser.version || 'N/A'})`
+        }
+
+        return result
+      } else {
+        return null
+      }
+    }
   }
 }
 </script>
