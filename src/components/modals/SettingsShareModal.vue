@@ -37,7 +37,7 @@ import { mapGetters } from 'vuex'
 
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { BIconBoxArrowInUpRight, BIconBoxArrowDownRight } from 'bootstrap-vue'
-import { NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 
 import StyledQRCode from '@/components/StyledQRCode'
 import BarcodeScanner from '@/components/BarcodeScanner'
@@ -63,6 +63,7 @@ export default {
       'storeDarkMode',
       'storeHideCitationMessage',
       'storeDisplayMarkerIndicators',
+      'storeCanvasDensity',
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
@@ -118,6 +119,13 @@ export default {
         } else if (parsed.nm === 0) {
           this.$store.commit('ON_NAVIGATION_MODE_CHANGED', NAVIGATION_MODE_JUMP)
         }
+        if (parsed.cd === 0) {
+          this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_HIGH)
+        } else if (parsed.cd === 1) {
+          this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_MEDIUM)
+        } else if (parsed.cd === 2) {
+          this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_LOW)
+        }
         if (parsed.tc) {
           const traitColors = parsed.tc.split(',').map(c => `#${c}`)
           this.$store.commit('ON_TRAIT_COLORS_CHANGED', traitColors)
@@ -139,6 +147,7 @@ export default {
       this.$refs.settingsShareModal.show()
 
       this.localSettings = JSON.stringify({
+        cd: this.storeCanvasDensity === CANVAS_DENSITY_LOW ? 2 : (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM ? 1 : 0),
         lc: this.storeLocale,
         dm: this.storeDarkMode ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,

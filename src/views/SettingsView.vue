@@ -77,6 +77,29 @@
               <b-form-input id="displayMinCellWidth" type="range" :min=2 :max=10 v-model.number="displayMinCellWidth" />
               <small>{{ $t('formPreviewSettingsMinCellWidth', { value: displayMinCellWidth }) }}</small>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsCanvasDensity')" :description="$t('formDescriptionSettingsCanvasDensity')" label-for="canvasDensity">
+              <b-button-group class="w-100 canvas-density">
+                <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_LOW" @click="canvasDensity = CANVAS_DENSITY_LOW">
+                  <BIconstack>
+                    <BIconDashLg :rotate="90" stacked :shift-h="-6" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="0" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="6" />
+                  </BIconstack> {{ $t('buttonCanvasDensityLow') }}</b-button>
+                <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_MEDIUM" @click="canvasDensity = CANVAS_DENSITY_MEDIUM">
+                  <BIconstack>
+                    <BIconDashLg :rotate="90" stacked :shift-h="-4" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="0" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="4" />
+                  </BIconstack> {{ $t('buttonCanvasDensityMedium') }}</b-button>
+                <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_HIGH" @click="canvasDensity = CANVAS_DENSITY_HIGH">
+                  <BIconstack>
+                    <BIconDashLg :rotate="90" stacked :shift-h="-2" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="0" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="2" />
+                  </BIconstack> {{ $t('buttonCanvasDensityHigh') }}</b-button>
+              </b-button-group>
+            </b-form-group>
           </b-card>
         </b-col>
       </b-row>
@@ -89,8 +112,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise } from 'bootstrap-vue'
-import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg } from 'bootstrap-vue'
+import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 
 export default {
@@ -100,6 +123,8 @@ export default {
     BIconArrowsMove,
     BIconX,
     BIconPlus,
+    BIconstack,
+    BIconDashLg,
     BIconArrowClockwise,
     SettingsShareModal
   },
@@ -107,11 +132,15 @@ export default {
     return {
       NAVIGATION_MODE_JUMP,
       NAVIGATION_MODE_DRAG,
+      CANVAS_DENSITY_LOW,
+      CANVAS_DENSITY_MEDIUM,
+      CANVAS_DENSITY_HIGH,
       locale: null,
       darkMode: false,
       hideCitationMessage: false,
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
+      canvasDensity: CANVAS_DENSITY_LOW,
       gpsEnabled: true,
       voiceFeedbackEnabled: false,
       restrictInputToMarked: false,
@@ -130,6 +159,7 @@ export default {
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
       'storeRestrictInputToMarked',
+      'storeCanvasDensity',
       'storeNavigationMode',
       'storeTraitColors'
     ]),
@@ -173,6 +203,9 @@ export default {
     },
     traitColors: function (newValue) {
       this.$store.dispatch('setTraitColors', newValue)
+    },
+    canvasDensity: function (newValue) {
+      this.$store.dispatch('setCanvasDensity', newValue)
     }
   },
   methods: {
@@ -199,6 +232,7 @@ export default {
       this.restrictInputToMarked = this.storeRestrictInputToMarked
       this.navigationMode = this.storeNavigationMode
       this.traitColors = this.storeTraitColors
+      this.canvasDensity = this.storeCanvasDensity
     }
   },
   mounted: function () {
@@ -212,5 +246,9 @@ export default {
 .settings-form .settings-colors input[type=color] {
   display: inline-flex;
   width: revert;
+}
+
+.settings-form .canvas-density {
+  flex-wrap: wrap;
 }
 </style>

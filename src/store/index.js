@@ -1,4 +1,4 @@
-import { NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -30,6 +30,7 @@ export default new Vuex.Store({
     restrictInputToMarked: false,
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
+    canvasDensity: CANVAS_DENSITY_LOW,
     selectedTrial: null,
     mapLayer: 'theme',
     hiddenTraits: [],
@@ -60,6 +61,7 @@ export default new Vuex.Store({
     storeRestrictInputToMarked: (state) => state.restrictInputToMarked,
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
+    storeCanvasDensity: (state) => state.canvasDensity,
     storeMapLayer: (state) => state.mapLayer,
     storeSelectedTrial: (state) => state.selectedTrial,
     storeHiddenTraits: (state) => state.hiddenTraits,
@@ -134,6 +136,13 @@ export default new Vuex.Store({
         state.voiceFeedbackEnabled = newVoiceFeedbackEnabled
       } else {
         Vue.set(state, 'voiceFeedbackEnabled', newVoiceFeedbackEnabled)
+      }
+    },
+    ON_CANVAS_DENSITY_CHANGED: function (state, newCanvasDensity) {
+      if (Object.prototype.hasOwnProperty.call(state, 'canvasDensity')) {
+        state.canvasDensity = newCanvasDensity
+      } else {
+        Vue.set(state, 'canvasDensity', newCanvasDensity)
       }
     },
     ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
@@ -212,6 +221,9 @@ export default new Vuex.Store({
     },
     setGpsEnabled: function ({ commit }, gpsEnabled) {
       commit('ON_GPS_ENABLED_CHANGED', gpsEnabled)
+    },
+    setCanvasDensity: function ({ commit }, canvasDensity) {
+      commit('ON_CANVAS_DENSITY_CHANGED', canvasDensity)
     },
     setVoiceFeedbackEnabled: function ({ commit }, voiceFeedbackEnabled) {
       commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', voiceFeedbackEnabled)

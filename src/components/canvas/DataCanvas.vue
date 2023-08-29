@@ -31,6 +31,7 @@ import HScroll from '@/components/canvas/HScroll'
 import RowHeader from '@/components/canvas/RowHeader'
 import VScroll from '@/components/canvas/VScroll'
 import PlotCanvas from '@/components/canvas/PlotCanvas'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -86,7 +87,8 @@ export default {
       'storeDarkMode',
       'storeSelectedTrial',
       'storeHiddenTraits',
-      'storeDisplayMinCellWidth'
+      'storeDisplayMinCellWidth',
+      'storeCanvasDensity'
     ])
   },
   watch: {
@@ -217,6 +219,17 @@ export default {
           })
         })
       })
+    }
+  },
+  created: function () {
+    if (this.storeCanvasDensity) {
+      if (this.storeCanvasDensity === CANVAS_DENSITY_LOW) {
+        this.dimensions.padding = 16
+      } else if (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM) {
+        this.dimensions.padding = 12
+      } else if (this.storeCanvasDensity === CANVAS_DENSITY_HIGH) {
+        this.dimensions.padding = 8
+      }
     }
   },
   mounted: function () {
