@@ -71,7 +71,7 @@
               <b-col class="mb-3" cols=12 md=6 v-for="trait in traits" :key="`trait-section-${trait.id}`">
                 <h4 class="d-flex justify-content-between align-items-center">
                   <span :style="{ color: trait.color }">
-                    <BIconCircleFill />
+                    <TraitIcon :trait="trait" />
                     <span class="mx-1">{{ trait.name }}</span>
                   </span>
                 </h4>
@@ -107,8 +107,9 @@
 import TrialLayoutCorners from '@/components/TrialLayoutCorners'
 import MarkerSetup from '@/components/MarkerSetup'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
+import TraitIcon from '@/components/icons/TraitIcon'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
-import { BIconTextareaT, BIconCardText, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconCircleFill, BIconTags, BIconCheck, BIconX, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconTags, BIconCheck, BIconX, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { updateTrialProperties } from '@/plugins/idb'
 
 const emitter = require('tiny-emitter/instance')
@@ -119,14 +120,14 @@ export default {
     BIconCardText,
     BIconArrowsFullscreen,
     BIconBoundingBoxCircles,
-    BIconCircleFill,
     BIconCheck,
     BIconTags,
     BIconX,
     BIconExclamationTriangleFill,
     LayoutFeedbackModal,
     MarkerSetup,
-    TrialLayoutCorners
+    TrialLayoutCorners,
+    TraitIcon
   },
   data: function () {
     return {

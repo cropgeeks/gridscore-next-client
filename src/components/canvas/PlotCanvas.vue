@@ -733,7 +733,7 @@ export default {
             }
           }
 
-          const targetX = Math.round(extraPadding / 2 + x + this.dimensions.padding + t * (this.dimensions.circleRadius + this.dimensions.padding))
+          const targetX = Math.round(extraPadding / 2 + x + this.dimensions.padding + t * (this.dimensions.circleRadius * 2 + this.dimensions.padding / 2))
           const targetY = Math.round(y + this.dimensions.textPartHeight + r * (this.dimensions.circleRadius * 2 + this.dimensions.padding))
           this.$refs.offscreenCanvas.copyToCanvas(trait.originalIndex, fill, count, this.ctx, targetX, targetY)
           maxY = targetY

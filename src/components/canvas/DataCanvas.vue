@@ -31,7 +31,7 @@ import HScroll from '@/components/canvas/HScroll'
 import RowHeader from '@/components/canvas/RowHeader'
 import VScroll from '@/components/canvas/VScroll'
 import PlotCanvas from '@/components/canvas/PlotCanvas'
-import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -88,7 +88,8 @@ export default {
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeDisplayMinCellWidth',
-      'storeCanvasDensity'
+      'storeCanvasDensity',
+      'storeCanvasSize'
     ])
   },
   watch: {
@@ -172,7 +173,7 @@ export default {
           this.dimensions.visibleTraitCount = this.trial.traits.length
         }
 
-        this.dimensions.rowHeaderWidth = 2 * this.dimensions.padding + this.dimensions.fontSize
+        this.dimensions.rowHeaderWidth = this.dimensions.padding + (this.dimensions.fontSize * `${this.trial.layout.rows}`.length)
         this.dimensions.canvasWidth = this.$refs.canvasWrapper.offsetWidth - this.dimensions.rowHeaderWidth - this.dimensions.hScrollHeight
         this.dimensions.columnHeaderHeight = 2 * this.dimensions.padding + this.dimensions.fontSize
         this.dimensions.canvasHeight = window.innerHeight - this.dimensions.columnHeaderHeight - this.dimensions.vScrollWidth
@@ -222,13 +223,23 @@ export default {
     }
   },
   created: function () {
+    if (this.storeCanvasSize) {
+      if (this.storeCanvasSize === CANVAS_SIZE_SMALL) {
+        this.dimensions.circleRadius = 8
+      } else if (this.storeCanvasSize === CANVAS_SIZE_MEDIUM) {
+        this.dimensions.circleRadius = 10
+      } else if (this.storeCanvasSize === CANVAS_SIZE_LARGE) {
+        this.dimensions.circleRadius = 12
+      }
+    }
+
     if (this.storeCanvasDensity) {
       if (this.storeCanvasDensity === CANVAS_DENSITY_LOW) {
-        this.dimensions.padding = 16
+        this.dimensions.padding = this.dimensions.circleRadius * 2
       } else if (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM) {
-        this.dimensions.padding = 12
+        this.dimensions.padding = this.dimensions.circleRadius * 1.25
       } else if (this.storeCanvasDensity === CANVAS_DENSITY_HIGH) {
-        this.dimensions.padding = 8
+        this.dimensions.padding = this.dimensions.circleRadius * 0.5
       }
     }
   },

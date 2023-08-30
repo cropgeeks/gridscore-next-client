@@ -1,12 +1,12 @@
 <template>
   <b-dropdown :title="$t('toolbarTraitVisibility')" ref="dropdown" id="trait-dropdown">
     <template #button-content>
-      <BIconCircleHalf /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
+      <BIconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
     <b-dropdown-form>
       <b-button-group>
-        <b-button @click="toggleVisibilityAll(true)"><BIconCircleFill /> {{ $t('buttonSelectAll') }}</b-button>
-        <b-button @click="toggleVisibilityAll(false)"><BIconCircle /> {{ $t('buttonSelectNone') }}</b-button>
+        <b-button @click="toggleVisibilityAll(true)"><BIconSquareFill v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircleFill v-else /> {{ $t('buttonSelectAll') }}</b-button>
+        <b-button @click="toggleVisibilityAll(false)"><BIconSquare v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircle v-else /> {{ $t('buttonSelectNone') }}</b-button>
       </b-button-group>
     </b-dropdown-form>
     <div class="trait-dropdown-list">
@@ -18,7 +18,7 @@
                                 class="position-relative"
                                 :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
                                 @click.native.capture.stop="toggleTraitVisibility(trait)">
-          <span :style="{ color: trait.visible ? trait.color : 'lightgray' }"><BIconCircleFill /> {{ trait.name }}</span>
+          <span :style="{ color: trait.visible ? trait.color : 'lightgray' }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
 
           <b-progress class="trait-progress position-absolute" height="3px">
             <b-progress-bar :value="trait.progress" :style="{ backgroundColor: trait.visible ? trait.color : 'lightgray' }"/>
@@ -31,7 +31,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCircleHalf, BIconCircleFill, BIconCircle, BProgress, BProgressBar } from 'bootstrap-vue'
+import { BIconCircleHalf, BIconSquareHalf, BIconCircleFill, BIconSquare, BIconSquareFill, BIconCircle, BProgress, BProgressBar } from 'bootstrap-vue'
+import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
+import TraitIcon from '@/components/icons/TraitIcon'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -40,8 +42,12 @@ export default {
     BIconCircleHalf,
     BIconCircleFill,
     BIconCircle,
+    BIconSquareFill,
+    BIconSquare,
+    BIconSquareHalf,
     BProgress,
-    BProgressBar
+    BProgressBar,
+    TraitIcon
   },
   props: {
     traits: {
@@ -49,9 +55,15 @@ export default {
       default: () => []
     }
   },
+  data: function () {
+    return {
+      CANVAS_SHAPE_SQUARE
+    }
+  },
   computed: {
     ...mapGetters([
-      'storeHiddenTraits'
+      'storeHiddenTraits',
+      'storeCanvasShape'
     ]),
     traitsByGroup: function () {
       if (this.traits) {
@@ -63,6 +75,7 @@ export default {
             id: t.id,
             name: t.name,
             color: t.color,
+            allowRepeats: t.allowRepeats,
             progress: t.progress,
             visible: !this.storeHiddenTraits.includes(t.id)
           }

@@ -14,7 +14,7 @@
       <div v-if="selectedFeature.measurements">
         <section v-for="(trait, traitId) in traitMap" :key="`trait-section-${traitId}`" class="mt-3">
           <h5 class="mb-1 mr-3">
-            <span :style="{ color: trait.color }"><BIconCircleFill /> {{ trait.name }}</span>
+            <span :style="{ color: trait.color }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
           </h5>
           <b-list-group class="map-measurement-list" v-if="selectedFeature.measurements[traitId] && selectedFeature.measurements[traitId].length > 0">
             <b-list-group-item class="flex-column align-items-start" v-for="(measure, index) in selectedFeature.measurements[traitId]" :key="`selected-measure-${traitId}-${index}`">
@@ -39,9 +39,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import { plotInfoToGeoJson } from '@/plugins/location'
-import { BIconCalendar3, BIconCircleFill } from 'bootstrap-vue'
+import { BIconCalendar3 } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
+import TraitIcon from '@/components/icons/TraitIcon'
 
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -62,7 +63,7 @@ L.Icon.Default.mergeOptions({
 export default {
   components: {
     BIconCalendar3,
-    BIconCircleFill
+    TraitIcon
   },
   computed: {
     ...mapGetters([

@@ -78,13 +78,36 @@
               <small>{{ $t('formPreviewSettingsMinCellWidth', { value: displayMinCellWidth }) }}</small>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsCanvasShape')" :description="$t('formDescriptionSettingsCanvasShape')" label-for="canvasShape">
+              <b-button-group class="w-100 canvas-shape">
+                <b-button variant="outline-secondary" :pressed="canvasShape === CANVAS_SHAPE_CIRCLE" @click="canvasShape = CANVAS_SHAPE_CIRCLE">
+                  <BIconCircleFill /> {{ $t('buttonCanvasShapeCircle') }}</b-button>
+                <b-button variant="outline-secondary" :pressed="canvasShape === CANVAS_SHAPE_SQUARE" @click="canvasShape = CANVAS_SHAPE_SQUARE">
+                  <BIconSquareFill /> {{ $t('buttonCanvasShapeSquare') }}</b-button>
+              </b-button-group>
+            </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsCanvasSize')" :description="$t('formDescriptionSettingsCanvasSize')" label-for="canvasSize">
+              <b-button-group class="w-100 canvas-size">
+                <b-button class="d-flex justify-content-center align-items-center" variant="outline-secondary" :pressed="canvasSize === CANVAS_SIZE_SMALL" @click="canvasSize = CANVAS_SIZE_SMALL">
+                  <BIconSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" :font-scale="0.6" />
+                  <BIconCircleFill v-else :font-scale="0.6" /> <span class="ml-1">{{ $t('buttonCanvasSizeSmall') }}</span></b-button>
+                <b-button class="d-flex justify-content-center align-items-center" variant="outline-secondary" :pressed="canvasSize === CANVAS_SIZE_MEDIUM" @click="canvasSize = CANVAS_SIZE_MEDIUM">
+                  <BIconSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" :font-scale="0.8" />
+                  <BIconCircleFill v-else :font-scale="0.8" /> <span class="ml-1">{{ $t('buttonCanvasSizeMedium') }}</span></b-button>
+                <b-button class="d-flex justify-content-center align-items-center" variant="outline-secondary" :pressed="canvasSize === CANVAS_SIZE_LARGE" @click="canvasSize = CANVAS_SIZE_LARGE">
+                  <BIconSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" :font-scale="1.0" />
+                  <BIconCircleFill v-else :font-scale="1.0" /> <span class="ml-1">{{ $t('buttonCanvasSizeLarge') }}</span></b-button>
+              </b-button-group>
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsCanvasDensity')" :description="$t('formDescriptionSettingsCanvasDensity')" label-for="canvasDensity">
               <b-button-group class="w-100 canvas-density">
                 <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_LOW" @click="canvasDensity = CANVAS_DENSITY_LOW">
                   <BIconstack>
-                    <BIconDashLg :rotate="90" stacked :shift-h="-6" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="-5" />
                     <BIconDashLg :rotate="90" stacked :shift-h="0" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="6" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="5" />
                   </BIconstack> {{ $t('buttonCanvasDensityLow') }}</b-button>
                 <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_MEDIUM" @click="canvasDensity = CANVAS_DENSITY_MEDIUM">
                   <BIconstack>
@@ -94,9 +117,9 @@
                   </BIconstack> {{ $t('buttonCanvasDensityMedium') }}</b-button>
                 <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_HIGH" @click="canvasDensity = CANVAS_DENSITY_HIGH">
                   <BIconstack>
-                    <BIconDashLg :rotate="90" stacked :shift-h="-2" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="-3" />
                     <BIconDashLg :rotate="90" stacked :shift-h="0" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="2" />
+                    <BIconDashLg :rotate="90" stacked :shift-h="3" />
                   </BIconstack> {{ $t('buttonCanvasDensityHigh') }}</b-button>
               </b-button-group>
             </b-form-group>
@@ -112,8 +135,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg } from 'bootstrap-vue'
-import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH } from '@/plugins/constants'
+import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg, BIconCircleFill, BIconSquareFill } from 'bootstrap-vue'
+import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 
 export default {
@@ -126,6 +149,8 @@ export default {
     BIconstack,
     BIconDashLg,
     BIconArrowClockwise,
+    BIconCircleFill,
+    BIconSquareFill,
     SettingsShareModal
   },
   data: function () {
@@ -135,12 +160,19 @@ export default {
       CANVAS_DENSITY_LOW,
       CANVAS_DENSITY_MEDIUM,
       CANVAS_DENSITY_HIGH,
+      CANVAS_SHAPE_CIRCLE,
+      CANVAS_SHAPE_SQUARE,
+      CANVAS_SIZE_SMALL,
+      CANVAS_SIZE_MEDIUM,
+      CANVAS_SIZE_LARGE,
       locale: null,
       darkMode: false,
       hideCitationMessage: false,
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
       canvasDensity: CANVAS_DENSITY_LOW,
+      canvasShape: CANVAS_SHAPE_CIRCLE,
+      canvasSize: CANVAS_SIZE_SMALL,
       gpsEnabled: true,
       voiceFeedbackEnabled: false,
       restrictInputToMarked: false,
@@ -160,6 +192,8 @@ export default {
       'storeVoiceFeedbackEnabled',
       'storeRestrictInputToMarked',
       'storeCanvasDensity',
+      'storeCanvasShape',
+      'storeCanvasSize',
       'storeNavigationMode',
       'storeTraitColors'
     ]),
@@ -206,6 +240,12 @@ export default {
     },
     canvasDensity: function (newValue) {
       this.$store.dispatch('setCanvasDensity', newValue)
+    },
+    canvasShape: function (newValue) {
+      this.$store.dispatch('setCanvasShape', newValue)
+    },
+    canvasSize: function (newValue) {
+      this.$store.dispatch('setCanvasSize', newValue)
     }
   },
   methods: {
@@ -233,6 +273,8 @@ export default {
       this.navigationMode = this.storeNavigationMode
       this.traitColors = this.storeTraitColors
       this.canvasDensity = this.storeCanvasDensity
+      this.canvasShape = this.storeCanvasShape
+      this.canvasSize = this.storeCanvasSize
     }
   },
   mounted: function () {
@@ -248,7 +290,9 @@ export default {
   width: revert;
 }
 
-.settings-form .canvas-density {
+.settings-form .canvas-density,
+.settings-form .canvas-shape,
+.settings-form .canvas-size {
   flex-wrap: wrap;
 }
 </style>

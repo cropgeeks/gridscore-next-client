@@ -37,7 +37,7 @@ import { mapGetters } from 'vuex'
 
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { BIconBoxArrowInUpRight, BIconBoxArrowDownRight } from 'bootstrap-vue'
-import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 
 import StyledQRCode from '@/components/StyledQRCode'
 import BarcodeScanner from '@/components/BarcodeScanner'
@@ -64,6 +64,8 @@ export default {
       'storeHideCitationMessage',
       'storeDisplayMarkerIndicators',
       'storeCanvasDensity',
+      'storeCanvasShape',
+      'storeCanvasSize',
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
@@ -126,6 +128,18 @@ export default {
         } else if (parsed.cd === 2) {
           this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_LOW)
         }
+        if (parsed.cs === 0) {
+          this.$store.commit('ON_CANVAS_SHAPE_CHANGED', CANVAS_SHAPE_CIRCLE)
+        } else if (parsed.cs === 1) {
+          this.$store.commit('ON_CANVAS_SHAPE_CHANGED', CANVAS_SHAPE_SQUARE)
+        }
+        if (parsed.sz === 0) {
+          this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_SMALL)
+        } else if (parsed.sz === 1) {
+          this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_MEDIUM)
+        } else if (parsed.sz === 2) {
+          this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_LARGE)
+        }
         if (parsed.tc) {
           const traitColors = parsed.tc.split(',').map(c => `#${c}`)
           this.$store.commit('ON_TRAIT_COLORS_CHANGED', traitColors)
@@ -147,7 +161,9 @@ export default {
       this.$refs.settingsShareModal.show()
 
       this.localSettings = JSON.stringify({
-        cd: this.storeCanvasDensity === CANVAS_DENSITY_LOW ? 2 : (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM ? 1 : 0),
+        cd: this.storeCanvasDensity === CANVAS_DENSITY_HIGH ? 0 : (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM ? 1 : 2),
+        sz: this.storeCanvasSize === CANVAS_SIZE_LARGE ? 2 : (this.storeCanvasSize === CANVAS_SIZE_MEDIUM ? 1 : 0),
+        cs: this.storeCanvasShape === CANVAS_SHAPE_SQUARE ? 1 : 0,
         lc: this.storeLocale,
         dm: this.storeDarkMode ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,

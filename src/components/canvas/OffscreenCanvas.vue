@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 
 const canvas = document.createElement('canvas')
@@ -11,7 +12,8 @@ let ctx = canvas.getContext('2d', { alpha: false })
 export default {
   computed: {
     ...mapGetters([
-      'storeDarkMode'
+      'storeDarkMode',
+      'storeCanvasShape'
     ]),
     fillStyleWhite: function () {
       return this.storeDarkMode ? '#000000' : '#ffffff'
@@ -110,25 +112,48 @@ export default {
         ctx.fillRect(0, y, this.circleCount * this.circleRadius * 2 + this.circleCount + 1, this.circleRadius * 6 + 2)
         // Draw trait circles
         this.traits.forEach((t, i) => {
-          // Filled circle
-          ctx.fillStyle = t.color
-          ctx.beginPath()
-          ctx.arc(1 + this.circleRadius + i * (this.circleRadius * 2 + 1), 1 + y + this.circleRadius, this.circleRadius, 0, 2 * Math.PI)
-          ctx.fill()
+          if (this.storeCanvasShape === CANVAS_SHAPE_SQUARE) {
+            ctx.lineWidth = 2
+            const x = i * (this.circleRadius * 2 + 1) + 1
 
-          // Outlined circle (-0.5px radius so it's the same size as the filled circle)
-          ctx.strokeStyle = t.color
-          ctx.beginPath()
-          ctx.arc(1 + this.circleRadius + i * (this.circleRadius * 2 + 1), 1 + y + this.circleRadius * 3, this.circleRadius - 0.5, 0, 2 * Math.PI)
-          ctx.stroke()
+            // Filled square
+            ctx.fillStyle = t.color
+            ctx.fillRect(x, y, this.circleRadius * 2 + 1, this.circleRadius * 2 + 1)
 
-          // Semi circle for multi traits
-          ctx.beginPath()
-          ctx.arc(1 + this.circleRadius + i * (this.circleRadius * 2 + 1), 1 + y + this.circleRadius * 5, this.circleRadius - 0.5, 0, 2 * Math.PI)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.arc(1 + this.circleRadius + i * (this.circleRadius * 2 + 1), 1 + y + this.circleRadius * 5, this.circleRadius, (Math.PI / 180) * 90, (Math.PI / 180) * 270)
-          ctx.fill()
+            // Outlined square
+            ctx.strokeStyle = t.color
+            ctx.strokeRect(x + 0.5, y + (this.circleRadius * 2) + 1.5, this.circleRadius * 2 - 1, this.circleRadius * 2 - 1)
+
+            // Semi square for multi traits
+            ctx.strokeRect(x + 0.5, y + (this.circleRadius * 4) + 1.5, this.circleRadius * 2 - 1, this.circleRadius * 2 - 1)
+            ctx.beginPath()
+            ctx.moveTo(x + this.circleRadius * 2, y + (this.circleRadius * 4) + 1)
+            ctx.lineTo(x, y + (this.circleRadius * 4) + 1)
+            ctx.lineTo(x, y + (this.circleRadius * 4) + 1 + this.circleRadius * 2)
+            ctx.fill()
+          } else {
+            ctx.lineWidth = 1
+            const x = i * (this.circleRadius * 2 + 1) + 1 + this.circleRadius
+            // Filled circle
+            ctx.fillStyle = t.color
+            ctx.beginPath()
+            ctx.arc(x, 1 + y + this.circleRadius, this.circleRadius, 0, 2 * Math.PI)
+            ctx.fill()
+
+            // Outlined circle (-0.5px radius so it's the same size as the filled circle)
+            ctx.strokeStyle = t.color
+            ctx.beginPath()
+            ctx.arc(x, 1 + y + this.circleRadius * 3, this.circleRadius - 0.5, 0, 2 * Math.PI)
+            ctx.stroke()
+
+            // Semi circle for multi traits
+            ctx.beginPath()
+            ctx.arc(x, 1 + y + this.circleRadius * 5, this.circleRadius - 0.5, 0, 2 * Math.PI)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.arc(x, 1 + y + this.circleRadius * 5, this.circleRadius, (Math.PI / 180) * 90, (Math.PI / 180) * 270)
+            ctx.fill()
+          }
         })
 
         // Draw the disabled circles

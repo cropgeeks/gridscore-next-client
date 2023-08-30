@@ -27,7 +27,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import { BIconCardChecklist, BIconCircleFill, BIconCardList, BIconHr, BIconPlusSquareFill } from 'bootstrap-vue'
+import { BIconCardChecklist, BIconCardList, BIconHr, BIconPlusSquareFill } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { toLocalDateString } from '@/plugins/misc'
 
@@ -42,7 +42,6 @@ Plotly.register([
 
 export default {
   components: {
-    BIconCircleFill,
     BIconPlusSquareFill
   },
   props: {

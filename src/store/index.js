@@ -1,4 +1,4 @@
-import { CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { CANVAS_DENSITY_LOW, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_SMALL, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -31,6 +31,8 @@ export default new Vuex.Store({
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     canvasDensity: CANVAS_DENSITY_LOW,
+    canvasShape: CANVAS_SHAPE_CIRCLE,
+    canvasSize: CANVAS_SIZE_SMALL,
     selectedTrial: null,
     mapLayer: 'theme',
     hiddenTraits: [],
@@ -62,6 +64,8 @@ export default new Vuex.Store({
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
     storeCanvasDensity: (state) => state.canvasDensity,
+    storeCanvasShape: (state) => state.canvasShape,
+    storeCanvasSize: (state) => state.canvasSize,
     storeMapLayer: (state) => state.mapLayer,
     storeSelectedTrial: (state) => state.selectedTrial,
     storeHiddenTraits: (state) => state.hiddenTraits,
@@ -145,6 +149,20 @@ export default new Vuex.Store({
         Vue.set(state, 'canvasDensity', newCanvasDensity)
       }
     },
+    ON_CANVAS_SHAPE_CHANGED: function (state, newCanvasShape) {
+      if (Object.prototype.hasOwnProperty.call(state, 'canvasShape')) {
+        state.canvasShape = newCanvasShape
+      } else {
+        Vue.set(state, 'canvasShape', newCanvasShape)
+      }
+    },
+    ON_CANVAS_SIZE_CHANGED: function (state, newCanvasSize) {
+      if (Object.prototype.hasOwnProperty.call(state, 'canvasSize')) {
+        state.canvasSize = newCanvasSize
+      } else {
+        Vue.set(state, 'canvasSize', newCanvasSize)
+      }
+    },
     ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
       state.restrictInputToMarked = newRestrictInputToMarked
     },
@@ -224,6 +242,12 @@ export default new Vuex.Store({
     },
     setCanvasDensity: function ({ commit }, canvasDensity) {
       commit('ON_CANVAS_DENSITY_CHANGED', canvasDensity)
+    },
+    setCanvasShape: function ({ commit }, canvasShape) {
+      commit('ON_CANVAS_SHAPE_CHANGED', canvasShape)
+    },
+    setCanvasSize: function ({ commit }, canvasSize) {
+      commit('ON_CANVAS_SIZE_CHANGED', canvasSize)
     },
     setVoiceFeedbackEnabled: function ({ commit }, voiceFeedbackEnabled) {
       commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', voiceFeedbackEnabled)

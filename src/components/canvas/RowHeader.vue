@@ -95,12 +95,12 @@ export default {
         this.ctx.fillStyle = this.fillStyleWhite
       }
 
-      const x = 0
+      const x = this.dimensions.rowHeaderWidth / 2
       const y = this.y + this.dimensions.cellHeight * row
 
-      this.ctx.fillRect(x, y, this.dimensions.rowHeaderWidth, this.dimensions.cellHeight)
+      this.ctx.fillRect(0, y, this.dimensions.rowHeaderWidth, this.dimensions.cellHeight)
       this.ctx.fillStyle = this.fillStyleText
-      this.ctx.fillText(this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - row) : (row + 1), x + this.dimensions.padding, y + this.dimensions.cellHeight / 2)
+      this.ctx.fillText(this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - row) : (row + 1), x, y + this.dimensions.cellHeight / 2)
     },
     reset: function () {
       if (this.resizeRunning) {

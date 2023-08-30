@@ -5,7 +5,7 @@
     <h4 class="d-flex justify-content-between align-items-center">
       <span class="d-flex align-items-center flex-wrap">
         <span :style="{ color: trait.color }" class="trait-name">
-          <BIconCircleFill />
+          <TraitIcon :trait="trait" />
           <span class="mx-1">{{ trait.name }}</span>
         </span>
         <span>
@@ -50,21 +50,25 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
+import TraitIcon from '@/components/icons/TraitIcon'
 import TraitInput from '@/components/TraitInput'
 import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal'
 
 import { getTraitTypeText } from '@/plugins/misc'
-import { BIconCircleFill, BIconCameraFill, BIconArrowRepeat, BIconClockHistory, BIconSegmentedNav, BIconX, BIconstack } from 'bootstrap-vue'
+import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
+import { BIconCameraFill, BIconArrowRepeat, BIconClockHistory, BIconSegmentedNav, BIconX, BIconstack } from 'bootstrap-vue'
 
 export default {
   components: {
     BIconstack,
     BIconClockHistory,
-    BIconCircleFill,
     BIconCameraFill,
     BIconArrowRepeat,
     BIconX,
     BIconSegmentedNav,
+    TraitIcon,
     TraitInput,
     TraitDataHistoryModal
   },
@@ -88,11 +92,15 @@ export default {
   },
   data: function () {
     return {
+      CANVAS_SHAPE_SQUARE,
       values: [],
       cellTraitMeasurements: null
     }
   },
   computed: {
+    ...mapGetters([
+      'storeCanvasShape'
+    ]),
     hasHistoricData: function () {
       // Check if there's at least one measurement for the trait id
       return this.cell && this.trait && this.cell.measurements && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0
