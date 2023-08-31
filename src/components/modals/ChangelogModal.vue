@@ -77,10 +77,14 @@ export default {
       }
     },
     totalCount: function () {
-      if (this.changelog) {
-        return this.changelog.length
+      if (this.prevVersion) {
+        return 1
       } else {
-        return 0
+        if (this.changelog) {
+          return this.changelog.length
+        } else {
+          return 0
+        }
       }
     },
     changelog: function () {

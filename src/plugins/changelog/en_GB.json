@@ -203,5 +203,26 @@
         "text": "Previously, due to the way the old GridScore stored dates, there were timezone issues when displaying and exporting data. These have been resolved in this version as we're now storing UTC timestamps."
       }
     ]
+  },
+  {
+    "version": "2.1.0",
+    "date": "2023-08-31",
+    "items": [
+      {
+        "type": "new",
+        "title": "Data display configuration",
+        "text": "We have added options to configure the main data display. These include changing the circles to squares, adjusting the size of the data points as well as their density to allow for more compact or relaxed displays."
+      },
+      {
+        "type": "update",
+        "title": "Image tagging iOS",
+        "text": "We have added a notification banner on iOS devices to the image tagging as iOS handles the download of images differently to any other OS. An additional step may be required to actually save the images."
+      },
+      {
+        "type": "bugfix",
+        "title": "Viewer code issues",
+        "text": "There was an issue with trial viewer permissions where a viewer wasn't able to load remote changes to a trial. This has been resolved."
+      }
+    ]
   }
 ]

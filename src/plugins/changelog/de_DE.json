@@ -203,5 +203,26 @@
         "text": "Bisher konnte es vorkommen, dass Zeitzonen-Probleme beim Darstellen oder Exportieren von Daten auftraten. Dies lag an der Art und Weise in der Daten gespeichert wurden und ist jetzt behoben dadurch, dass GridScore UTC-Zeitpunkte speichert."
       }
     ]
+  },
+  {
+    "version": "2.1.0",
+    "date": "2023-08-31",
+    "items": [
+      {
+        "type": "new",
+        "title": "Datendarstellungs-Konfiguration",
+        "text": "Wir haben Konfigurationsoptionen für die Haupt-Datenanzeige hinzugefügt. Diese beinhalten andere Symbole für Datenpunkte, Anpassung der Größe und Dichte welche es erlauben eine kompaktere oder gelockerte Darstellung zu wählen."
+      },
+      {
+        "type": "update",
+        "title": "Bildertagging auf iOS",
+        "text": "Wir haben ein Banner hinzugefügt welches auf iOS Geräten darauf hinweist, dass ein zusätzlicher Schritt beim Speichern von Bildern nötig sein kann, da iOS den Download von Bildern anders handhabt als andere Betriebssysteme."
+      },
+      {
+        "type": "bugfix",
+        "title": "Betrachtercode Probleme",
+        "text": "Es gab Probleme mit Betrachterberechtigungen wo es Betrachtern nicht möglich war Änderungen vom Server zu laden. Dies wurde behoben."
+      }
+    ]
   }
 ]
