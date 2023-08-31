@@ -1,7 +1,7 @@
 <template>
   <b-dropdown :title="$t('toolbarTraitVisibility')" ref="dropdown" id="trait-dropdown">
     <template #button-content>
-      <BIconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
+      <IconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
     <b-dropdown-form>
       <b-button-group>
@@ -31,9 +31,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCircleHalf, BIconSquareHalf, BIconCircleFill, BIconSquare, BIconSquareFill, BIconCircle, BProgress, BProgressBar } from 'bootstrap-vue'
+import { BIconCircleHalf, BIconCircleFill, BIconSquare, BIconSquareFill, BIconCircle, BProgress, BProgressBar } from 'bootstrap-vue'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
 import TraitIcon from '@/components/icons/TraitIcon'
+import IconSquareHalf from '@/components/icons/IconSquareHalf'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -44,7 +45,7 @@ export default {
     BIconCircle,
     BIconSquareFill,
     BIconSquare,
-    BIconSquareHalf,
+    IconSquareHalf,
     BProgress,
     BProgressBar,
     TraitIcon

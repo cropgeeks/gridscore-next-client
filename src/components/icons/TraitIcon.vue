@@ -1,7 +1,7 @@
 <template>
   <span v-if="trait">
     <template v-if="trait.allowRepeats">
-      <BIconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" />
+      <IconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" />
       <BIconCircleHalf v-else />
     </template>
     <template v-else>
@@ -14,14 +14,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
-import { BIconSquareFill, BIconSquareHalf, BIconCircleFill, BIconCircleHalf } from 'bootstrap-vue'
+import { BIconSquareFill, BIconCircleFill, BIconCircleHalf } from 'bootstrap-vue'
+import IconSquareHalf from '@/components/icons/IconSquareHalf'
 
 export default {
   components: {
     BIconSquareFill,
-    BIconSquareHalf,
     BIconCircleFill,
-    BIconCircleHalf
+    BIconCircleHalf,
+    IconSquareHalf
   },
   data: function () {
     return {
