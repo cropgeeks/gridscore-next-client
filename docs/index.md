@@ -56,3 +56,11 @@ There are a few sub-pages that contain specific information about how GridScore 
 ## GridScore NEXT website
 
 GridScore NEXT is available at [https://gridscore.hutton.ac.uk](https://gridscore.hutton.ac.uk)
+
+## About
+
+GridScore is developed and maintained by the [James Hutton Institute](https://www.hutton.ac.uk)
+
+<img src="img/hutton-black.svg" height="100" alt="Logo">
+<br />
+<img src="img/ics-sdg-black.svg" height="100" alt="Logo">

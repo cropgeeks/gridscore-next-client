@@ -25,3 +25,11 @@ GridScore NEXT is available at https://gridscore.hutton.ac.uk
 ## GridScore NEXT documentation
 
 Documentation about the use of GridScore NEXT is available at https://cropgeeks.github.io/gridscore-next-client
+
+## About
+
+GridScore is developed and maintained by the [James Hutton Institute](https://www.hutton.ac.uk)
+
+<img src="docs/img/hutton-black.svg" height="100" alt="Logo">
+<br />
+<img src="docs/img/ics-sdg-black.svg" height="100" alt="Logo">
