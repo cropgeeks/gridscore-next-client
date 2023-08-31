@@ -59,7 +59,7 @@ GridScore NEXT is available at [https://gridscore.hutton.ac.uk](https://gridscor
 
 ## About
 
-GridScore is developed and maintained by the [James Hutton Institute](https://www.hutton.ac.uk)
+GridScore is developed and maintained by the [James Hutton Institute](https://www.hutton.ac.uk) and [International Barley Hub](https://barleyhub.org)
 
 <img src="img/hutton-black.svg" height="100" alt="Logo">
 <br />
