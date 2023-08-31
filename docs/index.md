@@ -64,3 +64,5 @@ GridScore is developed and maintained by the [James Hutton Institute](https://ww
 <img src="img/hutton-black.svg" height="100" alt="Logo">
 <br />
 <img src="img/ics-sdg-black.svg" height="100" alt="Logo">
+<br/>
+<img src="img/ibh.svg" height="100" alt="IBH Logo">
