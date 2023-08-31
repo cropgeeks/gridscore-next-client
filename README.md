@@ -28,8 +28,8 @@ Documentation about the use of GridScore NEXT is available at https://cropgeeks.
 
 ## About
 
-GridScore is developed and maintained by the [James Hutton Institute](https://www.hutton.ac.uk)
+GridScore is developed and maintained by the [James Hutton Institute](https://www.hutton.ac.uk) and [International Barley Hub](https://barleyhub.org)
 
-<img src="docs/img/hutton-black.svg" height="100" alt="Logo">
-<br />
+<img src="docs/img/hutton-black.svg" height="100" alt="Logo"> <img src="docs/img/ibh.svg" height="100" alt="IBH Logo">
+<br/>
 <img src="docs/img/ics-sdg-black.svg" height="100" alt="Logo">
