@@ -4,6 +4,11 @@
     <canvas id="user-position-canvas" class="position-absolute" ref="userCanvas" :width="dimensions.scaledCanvasWidth" :height="dimensions.scaledCanvasHeight" />
 
     <OffscreenCanvas :circleRadius="dimensions.circleRadius" :traits="trial.traits" ref="offscreenCanvas" />
+
+    <b-toast id="marking-restriction-toast" variant="warning" :title="$t('toastDataInputRestrictedTitle')" :auto-hide-delay="5000" v-if="storeRestrictInputToMarked">
+      <p>{{ $t('toastDataInputRestrictedText') }}</p>
+      <b-button @click="disableMarkingRestriction" variant="outline-warning">{{ $t('buttonDisable') }}</b-button>
+    </b-toast>
   </div>
 </template>
 
@@ -51,6 +56,7 @@ export default {
   },
   data: function () {
     return {
+      followGps: true,
       isDrawing: false,
       drag: {
         active: false,
@@ -228,6 +234,9 @@ export default {
     }
   },
   methods: {
+    disableMarkingRestriction: function () {
+      this.$store.dispatch('setRestrictInputToMarked', false)
+    },
     onColumnMarked: function (col) {
       const minRow = Math.max(0, Math.floor(Math.abs(this.origin.y) / this.dimensions.cellHeight))
       const maxRow = Math.min(minRow + Math.ceil(this.dimensions.canvasHeight / this.dimensions.cellHeight) + 1, this.trial.layout.rows)
@@ -422,12 +431,7 @@ export default {
 
             if (anyMarked) {
               if (!this.markedColumns[column] && !this.markedRows[row]) {
-                this.$bvToast.toast(this.$t('toastDataInputRestrictedText'), {
-                  title: this.$t('toastDataInputRestrictedTitle'),
-                  variant: 'warning',
-                  autoHideDelay: 5000,
-                  appendToast: false
-                })
+                this.$bvToast.show('marking-restriction-toast')
                 return
               }
             }
@@ -651,6 +655,10 @@ export default {
         }
         this.uctx.drawImage(userPositionImg, -8, -8)
         this.uctx.restore()
+
+        if (this.followGps) {
+          this.scrollTo(this.userPosition.euclideanX, this.userPosition.euclideanY)
+        }
       }
     },
     updateCellCache: function (row, column, trialId, cell) {

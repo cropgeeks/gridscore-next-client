@@ -1,57 +1,69 @@
 <template>
   <div v-if="trials && trials.length > 0">
-    <h2>{{ $t('widgetTrialSelectorTitle') }}</h2>
+    <h2 class="d-flex justify-content-between">
+      <span>{{ $t('widgetTrialSelectorTitle') }}</span>
+      <b-button-group>
+        <b-button size="sm" :pressed="trialListMode === TRIAL_LIST_ALL" @click="trialListMode = TRIAL_LIST_ALL"><BIconListTask /></b-button>
+        <b-button size="sm" :pressed="trialListMode === TRIAL_LIST_TABBED" @click="trialListMode = TRIAL_LIST_TABBED"><BIconSegmentedNav /></b-button>
+      </b-button-group>
+    </h2>
     <p>{{ $t('widgetTrialSelectorText') }}</p>
 
     <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
       <b-input v-model="searchTerm" trim id="search-term" type="search" />
     </b-form-group>
 
-    <b-row v-if="sortedTrials && sortedTrials.length > 0">
-      <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in sortedTrials" :key="`trial-selector-${trial.localId}`"  class="mb-3">
-        <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null">
-          <a href="#" @click.prevent="synchronize(trial)" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
-            <template v-if="trial.transactionCount > 0">
-              <div class="card-corner card-corner-local" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
-              <BIconCloudUploadFill class="card-corner-icon" />
-            </template>
-            <template v-else-if="trial.hasRemoteUpdate">
-              <div class="card-corner card-corner-remote" v-b-tooltip="$t('tooltipTrialHasRemoteUpdate')" />
-              <BIconCloudDownloadFill class="card-corner-icon" />
-            </template>
-          </a>
-          <TrialInformation :trial="trial" />
-          <b-button @click="handleTrialExpiration(trial)" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
-            <BIconstack>
-              <BIconCalendar stacked />
-              <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
-            </BIconstack> {{ $t('widgetTrialSelectorTrialExpiryWarning') }}
-          </b-button>
-          <b-card-footer class="d-flex justify-content-between">
-            <b-button @click="loadTrial(trial)" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
-            <b-dropdown right>
-              <template #button-content>
-                <BIconGear />
-              </template>
-              <b-dropdown-item @click="showShareCodes(trial)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5ZM4 4h1v1H4V4Z"/><path d="M7 2H2v5h5V2ZM3 3h3v3H3V3Zm2 8H4v1h1v-1Z"/><path d="M7 9H2v5h5V9Zm-4 1h3v3H3v-3Zm8-6h1v1h-1V4Z"/><path d="M9 2h5v5H9V2Zm1 1v3h3V3h-3ZM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8H8Zm2 2H9V9h1v1Zm4 2h-1v1h-2v1h3v-2Zm-4 2v-1H8v1h2Z"/><path d="M12 9h2V8h-2v1Z"/></svg> {{ $t('buttonShare') }}</b-dropdown-item>
-              <b-dropdown-item @click="synchronize(trial)" v-if="trial.editable && trial.transactionCount > 0"><BIconstack :font-scale="1">
-                <BIconCloud stacked />
-                <BIconArrowDownUp stacked :scale="0.4" />
-              </BIconstack> {{ $t('buttonSynchronize') }}</b-dropdown-item>
-              <b-dropdown-item @click="duplicateTrial(trial)"><BIconJournals /> {{ $t('buttonDuplicateTrial') }}</b-dropdown-item>
-              <b-dropdown-divider v-if="trial.editable" />
-              <b-dropdown-item @click="showTrialEdit(trial)" v-if="trial.editable && (trial.shareStatus === TRIAL_STATE_NOT_SHARED || trial.shareStatus === TRIAL_STATE_OWNER)"><BIconPencilSquare /> {{  $t('buttonEditTrial') }}</b-dropdown-item>
-              <b-dropdown-item @click="addTrait(trial)" v-if="trial.editable"><BIconTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
-              <b-dropdown-item @click="addGermplasm(trial)" v-if="trial.editable && trial.layout.columns === 1"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
-              <b-dropdown-item @click="importData(trial)" v-if="trial.editable"><BIconFileEarmarkArrowUp /> {{ $t('buttonUploadData') }}</b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item variant="danger" @click="deleteTrial(trial)"><BIconTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
-            </b-dropdown>
-          </b-card-footer>
-        </b-card>
-      </b-col>
-    </b-row>
-    <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
+    <b-card no-body>
+      <b-tabs card v-model="tabIndex">
+        <b-tab :title="group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: (trials || []).length }) : `${group} (${(trials || []).length})`" v-for="(trials, group) in sortedTrials" :key="`tab-${group}`">
+          <b-row v-if="trials && trials.length > 0">
+            <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
+              <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null">
+                <a href="#" @click.prevent="synchronize(trial)" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
+                  <template v-if="trial.transactionCount > 0">
+                    <div class="card-corner card-corner-local" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
+                    <BIconCloudUploadFill class="card-corner-icon" />
+                  </template>
+                  <template v-else-if="trial.hasRemoteUpdate">
+                    <div class="card-corner card-corner-remote" v-b-tooltip="$t('tooltipTrialHasRemoteUpdate')" />
+                    <BIconCloudDownloadFill class="card-corner-icon" />
+                  </template>
+                </a>
+                <TrialInformation :trial="trial" />
+                <b-button @click="handleTrialExpiration(trial)" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
+                  <BIconstack>
+                    <BIconCalendar stacked />
+                    <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
+                  </BIconstack> {{ $t('widgetTrialSelectorTrialExpiryWarning') }}
+                </b-button>
+                <b-card-footer class="d-flex justify-content-between">
+                  <b-button @click="loadTrial(trial)" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
+                  <b-dropdown right>
+                    <template #button-content>
+                      <BIconGear />
+                    </template>
+                    <b-dropdown-item @click="showShareCodes(trial)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5ZM4 4h1v1H4V4Z"/><path d="M7 2H2v5h5V2ZM3 3h3v3H3V3Zm2 8H4v1h1v-1Z"/><path d="M7 9H2v5h5V9Zm-4 1h3v3H3v-3Zm8-6h1v1h-1V4Z"/><path d="M9 2h5v5H9V2Zm1 1v3h3V3h-3ZM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8H8Zm2 2H9V9h1v1Zm4 2h-1v1h-2v1h3v-2Zm-4 2v-1H8v1h2Z"/><path d="M12 9h2V8h-2v1Z"/></svg> {{ $t('buttonShare') }}</b-dropdown-item>
+                    <b-dropdown-item @click="synchronize(trial)" v-if="trial.editable && trial.transactionCount > 0"><BIconstack :font-scale="1">
+                      <BIconCloud stacked />
+                      <BIconArrowDownUp stacked :scale="0.4" />
+                    </BIconstack> {{ $t('buttonSynchronize') }}</b-dropdown-item>
+                    <b-dropdown-item @click="duplicateTrial(trial)"><BIconJournals /> {{ $t('buttonDuplicateTrial') }}</b-dropdown-item>
+                    <b-dropdown-divider v-if="trial.editable" />
+                    <b-dropdown-item @click="showTrialEdit(trial)" v-if="trial.editable && (trial.shareStatus === TRIAL_STATE_NOT_SHARED || trial.shareStatus === TRIAL_STATE_OWNER)"><BIconPencilSquare /> {{  $t('buttonEditTrial') }}</b-dropdown-item>
+                    <b-dropdown-item @click="addTrait(trial)" v-if="trial.editable"><BIconTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
+                    <b-dropdown-item @click="addGermplasm(trial)" v-if="trial.editable && trial.layout.columns === 1"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
+                    <b-dropdown-item @click="importData(trial)" v-if="trial.editable"><BIconFileEarmarkArrowUp /> {{ $t('buttonUploadData') }}</b-dropdown-item>
+                    <b-dropdown-divider />
+                    <b-dropdown-item variant="danger" @click="deleteTrial(trial)"><BIconTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
+                  </b-dropdown>
+                </b-card-footer>
+              </b-card>
+            </b-col>
+          </b-row>
+          <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
+        </b-tab>
+      </b-tabs>
+    </b-card>
 
     <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
     <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial" />
@@ -74,11 +86,13 @@ import TrialExpirationModal from '@/components/modals/TrialExpirationModal'
 import TrialDataImportModal from '@/components/modals/TrialDataImportModal'
 import AddGermplasmModal from '@/components/modals/AddGermplasmModal'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
-import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
+import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
-import { deleteTrial, getTrials } from '@/plugins/idb'
-import { BIconCalendar, BIconExclamationTriangleFill, BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloudDownloadFill, BIconFileEarmarkArrowUp, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus } from 'bootstrap-vue'
+import { deleteTrial, getTrialGroups, getTrials } from '@/plugins/idb'
+import { BIconCalendar, BIconExclamationTriangleFill, BIconJournalArrowUp, BIconGear, BIconTrash, BIconTags, BIconCloudUploadFill, BIconCloudDownloadFill, BIconFileEarmarkArrowUp, BIconPencilSquare, BIconCloud, BIconArrowDownUp, BIconJournals, BIconstack, BIconNodePlus, BIconListTask, BIconSegmentedNav } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
+
+const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -107,15 +121,18 @@ export default {
     BIconCloud,
     BIconArrowDownUp,
     BIconstack,
-    BIconNodePlus
+    BIconNodePlus,
+    BIconListTask,
+    BIconSegmentedNav
   },
   computed: {
     ...mapGetters([
-      'storeSelectedTrial'
+      'storeSelectedTrial',
+      'storeTrialListMode'
     ]),
     sortedTrials: function () {
       if (this.trials) {
-        return JSON.parse(JSON.stringify(this.trials))
+        const sortedAndFiltered = JSON.parse(JSON.stringify(this.trials))
           .filter(t => {
             if (this.searchTerm && (this.searchTerm !== '')) {
               const lower = this.searchTerm.toLowerCase()
@@ -159,19 +176,69 @@ export default {
 
             return t
           })
+
+        const result = {}
+
+        if (this.storeTrialListMode === TRIAL_LIST_TABBED) {
+          this.trialGroups.forEach(tg => {
+            result[tg] = []
+          })
+        }
+
+        sortedAndFiltered.forEach(t => {
+          let group
+          if (this.storeTrialListMode === TRIAL_LIST_TABBED && t.group && t.group.name) {
+            group = t.group.name
+          } else {
+            group = UNCATEGORIZED_TRIALS
+          }
+
+          if (!result[group]) {
+            result[group] = []
+          }
+
+          result[group].push(t)
+        })
+
+        return result
       } else {
-        return []
+        const result = {}
+        result[UNCATEGORIZED_TRIALS] = []
+        return result
       }
     }
   },
   data: function () {
     return {
+      UNCATEGORIZED_TRIALS,
+      TRIAL_LIST_ALL,
+      TRIAL_LIST_TABBED,
       TRIAL_STATE_NOT_SHARED,
       TRIAL_STATE_OWNER,
       trials: [],
+      tabIndex: 0,
       selectedTrial: null,
       trialUpdates: null,
-      searchTerm: null
+      searchTerm: null,
+      trialListMode: TRIAL_LIST_ALL,
+      trialGroups: [UNCATEGORIZED_TRIALS]
+    }
+  },
+  watch: {
+    trialListMode: function (newValue) {
+      this.$store.dispatch('setTrialListMode', newValue)
+    },
+    sortedTrials: function (newValue) {
+      if (this.storeTrialListMode === TRIAL_LIST_TABBED && this.storeSelectedTrial) {
+        let index = 0
+        Object.keys(newValue).forEach((g, i) => {
+          if (newValue[g].find(t => t.localId === this.storeSelectedTrial)) {
+            index = i
+          }
+        })
+
+        this.tabIndex = index
+      }
     }
   },
   methods: {
@@ -243,6 +310,14 @@ export default {
       }
     },
     update: function () {
+      this.tabIndex = 0
+
+      getTrialGroups().then(groups => {
+        const result = [UNCATEGORIZED_TRIALS]
+
+        this.trialGroups = result.concat(groups)
+      })
+
       getTrials()
         .then(trials => {
           this.trials = trials
@@ -258,6 +333,8 @@ export default {
     }
   },
   mounted: function () {
+    this.trialListMode = this.storeTrialListMode
+
     this.update()
 
     emitter.on('show-trial-comments', this.showTrialComments)

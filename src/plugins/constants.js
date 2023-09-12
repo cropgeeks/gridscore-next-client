@@ -27,6 +27,9 @@ const CANVAS_SIZE_LARGE = 'large'
 const CANVAS_SHAPE_CIRCLE = 'circle'
 const CANVAS_SHAPE_SQUARE = 'square'
 
+const TRIAL_LIST_TABBED = 'tabbed'
+const TRIAL_LIST_ALL = 'all'
+
 export {
   gridScoreVersion,
   NAVIGATION_MODE_DRAG,
@@ -48,5 +51,7 @@ export {
   CANVAS_SHAPE_SQUARE,
   CANVAS_SIZE_SMALL,
   CANVAS_SIZE_MEDIUM,
-  CANVAS_SIZE_LARGE
+  CANVAS_SIZE_LARGE,
+  TRIAL_LIST_TABBED,
+  TRIAL_LIST_ALL
 }

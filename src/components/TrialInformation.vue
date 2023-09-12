@@ -5,6 +5,7 @@
       <b-card-sub-title class="trial-description mb-3" v-if="trial.description" :title="trial.description">{{ trial.description }}</b-card-sub-title>
     </div>
     <div>
+      <b-card-text><BIconCollection /> {{ trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned') }}</b-card-text>
       <b-card-text><BIconLayoutThreeColumns rotate="90" /> {{ $tc('widgetTrialSelectorRows', trial.layout.rows) }}</b-card-text>
       <b-card-text><BIconLayoutThreeColumns /> {{ $tc('widgetTrialSelectorColumns', trial.layout.columns) }}</b-card-text>
       <b-card-text><BIconTags /> <span>{{ $tc('widgetTrialSelectorTraits', trial.traits.length) }}</span>
@@ -23,13 +24,14 @@
 
 <script>
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
-import { BIconLayoutThreeColumns, BIconCalendarRange, BIconTags, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
+import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
     BIconLayoutThreeColumns,
+    BIconCollection,
     BIconTags,
     BIconCalendarRange,
     BIconCalendarDate,

@@ -182,7 +182,7 @@ export default {
       this.map.scrollWheelZoom.disable()
       this.map.on('focus', () => this.map.scrollWheelZoom.enable())
       this.map.on('blur', () => this.map.scrollWheelZoom.disable())
-      // this.map.on('click', e => console.log(e.latlng))
+      this.map.on('click', e => console.log(e.latlng))
     },
     update: async function () {
       // Remove the old geojson layer if required
@@ -239,6 +239,60 @@ export default {
           this.trial = trial
           this.trialData = getTrialDataCached()
         })
+    },
+    fakeGpsMovement: function () {
+      const points = [
+        {
+          lat: 56.484180501316246,
+          lng: -3.1377527117729187,
+          steps: 600,
+          heading: 270
+        }, {
+          lat: 56.484147918689615,
+          lng: -3.1387156248092656,
+          steps: 60,
+          heading: 360
+        }, {
+          lat: 56.48420864083489,
+          lng: -3.1387209892272954,
+          steps: 600,
+          heading: 90
+        }, {
+          lat: 56.48424418546024,
+          lng: -3.1377661228179936,
+          steps: 60,
+          heading: 180
+        }
+      ]
+
+      let counter = 0
+      let steps = points[0].steps
+      let pointIndex = 0
+      setTimeout(() => {
+        const id = setInterval(() => {
+          counter++
+          if (counter === steps) {
+            counter = 0
+            pointIndex = (pointIndex + 1) % points.length
+            steps = points[pointIndex].steps
+            if (pointIndex === 0) {
+              clearInterval(id)
+            }
+          } else {
+            const start = points[pointIndex]
+            const end = points[(pointIndex + 1) % points.length]
+            const dLat = start.lat + ((end.lat - start.lat) / steps) * counter
+            const dLng = start.lng + ((end.lng - start.lng) / steps) * counter
+
+            if (!this.gpsMarker) {
+              this.gpsMarker = L.marker([dLat, dLng])
+              this.gpsMarker.addTo(this.map)
+            } else {
+              this.gpsMarker.setLatLng([dLat, dLng])
+            }
+          }
+        }, 100)
+      }, 10000)
     }
   },
   mounted: function () {
@@ -247,6 +301,8 @@ export default {
     emitter.on('trial-data-loaded', this.updateTrialDataCache)
 
     this.updateTrialDataCache()
+
+    // this.fakeGpsMovement()
   },
   beforeDestroy: function () {
     emitter.off('trial-data-loaded', this.updateTrialDataCache)

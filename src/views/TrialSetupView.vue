@@ -16,6 +16,18 @@
             </template>
             <b-form-input id="trial-name" :state="formState.trialName" trim required autofocus v-model="trialName" />
           </b-form-group>
+
+          <!-- Trial group -->
+          <b-form-group label-for="trial-group" :description="$t('formDescriptionTrialSetupTrialGroup')">
+            <template v-slot:label>
+              <BIconCollection /><span> {{ $t('formLabelTrialSetupTrialGroup') }}</span>
+            </template>
+            <b-form-input list="trial-groups" :state="formState.trialGroup" trim v-model="trialGroup" id="trial-group" />
+
+            <datalist id="trial-groups">
+              <option v-for="group in trialGroups" :key="`trial-group-${group}`">{{ group }}</option>
+            </datalist>
+          </b-form-group>
         </b-col>
         <b-col cols=12 lg=6>
           <!-- Trial description -->
@@ -161,12 +173,12 @@
 </template>
 
 <script>
-import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import Tour from '@/components/Tour'
-import { addTrial, getTrialById, getTrialData } from '@/plugins/idb'
+import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
@@ -184,6 +196,7 @@ export default {
     BIconCardChecklist,
     BIconExclamationTriangleFill,
     BIconSave,
+    BIconCollection,
     Tour,
     TrialLayoutComponent,
     TraitDefinitionComponent,
@@ -195,6 +208,8 @@ export default {
       traitSidebarVisible: false,
       trialName: null,
       trialDescription: null,
+      trialGroup: null,
+      trialGroups: [],
       layout: {
         rows: 1,
         columns: 1,
@@ -208,6 +223,7 @@ export default {
       formState: {
         trialName: null,
         trialDescription: null,
+        trialGroup: null,
         layout: null
       },
       layoutFeedback: null,
@@ -251,6 +267,11 @@ export default {
         title: () => this.$t('tourTitleSetupTrialDescription'),
         text: () => this.$t('tourTextSetupTrialDescription'),
         target: () => '#trial-description',
+        position: 'bottom'
+      }, {
+        title: () => this.$t('tourTitleSetupTrialGroup'),
+        text: () => this.$t('tourTextSetupTrialGroup'),
+        target: () => '#trial-group',
         position: 'bottom'
       }, {
         title: () => this.$t('tourTitleSetupTrialLayout'),
@@ -422,6 +443,7 @@ export default {
           const finalTrial = {
             name: this.trialName,
             description: this.trialDescription,
+            group: (this.trialGroup && this.trialGroup.length > 0) ? { name: this.trialGroup } : null,
             layout: this.layout,
             traits: this.traits,
             data: data,
@@ -454,6 +476,10 @@ export default {
   mounted: function () {
     this.$store.dispatch('setSelectedTrial', null)
 
+    getTrialGroups().then(groups => {
+      this.trialGroups = groups || []
+    })
+
     if (this.$route.params && this.$route.params.trialId) {
       getTrialById(this.$route.params.trialId)
         .then(trial => {
@@ -473,6 +499,7 @@ export default {
           if (trial) {
             this.trialName = this.$t('modalTextTrialDuplicateOfName', { original: trial.name })
             this.trialDescription = this.$t('modalTextTrialDuplicateOfDate', { original: trial.description, date: new Date().toLocaleDateString() })
+            this.trialGroup = trial.group ? trial.group.name : null
             this.layout = JSON.parse(JSON.stringify(trial.layout))
             this.traits = JSON.parse(JSON.stringify(trial.traits)).map(t => {
               if (t.group && t.group.name) {

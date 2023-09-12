@@ -11,7 +11,7 @@ const getDb = async () => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 1, {
+      openDB('gridscore-next-' + window.location.pathname, 2, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -44,10 +44,34 @@ const getDb = async () => {
             transactions = db.createObjectStore('transactions', { keyPath: 'trialId', autoIncrement: false })
             transactions.createIndex('content', 'content', { unique: false })
           }
+          if (oldVersion < 2) {
+            trials = transaction.objectStore('trials')
+            trials.createIndex('group', 'group', { unique: false })
+          }
         }
       }).then(db => resolve(db))
     }
   })
+}
+
+const getTrialGroups = async () => {
+  const db = await getDb()
+
+  const trials = await db.getAll('trials')
+
+  if (trials) {
+    const groups = new Set()
+
+    trials.forEach(t => {
+      if (t.group) {
+        groups.add(t.group.name)
+      }
+    })
+
+    return [...groups].sort((a, b) => a - b)
+  } else {
+    return []
+  }
 }
 
 const getTrials = async () => {
@@ -158,6 +182,14 @@ const updateTrial = async (localId, updatedTrial) => {
     delete updatedTrial.editable
     delete updatedTrial.shareStatus
     delete updatedTrial.transactionCount
+
+    // Set the trial group again
+    if (trial.group && trial.group.name) {
+      updatedTrial.group = {
+        name: trial.group.name
+      }
+    }
+
     if (updatedTrial.traits) {
       updatedTrial.traits.forEach(t => {
         delete t.color
@@ -186,6 +218,7 @@ const updateTrialProperties = async (localId, updates) => {
     trial.layout.markers = updates.markers
     trial.layout.corners = updates.corners
     trial.traits = updates.traits
+    trial.group = updates.group
 
     if (logTransactions(trial)) {
       const transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
@@ -613,6 +646,7 @@ const addTrial = async (trial) => {
     shareCodes: trial.shareCodes,
     name: trial.name,
     description: trial.description,
+    group: trial.group || null,
     layout: trial.layout,
     traits: trial.traits,
     brapiConfig: trial.brapiConfig,
@@ -1094,6 +1128,7 @@ export {
   getDb,
   getCell,
   getTrials,
+  getTrialGroups,
   getTrialById,
   getTrialData,
   deleteTrial,

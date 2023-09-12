@@ -261,6 +261,62 @@ export default {
         this.loadTrial()
       }
     },
+    fakeGpsMovement: function () {
+      const points = [
+        {
+          lat: 56.484180501316246,
+          lng: -3.1377527117729187,
+          steps: 600,
+          heading: 270
+        }, {
+          lat: 56.484147918689615,
+          lng: -3.1387156248092656,
+          steps: 60,
+          heading: 360
+        }, {
+          lat: 56.48420864083489,
+          lng: -3.1387209892272954,
+          steps: 600,
+          heading: 90
+        }, {
+          lat: 56.48424418546024,
+          lng: -3.1377661228179936,
+          steps: 60,
+          heading: 180
+        }
+      ]
+
+      let counter = 0
+      let steps = points[0].steps
+      let heading = points[0].heading
+      let pointIndex = 0
+      setTimeout(() => {
+        const id = setInterval(() => {
+          counter++
+          if (counter === steps) {
+            counter = 0
+            pointIndex = (pointIndex + 1) % points.length
+            steps = points[pointIndex].steps
+            heading = points[pointIndex].heading
+            if (pointIndex === 0) {
+              clearInterval(id)
+            }
+          } else {
+            const start = points[pointIndex]
+            const end = points[(pointIndex + 1) % points.length]
+            const dLat = start.lat + ((end.lat - start.lat) / steps) * counter
+            const dLng = start.lng + ((end.lng - start.lng) / steps) * counter
+
+            this.geolocation = {
+              lat: dLat,
+              lng: dLng,
+              elv: 100,
+              heading: heading
+            }
+          }
+        }, 100)
+      }, 10000)
+    },
     startGeoTracking: function () {
       if (navigator.geolocation && this.storeGpsEnabled) {
         const options = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
@@ -291,6 +347,8 @@ export default {
     emitter.on('plot-cache-changed', this.updateTraitProgress)
     emitter.on('trial-data-loaded', this.updateTraitProgress)
     emitter.on('tts', this.tts)
+
+    // this.fakeGpsMovement()
   },
   beforeDestroy: function () {
     emitter.off('show-trial-comments', this.showTrialComments)

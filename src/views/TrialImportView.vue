@@ -33,7 +33,7 @@
         </b-form-group>
         <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
           <b-input-group>
-            <b-input trim v-model="shareCode" />
+            <b-input trim v-model="shareCode" autofocus />
             <b-input-group-addon>
               <b-button @click="showCamera = !showCamera">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16">
@@ -73,6 +73,19 @@
               ref="confirmationModal">
         <p class="text-info">{{ $t('pageImportTrialMatchInfo') }}</p>
         <TrialInformation :showComments="false" :trial="trial" class="border" />
+
+        <!-- Trial group -->
+        <b-form-group label-for="trial-group" :description="$t('formDescriptionTrialSetupTrialGroup')" class="mt-3">
+          <template v-slot:label>
+            <BIconCollection /><span> {{ $t('formLabelTrialSetupTrialGroup') }}</span>
+          </template>
+          <b-form-input list="trial-groups" trim v-model="trialGroup" id="trial-group" />
+
+          <datalist id="trial-groups">
+            <option v-for="group in trialGroups" :key="`trial-group-${group}`">{{ group }}</option>
+          </datalist>
+        </b-form-group>
+
         <p class="text-info">{{ $t('pageImportTrialMatchConfirm') }}</p>
       </b-modal>
     </b-container>
@@ -84,15 +97,16 @@ import { mapGetters } from 'vuex'
 import BarcodeScanner from '@/components/BarcodeScanner'
 import TrialInformation from '@/components/TrialInformation'
 
-import { BIconSearch } from 'bootstrap-vue'
+import { BIconSearch, BIconCollection } from 'bootstrap-vue'
 
 import { getTrialByCode, getLegacyTrialByCode } from '@/plugins/api'
-import { addTrial } from '@/plugins/idb'
+import { addTrial, getTrialGroups } from '@/plugins/idb'
 import { migrateOldGridScoreTrial } from '@/plugins/misc'
 
 export default {
   components: {
     BIconSearch,
+    BIconCollection,
     BarcodeScanner,
     TrialInformation
   },
@@ -101,6 +115,8 @@ export default {
       showCamera: false,
       shareCode: null,
       serverError: null,
+      trialGroup: null,
+      trialGroups: [],
       trial: null,
       gridScoreVersion: null,
       gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore'
@@ -132,6 +148,12 @@ export default {
       this.checkCode()
     },
     loadTrial: function () {
+      if (this.trialGroup) {
+        this.trial.group = {
+          name: this.trialGroup
+        }
+      }
+
       addTrial(this.trial)
         .then(trialId => {
           this.$store.dispatch('setSelectedTrial', trialId)
@@ -180,6 +202,10 @@ export default {
     }
   },
   mounted: function () {
+    getTrialGroups().then(groups => {
+      this.trialGroups = groups || []
+    })
+
     if (this.$route.params) {
       this.shareCode = this.$route.params.shareCode
     }

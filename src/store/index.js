@@ -1,4 +1,4 @@
-import { CANVAS_DENSITY_LOW, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_SMALL, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { CANVAS_DENSITY_LOW, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_SMALL, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -35,6 +35,7 @@ export default new Vuex.Store({
     canvasSize: CANVAS_SIZE_SMALL,
     selectedTrial: null,
     mapLayer: 'theme',
+    trialListMode: TRIAL_LIST_ALL,
     hiddenTraits: [],
     plausible: {
       plausibleDomain: null,
@@ -66,6 +67,7 @@ export default new Vuex.Store({
     storeCanvasDensity: (state) => state.canvasDensity,
     storeCanvasShape: (state) => state.canvasShape,
     storeCanvasSize: (state) => state.canvasSize,
+    storeTrialListMode: (state) => state.trialListMode,
     storeMapLayer: (state) => state.mapLayer,
     storeSelectedTrial: (state) => state.selectedTrial,
     storeHiddenTraits: (state) => state.hiddenTraits,
@@ -163,6 +165,13 @@ export default new Vuex.Store({
         Vue.set(state, 'canvasSize', newCanvasSize)
       }
     },
+    ON_TRIAL_LIST_MODE_CHANGED: function (state, newTrialListMode) {
+      if (Object.prototype.hasOwnProperty.call(state, 'trialListMode')) {
+        state.trialListMode = newTrialListMode
+      } else {
+        Vue.set(state, 'trialListMode', newTrialListMode)
+      }
+    },
     ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
       state.restrictInputToMarked = newRestrictInputToMarked
     },
@@ -248,6 +257,9 @@ export default new Vuex.Store({
     },
     setCanvasSize: function ({ commit }, canvasSize) {
       commit('ON_CANVAS_SIZE_CHANGED', canvasSize)
+    },
+    setTrialListMode: function ({ commit }, trialListMode) {
+      commit('ON_TRIAL_LIST_MODE_CHANGED', trialListMode)
     },
     setVoiceFeedbackEnabled: function ({ commit }, voiceFeedbackEnabled) {
       commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', voiceFeedbackEnabled)

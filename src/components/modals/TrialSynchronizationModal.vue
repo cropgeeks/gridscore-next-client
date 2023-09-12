@@ -253,6 +253,12 @@ export default {
       emitter.emit('show-loading', true)
       synchronizeTrial(this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
         .then(result => {
+          if (this.trial.group && this.trial.group.name) {
+            result.group = {
+              name: this.trial.group.name
+            }
+          }
+
           result.localId = this.trial.localId
 
           return deleteTrial(this.trial.localId)
