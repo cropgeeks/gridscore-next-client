@@ -224,5 +224,20 @@
         "text": "There was an issue with trial viewer permissions where a viewer wasn't able to load remote changes to a trial. This has been resolved."
       }
     ]
+  },
+  {
+    "version": "2.2.0",
+    "date": "2023-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Trial groups",
+        "text": "It is now possible to organize trials into groups. These groups can be assigned during setup, import or at any point afterwards."
+      }, {
+        "type": "new",
+        "title": "Visual changes",
+        "text": "You can change the shape, size and compactness of the main data display to match your needs. Currently circles and squares are available as the shapes and three different settings for sizes and compactness are available."
+      }
+    ]
   }
 ]

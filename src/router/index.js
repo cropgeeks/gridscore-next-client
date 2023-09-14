@@ -63,6 +63,10 @@ const routes = [
     component: () => import('@/views/TrialSetupView.vue')
   }, {
     path: '/trial-import/:shareCode',
+    name: 'trial-import-code',
+    component: () => import('@/views/TrialImportView.vue')
+  }, {
+    path: '/trial-import',
     name: 'trial-import',
     component: () => import('@/views/TrialImportView.vue')
   }, {

@@ -8,8 +8,8 @@
       <p>{{ $t('pageImportText') }}</p>
       <p>{{ $t('pageImportSelectAppVersion') }}</p>
 
-      <b-row class="mb-3">
-        <b-col :cols=12 :md=4>
+      <b-row>
+        <b-col :cols=12 :md=4 class="mb-3">
           <b-button :variant="gridScoreVersion === 'current' ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="gridScoreVersion = 'current'">
             <h2>
               <b-img class="logo mt-2" fluid src="img/gridscore-next-text.svg"/>
@@ -17,7 +17,7 @@
             <span>{{ $t('appTitle') }}</span>
           </b-button>
         </b-col>
-        <b-col :cols=12 :md=4>
+        <b-col :cols=12 :md=4 class="mb-3">
           <b-button :variant="gridScoreVersion === 'legacy' ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="gridScoreVersion = 'legacy'">
             <h2>
               <b-img class="logo mt-2" fluid src="img/gridscore2.svg"/>
@@ -206,8 +206,9 @@ export default {
       this.trialGroups = groups || []
     })
 
-    if (this.$route.params) {
+    if (this.$route.params && this.$route.params.shareCode) {
       this.shareCode = this.$route.params.shareCode
+      this.gridScoreVersion = 'current'
     }
   }
 }

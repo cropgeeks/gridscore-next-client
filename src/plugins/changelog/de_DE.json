@@ -224,5 +224,20 @@
         "text": "Es gab Probleme mit Betrachterberechtigungen wo es Betrachtern nicht möglich war Änderungen vom Server zu laden. Dies wurde behoben."
       }
     ]
+  },
+  {
+    "version": "2.2.0",
+    "date": "2023-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Versuchsgruppen",
+        "text": "Es ist jetzt möglich Versuche in Gruppen zu organisieren. Diese Gruppen können während des Aufbaus, beim Importieren oder zu einem späteren Zeitpunkt zugewiesen werden."
+      }, {
+        "type": "new",
+        "title": "Visuelle Änderungen",
+        "text": "Die Form, Größe und Kompaktheit der Hauptdatenanzeige kann jetzt verändert werden. Aktuell stehen Kreise und Quadrate als Formen und drei Auswahlmöglichkeiten für Größen und Kompaktheit zur Auswahl."
+      }
+    ]
   }
 ]

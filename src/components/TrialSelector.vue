@@ -15,7 +15,7 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab :title="group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: (trials || []).length }) : `${group} (${(trials || []).length})`" v-for="(trials, group) in sortedTrials" :key="`tab-${group}`">
+        <b-tab lazy :title="group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: (trials || []).length }) : `${group} (${(trials || []).length})`" v-for="(trials, group) in sortedTrials" :key="`tab-${group}`">
           <b-row v-if="trials && trials.length > 0">
             <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
               <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null">
@@ -228,20 +228,23 @@ export default {
     trialListMode: function (newValue) {
       this.$store.dispatch('setTrialListMode', newValue)
     },
-    sortedTrials: function (newValue) {
+    sortedTrials: function () {
       if (this.storeTrialListMode === TRIAL_LIST_TABBED && this.storeSelectedTrial) {
-        let index = 0
-        Object.keys(newValue).forEach((g, i) => {
-          if (newValue[g].find(t => t.localId === this.storeSelectedTrial)) {
-            index = i
-          }
-        })
-
-        this.tabIndex = index
+        this.updateTabIndex()
       }
     }
   },
   methods: {
+    updateTabIndex: function () {
+      let index = 0
+      Object.keys(this.sortedTrials).forEach((g, i) => {
+        if (this.sortedTrials[g].find(t => t.localId === this.storeSelectedTrial)) {
+          index = i
+        }
+      })
+
+      this.$nextTick(() => { this.tabIndex = index })
+    },
     handleTrialExpiration: function (trial) {
       this.selectedTrial = trial
 
