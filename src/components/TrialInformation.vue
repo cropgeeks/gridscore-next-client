@@ -1,7 +1,7 @@
 <template>
   <b-card-body class="d-flex flex-column justify-content-between align-items-start" v-if="trial">
     <div>
-      <b-card-title class="trial-name">{{ `${trial.name}` }}</b-card-title>
+      <b-card-title class="trial-name">{{ trial.name }}</b-card-title>
       <b-card-sub-title class="trial-description mb-3" v-if="trial.description" :title="trial.description">{{ trial.description }}</b-card-sub-title>
     </div>
     <div>

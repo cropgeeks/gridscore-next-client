@@ -1,4 +1,4 @@
-import { CANVAS_DENSITY_LOW, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_SMALL, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL } from '@/plugins/constants'
+import { CANVAS_DENSITY_LOW, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_SMALL, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -36,6 +36,7 @@ export default new Vuex.Store({
     selectedTrial: null,
     mapLayer: 'theme',
     trialListMode: TRIAL_LIST_ALL,
+    trialListArrangement: TRIAL_LIST_GRID,
     hiddenTraits: [],
     plausible: {
       plausibleDomain: null,
@@ -68,6 +69,7 @@ export default new Vuex.Store({
     storeCanvasShape: (state) => state.canvasShape,
     storeCanvasSize: (state) => state.canvasSize,
     storeTrialListMode: (state) => state.trialListMode,
+    storeTrialListArrangement: (state) => state.trialListArrangement,
     storeMapLayer: (state) => state.mapLayer,
     storeSelectedTrial: (state) => state.selectedTrial,
     storeHiddenTraits: (state) => state.hiddenTraits,
@@ -172,6 +174,13 @@ export default new Vuex.Store({
         Vue.set(state, 'trialListMode', newTrialListMode)
       }
     },
+    ON_TRIAL_LIST_ARRANGEMENT_CHANGED: function (state, newTrialListArrangement) {
+      if (Object.prototype.hasOwnProperty.call(state, 'trialListArrangement')) {
+        state.trialListArrangement = newTrialListArrangement
+      } else {
+        Vue.set(state, 'trialListArrangement', newTrialListArrangement)
+      }
+    },
     ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
       state.restrictInputToMarked = newRestrictInputToMarked
     },
@@ -260,6 +269,9 @@ export default new Vuex.Store({
     },
     setTrialListMode: function ({ commit }, trialListMode) {
       commit('ON_TRIAL_LIST_MODE_CHANGED', trialListMode)
+    },
+    setTrialListArrangement: function ({ commit }, trialListArrangement) {
+      commit('ON_TRIAL_LIST_ARRANGEMENT_CHANGED', trialListArrangement)
     },
     setVoiceFeedbackEnabled: function ({ commit }, voiceFeedbackEnabled) {
       commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', voiceFeedbackEnabled)

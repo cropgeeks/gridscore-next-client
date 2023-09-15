@@ -29,6 +29,8 @@ const CANVAS_SHAPE_SQUARE = 'square'
 
 const TRIAL_LIST_TABBED = 'tabbed'
 const TRIAL_LIST_ALL = 'all'
+const TRIAL_LIST_GRID = 'grid'
+const TRIAL_LIST_LIST = 'list'
 
 export {
   gridScoreVersion,
@@ -53,5 +55,7 @@ export {
   CANVAS_SIZE_MEDIUM,
   CANVAS_SIZE_LARGE,
   TRIAL_LIST_TABBED,
-  TRIAL_LIST_ALL
+  TRIAL_LIST_ALL,
+  TRIAL_LIST_GRID,
+  TRIAL_LIST_LIST
 }
