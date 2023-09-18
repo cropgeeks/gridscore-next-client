@@ -490,6 +490,7 @@
   "pageArchiveTextExportedOn": "Daten archiviert am: {date}",
   "pageArchiveTextUpdatedOn": "Versuch zuletzt aktualisiert am: {date}",
   "pageArchiveNoArchiveFound": "Es wurde kein Archiv für diesen Versuch gefunden. Dies bedeutet entweder, dass es sehr, sehr lange her ist das GridScore benutzt wurde oder, dass etwas  mit der Archivierung schief gegangen ist. Bitte mit den Entwicklern von GridScore in Verbingung setzen.",
+  "pageGuidedWalkInvalidConfig": "Ungültige Konfiguration für gelenkten Ablauf. Bitte erneut versuchen.",
   "tabTitleSettingsShareExport": "Deine Einstellungen teilen",
   "tabTextSettingsShareExport": "Der QR-Code unten kann von anderen genutzt werden um deine Einstellungen zu laden und ihre eigenen zu überschreiben.",
   "tabTitleSettingsShareImport": "Andere Einstellungen laden",

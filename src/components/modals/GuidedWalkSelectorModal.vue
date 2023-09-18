@@ -42,11 +42,18 @@ export default {
   methods: {
     onSubmit: function () {
       const order = this.$refs.guideOrderSelector.getOrder()
-      this.$emit('change', order)
 
       emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: order } })
+      this.$router.push({ name: 'guided-walk', query: { row: this.cell.row, column: this.cell.column, guidedWalkName: order } })
 
-      this.$nextTick(() => this.hide())
+      // this.$nextTick(() => this.hide())
+
+      // const order = this.$refs.guideOrderSelector.getOrder()
+      // this.$emit('change', order)
+
+      // emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: order } })
+
+      // this.$nextTick(() => this.hide())
     },
     /**
      * Shows and resets modal dialog

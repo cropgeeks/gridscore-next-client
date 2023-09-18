@@ -4,6 +4,7 @@
            ok-variant="primary"
            :cancel-variant="isGuidedWalk ? 'primary' : null"
            :cancel-disabled="cancelDisabled"
+           scrollable
            no-close-on-backdrop
            no-close-on-esc
            @cancel.prevent="onCancel"
@@ -12,6 +13,8 @@
            @shown="autofocusFirst"
            id="data-input-modal"
            no-fade
+           :dialog-class="fullscreen ? 'fullscreen-dialog' : null"
+           :content-class="fullscreen ? 'fullscreen-content' : null"
            size="xl"
            header-class="align-items-center"
            ref="dataInputModal">
@@ -144,6 +147,10 @@ export default {
     geolocation: {
       type: Object,
       default: () => null
+    },
+    fullscreen: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -383,6 +390,10 @@ export default {
     startTour: function () {
       this.$refs.dataInputTour.start()
     },
+    forceGuidedWalk: function (config) {
+      this.updateCell(config.row, config.column)
+      this.onSelectGuidedWalk(config.walkName)
+    },
     onSelectGuidedWalk: function (typeName) {
       const match = guideOrderTypes.find(g => g.name === typeName)
 
@@ -454,9 +465,14 @@ export default {
       if (group) {
         const traitIndex = group.traits.findIndex(t => t.id === currentTrait.id)
 
-        if (traitIndex !== -1 && traitIndex < group.traits.length - 1) {
-          this.$refs[`trait-section-${group.traits[traitIndex + 1].id}`][0].handleTraverse(0)
-          emitter.emit('tts', group.traits[traitIndex + 1].name, false)
+        if (traitIndex !== -1) {
+          if (traitIndex < group.traits.length - 1) {
+            this.$refs[`trait-section-${group.traits[traitIndex + 1].id}`][0].handleTraverse(0)
+            emitter.emit('tts', group.traits[traitIndex + 1].name, false)
+          } else if (this.traitsByGroup.length === 1) {
+            // This is the last trait in this tab/group and there's only one tab
+            this.validate()
+          }
         }
       }
     },
@@ -610,7 +626,10 @@ export default {
      */
     hide: function () {
       this.reset()
-      this.$nextTick(() => this.$refs.dataInputModal.hide())
+      this.$nextTick(() => {
+        this.$refs.dataInputModal.hide()
+        this.$emit('hidden')
+      })
     },
     reset: function () {
       this.traitGroupTabIndex = 0
@@ -621,10 +640,12 @@ export default {
   created: function () {
     emitter.on('plot-clicked', this.updateCell)
     emitter.on('plot-cache-changed', this.updateCellComments)
+    emitter.on('force-guided-walk', this.forceGuidedWalk)
   },
   beforeDestroy: function () {
     emitter.off('plot-clicked', this.updateCell)
     emitter.off('plot-cache-changed', this.updateCellComments)
+    emitter.off('force-guided-walk', this.forceGuidedWalk)
   }
 }
 </script>
@@ -632,5 +653,19 @@ export default {
 <style>
 .trait-group-tab-content section:first-child hr {
   display: none;
+}
+
+.fullscreen-dialog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  max-width: unset;
+}
+.fullscreen-content {
+  min-height: 100vh;
 }
 </style>

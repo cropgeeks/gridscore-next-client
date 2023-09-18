@@ -148,7 +148,7 @@ export default {
               behavior: 'smooth'
             })
           } else {
-            this.popoverShow = true
+            this.popoverShow = false
             this.currentIndex++
           }
         } else {

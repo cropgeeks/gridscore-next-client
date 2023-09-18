@@ -54,6 +54,10 @@ const routes = [
     name: 'data-entry',
     component: () => import('@/views/DataEntryView.vue')
   }, {
+    path: '/guided-walk',
+    name: 'guided-walk',
+    component: () => import('@/views/GuidedWalkView.vue')
+  }, {
     path: '/trial-setup',
     name: 'trial-setup',
     component: () => import('@/views/TrialSetupView.vue')
