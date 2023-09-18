@@ -10,11 +10,10 @@
            @cancel.prevent="onCancel"
            @ok.prevent="validate"
            @hidden="reset"
-           @shown="autofocusFirst"
+           @shown="shown"
            id="data-input-modal"
            no-fade
-           :dialog-class="fullscreen ? 'fullscreen-dialog' : null"
-           :content-class="fullscreen ? 'fullscreen-content' : null"
+           :modal-class="fullscreen ? 'modal-fullscreen-xl' : null"
            size="xl"
            header-class="align-items-center"
            ref="dataInputModal">
@@ -391,7 +390,6 @@ export default {
       this.$refs.dataInputTour.start()
     },
     forceGuidedWalk: function (config) {
-      this.updateCell(config.row, config.column)
       this.onSelectGuidedWalk(config.walkName)
     },
     onSelectGuidedWalk: function (typeName) {
@@ -446,6 +444,10 @@ export default {
       this.selectedTrait = selectedTrait
 
       this.$nextTick(() => this.$refs.imageModal.show())
+    },
+    shown: function () {
+      this.$emit('shown')
+      this.autofocusFirst()
     },
     autofocusFirst: function () {
       this.$nextTick(() => {
@@ -653,19 +655,5 @@ export default {
 <style>
 .trait-group-tab-content section:first-child hr {
   display: none;
-}
-
-.fullscreen-dialog {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: 0;
-  padding: 0;
-  max-width: unset;
-}
-.fullscreen-content {
-  min-height: 100vh;
 }
 </style>

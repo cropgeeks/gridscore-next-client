@@ -408,6 +408,38 @@ $danger: #EA2027;
   }
 }
 
+@mixin modal-fullscreen() {
+  padding: 0 !important; // override inline padding-right added from js
+
+  .modal-dialog {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .modal-content {
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .modal-body {
+    overflow-y: auto;
+  }
+
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-down($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    .modal-fullscreen#{$infix} {
+      @include modal-fullscreen();
+    }
+  }
+}
+
 @import '@/assets/css/dark-mode';
 
 html {

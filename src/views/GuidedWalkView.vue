@@ -4,10 +4,10 @@
                     :geolocation="geolocation"
                     :trial="trial"
                     @hidden="onHidden"
+                    @shown="forceGuidedWalk"
                     ref="dataInputModal"
-                    v-model="show"
-                    v-if="validConfig" />
-    <b-container>
+                    v-if="trial" />
+    <b-container v-else>
       <p>{{ $t('pageGuidedWalkInvalidConfig') }}</p>
     </b-container>
   </div>
@@ -28,10 +28,7 @@ export default {
     ...mapGetters([
       'storeGpsEnabled',
       'storeSelectedTrial'
-    ]),
-    validConfig: function () {
-      return this.column !== null && this.row !== null && this.guidedWalkName && this.trial
-    }
+    ])
   },
   data: function () {
     return {
@@ -47,18 +44,17 @@ export default {
       this.loadTrial()
     },
     trial: function () {
-      this.show = true
-
-      this.$nextTick(() => {
-        emitter.emit('force-guided-walk', {
-          row: this.row,
-          column: this.column,
-          walkName: this.guidedWalkName
-        })
-      })
+      this.$nextTick(() => emitter.emit('plot-clicked', this.row, this.column))
     }
   },
   methods: {
+    forceGuidedWalk: function () {
+      emitter.emit('force-guided-walk', {
+        row: this.row,
+        column: this.column,
+        walkName: this.guidedWalkName
+      })
+    },
     onHidden: function () {
       this.$router.push({ name: 'data-entry' })
     },
@@ -103,10 +99,10 @@ export default {
       if (q.guidedWalkName) {
         this.guidedWalkName = q.guidedWalkName
       }
-      if (q.row !== undefined && q.row !== null) {
-        this.row = q.row
+      if (q.row !== undefined && q.row !== null && q.row !== '') {
+        this.row = +q.row
       }
-      if (q.column !== undefined && q.row !== null) {
+      if (q.column !== undefined && q.column !== null && q.column !== '') {
         this.column = +q.column
       }
     }
