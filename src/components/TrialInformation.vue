@@ -66,22 +66,22 @@ export default {
 </script>
 
 <style scoped>
-.trial-name {
-  display: -webkit-box;
-  text-overflow: ellipsis;
-  -webkit-box-orient: vertical;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  max-width: 100%;
-}
+.trial-name,
 .trial-description {
   display: -webkit-box;
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
-  line-clamp: 1;
-  -webkit-line-clamp: 1;
   overflow: hidden;
   max-width: 100%;
+  word-break: break-word;
+}
+
+.trial-name {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+}
+.trial-description {
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
 }
 </style>

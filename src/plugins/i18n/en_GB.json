@@ -260,6 +260,8 @@
   "formDescriptionSettingsCanvasShape": "Change the shape of the data points shown on the main data display.",
   "formLabelSettingsCanvasSize": "Data point size",
   "formDescriptionSettingsCanvasSize": "Change the size of the data point shape on the main data display.",
+  "formLabelSettingsCitation": "Hide citation message",
+  "formDescriptionSettingsCitation": "Decide whether or not to hide the citation banner on the home page.",
   "genericDisabled": "Disabled",
   "genericEnabled": "Enabled",
   "genericYes": "Yes",

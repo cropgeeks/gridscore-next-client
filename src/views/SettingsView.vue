@@ -16,6 +16,12 @@
                 {{ darkMode ? $t('genericEnabled') : $t('genericDisabled') }}
               </b-form-checkbox>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsCitation')" :description="$t('formDescriptionSettingsCitation')" label-for="showCitation">
+              <b-form-checkbox id="showCitation" v-model="hideCitationMessage" switch>
+                {{ hideCitationMessage ? $t('genericYes') : $t('genericNo') }}
+              </b-form-checkbox>
+            </b-form-group>
           </b-card>
           <b-card class="mb-4" :title="$t('pageSettingsCardDataCollectionTitle')" :sub-title="$t('pageSettingsCardDataCollectionSubtitle')">
             <b-form-group :label="$t('formLabelSettingsUseGps')" :description="$t('formDescriptionSettingsUseGps')" label-for="gpsEnabled">

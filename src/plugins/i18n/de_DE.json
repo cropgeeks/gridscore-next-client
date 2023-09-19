@@ -257,6 +257,8 @@
   "formDescriptionSettingsCanvasSize": "Ändert die Größe der Datenpunkte auf der Haupt-Datendarstellung.",
   "formLabelTrialSetupTrialGroup": "Versuchsgruppe",
   "formDescriptionTrialSetupTrialGroup": "Optional können Versuche zur Übersichtlichkeit in Gruppen sortiert werden.",
+  "formLabelSettingsCitation": "Veröffentlichungsinformationen ausblenden",
+  "formDescriptionSettingsCitation": "Entscheide ob die Veröffentlichungsinformation auf der Startseite ausgeblendet werden soll.",
   "menuHome": "Home",
   "menuDataEntry": "Dateneingabe",
   "menuDataExport": "Exportieren",

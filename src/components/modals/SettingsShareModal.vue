@@ -111,6 +111,11 @@ export default {
         } else if (parsed.vf === 0) {
           this.$store.commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', false)
         }
+        if (parsed.hc === 1) {
+          this.$store.commit('ON_HIDE_CITATION_MESSAGE_CHANGED', true)
+        } else if (parsed.hc === 0) {
+          this.$store.commit('ON_HIDE_CITATION_MESSAGE_CHANGED', false)
+        }
         if (parsed.rm === 1) {
           this.$store.commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', true)
         } else if (parsed.rm === 0) {
@@ -165,6 +170,7 @@ export default {
         sz: this.storeCanvasSize === CANVAS_SIZE_LARGE ? 2 : (this.storeCanvasSize === CANVAS_SIZE_MEDIUM ? 1 : 0),
         cs: this.storeCanvasShape === CANVAS_SHAPE_SQUARE ? 1 : 0,
         lc: this.storeLocale,
+        hc: this.storeHideCitationMessage ? 1 : 0,
         dm: this.storeDarkMode ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,
         cw: this.storeDisplayMinCellWidth,
