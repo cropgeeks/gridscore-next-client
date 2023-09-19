@@ -67,8 +67,13 @@
         <b-col cols=4>
           <b-card class="text-center h-100">
             <b-card-title>
-              <BIconChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <BIconGeoAltFill class="mx-2" /> <BIconChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
+              <BIconChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <a href="#" @click.prevent><BIconGeoAltFill id="guided-walk-current" class="mx-2" /></a> <BIconChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
             </b-card-title>
+
+            <b-popover target="guided-walk-current" container="body" triggers="focus" placement="bottom" custom-class="popover-unset-width">
+              <TrialPreviewCanvas :trial="trial" :column="cell.column" :row="cell.row" />
+            </b-popover>
+
             <b-card-sub-title>
               {{ $t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - cell.column) : (cell.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - cell.row) : (cell.row + 1) }) }}
             </b-card-sub-title>
@@ -110,6 +115,7 @@ import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
+import TrialPreviewCanvas from '@/components/canvas/TrialPreviewCanvas'
 import Tour from '@/components/Tour'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
@@ -126,6 +132,7 @@ export default {
     PlotCommentModal,
     GuidedWalkSelectorModal,
     Tour,
+    TrialPreviewCanvas,
     BIconChatRightTextFill,
     BIconBookmarkCheckFill,
     BIconBookmark,
@@ -655,5 +662,8 @@ export default {
 <style>
 .trait-group-tab-content section:first-child hr {
   display: none;
+}
+.popover-unset-width {
+  max-width: 100%;
 }
 </style>

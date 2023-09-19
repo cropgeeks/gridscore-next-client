@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     update: function () {
-      if (this.$refs.heatmapRepCompareChart) {
+      if (this.$refs.heatmapRepCompareChart && this.selectedTrait) {
         let minDate = new Date('9999-12-31')
         let maxDate = new Date('1900-01-01')
         let minValue = Number.MAX_SAFE_INTEGER

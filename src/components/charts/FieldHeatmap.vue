@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     update: function () {
-      if (this.$refs.heatmapChart) {
+      if (this.$refs.heatmapChart && this.selectedTrait) {
         try {
           Plotly.purge(this.$refs.heatmapChart)
         } catch {

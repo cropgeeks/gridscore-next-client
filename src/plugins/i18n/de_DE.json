@@ -655,6 +655,7 @@
   "widgetTrialSelectorComments": "Keine Kommentare | Ein Kommentar | {count} Kommentare",
   "widgetTrialSelectorNoMatchFound": "Kein passender Versuch für die Suchanfrage gefunden.",
   "widgetTrialSelectorTrialExpiryWarning": "Versuch wird bald ablaufen!",
+  "widgetTrialPreviewTitle": "Versuchsübersicht",
   "widgetChartTraitTimeframeAxisTitleTime": "Zeit",
   "widgetChartTraitTimeframeAxisTitleTrait": "Merkmal",
   "widgetChartTraitTimeframeToday": "Heute",

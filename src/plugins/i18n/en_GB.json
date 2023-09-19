@@ -662,6 +662,7 @@
   "widgetTrialSelectorComments": "No comments | One comment | {count} comments",
   "widgetTrialSelectorNoMatchFound": "No matching trial found for your search query.",
   "widgetTrialSelectorTrialExpiryWarning": "Trial will expire soon!",
+  "widgetTrialPreviewTitle": "Trial overview",
   "widgetChartTraitTimeframeAxisTitleTime": "Time",
   "widgetChartTraitTimeframeAxisTitleTrait": "Trait",
   "widgetChartTraitTimeframeToday": "Today",
