@@ -73,6 +73,8 @@
   "buttonCanvasSizeMedium": "Mittel",
   "buttonCanvasSizeLarge": "Groß",
   "buttonDisable": "Einstellung deaktivieren",
+  "buttonIndividualTimepoints": "Individuelle Zeitpunkte",
+  "buttonEvolvingTimepoints": "Entwickelnde Zeitpunkte",
   "changelogBadgeNew": "NEU",
   "changelogBadgeUpdate": "AKT",
   "changelogBadgeFix": "FIX",

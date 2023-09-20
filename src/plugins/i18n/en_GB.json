@@ -73,6 +73,8 @@
   "buttonCanvasSizeMedium": "Medium",
   "buttonCanvasSizeLarge": "Large",
   "buttonDisable": "Disable setting",
+  "buttonIndividualTimepoints": "Individual timepoints",
+  "buttonEvolvingTimepoints": "Evolving timepoints",
   "appTitle": "GridScore NEXT",
   "appTitleLegacy": "GridScore legacy",
   "changelogBadgeNew": "NEW",

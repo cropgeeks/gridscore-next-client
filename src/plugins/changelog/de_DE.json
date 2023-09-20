@@ -234,10 +234,6 @@
         "title": "Versuchsgruppen",
         "text": "Es ist jetzt möglich Versuche in Gruppen zu organisieren. Diese Gruppen können während des Aufbaus, beim Importieren oder zu einem späteren Zeitpunkt zugewiesen werden."
       }, {
-        "type": "new",
-        "title": "Visuelle Änderungen",
-        "text": "Die Form, Größe und Kompaktheit der Hauptdatenanzeige kann jetzt verändert werden. Aktuell stehen Kreise und Quadrate als Formen und drei Auswahlmöglichkeiten für Größen und Kompaktheit zur Auswahl."
-      }, {
         "type": "update",
         "title": "Gelenkter Ablaub Änderung",
         "text": "Um sowohl den verfügbaren Bildschirmbereich als auch die Leistung zu maximieren haben wir den gelenkten Ablauf auf eine eigenständige Seite verlagert wo er den maximalen Bildschirmbereich ausnutzen kann."

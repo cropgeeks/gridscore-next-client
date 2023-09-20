@@ -234,10 +234,6 @@
         "title": "Trial groups",
         "text": "It is now possible to organize trials into groups. These groups can be assigned during setup, import or at any point afterwards."
       }, {
-        "type": "new",
-        "title": "Visual changes",
-        "text": "You can change the shape, size and compactness of the main data display to match your needs. Currently circles and squares are available as the shapes and three different settings for sizes and compactness are available."
-      }, {
         "type": "update",
         "title": "Guided walk change",
         "text": "To maximize the available screen space as well as performance, we have moved the guided walk to its own page where it will use all the available screen space."

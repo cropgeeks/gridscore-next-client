@@ -4,6 +4,13 @@
       <b-button v-for="mode in plotModes" :key="`plot-mode-${mode.value}`" :pressed="plotMode === mode.value" @click="plotMode = mode.value">
         <component :is="mode.icon" /> {{ mode.name }}
       </b-button>
+
+      <b-button :pressed="individualTimepoints" @click="individualTimepoints = true" class="ml-3">
+        <BIconBarChartSteps :rotate="-90" /> {{ $t('buttonIndividualTimepoints') }}
+      </b-button>
+      <b-button :pressed="!individualTimepoints" @click="individualTimepoints = false">
+        <BIconGraphUp /> {{ $t('buttonEvolvingTimepoints') }}
+      </b-button>
     </b-button-group>
     <div v-if="plotMode === 'selection'" class="select-search-wrapper">
       <b-form-input v-model="searchTerm" type="search" :placeholder="$t('formPlaceholderTimelinePlotSearch')" />
@@ -27,7 +34,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import { BIconCardChecklist, BIconCardList, BIconHr, BIconPlusSquareFill } from 'bootstrap-vue'
+import { BIconCardChecklist, BIconCardList, BIconHr, BIconPlusSquareFill, BIconBarChartSteps, BIconGraphUp } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { toLocalDateString } from '@/plugins/misc'
 
@@ -42,7 +49,9 @@ Plotly.register([
 
 export default {
   components: {
-    BIconPlusSquareFill
+    BIconPlusSquareFill,
+    BIconBarChartSteps,
+    BIconGraphUp
   },
   props: {
     trial: {
@@ -64,7 +73,8 @@ export default {
       allGermplasm: [],
       selectedGermplasmTemp: [],
       selectedGermplasm: [],
-      searchTerm: null
+      searchTerm: null,
+      individualTimepoints: false
     }
   },
   computed: {
@@ -120,6 +130,9 @@ export default {
     },
     selectedGermplasm: function () {
       this.plot()
+    },
+    individualTimepoints: function () {
+      this.plot()
     }
   },
   methods: {
@@ -152,63 +165,132 @@ export default {
       })
 
       const sortedDates = [...allDates].sort((a, b) => a - b)
-
       // Keep track of statistics
       const mins = sortedDates.map(d => Number.MAX_SAFE_INTEGER)
       const maxs = mins.map(d => -d)
       const totals = mins.map(d => 0)
       const counts = mins.map(d => 0)
-      const traces = []
-      // For each field cell
-      Object.keys(this.trialData).forEach(k => {
-        const c = this.trialData[k]
+      let traces = []
 
-        const traitMeasurements = c.measurements[this.trait.id] || []
+      if (this.individualTimepoints) {
+        // For each field cell
+        Object.keys(this.trialData).forEach(k => {
+          const c = this.trialData[k]
 
-        const dataPoints = traitMeasurements.map(m => {
-          const date = new Date(m.timestamp)
-          date.setHours(0, 0, 0, 0)
-          const time = date.getTime()
+          const traitMeasurements = c.measurements[this.trait.id] || []
 
-          const existingValues = m.values.filter(v => v !== undefined && v !== null)
-          let avg
+          const dataPoints = traitMeasurements.map(m => {
+            const date = new Date(m.timestamp)
+            date.setHours(0, 0, 0, 0)
+            const time = date.getTime()
 
-          if (this.trait.dataType === 'categorical') {
-            avg = existingValues.length > 0 ? existingValues[existingValues.length - 1] : 0
-          } else {
-            avg = existingValues.length > 0 ? existingValues.reduce((acc, val) => acc + (+val), 0) / existingValues.length : 0
+            const existingValues = m.values.filter(v => v !== undefined && v !== null)
+            let avg
+
+            if (this.trait.dataType === 'categorical') {
+              avg = existingValues.length > 0 ? existingValues[existingValues.length - 1] : 0
+            } else {
+              avg = existingValues.length > 0 ? existingValues.reduce((acc, val) => acc + (+val), 0) / existingValues.length : 0
+            }
+
+            // Update statistics
+            mins.forEach((m, i) => {
+              if (sortedDates[i] === time) {
+                mins[i] = Math.min(mins[i], avg)
+                maxs[i] = Math.max(maxs[i], avg)
+                totals[i] += avg
+                counts[i]++
+              }
+            })
+
+            return {
+              date: time,
+              value: avg
+            }
+          })
+
+          dataPoints.sort((a, b) => a.date - b.date)
+
+          if (this.plotMode === 'all' || (this.plotMode === 'selection' && this.selectedGermplasm.indexOf(c.displayName) !== -1)) {
+            traces.push({
+              type: 'scatter',
+              mode: 'lines+markers',
+              name: c.displayName,
+              x: dataPoints.map(dp => new Date(dp.date)),
+              y: this.trait.dataType === 'categorical' ? dataPoints.map(dp => this.trait.restrictions.categories[dp.value]) : dataPoints.map(dp => dp.value)
+            })
           }
+        })
+      } else {
+        traces = Object.keys(this.trialData).map(k => {
+          const c = this.trialData[k]
 
-          // Update statistics
-          mins.forEach((m, i) => {
-            if (sortedDates[i] === time) {
+          const traitMeasurements = c.measurements[this.trait.id] || []
+
+          const y = sortedDates.map(_ => NaN)
+
+          // let lastIndex = sortedDates.length - 1
+          // for (let i = sortedDates.length - 1; i >= 0; i--) {
+          //   const values = traitMeasurements.filter(m => {
+          //     const existingValues = m.values.filter(v => v !== undefined && v !== null)
+          //     const date = new Date(m.timestamp)
+          //     date.setHours(0, 0, 0, 0)
+          //     const time = date.getTime()
+
+          //     return time === sortedDates[i] && existingValues.length > 0
+          //   })
+
+          //   if (values.length > 0) {
+          //     lastIndex = i
+          //     break
+          //   }
+          // }
+
+          for (let i = 0; i < sortedDates.length; i++) {
+            const values = traitMeasurements.filter(m => {
+              const existingValues = m.values.filter(v => v !== undefined && v !== null)
+              const date = new Date(m.timestamp)
+              date.setHours(0, 0, 0, 0)
+              const time = date.getTime()
+
+              return time === sortedDates[i] && existingValues.length > 0
+            })
+
+            const flattened = values.map(m => m.values).flat()
+
+            if (flattened.length > 0) {
+              const avg = flattened.reduce((acc, val) => acc + (+val), 0) / flattened.length
               mins[i] = Math.min(mins[i], avg)
               maxs[i] = Math.max(maxs[i], avg)
               totals[i] += avg
               counts[i]++
+              y[i] = avg
+            } else if (i > 0 && !isNaN(y[i - 1])) {
+              y[i] = y[i - 1]
+              mins[i] = Math.min(mins[i], y[i])
+              maxs[i] = Math.max(maxs[i], y[i])
+              totals[i] += y[i]
+              counts[i]++
+            } else {
+              y[i] = NaN
             }
-          })
-
-          return {
-            date: time,
-            value: avg
           }
-        })
 
-        dataPoints.sort((a, b) => a.date - b.date)
+          // y = y.map((v, i) => i <= lastIndex ? v : NaN)
 
-        if (this.plotMode === 'all' || (this.plotMode === 'selection' && this.selectedGermplasm.indexOf(c.displayName) !== -1)) {
-          console.log(c.displayName, dataPoints)
-
-          traces.push({
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: c.displayName,
-            x: dataPoints.map(dp => new Date(dp.date)),
-            y: this.trait.dataType === 'categorical' ? dataPoints.map(dp => this.trait.restrictions.categories[dp.value]) : dataPoints.map(dp => dp.value)
-          })
-        }
-      })
+          if (this.plotMode === 'all' || (this.plotMode === 'selection' && this.selectedGermplasm.indexOf(c.displayName) !== -1)) {
+            return {
+              x: sortedDates.map(d => new Date(d)),
+              y: y,
+              type: 'scatter',
+              mode: 'lines+markers',
+              name: c.displayName
+            }
+          } else {
+            return null
+          }
+        }).filter(t => t !== null)
+      }
 
       const background = {
         x: [],
