@@ -96,6 +96,7 @@ import { gridScoreVersion } from '@/plugins/constants'
 import { isOffline } from '@/plugins/misc'
 
 import { UAParser } from 'ua-parser-js'
+import { initDb } from './plugins/idb'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -271,6 +272,8 @@ export default {
       console.log('reloading')
       window.location.reload(true)
     })
+
+    initDb()
   },
   mounted: function () {
     loadLanguageAsync(this.storeLocale)

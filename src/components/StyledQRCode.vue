@@ -1,7 +1,10 @@
 <template>
   <div v-if="code">
     <div ref="svg" id="qrcode" class="text-center" />
-    <p class="text-center" v-if="showCode">{{ text }}</p>
+    <template v-if="showCode">
+      <p class="text-center">{{ text }}</p>
+      <b-form-input :value="code" readonly @focus="$event.target.select()" />
+    </template>
   </div>
 </template>
 
@@ -33,7 +36,7 @@ export default {
     code: function () {
       if (this.text) {
         if (this.isTrialCode) {
-          const uuidPart = this.$router.resolve({ name: 'trial-import', params: { shareCode: this.text } }).resolved.path
+          const uuidPart = this.$router.resolve({ name: 'trial-import-code', params: { shareCode: this.text } }).resolved.path
           let origin = window.location.origin
           let pathname = window.location.pathname
 

@@ -234,6 +234,10 @@
         "title": "Versuchsgruppen",
         "text": "Es ist jetzt möglich Versuche in Gruppen zu organisieren. Diese Gruppen können während des Aufbaus, beim Importieren oder zu einem späteren Zeitpunkt zugewiesen werden."
       }, {
+        "type": "new",
+        "title": "Versuchsmerkmalimport",
+        "text": "Beim Erstellen eines neuen Versuches können jetzt Merkmale aus einem anderen Versuch importiert werden der auf dem aktuellen Gerät verfügbar ist."
+      }, {
         "type": "update",
         "title": "Gelenkter Ablaub Änderung",
         "text": "Um sowohl den verfügbaren Bildschirmbereich als auch die Leistung zu maximieren haben wir den gelenkten Ablauf auf eine eigenständige Seite verlagert wo er den maximalen Bildschirmbereich ausnutzen kann."

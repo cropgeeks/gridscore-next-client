@@ -54,6 +54,25 @@ const getDb = async () => {
   })
 }
 
+const initDb = async () => {
+  const db = await getDb()
+
+  let cursor = await db.transaction('trials', 'readwrite').store.openCursor()
+
+  while (cursor) {
+    const trial = cursor.value
+
+    if (trial) {
+      delete trial.data
+
+      // Write it back to the database
+      await cursor.update(trial)
+    }
+
+    cursor = await cursor.continue()
+  }
+}
+
 const getTrialGroups = async () => {
   const db = await getDb()
 
@@ -182,6 +201,7 @@ const updateTrial = async (localId, updatedTrial) => {
     delete updatedTrial.editable
     delete updatedTrial.shareStatus
     delete updatedTrial.transactionCount
+    delete updatedTrial.data
 
     // Set the trial group again
     if (trial.group && trial.group.name) {
@@ -764,7 +784,7 @@ const deleteTrialComment = async (trialId, comment) => {
   if (trial) {
     trial.comments = trial.comments.filter(c => c.timestamp !== comment.timestamp && c.content !== comment.content)
     trial.updatedOn = new Date().toISOString()
-    const db = await getDb()
+    // Make sure there's no data stored in the `trials` table
 
     if (logTransactions(trial)) {
       const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
@@ -1131,6 +1151,7 @@ export {
   getTrialGroups,
   getTrialById,
   getTrialData,
+  initDb,
   deleteTrial,
   addTrial,
   deleteTrialComment,

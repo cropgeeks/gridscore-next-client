@@ -46,6 +46,8 @@
               </b-form-group>
             </b-col>
           </b-row>
+
+          <div class="border border-warning text-center mb-3 p-2"><BIconExclamationTriangleFill class="text-warning" /> {{ $t('pageTrialLayoutDimensionsFielDHubNotice') }}</div>
         </b-container>
       </b-tab>
       <b-tab :disabled="!hasDimensions">
@@ -90,7 +92,7 @@
 import TrialLayoutGermplasmGrid from '@/components/TrialLayoutGermplasmGrid'
 import MarkerSetup from '@/components/MarkerSetup'
 import TrialLayoutCorners from '@/components/TrialLayoutCorners'
-import { BIconLayoutThreeColumns, BIconCheck, BIconX, BIconGrid3x2Gap, BIconFlower1, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconSortNumericDown, BIconSortNumericUpAlt } from 'bootstrap-vue'
+import { BIconLayoutThreeColumns, BIconCheck, BIconX, BIconExclamationTriangleFill, BIconGrid3x2Gap, BIconFlower1, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconSortNumericDown, BIconSortNumericUpAlt } from 'bootstrap-vue'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_BOTTOM_TO_TOP } from '@/plugins/constants'
 
@@ -104,6 +106,7 @@ export default {
     BIconX,
     BIconGrid3x2Gap,
     BIconFlower1,
+    BIconExclamationTriangleFill,
     BIconArrowsFullscreen,
     BIconBoundingBoxCircles,
     BIconSortNumericDown,

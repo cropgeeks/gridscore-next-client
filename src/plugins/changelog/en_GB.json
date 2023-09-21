@@ -234,6 +234,10 @@
         "title": "Trial groups",
         "text": "It is now possible to organize trials into groups. These groups can be assigned during setup, import or at any point afterwards."
       }, {
+        "type": "new",
+        "title": "Trial trait import",
+        "text": "When setting up a new trial you can now import trials from another trial that's available on your current device."
+      }, {
         "type": "update",
         "title": "Guided walk change",
         "text": "To maximize the available screen space as well as performance, we have moved the guided walk to its own page where it will use all the available screen space."

@@ -126,6 +126,7 @@
             <b-dropdown-group id="import-group" :header="$t('dropdownSectionImportTraits')">
               <b-dropdown-item-button @click="importExportJson(false)">{{ $t('dropdownOptionImportTraitsJson') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="importExportGerminate(false)">{{ $t('dropdownOptionImportTraitsGerminate') }}</b-dropdown-item-button>
+              <b-dropdown-item-button @click="importOtherTrial">{{ $t('dropdownOptionImportTraitsOtherTrial') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="$refs.brapiTraitImportModal.show()">{{ $t('dropdownOptionImportTraitsBrapi') }}</b-dropdown-item-button>
             </b-dropdown-group>
             <b-dropdown-group id="export-group" :header="$t('dropdownSectionExportTraits')">
@@ -176,6 +177,7 @@
 
     <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" @change="importTraits" />
     <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" @change="importTraits" />
+    <TraitImportTrialModal ref="traitImportTrialModal" @change="importTraits" />
     <BrapiTraitImportModal ref="brapiTraitImportModal" @traits-selected="importBrapiTraits" />
   </div>
 </template>
@@ -183,6 +185,7 @@
 <script>
 import Vue from 'vue'
 import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal'
+import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal'
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal'
 import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal'
 import { getTraitTypeText } from '@/plugins/misc'
@@ -217,6 +220,7 @@ export default {
     BIconTags,
     TraitImportExportGridScoreModal,
     TraitImportExportGerminateModal,
+    TraitImportTrialModal,
     BrapiTraitImportModal
   },
   props: {
@@ -408,6 +412,9 @@ export default {
         t.id = getId()
         this.traits.push(t)
       })
+    },
+    importOtherTrial: function () {
+      this.$refs.traitImportTrialModal.show()
     },
     importExportGerminate: function (xport) {
       if (xport && this.traits && this.traits.length > 0) {

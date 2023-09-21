@@ -34,6 +34,8 @@ If your trial does not follow a rectangular layout, you can still use GridScore,
 
 In addition to the dimensionality, you can choose in which order rows and columns are numbered. By default, GridScore will number them from the top-left corner, starting at row 1, column 1. You can switch both the row and column order separately to change this behavior to better suit your needs. If, for example, you are counting rows and columns from the bottom-left corner, reverse the row order to go from bottom to top, but keep the column order the same. This used to be a global setting in the old GridScore, but we realized that everyone working on the same trial will be using the same ordering while they may use different orderings for individual trials.
 
+> NOTE: If you're importing a trial design from FielDHub, please make sure to select 'bottom to top' for the row order.
+
 ### Germplasm grid
 <img src="img/setup-grid.png" style="max-width: 100%;" alt="Trial germplasm grid">
 
