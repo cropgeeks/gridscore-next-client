@@ -139,8 +139,8 @@ const synchronizeTrial = (shareCode, transactions) => {
   return axiosCall({ url: `trial/${shareCode}/transaction`, params: transactions, method: 'post' })
 }
 
-const exportToGerminate = (shareCode) => {
-  return axiosCall({ url: `trial/${shareCode}/export/g8`, method: 'get' })
+const exportToGerminate = (shareCode, aggregate = true) => {
+  return axiosCall({ url: `trial/${shareCode}/export/g8?aggregate=${aggregate}`, method: 'get' })
 }
 
 const exportToShapefile = (shareCode) => {

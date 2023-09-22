@@ -13,20 +13,7 @@
       </b-row>
     </div>
 
-    <b-row>
-      <b-col cols=6 md=3 class="mb-4" v-for="banner in homeBanners" :key="`home-banner-${banner.id}`">
-        <b-card class="home-card h-100" no-body>
-          <b-card-img class="p-2 p-md-4 p-lg-5" :top="true" :src="require(`@/assets/img/${banner.image}`)" />
-          <b-card-body>
-            <b-card-title>{{ banner.title }}</b-card-title>
-            <b-card-sub-title>{{ banner.subtitle }}</b-card-sub-title>
-          </b-card-body>
-          <b-button variant="primary" class="stretched-link" :to="banner.to"><BIconCaretRight /> {{ $t('buttonSelect') }}</b-button>
-        </b-card>
-      </b-col>
-    </b-row>
-
-    <TrialSelector class="mb-4" />
+    <component v-for="c in sortedWidgets" :key="c.id" :is="c.component" class="mb-3" />
 
     <b-card bg-variant="light" class="mb-4" v-if="!storeHideCitationMessage" no-body>
       <b-card-body>
@@ -46,49 +33,42 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconNewspaper, BIconCaretRight } from 'bootstrap-vue'
+import { BIconNewspaper } from 'bootstrap-vue'
 
+import HomeBanners from '@/components/HomeBanners'
 import TrialSelector from '@/components/TrialSelector'
 
 const emitter = require('tiny-emitter/instance')
 
 export default {
   name: 'HomeView',
+  data: function () {
+    return {
+      widgets: [{
+        id: 'banners',
+        component: HomeBanners
+      }, {
+        id: 'trials',
+        component: TrialSelector
+      }]
+    }
+  },
   components: {
     BIconNewspaper,
-    BIconCaretRight,
+    HomeBanners,
     TrialSelector
   },
   computed: {
     ...mapGetters([
-      'storeHideCitationMessage'
+      'storeHideCitationMessage',
+      'storeHomeWidgetOrder'
     ]),
-    homeBanners: function () {
-      return [{
-        id: 'setup',
-        title: this.$t('pageHomeCardTitleSetup'),
-        subtitle: this.$t('pageHomeCardSubtitleSetup'),
-        image: 'banner-setup.svg',
-        to: { name: 'trial-setup' }
-      }, {
-        id: 'share',
-        title: this.$t('pageHomeCardTitleShareData'),
-        subtitle: this.$t('pageHomeCardSubtitleShareData'),
-        image: 'banner-share.svg',
-        to: { name: 'trial-import' }
-      }, {
-        id: 'example',
-        title: this.$t('pageHomeCardTitleLoadExample'),
-        subtitle: this.$t('pageHomeCardSubtitleLoadExample'),
-        image: 'banner-load-example.svg',
-        to: { name: 'load-example' }
-      }, {
-        id: 'settings',
-        title: this.$t('pageHomeCardTitleSettings'),
-        subtitle: this.$t('pageHomeCardSubtitleSettings'),
-        image: 'banner-settings.svg',
-        to: { name: 'settings' }
-      }]
+    sortedWidgets: function () {
+      if (this.storeHomeWidgetOrder && this.storeHomeWidgetOrder.length > 0) {
+        return this.storeHomeWidgetOrder.map(o => this.widgets.find(w => w.id === o))
+      } else {
+        return this.widgets
+      }
     }
   },
   methods: {

@@ -137,7 +137,7 @@
         </div>
         <p>{{ $t('pageTrialTraitListText') }}</p>
         <draggable v-model="traits" tag="b-list-group" v-if="traits && traits.length > 0" handle=".drag-handle" class="trait-list">
-          <b-list-group-item :active="newTrait.id === trait.id" href="#" @click="toggleTrait(index)" class="flex-column align-items-start" v-for="(trait, index) in traits" :key="`trait-list-${trait.id}`">
+          <b-list-group-item :active="newTrait.id === trait.id" href="#" @click.prevent="toggleTrait(index)" class="flex-column align-items-start" v-for="(trait, index) in traits" :key="`trait-list-${trait.id}`">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1">{{ trait.name }}</h5>
               <span>

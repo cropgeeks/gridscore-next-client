@@ -2,7 +2,7 @@
   <b-container class="my-4">
     <div class="d-flex align-items-center justify-content-between">
       <h1 class="display-4">{{ $t(trialToCopy ? 'modalTitleTrialDuplicate' : 'pageTrialSetupTitle') }}</h1>
-      <h4><a href="#" class="text-dark" @click="$refs.setupTour.start()"><BIconQuestionCircle /></a></h4>
+      <h4><a href="#" class="text-dark" @click.prevent="$refs.setupTour.start()"><BIconQuestionCircle /></a></h4>
     </div>
     <p>{{ $t(trialToCopy ? 'modalTextTrialDuplicate' : 'pageTrialSetupText') }}</p>
 

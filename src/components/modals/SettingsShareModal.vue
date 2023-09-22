@@ -67,6 +67,7 @@ export default {
       'storeCanvasShape',
       'storeCanvasSize',
       'storeDisplayMinCellWidth',
+      'storeHomeWidgetOrder',
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
       'storeRestrictInputToMarked',
@@ -88,6 +89,9 @@ export default {
           this.$store.commit('ON_LOCALE_CHANGED', parsed.lc)
           loadLanguageAsync(parsed.lc)
         }
+        if (parsed.hw) {
+          this.$store.commit('ON_HOME_WIDGET_ORDER_CHANGED', parsed.hw)
+        }
         if (parsed.dm === 1) {
           this.$store.commit('ON_DARK_MODE_CHANGED', true)
         } else if (parsed.dm === 0) {
@@ -99,7 +103,7 @@ export default {
           this.$store.commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', false)
         }
         if (parsed.cw !== undefined && parsed.cw !== null) {
-          this.$store.commit('ON_DISPLAY_MIN_CELL_WIDTH_CHANGED', parsed.cw)
+          this.$store.commit('ON_DISPLAY_MIN_CELL_WIDTH_CHANGED', parsed.cw.split(','))
         }
         if (parsed.ge === 1) {
           this.$store.commit('ON_GPS_ENABLED_CHANGED', true)
@@ -173,6 +177,7 @@ export default {
         hc: this.storeHideCitationMessage ? 1 : 0,
         dm: this.storeDarkMode ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,
+        hw: this.storeHomeWidgetOrder.join(','),
         cw: this.storeDisplayMinCellWidth,
         ge: this.storeGpsEnabled ? 1 : 0,
         vf: this.storeVoiceFeedbackEnabled ? 1 : 0,

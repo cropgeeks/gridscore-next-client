@@ -22,6 +22,19 @@
                 {{ hideCitationMessage ? $t('genericYes') : $t('genericNo') }}
               </b-form-checkbox>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsWidgetOrder')" :description="$t('formDescriptionSettingsWidgetOrder')" label-for="home-widget-list">
+              <draggable v-model="homeWidgetOrder" tag="b-list-group" handle=".drag-handle" id="home-widget-list">
+                <b-list-group-item class="flex-column align-items-start" v-for="homeWidget in homeWidgetOrder" :key="`home-widget-list-${homeWidget}`">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ homeWidgetOptions[homeWidget].name }}</h5>
+                    <BIconGripVertical class="drag-handle ml-2" />
+                  </div>
+
+                  <p class="mb-1 trait-description">{{ homeWidgetOptions[homeWidget].description }}</p>
+                </b-list-group-item>
+              </draggable>
+            </b-form-group>
           </b-card>
           <b-card class="mb-4" :title="$t('pageSettingsCardDataCollectionTitle')" :sub-title="$t('pageSettingsCardDataCollectionSubtitle')">
             <b-form-group :label="$t('formLabelSettingsUseGps')" :description="$t('formDescriptionSettingsUseGps')" label-for="gpsEnabled">
@@ -141,9 +154,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg, BIconCircleFill, BIconSquareFill } from 'bootstrap-vue'
+import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg, BIconCircleFill, BIconSquareFill, BIconGripVertical } from 'bootstrap-vue'
 import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
+import draggable from 'vuedraggable'
 
 export default {
   components: {
@@ -152,12 +166,14 @@ export default {
     BIconArrowsMove,
     BIconX,
     BIconPlus,
+    BIconGripVertical,
     BIconstack,
     BIconDashLg,
     BIconArrowClockwise,
     BIconCircleFill,
     BIconSquareFill,
-    SettingsShareModal
+    SettingsShareModal,
+    draggable
   },
   data: function () {
     return {
@@ -176,6 +192,7 @@ export default {
       hideCitationMessage: false,
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
+      homeWidgetOrder: ['banners', 'trials'],
       canvasDensity: CANVAS_DENSITY_LOW,
       canvasShape: CANVAS_SHAPE_CIRCLE,
       canvasSize: CANVAS_SIZE_SMALL,
@@ -201,6 +218,7 @@ export default {
       'storeCanvasShape',
       'storeCanvasSize',
       'storeNavigationMode',
+      'storeHomeWidgetOrder',
       'storeTraitColors'
     ]),
     localeOptions: function () {
@@ -210,6 +228,20 @@ export default {
           text: l.name
         }
       })
+    },
+    homeWidgetOptions: function () {
+      return {
+        banners: {
+          id: 'banners',
+          name: this.$t('pageSettingsHomeWidgetOrderBannersName'),
+          description: this.$t('pageSettingsHomeWidgetOrderBannersDescription')
+        },
+        trials: {
+          id: 'trials',
+          name: this.$t('pageSettingsHomeWidgetOrderTrialsName'),
+          description: this.$t('pageSettingsHomeWidgetOrderTrialsDescription')
+        }
+      }
     }
   },
   watch: {
@@ -252,6 +284,12 @@ export default {
     },
     canvasSize: function (newValue) {
       this.$store.dispatch('setCanvasSize', newValue)
+    },
+    homeWidgetOrder: {
+      deep: true,
+      handler: function (newValue) {
+        this.$store.dispatch('setHomeWidgetOrder', newValue)
+      }
     }
   },
   methods: {
@@ -276,6 +314,7 @@ export default {
       this.gpsEnabled = this.storeGpsEnabled
       this.voiceFeedbackEnabled = this.storeVoiceFeedbackEnabled
       this.restrictInputToMarked = this.storeRestrictInputToMarked
+      this.homeWidgetOrder = this.storeHomeWidgetOrder
       this.navigationMode = this.storeNavigationMode
       this.traitColors = this.storeTraitColors
       this.canvasDensity = this.storeCanvasDensity
@@ -300,5 +339,9 @@ export default {
 .settings-form .canvas-shape,
 .settings-form .canvas-size {
   flex-wrap: wrap;
+}
+
+.drag-handle:hover {
+  cursor: move;
 }
 </style>

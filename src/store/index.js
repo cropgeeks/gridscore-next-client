@@ -30,6 +30,7 @@ export default new Vuex.Store({
     restrictInputToMarked: false,
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
+    homeWidgetOrder: ['banners', 'trials'],
     canvasDensity: CANVAS_DENSITY_LOW,
     canvasShape: CANVAS_SHAPE_CIRCLE,
     canvasSize: CANVAS_SIZE_SMALL,
@@ -65,6 +66,7 @@ export default new Vuex.Store({
     storeRestrictInputToMarked: (state) => state.restrictInputToMarked,
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
+    storeHomeWidgetOrder: (state) => state.homeWidgetOrder,
     storeCanvasDensity: (state) => state.canvasDensity,
     storeCanvasShape: (state) => state.canvasShape,
     storeCanvasSize: (state) => state.canvasSize,
@@ -190,6 +192,13 @@ export default new Vuex.Store({
     ON_TRAIT_COLORS_CHANGED: function (state, newTraitColors) {
       state.traitColors = newTraitColors
     },
+    ON_HOME_WIDGET_ORDER_CHANGED: function (state, newHomeWidgetOrder) {
+      if (Object.prototype.hasOwnProperty.call(state, 'homeWidgetOrder')) {
+        state.homeWidgetOrder = newHomeWidgetOrder
+      } else {
+        Vue.set(state, 'homeWidgetOrder', newHomeWidgetOrder)
+      }
+    },
     ON_PLAUSIBLE_CHANGED: function (state, newPlausible) {
       state.plausible = newPlausible
     },
@@ -284,6 +293,9 @@ export default new Vuex.Store({
     },
     setTraitColors: function ({ commit }, traitColors) {
       commit('ON_TRAIT_COLORS_CHANGED', traitColors)
+    },
+    setHomeWidgetOrder: function ({ commit }, homeWidgetOrder) {
+      commit('ON_HOME_WIDGET_ORDER_CHANGED', homeWidgetOrder)
     },
     setPlausible: function ({ commit }, plausible) {
       commit('ON_PLAUSIBLE_CHANGED', plausible)

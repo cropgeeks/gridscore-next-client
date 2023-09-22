@@ -121,6 +121,7 @@ export default {
     createComment: function () {
       addTrialComment(this.trial.localId, this.newCommentContent)
         .then(() => {
+          this.$refs.input.reset()
           this.newCommentContent = null
           this.commentFormVisible = false
           emitter.emit('trial-properties-changed', this.trial.localId)

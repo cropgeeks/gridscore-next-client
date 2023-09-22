@@ -64,6 +64,12 @@
         <b-row>
           <b-col cols=12 md=6>
             <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateDataCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateDataCardSubtitle')">
+              <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
+                <b-form-checkbox id="aggregate" v-model="germinateAggregate" switch>
+                  {{ germinateAggregate ? $t('genericYes') : $t('genericNo') }}
+                </b-form-checkbox>
+              </b-form-group>
+
               <b-button :disabled="storeIsOffline" :href="exportedFiles.germinate" @click="exportedFiles.germinate = null" variant="success" v-if="exportedFiles.germinate"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
               <b-button :disabled="storeIsOffline" @click="exportDataGerminate" variant="primary" v-else><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
             </b-card>
@@ -125,6 +131,7 @@ export default {
         germinate: null,
         shapefile: null
       },
+      germinateAggregate: true,
       plotCommentCount: 0
     }
   },
@@ -347,7 +354,7 @@ export default {
                 this.$refs.traitSyncModal.show()
               } else {
                 emitter.emit('show-loading', true)
-                exportToGerminate(shareCode)
+                exportToGerminate(shareCode, this.germinateAggregate)
                   .then(uuid => {
                     this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
                     emitter.emit('show-loading', false)
@@ -357,7 +364,7 @@ export default {
             })
         } else {
           emitter.emit('show-loading', true)
-          exportToGerminate(shareCode)
+          exportToGerminate(shareCode, this.germinateAggregate)
             .then(uuid => {
               this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
               emitter.emit('show-loading', false)

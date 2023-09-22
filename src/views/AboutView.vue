@@ -10,7 +10,7 @@
             <h1 class="display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
             <p class="lead text-center text-md-left"><BIconTag /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
             <p class="lead text-center text-md-left" v-if="storeDeviceConfigString"><BIconLaptop /> {{ storeDeviceConfigString }}</p>
-            <p class="text-center text-md-left mb-0"><BIconInfoCircle /> <a href="#" @click="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
+            <p class="text-center text-md-left mb-0"><BIconInfoCircle /> <a href="#" @click.prevent="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
           </b-col>
         </b-row>
       </div>

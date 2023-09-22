@@ -238,6 +238,14 @@
         "title": "Trial trait import",
         "text": "When setting up a new trial you can now import trials from another trial that's available on your current device."
       }, {
+        "type": "new",
+        "title": "Germinate Excel export",
+        "text": "When exporting to the Germinate Excel data templates you can now disable averaging of values across sets and on the same day."
+      }, {
+        "type": "new",
+        "title": "Home page order",
+        "text": "You can now change the order of the home page widgets from the settings page."
+      }, {
         "type": "update",
         "title": "Guided walk change",
         "text": "To maximize the available screen space as well as performance, we have moved the guided walk to its own page where it will use all the available screen space."

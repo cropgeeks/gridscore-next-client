@@ -53,6 +53,9 @@ export default {
     }
   },
   methods: {
+    reset: function () {
+      this.value = null
+    },
     focus: function () {
       this.$refs.textarea.focus()
     },

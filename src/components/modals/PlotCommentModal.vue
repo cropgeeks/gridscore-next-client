@@ -117,6 +117,7 @@ export default {
     createComment: function () {
       addPlotComment(this.cell.trialId, this.cell.row, this.cell.column, this.newCommentContent)
         .then(() => {
+          this.$refs.input.reset()
           this.newCommentContent = null
           this.commentFormVisible = false
           emitter.emit('plot-comments-changed', this.cell.row, this.cell.column, this.cell.trialId)
