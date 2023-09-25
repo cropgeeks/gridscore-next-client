@@ -14,6 +14,12 @@
         <b-row>
           <b-col cols=12 md=6>
             <b-card class="mb-3" :title="$t('pageExportTrialFormatTabDataCardTitle')" :sub-title="$t('pageExportTrialFormatTabDataCardSubtitle')">
+              <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
+                <b-form-checkbox id="aggregate" v-model="tabAggregate" switch>
+                  {{ tabAggregate ? $t('genericYes') : $t('genericNo') }}
+                </b-form-checkbox>
+              </b-form-group>
+
               <b-button @click="exportDataTab" variant="primary"><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
             </b-card>
           </b-col>
@@ -104,7 +110,7 @@ import IconGerminate from '@/components/icons/IconGerminate'
 import IconBrapi from '@/components/icons/IconBrapi'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
 import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload, BIconChatRightQuoteFill, BIconstack, BIconChatRight, BIconArrowDown } from 'bootstrap-vue'
-import { downloadText, toLocalDateString } from '@/plugins/misc'
+import { downloadText, toLocalDateString, trialsDataToMatrix } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import BrapiExportSection from '@/components/BrapiExportSection'
 
@@ -132,6 +138,7 @@ export default {
         shapefile: null
       },
       germinateAggregate: true,
+      tabAggregate: true,
       plotCommentCount: 0
     }
   },
@@ -238,87 +245,7 @@ export default {
 
       const data = getTrialDataCached()
       // Header row
-      let result = `Line/Trait\tRep\tRow\tColumn\tDate\t${this.trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
-
-      Object.values(data).forEach(v => {
-        if (v.measurements) {
-          const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (v.row + 1) : (this.trial.layout.rows - v.row)
-          const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (v.column + 1) : (this.trial.layout.columns - v.column)
-          const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
-
-          const dates = new Set()
-          Object.values(v.measurements).forEach(td => {
-            td.forEach(dp => dates.add(dp.timestamp.split('T')[0]))
-          })
-
-          const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
-
-          dateArray.forEach(date => {
-            result += `\n${germplasmMeta}\t${date}`
-
-            this.trial.traits.forEach(t => {
-              const td = v.measurements[t.id]
-
-              if (td) {
-                const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
-
-                if (onDate.length > 0) {
-                  if (t.dataType === 'float' || t.dataType === 'int') {
-                    result += `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
-                  } else if (t.dataType === 'categorical') {
-                    result += `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`
-                  } else {
-                    result += `\t${onDate[onDate.length - 1]}`
-                  }
-                } else {
-                  result += '\t'
-                }
-              } else {
-                result += '\t'
-              }
-            })
-
-            if (v.geography) {
-              if (v.geography.center) {
-                result += `\t${v.geography.center.lat || ''}\t${v.geography.center.lng || ''}`
-              } else if (v.geography.corners) {
-                let latverage = 0
-                let lngverage = 0
-                let count = 0
-
-                if (v.geography.corners.topLeft) {
-                  latverage += v.geography.corners.topLeft.lat || 0
-                  lngverage += v.geography.corners.topLeft.lng || 0
-                  count++
-                }
-                if (v.geography.corners.topRight) {
-                  latverage += v.geography.corners.topRight.lat || 0
-                  lngverage += v.geography.corners.topRight.lng || 0
-                  count++
-                }
-                if (v.geography.corners.bottomLeft) {
-                  latverage += v.geography.corners.bottomLeft.lat || 0
-                  lngverage += v.geography.corners.bottomLeft.lng || 0
-                  count++
-                }
-                if (v.geography.corners.bottomRight) {
-                  latverage += v.geography.corners.bottomRight.lat || 0
-                  lngverage += v.geography.corners.bottomRight.lng || 0
-                  count++
-                }
-
-                if (count) {
-                  result += `\t${latverage / count}\t${lngverage / count}`
-                } else {
-                  result += '\t\t'
-                }
-              } else {
-                result += '\t\t'
-              }
-            }
-          })
-        }
-      })
+      const result = trialsDataToMatrix(data, this.trial, this.tabAggregate)
 
       downloadText(result, `gridscore-data-${this.safeTrialName}.txt`)
 

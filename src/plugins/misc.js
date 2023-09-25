@@ -4,6 +4,7 @@ import { trialLayoutToPlots } from '@/plugins/location'
 import store from '@/store'
 
 import { saveAs } from 'file-saver'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from './constants'
 
 const categoryColors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
@@ -318,7 +319,152 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
   }
 }
 
+const trialsDataToMatrix = (data, trial, aggregate = true) => {
+  let result = `Line/Trait\tRep\tRow\tColumn\tDate\t${trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
+
+  if (aggregate) {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (v.row + 1) : (trial.layout.rows - v.row)
+        const column = trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (v.column + 1) : (trial.layout.columns - v.column)
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        const dates = new Set()
+        Object.values(v.measurements).forEach(td => {
+          td.forEach(dp => dates.add(dp.timestamp.split('T')[0]))
+        })
+
+        const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
+
+        dateArray.forEach(date => {
+          result += `\n${germplasmMeta}\t${date}`
+
+          trial.traits.forEach(t => {
+            const td = v.measurements[t.id]
+
+            if (td) {
+              const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
+
+              if (onDate.length > 0) {
+                if (t.dataType === 'float' || t.dataType === 'int') {
+                  result += `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
+                } else if (t.dataType === 'categorical') {
+                  result += `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`
+                } else {
+                  result += `\t${onDate[onDate.length - 1]}`
+                }
+              } else {
+                result += '\t'
+              }
+            } else {
+              result += '\t'
+            }
+          })
+
+          if (v.geography) {
+            result += getLatLngAverage(v.geography)
+          } else {
+            result += '\t\t'
+          }
+        })
+      }
+    })
+  } else {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (v.row + 1) : (trial.layout.rows - v.row)
+        const column = trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (v.column + 1) : (trial.layout.columns - v.column)
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        const measurements = []
+
+        trial.traits.forEach(t => {
+          const td = v.measurements[t.id]
+
+          if (td) {
+            td.forEach(dp => {
+              const values = (dp.values || []).filter(val => val !== undefined && val !== null && val !== '')
+                .reduce((acc, value) => acc.concat(value), [])
+                .filter(val => val !== undefined && val !== null && val !== '')
+
+              if (values && values.length > 0) {
+                values.forEach(val => {
+                  measurements.push({
+                    traitId: t.id,
+                    date: dp.timestamp.split('T')[0],
+                    value: val,
+                    geography: v.geography
+                  })
+                })
+              }
+            })
+          }
+        })
+
+        measurements.forEach(m => {
+          const values = trial.traits.map(t => `${t.id === m.traitId ? m.value : ''}`).join('\t')
+          result += `\n${germplasmMeta}\t${m.date}\t${values}`
+
+          if (m.geography) {
+            result += getLatLngAverage(m.geography)
+          } else {
+            result += '\t\t'
+          }
+        })
+      }
+    })
+  }
+
+  return result
+}
+
+const getLatLngAverage = (geography) => {
+  let result = ''
+
+  if (geography) {
+    if (geography.center) {
+      result += `\t${geography.center.lat || ''}\t${geography.center.lng || ''}`
+    } else if (geography.corners) {
+      let latverage = 0
+      let lngverage = 0
+      let count = 0
+
+      if (geography.corners.topLeft) {
+        latverage += geography.corners.topLeft.lat || 0
+        lngverage += geography.corners.topLeft.lng || 0
+        count++
+      }
+      if (geography.corners.topRight) {
+        latverage += geography.corners.topRight.lat || 0
+        lngverage += geography.corners.topRight.lng || 0
+        count++
+      }
+      if (geography.corners.bottomLeft) {
+        latverage += geography.corners.bottomLeft.lat || 0
+        lngverage += geography.corners.bottomLeft.lng || 0
+        count++
+      }
+      if (geography.corners.bottomRight) {
+        latverage += geography.corners.bottomRight.lat || 0
+        lngverage += geography.corners.bottomRight.lng || 0
+        count++
+      }
+
+      if (count) {
+        result += `\t${latverage / count}\t${lngverage / count}`
+      } else {
+        result += '\t\t'
+      }
+    } else {
+      result += '\t\t'
+    }
+  }
+
+  return result
+}
+
 export {
+  trialsDataToMatrix,
   getTraitTypeText,
   downloadText,
   toLocalDateString,
