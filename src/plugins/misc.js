@@ -392,7 +392,7 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
                   measurements.push({
                     traitId: t.id,
                     date: dp.timestamp.split('T')[0],
-                    value: val,
+                    value: t.dataType === 'categorical' ? t.restrictions.categories[+val] : val,
                     geography: v.geography
                   })
                 })
