@@ -239,8 +239,8 @@
         "text": "When setting up a new trial you can now import trials from another trial that's available on your current device."
       }, {
         "type": "new",
-        "title": "Germinate Excel export",
-        "text": "When exporting to the Germinate Excel data templates you can now disable averaging of values across sets and on the same day."
+        "title": "Non-averaged data export",
+        "text": "When exporting trials data you can now disable averaging of values across sets and on the same day."
       }, {
         "type": "new",
         "title": "Home page order",

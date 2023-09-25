@@ -239,8 +239,8 @@
         "text": "Beim Erstellen eines neuen Versuches können jetzt Merkmale aus einem anderen Versuch importiert werden der auf dem aktuellen Gerät verfügbar ist."
       }, {
         "type": "new",
-        "title": "Germinate Excel Export",
-        "text": "Beim Exportieren in die Germinate Excel Datenvorlagen kann jetzt das Mitteln über Wertsätze und den gleichen Tag deaktiviert werden."
+        "title": "Nicht-gemittelter Datenexport",
+        "text": "Beim Exportieren von Versuchsdaten kann jetzt das Mitteln über Wertsätze und den gleichen Tag deaktiviert werden."
       }, {
         "type": "new",
         "title": "Homepage-Ordnung",
