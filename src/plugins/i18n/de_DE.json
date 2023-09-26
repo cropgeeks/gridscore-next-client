@@ -495,7 +495,6 @@
   "pageExportTrialFormatBrapiGermplasmIdText": "{count}/{total} Keimplasma in diesem Versuch haben eine gültige BrAPI Datenbank-ID. Nutze den Knopf unten um eine Anfrage an den BrAPI Server zu schicken um nach Übereinstimmungen zu finden.",
   "pageExportTrialFormatBrapiTraitIdTitle": "Merkmal-Datenbank-ID-Nachschlagen",
   "pageExportTrialFormatBrapiTraitIdText": "{count}/{total} Merkmale in diesem Versuch haben eine gültige BrAPI Datenbank-ID. Nutze den Knopf unten um eine Anfrage an den BrAPI Server zu schicken um nach Übereinstimmungen zu finden.",
-  "pageExportTrialFormatFilterTitle": "Filtern",
   "pageExportTrialFormatGerminateDataCardTitle": "Daten exportieren",
   "pageExportTrialFormatGerminateDataCardSubtitle": "Exportiere die gesammelten Daten direkt in die Germinate Datenvorlagen für phänotypische Versuchsdaten. Diese können dann direkt nach Germinate hochgeladen werden.",
   "pageExportTrialFormatGerminateShapeCardTitle": "Versuchsaufbau exportieren",

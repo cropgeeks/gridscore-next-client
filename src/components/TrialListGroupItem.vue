@@ -1,36 +1,38 @@
 <template>
-  <b-list-group-item :variant="trial.localId === storeSelectedTrial ? 'light' : null" :class="{ 'border-primary': trial.localId === storeSelectedTrial }" v-if="trial">
-    <div class="d-flex w-100 justify-content-between">
-      <h4 class="mb-1 trial-name">{{ trial.name }}</h4>
-      <small v-if="trial.updatedOn" :class="{ 'mr-4': trial.transactionCount > 0 || trial.hasRemoteUpdate }"><BIconCalendarDate /> {{ new Date(trial.updatedOn).toLocaleString() }}</small>
+  <b-list-group-item :variant="trial.localId === storeSelectedTrial ? 'light' : null" :class="{ 'horizontal-cards': true, 'border-primary': trial.localId === storeSelectedTrial }" v-if="trial">
+    <div class="content">
+      <div class="d-flex w-100 justify-content-between">
+        <h4 class="mb-1 trial-name">{{ trial.name }}</h4>
+        <small v-if="trial.updatedOn" :class="{ 'mr-4': trial.transactionCount > 0 || trial.hasRemoteUpdate }"><BIconCalendarDate /> {{ new Date(trial.updatedOn).toLocaleString() }}</small>
+      </div>
+
+      <a href="#" @click.prevent="$emit('synchronize')" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
+        <template v-if="trial.transactionCount > 0">
+          <div class="card-corner card-corner-local" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
+          <BIconCloudUploadFill class="card-corner-icon" />
+        </template>
+        <template v-else-if="trial.hasRemoteUpdate">
+          <div class="card-corner card-corner-remote" v-b-tooltip="$t('tooltipTrialHasRemoteUpdate')" />
+          <BIconCloudDownloadFill class="card-corner-icon" />
+        </template>
+      </a>
+
+      <h6 :title="trial.description" class="trial-description" v-if="trial.description">{{ trial.description }}</h6>
+
+      <div class="d-flex flex-wrap flex-row my-2">
+        <div class="mr-3" v-b-tooltip="trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned')"><BIconCollection /></div>
+        <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorRows', trial.layout.rows)"><BIconLayoutThreeColumns rotate="90" /> {{ trial.layout.rows }}</div>
+        <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorColumns', trial.layout.columns)"><BIconLayoutThreeColumns /> {{ trial.layout.columns }}</div>
+        <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorTraits', trial.traits.length)"><BIconTags /> <span>{{ trial.traits.length }}</span>
+          <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
+        </div>
+        <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0)">
+          <BIconChatLeftText /> <a href="#" @click.prevent="onShowTrialCommentsClicked">{{ trial.comments ? trial.comments.length : 0 }}</a>
+        </div>
+      </div>
     </div>
 
-    <a href="#" @click.prevent="$emit('synchronize')" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
-      <template v-if="trial.transactionCount > 0">
-        <div class="card-corner card-corner-local" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
-        <BIconCloudUploadFill class="card-corner-icon" />
-      </template>
-      <template v-else-if="trial.hasRemoteUpdate">
-        <div class="card-corner card-corner-remote" v-b-tooltip="$t('tooltipTrialHasRemoteUpdate')" />
-        <BIconCloudDownloadFill class="card-corner-icon" />
-      </template>
-    </a>
-
-    <h6 :title="trial.description" class="trial-description" v-if="trial.description">{{ trial.description }}</h6>
-
-    <div class="d-flex flex-wrap flex-row mb-3 mt-2">
-      <div class="mr-3" v-b-tooltip="trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned')"><BIconCollection /></div>
-      <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorRows', trial.layout.rows)"><BIconLayoutThreeColumns rotate="90" /> {{ trial.layout.rows }}</div>
-      <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorColumns', trial.layout.columns)"><BIconLayoutThreeColumns /> {{ trial.layout.columns }}</div>
-      <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorTraits', trial.traits.length)"><BIconTags /> <span>{{ trial.traits.length }}</span>
-        <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
-      </div>
-      <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0)">
-        <BIconChatLeftText /> <a href="#" @click.prevent="onShowTrialCommentsClicked">{{ trial.comments ? trial.comments.length : 0 }}</a>
-      </div>
-    </div>
-
-    <div class="d-flex justify-content-between">
+    <div class="card-footer d-flex justify-content-between">
       <b-button @click="$emit('loadTrial')" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
 
       <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
@@ -145,5 +147,12 @@ export default {
 .trial-description {
   line-clamp: 1;
   -webkit-line-clamp: 1;
+}
+
+.horizontal-cards {
+  padding: 0;
+}
+.horizontal-cards .content {
+  padding: 0.75rem 1.25rem
 }
 </style>
