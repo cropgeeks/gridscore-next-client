@@ -18,7 +18,7 @@
             </BIconstack>
           </b-badge>
           <b-badge class="mx-1 trait-set-size" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
-            <BIconSegmentedNav :rotate="90" /> {{ trait.setSize || 1 }}
+            <BIconSegmentedNav :rotate="90" /> {{ $n(trait.setSize || 1) }}
           </b-badge>
         </span>
       </span>
@@ -35,7 +35,7 @@
     </div>
     <p class="text-muted trait-description" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
-    <b-form-group :label="$t('formLabelMeasurementSet', { position: index })"
+    <b-form-group :label="$t('formLabelMeasurementSet', { position: $n(index) })"
                   v-for="index in (trait.setSize || 1)"
                   :key="`${trait.id}-${index}`"
                   :label-for="`trait-input-${trait.id}-${index}`">

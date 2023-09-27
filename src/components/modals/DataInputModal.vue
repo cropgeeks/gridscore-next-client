@@ -62,7 +62,7 @@
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.prev.column) : (guidedWalk.prev.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.prev.row) : (guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
+          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.prev.column) : $n(guidedWalk.prev.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.prev.row) : $n(guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
         </b-col>
         <b-col cols=4>
           <b-card class="text-center h-100">
@@ -80,7 +80,7 @@
           </b-card>
         </b-col>
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - guidedWalk.next.column) : (guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - guidedWalk.next.row) : (guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
+          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.next.column) : $n(guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.next.row) : $n(guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
       <b-tabs v-model="traitGroupTabIndex" id="trait-group-tabs">

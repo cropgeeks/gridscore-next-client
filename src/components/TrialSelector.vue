@@ -21,7 +21,7 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab lazy :title="group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: (trials || []).length }) : `${group} (${(trials || []).length})`" v-for="(trials, group) in sortedTrials" :key="`tab-${group}`">
+        <b-tab lazy :title="group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trials || []).length) }) : `${group} (${$n((trials || []).length)})`" v-for="(trials, group) in sortedTrials" :key="`tab-${group}`">
           <template v-if="trials && trials.length > 0">
             <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
               <TrialListGroupItem :trial="trial"

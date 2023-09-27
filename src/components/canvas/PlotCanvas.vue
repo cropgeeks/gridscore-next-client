@@ -1,5 +1,5 @@
 <template>
-  <div class="cell d-block position-relative" v-if="dimensions">
+  <div class="canvas-wrapper cell d-block position-relative" v-if="dimensions">
     <canvas id="main-canvas" class="position-absolute" ref="plotCanvas" :width="dimensions.scaledCanvasWidth" :height="dimensions.scaledCanvasHeight" />
     <canvas id="user-position-canvas" class="position-absolute" ref="userCanvas" :width="dimensions.scaledCanvasWidth" :height="dimensions.scaledCanvasHeight" />
 
@@ -891,5 +891,9 @@ export default {
 <style scoped>
 #user-position-canvas {
   pointer-events: none;
+}
+.canvas-wrapper {
+  /* This is added to "fix" the main data display on RTL languages. */
+  direction: ltr !important;
 }
 </style>

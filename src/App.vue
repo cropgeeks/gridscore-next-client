@@ -84,7 +84,7 @@ import BrapiModal from '@/components/modals/BrapiModal'
 import ChangelogModal from '@/components/modals/ChangelogModal'
 import MissingTrialModal from '@/components/modals/MissingTrialModal'
 import { mapGetters } from 'vuex'
-import { loadLanguageAsync } from '@/plugins/i18n'
+import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
 import { VuePlausible } from 'vue-plausible'
 import Vue from 'vue'
@@ -121,15 +121,7 @@ export default {
   },
   data: function () {
     return {
-      languages: [{
-        locale: 'en_GB',
-        name: 'British English',
-        icon: '🇬🇧'
-      }, {
-        locale: 'de_DE',
-        name: 'Deutsch - Deutschland',
-        icon: '🇩🇪'
-      }],
+      languages: locales,
       loadingVisible: false,
       refreshing: false,
       registration: null,
@@ -276,7 +268,7 @@ export default {
     initDb()
   },
   mounted: function () {
-    loadLanguageAsync(this.storeLocale)
+    loadLanguageAsync(this.storeLocale.replace('_', '-'))
 
     document.documentElement.className = this.storeDarkMode ? 'dark-mode' : 'light-mode'
 

@@ -94,7 +94,7 @@
 
             <b-form-group :label="$t('formLabelSettingsMinCellWidth')" :description="$t('formDescriptionSettingsMinCellWidth')" label-for="displayMinCellWidth">
               <b-form-input id="displayMinCellWidth" type="range" :min=2 :max=10 v-model.number="displayMinCellWidth" />
-              <small>{{ $t('formPreviewSettingsMinCellWidth', { value: displayMinCellWidth }) }}</small>
+              <small>{{ $t('formPreviewSettingsMinCellWidth', { value: $n(displayMinCellWidth) }) }}</small>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsCanvasShape')" :description="$t('formDescriptionSettingsCanvasShape')" label-for="canvasShape">

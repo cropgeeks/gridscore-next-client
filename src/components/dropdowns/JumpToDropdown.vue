@@ -135,6 +135,8 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   column-gap: 10px;
   row-gap: 10px;
+  /* Force the direction here to keep the buttons in place. They shouldn't change based on the language. */
+  direction: ltr;
 }
 .direction-grid > div {
   justify-self: center;

@@ -100,7 +100,7 @@ export default {
 
       this.ctx.fillRect(x, y, this.dimensions.cellWidth, this.dimensions.columnHeaderHeight)
       this.ctx.fillStyle = this.fillStyleText
-      this.ctx.fillText(this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (this.trial.layout.columns - col) : (col + 1), x + this.dimensions.cellWidth / 2, y + this.dimensions.padding + this.dimensions.fontSize / 2)
+      this.ctx.fillText(this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? this.$n(this.trial.layout.columns - col) : this.$n(col + 1), x + this.dimensions.cellWidth / 2, y + this.dimensions.padding + this.dimensions.fontSize / 2)
     },
     reset: function () {
       if (this.resizeRunning) {

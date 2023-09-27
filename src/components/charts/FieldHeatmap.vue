@@ -243,9 +243,9 @@ export default {
 
         const traces = [{
           // X values are the column indices
-          x: Array.from({ length: this.trial.layout.columns }, (v, k) => k + 1),
+          x: Array.from({ length: this.trial.layout.columns }, (v, k) => this.$n(k + 1)),
           // Y Values are the row indices
-          y: Array.from({ length: this.trial.layout.rows }, (v, k) => k + 1),
+          y: Array.from({ length: this.trial.layout.rows }, (v, k) => this.$n(k + 1)),
           z: z,
           text: text,
           customdata: customdata,

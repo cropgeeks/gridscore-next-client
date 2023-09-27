@@ -291,7 +291,7 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
 
   // Check if advanced number formatting is available
   if ('Intl' in window && Intl.NumberFormat) {
-    const locale = (store.getters.storeLocale || 'en_GB').replace('_', '-')
+    const locale = (store.getters.storeLocale || 'en-GB').replace('_', '-')
     let formatter
     if (k === 1024) {
       // Handle byte values

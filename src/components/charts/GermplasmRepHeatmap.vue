@@ -247,9 +247,9 @@ export default {
         }
 
         const traces = [{
-          x: this.reps.map((r, i) => i),
+          x: this.reps.map((r, i) => this.$n(i)),
           // Y Values are the row indices
-          y: Array.from(Array(this.allGermplasm.length).keys()).map(i => i + 1),
+          y: Array.from(Array(this.allGermplasm.length).keys()).map(i => this.$n(i + 1)),
           z: z,
           text: text,
           customdata: customdata,
