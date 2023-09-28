@@ -222,7 +222,41 @@ export default {
               gridcolor: this.storeDarkMode ? '#111111' : '#eeeeee',
               showgrid: chartType === 'box'
             },
-            hovermode: 'closest'
+            hovermode: 'closest',
+            shapes: []
+          }
+
+          if (trait.restrictions) {
+            if (trait.restrictions.min !== undefined && trait.restrictions.min !== null) {
+              layout.shapes.push({
+                type: 'line',
+                yref: 'paper',
+                x0: trait.restrictions.min,
+                y0: 0,
+                x1: trait.restrictions.min,
+                y1: 1,
+                line: {
+                  color: trait.color,
+                  width: 1.5,
+                  dash: 'dot'
+                }
+              })
+            }
+            if (trait.restrictions.max !== undefined && trait.restrictions.max !== null) {
+              layout.shapes.push({
+                type: 'line',
+                yref: 'paper',
+                x0: trait.restrictions.max,
+                y0: 0,
+                x1: trait.restrictions.max,
+                y1: 1,
+                line: {
+                  color: trait.color,
+                  width: 1.5,
+                  dash: 'dot'
+                }
+              })
+            }
           }
 
           if (trait.dataType === 'categorical' || trait.dataType === 'text') {
