@@ -117,10 +117,9 @@ export default {
       this.map.setView([22.5937, 2.1094], 3)
 
       // Add OSM as the default
-      const openstreetmap = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      const openstreetmap = L.tileLayer('//tile.openstreetmap.org/{z}/{x}/{y}.png', {
         id: 'OpenStreetMap',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        subdomains: ['a', 'b', 'c'],
         maxZoom: 21,
         maxNativeZoom: 19
       })
