@@ -117,22 +117,22 @@ export default {
      * Pushes the changed BrAPI URL to the store
      */
     updateBrapiUrl: function () {
-      this.$store.commit('ON_BRAPI_CONFIG_CHANGED', {
+      const config = {
         url: this.brapiUrl,
         token: this.brapiToken
-      })
+      }
+      this.$store.commit('ON_BRAPI_CONFIG_CHANGED', config)
 
       if (this.storeSelectedTrial) {
-        updateTrialBrapiConfig(this.storeSelectedTrial, {
-          url: this.brapiUrl,
-          token: this.brapiToken
-        })
+        updateTrialBrapiConfig(this.storeSelectedTrial, config)
           .then(() => {
+            this.$emit('brapi-settings-changed', config)
             emitter.emit('trial-selected')
-            this.hide()
+            // this.hide()
           })
       } else {
-        this.hide()
+        this.$emit('brapi-settings-changed', config)
+        // this.hide()
       }
     }
   }

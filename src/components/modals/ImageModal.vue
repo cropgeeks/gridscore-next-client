@@ -18,8 +18,8 @@
 
       <!-- Show image date if available -->
       <b-badge v-if="imageDate"><BIconCalendar3 /> {{ imageDate.toLocaleString() }}</b-badge><br/>
-      <!-- Show geolocation if available -->
-      <b-badge target="_blank" rel="noopener noreferrer" :href="`https://www.google.com/maps/place/${imageGps.latitude},${imageGps.longitude}/@${imageGps.latitude},${imageGps.longitude},9z`" v-if="imageGps && imageGps.latitude && imageGps.longitude">📍 {{ imageGps.latitude.toFixed(4) }}; {{ imageGps.longitude.toFixed(4) }}</b-badge>
+      <!-- Show a link to GeoHack website if geolocation is available. This is the resource Wikipedia uses and it link out to many other resources. -->
+      <b-badge target="_blank" rel="noopener noreferrer" :href="`https://geohack.toolforge.org/geohack.php?params=${imageGps.latitude};${imageGps.longitude}`" v-if="imageGps && imageGps.latitude && imageGps.longitude">📍 {{ imageGps.latitude.toFixed(4) }}; {{ imageGps.longitude.toFixed(4) }}</b-badge>
 
       <div v-if="imageData && isIOS" class="modal-banner bg-warning text-black text-center mt-3 mb-0 p-2">
         {{ $t('modalTextImageTaggingIOSWarning') }}

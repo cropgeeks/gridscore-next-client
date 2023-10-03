@@ -55,6 +55,7 @@
                 :cancelTitle="'buttonCancel'"
                 :okDisabled="true"
                 :errorMessage="brapiErrorMessage"
+                @brapi-settings-changed="onBrapiSettingsChanged"
                 no-fade />
 
     <b-modal v-model="loadingVisible" hide-header hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
@@ -150,6 +151,9 @@ export default {
     }
   },
   methods: {
+    onBrapiSettingsChanged: function (config) {
+      emitter.emit('brapi-settings-changed', config)
+    },
     toggleDarkMode: function () {
       this.$store.dispatch('setDarkMode', !this.storeDarkMode)
     },
