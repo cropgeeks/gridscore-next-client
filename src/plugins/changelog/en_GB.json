@@ -227,7 +227,7 @@
   },
   {
     "version": "2.2.0",
-    "date": "2023-09-25",
+    "date": "2023-10-04",
     "items": [
       {
         "type": "new",
@@ -249,6 +249,10 @@
         "type": "update",
         "title": "Guided walk change",
         "text": "To maximize the available screen space as well as performance, we have moved the guided walk to its own page where it will use all the available screen space."
+      }, {
+        "type": "bugfix",
+        "title": "BrAPI issues",
+        "text": "There were some issues with the BrAPI functionality both for importing traits as well as exporting data. These have been resolved."
       }
     ]
   }
