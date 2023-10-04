@@ -2,6 +2,7 @@
   <b-modal :title="$t('modalTitleChangelog')"
            :ok-title="$t('buttonClose')"
            ok-only
+           scrollable
            no-fade
            size="lg"
            ref="changelogModal">
