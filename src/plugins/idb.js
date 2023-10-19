@@ -191,6 +191,18 @@ const getTrials = async () => {
   }))
 }
 
+const updateTrialShareCodes = async (localId, shareCodes) => {
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    const db = await getDb()
+
+    trial.shareCodes = shareCodes
+
+    return db.put('trials', trial)
+  }
+}
+
 const updateTrial = async (localId, updatedTrial) => {
   const trial = await getTrialById(localId)
 
@@ -1160,6 +1172,7 @@ export {
   addTrialComment,
   setPlotMarked,
   updateTrial,
+  updateTrialShareCodes,
   updateTrialBrapiConfig,
   updateTrialProperties,
   addTrialTraits,

@@ -19,6 +19,8 @@
 
       <h6 :title="trial.description" class="trial-description" v-if="trial.description">{{ trial.description }}</h6>
 
+      <div v-if="trial.shareStatus !== TRIAL_STATE_NOT_SHARED"> <TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" /></div>
+
       <div class="d-flex flex-wrap flex-row my-2">
         <div class="mr-3" v-b-tooltip="trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned')"><BIconCollection /></div>
         <div class="mr-3" v-b-tooltip="$tc('widgetTrialSelectorRows', trial.layout.rows)"><BIconLayoutThreeColumns rotate="90" /> {{ trial.layout.rows }}</div>
@@ -71,12 +73,14 @@ import { mapGetters } from 'vuex'
 import { BIconCalendarDate, BIconJournalArrowUp, BIconGear, BIconCloud, BIconExclamationTriangleFill, BIconCloudUploadFill, BIconCloudDownloadFill, BIconArrowDownUp, BIconstack, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash, BIconCollection, BIconLayoutThreeColumns, BIconCalendarRange, BIconChatLeftText } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
+import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
 
 const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
     TrialTraitTimeframeModal,
+    TrialShareTypeIcon,
     BIconCalendarDate,
     BIconJournalArrowUp,
     BIconGear,

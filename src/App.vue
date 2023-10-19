@@ -155,6 +155,7 @@ export default {
       emitter.emit('brapi-settings-changed', config)
     },
     toggleDarkMode: function () {
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: !this.storeDarkMode } })
       this.$store.dispatch('setDarkMode', !this.storeDarkMode)
     },
     /**

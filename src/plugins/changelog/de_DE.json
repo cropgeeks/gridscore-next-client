@@ -255,5 +255,26 @@
         "text": "Es gab ein paar Problemen mit der BrAPI-Funktionalität sowohl für das Importieren von Merkmalen als auch das Exportieren von Daten. Diese Probleme sind jetzt behoben."
       }
     ]
+  },
+  {
+    "version": "2.3.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Versuchsaufwertung",
+        "text": "Wir haben bessere Handhabung von Situationen wo Versuche via Code importiert werden die bereits auf dem Gerät existieren. Basierend auf den Berechtigungen des geteilten Versuchs und des lokalen werden Benutzern Optionen zum Aufwerten ihres lokalen Versuches oder der Import einer neuen, unabhängigen Kopie angeboten."
+      },
+      {
+        "type": "update",
+        "title": "Versuchs-Teilstatus",
+        "text": "Eine Angabe zum Versuchs-Teilstatus wurde zur Versuchsinformation hinzugefügt. Dies zeigt an ob man der 'Besitzer', 'Editor' oder 'Betrachter' für diesen Versuch ist."
+      },
+      {
+        "type": "update",
+        "title": "Bilddateiname",
+        "text": "Der Versuchsname (oder eher eine kompakte Version davon) wurde zum Anfang des Dateinamens von Bildern die mit GridScore aufgezeichnet werden hinzugefügt."
+      }
+    ]
   }
 ]

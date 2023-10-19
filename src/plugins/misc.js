@@ -463,6 +463,20 @@ const getLatLngAverage = (geography) => {
   return result
 }
 
+const truncateAfterWords = (str, words) => {
+  if (!str) {
+    return str
+  }
+
+  const parts = str.split(' ')
+
+  if (parts.length > words) {
+    return parts.splice(0, words).map(p => p.replace(/[^a-z0-9]/gi, '-')).join('-')
+  } else {
+    return parts.map(p => p.replace(/[^a-z0-9]/gi, '-')).join('-')
+  }
+}
+
 export {
   trialsDataToMatrix,
   getTraitTypeText,
@@ -474,5 +488,6 @@ export {
   checkDataMatchesTraitType,
   isValidDateString,
   categoryColors,
-  getNumberWithSuffix
+  getNumberWithSuffix,
+  truncateAfterWords
 }

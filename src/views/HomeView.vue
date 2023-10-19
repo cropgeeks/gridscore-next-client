@@ -83,7 +83,7 @@ export default {
           if (value) {
             this.$store.dispatch('setHideCitationMessage', true)
 
-            emitter.emit('plausible-event', { key: 'citation-hidden' })
+            emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: true } })
           }
         })
     }

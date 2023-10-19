@@ -128,8 +128,17 @@ export default {
 
                 if (cell.measurements && cell.measurements[trait.id]) {
                   cell.measurements[trait.id].forEach(m => {
-                    m.values.forEach(v => {
-                      datapoints.push({ value: v, name: cell.displayName, date: new Date(m.timestamp).toLocaleString() })
+                    const dateString = new Date(m.timestamp).toLocaleString()
+                    m.values.forEach((v, setIndex) => {
+                      datapoints.push({
+                        row: cell.row,
+                        column: cell.column,
+                        setIndex: setIndex,
+                        value: v,
+                        name: cell.displayName,
+                        date: dateString,
+                        timestamp: m.timestamp
+                      })
                     })
                   })
                 }
@@ -139,6 +148,7 @@ export default {
                 x: datapoints.map(d => d.value),
                 text: datapoints.map(d => d.name),
                 customdata: datapoints.map(d => d.date),
+                ids: datapoints.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                 marker: {
                   color: trait.color
                 },
@@ -280,6 +290,28 @@ export default {
           }
 
           Plotly.newPlot(ref[0], data, layout, config)
+
+          ref[0].on('plotly_selected', eventData => {
+            console.log(eventData)
+            if (!eventData || (eventData.points.length < 1)) {
+              Plotly.restyle(ref[0], { selectedpoints: [null] })
+            } else {
+              const mapped = eventData.points.map(p => {
+                const [row, column, setIndex, timestamp, value] = p.id.split('|')
+
+                return {
+                  row: +row,
+                  column: +column,
+                  setIndex: +setIndex,
+                  timestamp,
+                  value
+                }
+              }).filter((value, index, self) => self.indexOf(value) === index)
+
+              // TODO: Do something with the selection here now.
+              console.log(mapped)
+            }
+          })
         }
       })
     },

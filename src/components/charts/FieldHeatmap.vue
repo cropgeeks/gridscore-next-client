@@ -342,6 +342,22 @@ export default {
           },
           displaylogo: false
         })
+        this.$refs.heatmapChart.on('plotly_click', eventData => {
+          if (eventData && eventData.points && eventData.points.length === 1) {
+            const clicked = eventData.points[0]
+
+            const row = this.trial.layout.rows - clicked.y
+            const column = clicked.x - 1
+
+            const cell = this.trialData[`${row}|${column}`]
+
+            const traitMeasurements = cell.measurements[this.selectedTrait.id] || []
+
+            const measurements = traitMeasurements.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+
+            console.log(cell.displayName, measurements)
+          }
+        })
       }
     },
     updateTrialDataCache: function () {

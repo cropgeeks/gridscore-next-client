@@ -89,6 +89,13 @@
         <p class="text-info">{{ $t('pageImportTrialMatchConfirm') }}</p>
       </b-modal>
     </b-container>
+
+    <TrialImportPermissionUpgradeModal :remotePermissionType="remotePermissionType"
+                                       :localPermissionType="localPermissionType"
+                                       v-if="remotePermissionType && localPermissionType"
+                                       @upgrade="upgradePermissions"
+                                       @new="importAsNew"
+                                       ref="importPermissionUpgradeModal" />
   </div>
 </template>
 
@@ -96,19 +103,22 @@
 import { mapGetters } from 'vuex'
 import BarcodeScanner from '@/components/BarcodeScanner'
 import TrialInformation from '@/components/TrialInformation'
+import TrialImportPermissionUpgradeModal from '@/components/modals/TrialImportPermissionUpgradeModal'
 
 import { BIconSearch, BIconCollection } from 'bootstrap-vue'
 
 import { getTrialByCode, getLegacyTrialByCode } from '@/plugins/api'
-import { addTrial, getTrialGroups } from '@/plugins/idb'
+import { addTrial, getTrialGroups, getTrials, updateTrialShareCodes } from '@/plugins/idb'
 import { migrateOldGridScoreTrial } from '@/plugins/misc'
+import { TRIAL_STATE_EDITOR, TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER } from '@/plugins/constants'
 
 export default {
   components: {
     BIconSearch,
     BIconCollection,
     BarcodeScanner,
-    TrialInformation
+    TrialInformation,
+    TrialImportPermissionUpgradeModal
   },
   data: function () {
     return {
@@ -117,8 +127,12 @@ export default {
       serverError: null,
       trialGroup: null,
       trialGroups: [],
+      existingTrials: [],
       trial: null,
       gridScoreVersion: null,
+      localPermissionType: null,
+      remotePermissionType: null,
+      localTrialMatch: null,
       gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore'
     }
   },
@@ -160,12 +174,18 @@ export default {
           this.$router.push({ name: 'home' })
         })
     },
+    isHigherPermission: function (one, two) {
+      return (one === TRIAL_STATE_OWNER && (two === TRIAL_STATE_EDITOR || two === TRIAL_STATE_VIEWER)) || (one === TRIAL_STATE_EDITOR && two === TRIAL_STATE_VIEWER)
+    },
     checkCode: function () {
       if (this.buttonDisabled) {
         return
       }
 
       this.serverError = null
+      this.localTrialMatch = null
+      this.localPermissionType = null
+      this.remotePermissionType = null
 
       if (this.gridScoreVersion === 'legacy') {
         getLegacyTrialByCode(this.gridScoreUrl, this.shareCode)
@@ -189,7 +209,52 @@ export default {
           .then(result => {
             this.trial = result
 
-            this.$nextTick(() => this.$refs.confirmationModal.show())
+            const match = this.existingTrials.filter(t => t.shareCodes.ownerCode === result.shareCodes.ownerCode || t.shareCodes.editorCode === result.shareCodes.editorCode || t.shareCodes.viewerCode === result.shareCodes.viewerCode)
+
+            if (match && match.length > 0) {
+              this.localTrialMatch = match[0]
+              this.localPermissionType = this.localTrialMatch.shareStatus
+              if (this.shareCode === result.shareCodes.ownerCode) {
+                this.remotePermissionType = TRIAL_STATE_OWNER
+              } else if (this.shareCode === result.shareCodes.editorCode) {
+                this.remotePermissionType = TRIAL_STATE_EDITOR
+              } else if (this.shareCode === result.shareCodes.viewerCode) {
+                this.remotePermissionType = TRIAL_STATE_VIEWER
+              }
+
+              if (this.localPermissionType === this.remotePermissionType) {
+                // Loaded a trial that already exists with the same permissions
+                this.$bvModal.msgBoxConfirm(this.$t('toastTextTrialShareCodeSameOrHigherPermission'), {
+                  title: this.$t('toastTitleTrialShareCodeSameOrHigherPermission'),
+                  okTitle: this.$t('buttonYes'),
+                  cancelTitle: this.$t('buttonNo'),
+                  okVariant: 'primary',
+                  cancelVariant: 'primary'
+                }).then(value => {
+                  if (value === true) {
+                    this.$nextTick(() => this.$refs.confirmationModal.show())
+                  }
+                })
+              } else if (this.isHigherPermission(this.remotePermissionType, this.localPermissionType)) {
+                // The new code that was used is a higher permission grade than the local one, so ask to update the local one's permission grade
+                this.$nextTick(() => this.$refs.importPermissionUpgradeModal.show())
+              } else {
+                // The new code that was used is a lower permission grade than the local one, don't do anything, as this is pointless. Notify user.
+                this.$bvModal.msgBoxConfirm(this.$t('toastTextTrialShareCodeSameOrHigherPermission'), {
+                  title: this.$t('toastTitleTrialShareCodeSameOrHigherPermission'),
+                  okTitle: this.$t('buttonYes'),
+                  cancelTitle: this.$t('buttonNo'),
+                  okVariant: 'primary',
+                  cancelVariant: 'primary'
+                }).then(value => {
+                  if (value === true) {
+                    this.$nextTick(() => this.$refs.confirmationModal.show())
+                  }
+                })
+              }
+            } else {
+              this.$nextTick(() => this.$refs.confirmationModal.show())
+            }
           })
           .catch(error => {
             if (error.status === 404) {
@@ -199,9 +264,42 @@ export default {
             }
           })
       }
+    },
+    upgradePermissions: function () {
+      this.$bvModal.msgBoxConfirm(this.$t('toastTextTrialShareCodeUpgrade'), {
+        title: this.$t('toastTitleTrialShareCodeUpgrade'),
+        okTitle: this.$t('buttonYes'),
+        cancelTitle: this.$t('buttonNo'),
+        okVariant: 'primary',
+        cancelVariant: 'primary'
+      }).then(value => {
+        if (value === true) {
+          updateTrialShareCodes(this.localTrialMatch.localId, this.trial.shareCodes)
+            .then(() => {
+              this.$store.dispatch('setSelectedTrial', this.localTrialMatch.localId)
+              this.$router.push({ name: 'home' })
+            })
+        }
+      })
+    },
+    importAsNew: function () {
+      this.$bvModal.msgBoxConfirm(this.$t('toastTextTrialShareCodeAsNew'), {
+        title: this.$t('toastTitleTrialShareCodeAsNew'),
+        okTitle: this.$t('buttonYes'),
+        cancelTitle: this.$t('buttonNo'),
+        okVariant: 'primary',
+        cancelVariant: 'primary'
+      }).then(value => {
+        if (value === true) {
+          this.$nextTick(() => this.$refs.confirmationModal.show())
+        }
+      })
     }
   },
   mounted: function () {
+    getTrials().then(trials => {
+      this.existingTrials = (trials || []).filter(t => t.shareCodes !== undefined && t.shareStatus !== TRIAL_STATE_NOT_SHARED)
+    })
     getTrialGroups().then(groups => {
       this.trialGroups = groups || []
     })

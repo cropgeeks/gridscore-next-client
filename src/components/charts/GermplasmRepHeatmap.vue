@@ -141,10 +141,12 @@ export default {
         const z = []
         const text = []
         const customdata = []
+        const ids = []
         for (let row = this.allGermplasm.length - 1; row >= 0; row--) {
           const rowData = []
           const rowText = []
           const rowCustomdata = []
+          const rowIds = []
           const g = this.allGermplasm[row]
           for (let column = 0; column < this.reps.length; column++) {
             const match = this.germplasmMap[g].find(m => m.rep === this.reps[column])
@@ -153,6 +155,7 @@ export default {
               rowData.push(NaN)
               rowText.push('')
               rowCustomdata.push(null)
+              rowIds.push(null)
               continue
             }
 
@@ -162,6 +165,7 @@ export default {
               rowData.push(NaN)
               rowText.push('')
               rowCustomdata.push(null)
+              rowIds.push(null)
               continue
             }
 
@@ -204,6 +208,8 @@ export default {
               })
 
               if (finalValue) {
+                rowIds.push(`${cell.row}|${cell.column}`)
+
                 if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text') {
                   rowData.push(new Date(finalValue.timestamp))
                   rowCustomdata.push(null)
@@ -225,16 +231,19 @@ export default {
               } else {
                 rowData.push(NaN)
                 rowCustomdata.push(null)
+                rowIds.push(null)
               }
             } else {
               rowData.push(NaN)
               rowCustomdata.push(null)
+              rowIds.push(null)
             }
           }
 
           z.push(rowData)
           text.push(rowText)
           customdata.push(rowCustomdata)
+          ids.push(rowIds)
         }
 
         // Adjust date-based data to be "days since first recording" using the min date
@@ -253,6 +262,7 @@ export default {
           z: z,
           text: text,
           customdata: customdata,
+          ids: ids,
           type: 'heatmap',
           colorscale: this.selectedTrait.dataType === 'categorical'
             ? restrictions.categories.map((_, i) => {
@@ -342,6 +352,27 @@ export default {
             filename: `germplasm-heatmap-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`
           },
           displaylogo: false
+        })
+
+        this.$refs.heatmapRepCompareChart.on('plotly_click', eventData => {
+          if (eventData && eventData.points && eventData.points.length === 1) {
+            const clicked = eventData.points[0]
+
+            if (clicked && clicked.id) {
+              const [row, column] = clicked.id.split('|').map(c => +c)
+
+              const cell = this.trialData[`${row}|${column}`]
+
+              if (cell) {
+                // Get all sorted measurements for this trait and plot
+                const traitMeasurements = cell.measurements[this.selectedTrait.id] || []
+
+                const measurements = traitMeasurements.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+
+                console.log(cell.displayName, measurements)
+              }
+            }
+          }
         })
       }
     },

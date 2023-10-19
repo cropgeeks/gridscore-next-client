@@ -159,6 +159,8 @@ import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 import draggable from 'vuedraggable'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     BIconShare,
@@ -248,47 +250,61 @@ export default {
     locale: function (newValue) {
       this.$store.dispatch('setLocale', newValue)
       loadLanguageAsync(newValue)
+      emitter.emit('plausible-event', { key: 'locale-changed', props: { locale: newValue } })
     },
     darkMode: function (newValue) {
       this.$store.dispatch('setDarkMode', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: newValue } })
     },
     hideCitationMessage: function (newValue) {
       this.$store.dispatch('setHideCitationMessage', newValue)
+      emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: newValue } })
     },
     displayMarkerIndicators: function (newValue) {
       this.$store.dispatch('setDisplayMarkerIndicators', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMarkerIndicators: newValue } })
     },
     displayMinCellWidth: function (newValue) {
       this.$store.dispatch('setDisplayMinCellWidth', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMinCellWidth: newValue } })
     },
     gpsEnabled: function (newValue) {
       this.$store.dispatch('setGpsEnabled', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { gpsEnabled: newValue } })
     },
     voiceFeedbackEnabled: function (newValue) {
       this.$store.dispatch('setVoiceFeedbackEnabled', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { voiceFeedbackEnabled: newValue } })
     },
     restrictInputToMarked: function (newValue) {
       this.$store.dispatch('setRestrictInputToMarked', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { restrictInputToMarked: newValue } })
     },
     navigationMode: function (newValue) {
       this.$store.dispatch('setNavigationMode', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { navigationMode: newValue } })
     },
     traitColors: function (newValue) {
       this.$store.dispatch('setTraitColors', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { traitColors: newValue } })
     },
     canvasDensity: function (newValue) {
       this.$store.dispatch('setCanvasDensity', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasDensity: newValue } })
     },
     canvasShape: function (newValue) {
       this.$store.dispatch('setCanvasShape', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasShape: newValue } })
     },
     canvasSize: function (newValue) {
       this.$store.dispatch('setCanvasSize', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasSize: newValue } })
     },
     homeWidgetOrder: {
       deep: true,
       handler: function (newValue) {
         this.$store.dispatch('setHomeWidgetOrder', newValue)
+        emitter.emit('plausible-event', { key: 'settings-changed', props: { homeWidgetOrder: newValue } })
       }
     }
   },
