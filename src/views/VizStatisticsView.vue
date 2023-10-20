@@ -8,7 +8,7 @@
         <b-row class="mb-3">
           <b-col cols=12 md=6 lg=4 xl=3>
             <b-form-group :label="$t('formLabelStatisticsTrait')" :description="$t('formDescriptionStatisticsTrait')" label-for="trait">
-              <b-form-select multiple v-model="selectedTraitIndices" :options="traitOptions" id="trait" />
+              <b-form-select multiple v-model="selectedTraitIndices" :select-size="selectSize" :options="traitOptions" id="trait" />
             </b-form-group>
             <b-button variant="primary" @click="updateTraits"><BIconArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
           </b-col>
@@ -55,6 +55,13 @@ export default {
       'storeDarkMode',
       'storeLocale'
     ]),
+    selectSize: function () {
+      if (this.traitOptions) {
+        return Math.min(5, this.traitOptions.length)
+      } else {
+        return 3
+      }
+    },
     traitOptions: function () {
       if (this.trial) {
         return this.trial.traits.map((t, i) => {
