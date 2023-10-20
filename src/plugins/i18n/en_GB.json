@@ -549,6 +549,7 @@
   "tooltipChartHeatmapValue": "Value",
   "tooltipChartHeatmapGermplasm": "Germplasm",
   "tooltipChartHeatmapRep": "Rep",
+  "tooltipChartBoxplotInfo": "Date: {date}<br>Germplasm: {germplasm}<br>Rep: {rep}<br>Row: {row}<br>Column: {column}",
   "tooltipSetupGetLocation": "Use current GPS location",
   "tooltipSettingsResetColors": "Reset colors",
   "tooltipDataEntryDateMinusOne": "Subtract one day",

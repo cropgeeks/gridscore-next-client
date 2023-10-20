@@ -541,6 +541,7 @@
   "tooltipChartHeatmapValue": "Wert",
   "tooltipChartHeatmapGermplasm": "Keimplasma",
   "tooltipChartHeatmapRep": "Rep",
+  "tooltipChartBoxplotInfo": "Datum: {date}<br>Keimplasma: {germplasm}<br>Rep: {rep}<br>Zeile: {row}<br>Spalte: {column}",
   "tooltipSetupGetLocation": "Nutze aktuellen GPS-Standort",
   "tooltipSettingsResetColors": "Farben zurücksetzen",
   "tooltipDataEntryDateMinusOne": "Einen Tag abziehen",

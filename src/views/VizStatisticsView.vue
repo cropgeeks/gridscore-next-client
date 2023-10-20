@@ -136,6 +136,7 @@ export default {
                         setIndex: setIndex,
                         value: v,
                         name: cell.displayName,
+                        rep: cell.rep,
                         date: dateString,
                         timestamp: m.timestamp
                       })
@@ -147,7 +148,7 @@ export default {
               data.push({
                 x: datapoints.map(d => d.value),
                 text: datapoints.map(d => d.name),
-                customdata: datapoints.map(d => d.date),
+                customdata: datapoints.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
                 ids: datapoints.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                 marker: {
                   color: trait.color
