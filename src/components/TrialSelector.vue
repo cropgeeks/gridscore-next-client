@@ -21,11 +21,11 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab lazy :title-link-class="{ 'bg-danger': trialGroup.hasExpiryWarning, 'bg-warning': trialGroup.hasRemoteUpdate, 'text-white': trialGroup.hasExpiryWarning || trialGroup.hasRemoteUpdate }" v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
+        <b-tab lazy v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
           <template #title>
             <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
-            <BIconCloudDownloadFill class="ml-2" v-if="trialGroup.hasRemoteUpdate" />
-            <BIconstack class="ml-2" v-if="trialGroup.hasExpiryWarning">
+            <BIconCloudDownloadFill class="ml-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
+            <BIconstack class="ml-2 text-danger" v-if="trialGroup.hasExpiryWarning">
               <BIconCalendar stacked />
               <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
             </BIconstack>

@@ -47,7 +47,7 @@ import Tour from '@/components/Tour'
 import { getTrialById } from '@/plugins/idb'
 import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
-// import { BIconFullscreen, BIconFullscreenExit, BIconSearch } from 'bootstrap-vue'
+// import { BIconFullscreen, BIconFullscreenExit } from 'bootstrap-vue'
 import { BIconSearch, BIconQuestionCircle } from 'bootstrap-vue'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
