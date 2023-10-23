@@ -32,6 +32,7 @@ import { BIconCalendarDate } from 'bootstrap-vue'
 
 import deDE from '@/plugins/changelog/de_DE.json'
 import enGB from '@/plugins/changelog/en_GB.json'
+import viVN from '@/plugins/changelog/vi_VN.json'
 
 const semver = require('semver')
 
@@ -46,8 +47,9 @@ const sorting = (a, b) => {
 }
 
 const changelogMap = {
-  de_DE: deDE.sort(sorting),
-  en_GB: enGB.sort(sorting)
+  'de-DE': deDE.sort(sorting),
+  'en-GB': enGB.sort(sorting),
+  'vi-VN': viVN.sort(sorting)
 }
 
 export default {

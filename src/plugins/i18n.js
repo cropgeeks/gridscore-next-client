@@ -3,6 +3,7 @@ import VueI18n from 'vue-i18n'
 
 import deDE from '@/plugins/i18n/de_DE.json'
 import enGB from '@/plugins/i18n/en_GB.json'
+import viVN from '@/plugins/i18n/vi_VN.json'
 // import arMA from '@/plugins/i18n/ar_MA.json'
 
 const locales = [{
@@ -15,6 +16,11 @@ const locales = [{
   name: 'Deutsch - Deutschland',
   direction: 'ltr',
   icon: '🇩🇪'
+}, {
+  locale: 'vi-VN',
+  name: 'Tiếng Việt',
+  direction: 'ltr',
+  icon: '🇻🇳'
 // }, {
 //   locale: 'ar-MA',
 //   name: 'العربية - المغرب',
@@ -26,7 +32,8 @@ Vue.use(VueI18n)
 
 const messages = {
   'en-GB': enGB,
-  'de-DE': deDE
+  'de-DE': deDE,
+  'vi-VN': viVN
   // 'ar-MA': arMA
 }
 
@@ -37,7 +44,8 @@ export const i18n = new VueI18n({
   numberFormats: {
     'en-GB': {},
     'de-DE': {},
-    'ar-MA': {}
+    'ar-MA': {},
+    'vi-VN': {}
   }
 })
 

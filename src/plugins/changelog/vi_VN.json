@@ -1,0 +1,260 @@
+[
+  {
+    "version": "1.11.0",
+    "date": "2022-07-12",
+    "items": [
+      {
+        "type": "new",
+        "title": "Đồng bộ hóa dữ liệu",
+        "text": "GridScore hiện có thể đồng bộ hóa dữ liệu được thu thập trên các thiết bị khác nhau cho cùng một bản dùng thử. Dữ liệu sẽ được nối bằng cách ưu tiên dữ liệu có ngày ghi mới hơn."
+      },
+      {
+        "type": "new",
+        "title": "Xuất dữ liệu từ cơ sở dữ liệu cây trồng Germinate",
+        "text": "Khi xuất dữ liệu chứa nhiều đặc tính sang Germinate, bạn phải chọn phương pháp tổng hợp cho mỗi đặc tính đó."
+      },
+      {
+        "type": "new",
+        "title": "Khảo sát",
+        "text": "GridScore hiện hỗ trợ một loại tập dữ liệu khác, đó là Khảo sát. Chúng được thiết kế để hỗ trợ việc thu thập dữ liệu miễn phí không nằm ở vị trí vật lý theo kiểu lưới."
+      },
+      {
+        "type": "new",
+        "title": "Nhận xét về tập dữ liệu",
+        "text": "Bây giờ có thể thêm nhận xét chung cho toàn bộ bản thí nghiệm. Sử dụng biểu tượng nhận xét nhỏ bên cạnh tên thí nghiệm trên màn hình dữ liệu."
+      },
+      {
+        "type": "update",
+        "title": "Vòng tròn dữ liệu",
+        "text": "Vòng tròn dữ liệu đặc điểm cho nhiều đặc tính hiện hiển thị một nửa vòng tròn khi đặc điểm đó đã được ghi ít nhất một lần."
+      },
+      {
+        "type": "bugfix",
+        "title": "Tổng hợp giọng nói",
+        "text": "Đã sửa lỗi tổng hợp giọng nói đôi khi khiến văn bản bị bỏ qua."
+      }
+    ]
+  },
+  {
+    "version": "1.12.0",
+    "date": "2022-08-12",
+    "items": [
+      {
+        "type": "new",
+        "title": "Hiển thị giá trị đặc điểm đơn",
+        "text": "GridScore hiện có thể hiển thị cho bạn giá trị của một đặc điểm duy nhất cho tất cả các cây/lô đất ngay trong chế độ xem dữ liệu. Để thử điều này, hãy chọn menu thả xuống 'Chế độ hiển thị đặc điểm' rồi chọn 'Giá trị đơn'. Sau đó, bạn có thể chuyển đổi giữa các đặc điểm riêng lẻ để xem giá trị của chúng ngay trong sơ đồ hiện trường."
+      },
+      {
+        "type": "update",
+        "title": "Quét mã QR/mã vạch tốt hơn",
+        "text": "Chúng tôi đã chuyển sang thư viện mới để quét mã QR/mã vạch. Thư viện mới này hỗ trợ tốt hơn cho nhiều loại mã vạch và cũng sẽ quét mã nhanh hơn thư viện cũ."
+      },
+      {
+        "type": "new",
+        "title": "Thêm nhiều mục vào khảo sát",
+        "text": "Giờ đây, bạn có thể thêm nhiều mục vào khảo sát cùng lúc thay vì thêm chúng riêng lẻ."
+      },
+      {
+        "type": "bugfix",
+        "title": "Sửa lỗi đánh giá nhiều đặc tính",
+        "text": "Trong các phiên bản trước, đã xảy ra một lỗi khi tính điểm nhiều đặc tính trong khi cũng có một số  đặc tính bị thay đổi. Điều này sẽ dẫn đến dữ liệu bị hỏng và hiện đã được sửa chữa."
+      }
+    ]
+  },
+  {
+    "version": "1.13.0",
+    "date": "2022-11-14",
+    "items": [
+      {
+        "type": "new",
+        "title": "Hỗ trợ đại diện",
+        "text": "GridScore hiện hỗ trợ số đại diện trong thiết lập dùng thử. Với mục đích này, một bộ nhận dạng nguồn gen mới và màn hình đại diện đã được thêm vào. Các đại diện là hoàn toàn tùy chọn trừ khi cùng một mã định danh chất mầm đã được sử dụng nhiều lần, trong trường hợp đó đại diện cần được sử dụng để phân biệt giữa chúng."
+      },
+      {
+        "type": "new",
+        "title": "Xuất tệp hình dạng",
+        "text": "Nếu các điểm góc của thí nghiệm đã được xác định, GridScore có thể tạo Shapefile tương thích với Germinate, sau đó có thể tải trực tiếp lên Germinate để xác định các hình dạng riêng lẻ."
+      },
+      {
+        "type": "new",
+        "title": "Trực quan hóa nhiều đặc tính cây trồng",
+        "text": "Một hình ảnh trực quan mới cho nhiều đặc tính định dạng dữ liệu số đã được thêm vào để hiển thị sự phát triển giá trị theo thời gian. Điều này đặc biệt hữu ích để xem liệu có bất kỳ tác động tạm thời nào đến các giá trị tính trạng như khả năng kháng bệnh, chiều cao hoặc năng suất của cây hay không."
+      },
+      {
+        "type": "bugfix",
+        "title": "Loại bỏ điểm dữ liệu số",
+        "text": "Trước đây không thể loại bỏ giá trị của một đặc điểm số. Điều này đã được sửa trong phiên bản này."
+      }
+    ]
+  },
+  {
+    "version": "1.14.0",
+    "date": "2023-01-24",
+    "items": [
+      {
+        "type": "new",
+        "title": "Xuất khẩu nhiều đặc tính không tổng hợp sang Germinate",
+        "text": "Cho đến nay, bất cứ khi nào xuất dữ liệu nhiều đặc tính vào Germinate, bạn phải chọn phương pháp tổng hợp cho mỗi đặc tính. Đây là một trong các tùy chọn sau: giá trị trung bình, tổng hoặc giá trị được ghi lần cuối. Giờ đây, bạn có thể xuất tất cả các điểm dữ liệu riêng lẻ cho nhiều đặc tính bằng cách bỏ chọn tập hợp trong khi xuất. Điều này sẽ dẫn đến một tập tin chứa tất cả các phép đo riêng lẻ."
+      },
+      {
+        "type": "new",
+        "title": "Biểu đồ dòng thời gian của bản đồ nhiệt",
+        "text": "Đối với nhiều đặc tính, giờ đây bạn có thể xem tất cả các giá trị được ghi lại theo thời gian dưới dạng bản đồ nhiệt. Với mục đích này, chúng tôi đã thêm một tùy chọn trực quan hóa mới có tên là 'Hiển thị dòng thời gian'. Tùy chọn này sẽ kích hoạt thanh trượt thời gian để di chuyển theo thời gian và xem nhiều đặc tính thay đổi như thế nào theo thời gian."
+      }
+    ]
+  },
+  {
+    "version": "1.15.0",
+    "date": "2023-02-10",
+    "items": [
+      {
+        "type": "new",
+        "title": "Xuất BrAPI sang Germinate",
+        "text": "GridScore hiện hỗ trợ xuất dữ liệu thí nghiệm sang Germinate thông qua BrAPI. Để sử dụng tính năng này, hãy chuyển đến phần xuất của bản dùng thử rồi chọn tab 'BrAPI'. Bạn cần có mã thông báo API nảy mầm hợp lệ để tải dữ liệu lên và bạn phải có ít nhất quyền 'Người quản lý dữ liệu'."
+      }
+    ]
+  },
+  {
+    "version": "2.0.2",
+    "date": "2023-07-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "Bản phát hành GridScore NEXT",
+        "text": "Điều này đánh dấu việc phát hành phiên bản GridScore mới có tên GridScore NEXT. Đây là một bước tiến quan trọng và chúng tôi đã thực hiện những thay đổi lớn đối với cách GridScore hoạt động ở chế độ nền. Thông tin chi tiết về hầu hết các thay đổi có thể được tìm thấy dưới đây."
+      },
+      {
+        "type": "new",
+        "title": "Kích thước bộ đặc điểm",
+        "text": "Trong nhiều tình huống thí nghiệm, bạn sẽ chấm điểm nhiều cá thể trên mỗi ô/bình. Để tạo điều kiện thuận lợi cho việc này, chúng tôi đã giới thiệu kích thước tập hợp đặc điểm. Kích thước cài đặt xác định số lượng phép đo riêng lẻ trên mỗi ô/chậu được thực hiện trong mỗi bộ. Vì vậy, nếu bạn tính điểm ba cây trên mỗi ô/chậu, hãy đặt kích thước cài đặt thành 3."
+      },
+      {
+        "type": "new",
+        "title": "Khung thời gian đặc điểm",
+        "text": "Thông thường những đặc điểm cụ thể cần được hoặc nên được chấm điểm trong một khoảng thời gian nhất định. Để giúp mọi người biết về thực tế này, chúng tôi đã giới thiệu các khung thời gian đặc điểm xác định thời điểm dữ liệu cho một đặc điểm nên hoặc phải được tính điểm. Một biểu đồ hữu ích sẽ cho bạn thấy khung thời gian của từng đặc điểm."
+      },
+      {
+        "type": "new",
+        "title": "Nhóm đặc điểm",
+        "text": "Để sắp xếp giao diện nhưng cũng cho phép chuyển đổi nhiều đặc điểm cùng lúc, các nhóm đặc điểm đã được thêm vào. Các nhóm này có thể được sử dụng để tạo ra các tập hợp các đặc điểm có chung các đặc điểm như khung thời gian khi chúng được tính điểm hoặc liệu chúng có phải là đặc điểm sinh lý hay bất kỳ đặc điểm nào khác hay không."
+      },
+      {
+        "type": "new",
+        "title": "Quyền chia sẻ",
+        "text": "Trong phiên bản cũ của GridScore, sau khi bạn chia sẻ thí nghiệm, mọi người đều có thể thêm và thay đổi dữ liệu cũng như đặc điểm. Trong phiên bản mới, khi chia sẻ thí nghiệm, bạn sẽ được cấp ba mã chia sẻ khác nhau, mỗi mã cấp các quyền cụ thể cho bản dùng thử. Có nhiều thông tin hơn trên màn hình chia sẻ, nhưng về cơ bản, các loại quyền là 'Chủ sở hữu', 'Người chỉnh sửa' và 'Người xem'."
+      },
+      {
+        "type": "new",
+        "title": "Cải thiện thiết lập",
+        "text": "Chúng tôi đã hợp lý hóa quá trình tạo thí nghiệm bằng cách chia giao diện người dùng thành các phần dễ hiểu hơn cũng như bổ sung thêm nhiều chức năng hơn. Các thí nghiệm và đặc điểm hiện có thể có mô tả. Thông tin về mầm bệnh về thí nghiệm có thể được nhập từ nhiều định dạng hơn, bao gồm cả đầu ra từ FielDHub và các công cụ khác. Các đặc điểm, sau khi được thêm vào thiết lập, có thể được sửa đổi và sắp xếp lại. Toàn bộ danh sách các đặc điểm hiện có thể được xuất và nhập ở định dạng GridScore và Germinate."
+      },
+      {
+        "type": "new",
+        "title": "Các bộ dữ liệu mẫu khác",
+        "text": "Để làm nổi bật các tính năng mới được nêu ở đây, chúng tôi đã giới thiệu các tập dữ liệu mẫu mới và cập nhật các tập dữ liệu hiện có. Tại sao không thử chúng bằng cách tải một trong các tập dữ liệu mẫu?"
+      },
+      {
+        "type": "new",
+        "title": "Chia sẻ cài đặt",
+        "text": "Giờ đây, bạn có thể chia sẻ cài đặt GridScore chung giữa các thiết bị bằng mã QR. Điều này giúp dễ dàng thiết lập cài đặt giống nhau trên tất cả các thiết bị sẽ được sử dụng."
+      },
+      {
+        "type": "new",
+        "title": "Chỉnh sửa thí nghiệm hiện có",
+        "text": "Hiện tại có cách chỉnh sửa/thay đổi các thuộc tính cụ thể của thí nghiệm như tên, mô tả, điểm góc và điểm đánh dấu trực quan."
+      },
+      {
+        "type": "new",
+        "title": "Nhân bản thí nghiệm",
+        "text": "Nếu bạn muốn tạo thí nghiệm mới dựa trên thí nghiệm hiện có, giờ đây đã có tính năng sao chép thí nghiệm cho phép bạn sao chép (nhưng cũng có thể sửa đổi) thiết lập của thí nghiệm khác đó để tạo thí nghiệm riêng biệt mới."
+      },
+      {
+        "type": "new",
+        "title": "Lặp lại bản đồ nhiệt",
+        "text": "Một hình ảnh trực quan mới đã được thêm vào dưới dạng bản đồ nhiệt có lặp lại. Nếu bạn đang sử dụng thí nghiệm có lặp lại, giờ đây bạn có thể xem xét sự khác biệt trong giống thí nghiệm và giữa các lặp lại để xác định các lỗi xuất hiện trong dữ liệu của mình."
+      },
+      {
+        "type": "new",
+        "title": "Nhiều nhận xét",
+        "text": "Bây giờ có thể thêm nhiều nhận xét vào bản dùng thử và từng ô riêng lẻ. Mỗi nhận xét đều được đánh dấu thời gian để bạn luôn biết khi nào nội dung nào đó đã được ghi lại."
+      },
+      {
+        "type": "new",
+        "title": "Lưu trữ thí nghiệm",
+        "text": "Các bản dùng thử được chia sẻ sẽ được máy chủ GridScore lưu trữ sau một thời gian không hoạt động. GridScore sẽ thông báo cho bạn trước ngày hết hạn để bạn có đủ thời gian để xuất bản dùng thử hoặc gia hạn bản dùng thử. Sau khi lưu trữ, toàn bộ bản dùng thử vẫn có thể được tải xuống dưới dạng gói."
+      },
+      {
+        "type": "update",
+        "title": "Nhập dữ liệu hiện có",
+        "text": "Cách dữ liệu hiện có được nhập vào bản dùng thử đã thay đổi để mang lại sự linh hoạt hơn."
+      },
+      {
+        "type": "update",
+        "title": "Đồng bộ hóa tốt hơn",
+        "text": "Chúng tôi đã đầu tư rất nhiều thời gian vào việc cải thiện việc đồng bộ hóa dữ liệu giữa các thiết bị. Bây giờ chúng tôi sử dụng một hệ thống dựa trên giao dịch, nơi mỗi thay đổi bạn thực hiện được đồng bộ hóa như một đơn vị riêng biệt giúp máy chủ tích hợp những thay đổi này dễ dàng hơn nhiều. Nó cũng cung cấp cho bạn một cái nhìn tổng quan về những thay đổi bạn đã thực hiện trước khi đồng bộ hóa chúng."
+      },
+      {
+        "type": "update",
+        "title": "Cập nhật phiên bản",
+        "text": "Bất cứ khi nào một phiên bản mới của GridScore được phát hành, ứng dụng sẽ thông báo cho bạn về phiên bản mới và yêu cầu bạn cập nhật và làm mới để thể hiện rõ hơn rằng đã có phiên bản mới."
+      },
+      {
+        "type": "bugfix",
+        "title": "Vấn đề về múi giờ",
+        "text": "Trước đây, do cách GridScore cũ lưu trữ ngày, đã có vấn đề về múi giờ khi hiển thị và xuất dữ liệu. Chúng đã được giải quyết trong phiên bản này vì chúng tôi hiện đang lưu trữ dấu thời gian UTC."
+      }
+    ]
+  },
+  {
+    "version": "2.1.0",
+    "date": "2023-08-31",
+    "items": [
+      {
+        "type": "new",
+        "title": "Cấu hình hiển thị dữ liệu",
+        "text": "Chúng tôi đã thêm các tùy chọn để định cấu hình hiển thị dữ liệu chính. Chúng bao gồm thay đổi các vòng tròn thành hình vuông, điều chỉnh kích thước của các điểm dữ liệu cũng như mật độ của chúng để cho phép hiển thị nhỏ gọn hoặc dễ nhìn hơn."
+      },
+      {
+        "type": "update",
+        "title": "Gắn thẻ hình ảnh iOS",
+        "text": "Chúng tôi đã thêm biểu ngữ thông báo trên thiết bị iOS vào thẻ hình ảnh vì iOS xử lý việc tải xuống hình ảnh khác với bất kỳ hệ điều hành nào khác. Một bước bổ sung có thể được yêu cầu để thực sự lưu hình ảnh."
+      },
+      {
+        "type": "bugfix",
+        "title": "Vấn đề về mã người xem",
+        "text": "Đã xảy ra sự cố với quyền của người xem thí nghiệm trong đó người xem không thể tải các thay đổi từ xa vào bản dùng thử. Điều này đã được giải quyết."
+      }
+    ]
+  },
+  {
+    "version": "2.2.0",
+    "date": "2023-09-25",
+    "items": [
+      {
+        "type": "new",
+        "title": "Nhóm thí nghiệm",
+        "text": "Bây giờ có thể tổ chức các thí nghiệm thành các nhóm. Các nhóm này có thể được chỉ định trong quá trình thiết lập, nhập hoặc tại bất kỳ thời điểm nào sau đó."
+      },
+      {
+        "type": "new",
+        "title": "Nhập đặc điểm thí nghiệm",
+        "text": "Khi thiết lập thí nghiệm mới,  bạn có thể nhập bản dùng thử từ một bản dùng thử khác có sẵn trên thiết bị hiện tại của mình."
+      },
+      {
+        "type": "new",
+        "title": "Xuất dữ liệu không tính trung bình",
+        "text": "Khi xuất dữ liệu thí nghiệm, giờ đây bạn có thể tắt tính năng tính trung bình của các giá trị trên các tập hợp và trong cùng một ngày."
+      },
+      {
+        "type": "new",
+        "title": "Thứ tự trang chủ",
+        "text": "Bây giờ bạn có thể thay đổi thứ tự của các tiện ích trên trang chủ từ trang cài đặt."
+      },
+      {
+        "type": "update",
+        "title": "Thay đổi hướng dẫn từng bước",
+        "text": "Để tối đa hóa không gian màn hình có sẵn cũng như hiệu suất, chúng tôi đã chuyển hướng từng bước sang trang riêng nơi nó sẽ sử dụng tất cả không gian màn hình có sẵn."
+      }
+    ]
+  }
+]

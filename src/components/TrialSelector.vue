@@ -21,11 +21,19 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab lazy :title="group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trials || []).length) }) : `${group} (${$n((trials || []).length)})`" v-for="(trials, group) in sortedTrials" :key="`tab-${group}`">
-          <template v-if="trials && trials.length > 0">
+        <b-tab lazy :title-link-class="{ 'bg-danger': trialGroup.hasExpiryWarning, 'bg-warning': trialGroup.hasRemoteUpdate, 'text-white': trialGroup.hasExpiryWarning || trialGroup.hasRemoteUpdate }" v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
+          <template #title>
+            <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
+            <BIconCloudDownloadFill class="ml-2" v-if="trialGroup.hasRemoteUpdate" />
+            <BIconstack class="ml-2" v-if="trialGroup.hasExpiryWarning">
+              <BIconCalendar stacked />
+              <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
+            </BIconstack>
+          </template>
+          <template v-if="trialGroup.trials && trialGroup.trials.length > 0">
             <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
               <TrialListGroupItem :trial="trial"
-                                  v-for="trial in trials" :key="`trial-selector-${trial.localId}`"
+                                  v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`"
                                   @loadTrial="loadTrial(trial)"
                                   @handleTrialExpiration="handleTrialExpiration(trial)"
                                   @showShareCodes="showShareCodes(trial)"
@@ -38,7 +46,7 @@
                                   @deleteTrial="deleteTrial(trial)"/>
             </b-list-group>
             <b-row v-else>
-              <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
+              <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
                 <TrialCard :trial="trial"
                           @loadTrial="loadTrial(trial)"
                           @handleTrialExpiration="handleTrialExpiration(trial)"
@@ -83,7 +91,7 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrialGroups, getTrials } from '@/plugins/idb'
-import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked } from 'bootstrap-vue'
+import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconstack, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
 const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
@@ -105,7 +113,11 @@ export default {
     BIconListTask,
     BIconSegmentedNav,
     BIconGrid,
-    BIconViewStacked
+    BIconCloudDownloadFill,
+    BIconViewStacked,
+    BIconstack,
+    BIconCalendar,
+    BIconExclamationTriangleFill
   },
   computed: {
     ...mapGetters([
@@ -164,7 +176,9 @@ export default {
 
         if (this.storeTrialListMode === TRIAL_LIST_TABBED) {
           this.trialGroups.forEach(tg => {
-            result[tg] = []
+            result[tg] = {
+              trials: []
+            }
           })
         }
 
@@ -177,16 +191,24 @@ export default {
           }
 
           if (!result[group]) {
-            result[group] = []
+            result[group] = {
+              trials: []
+            }
           }
 
-          result[group].push(t)
+          result[group].trials.push(t)
+          result[group].hasRemoteUpdate ||= t.hasRemoteUpdate
+          result[group].hasExpiryWarning ||= t.showExpiryWarning
         })
 
         return result
       } else {
         const result = {}
-        result[UNCATEGORIZED_TRIALS] = []
+        result[UNCATEGORIZED_TRIALS] = {
+          trials: [],
+          hasRemoteUpdate: false,
+          hasExpiryWarning: false
+        }
         return result
       }
     }
@@ -227,7 +249,7 @@ export default {
     updateTabIndex: function () {
       let index = 0
       Object.keys(this.sortedTrials).forEach((g, i) => {
-        if (this.sortedTrials[g].find(t => t.localId === this.storeSelectedTrial)) {
+        if (this.sortedTrials[g].trials.find(t => t.localId === this.storeSelectedTrial)) {
           index = i
         }
       })
