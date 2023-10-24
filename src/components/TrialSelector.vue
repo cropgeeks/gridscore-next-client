@@ -173,6 +173,9 @@ export default {
           })
 
         const result = {}
+        result[UNCATEGORIZED_TRIALS] = {
+          trials: []
+        }
 
         if (this.storeTrialListMode === TRIAL_LIST_TABBED) {
           this.trialGroups.forEach(tg => {
