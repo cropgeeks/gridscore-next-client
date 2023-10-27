@@ -16,7 +16,7 @@
             {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><BIconArrowRepeat /></b-button>
           </template>
           <div class="text-center mb-3">
-            <b-img fluid :src="captchaUrl" />
+            <b-img-lazy fluid :blank-src="null" :blank-width="200" :blank-height="50" blank-color="#bdc3c7" :src="captchaUrl" />
           </div>
           <b-form-input id="captcha" v-model="captcha" required />
         </b-form-group>

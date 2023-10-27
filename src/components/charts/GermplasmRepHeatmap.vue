@@ -335,6 +335,7 @@ export default {
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
           },
           yaxis: {
+            automargin: true,
             showgrid: false,
             tickmode: 'array',
             tickvals: Array.from(Array(this.allGermplasm.length).keys()).map(i => this.allGermplasm.length - i),

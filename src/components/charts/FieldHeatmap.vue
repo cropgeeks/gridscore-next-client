@@ -324,6 +324,7 @@ export default {
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
           },
           yaxis: {
+            automargin: true,
             showgrid: false,
             tickmode: 'array',
             tickvals: Array.from(Array(this.trial.layout.rows).keys()).map(i => i + 1),
