@@ -794,6 +794,7 @@ const deleteTrialComment = async (trialId, comment) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
+    const db = await getDb()
     trial.comments = trial.comments.filter(c => c.timestamp !== comment.timestamp && c.content !== comment.content)
     trial.updatedOn = new Date().toISOString()
     // Make sure there's no data stored in the `trials` table

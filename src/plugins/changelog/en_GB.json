@@ -274,6 +274,16 @@
         "type": "update",
         "title": "Image filename",
         "text": "The trial name (or rather a compact version of it) has been added to the start of the filename of images that are recorded using GridScore."
+      },
+      {
+        "type": "update",
+        "title": "Trial information dropdown",
+        "text": "The trial information dropdown box that was shown on the data input page has now been moved to the main navigation bar so it's available on more pages. It will not be shown on generic pages that aren't related to any particular trial like the home page or settings page."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trial comment deletion",
+        "text": "Fixed a bug where it wasn't possible to delete a trial comment."
       }
     ]
   }

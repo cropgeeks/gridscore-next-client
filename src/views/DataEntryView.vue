@@ -2,7 +2,6 @@
   <b-container fluid class="mt-3 px-0" v-if="trial" ref="dataEntryView">
     <b-button-toolbar>
       <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
-      <TrialInformationDropdown :trial="trial" ref="trialInfoDropdown" />
       <JumpToDropdown :trial="trial" />
       <b-button :title="$t('toolbarHelp')" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
       <!-- <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
@@ -25,7 +24,6 @@
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
-    <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
     <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
@@ -36,8 +34,6 @@
 <script>
 import DataCanvas from '@/components/canvas/DataCanvas'
 import TraitDropdown from '@/components/dropdowns/TraitDropdown'
-import TrialInformationDropdown from '@/components/dropdowns/TrialInformationDropdown'
-import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import DataInputModal from '@/components/modals/DataInputModal'
 import SearchMatchModal from '@/components/modals/SearchMatchModal'
 import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal'
@@ -57,9 +53,7 @@ export default {
   components: {
     DataCanvas,
     TraitDropdown,
-    TrialInformationDropdown,
     JumpToDropdown,
-    TrialCommentModal,
     SearchMatchModal,
     DataInputModal,
     DataViewJumpControl,
@@ -249,13 +243,6 @@ export default {
         })
       }
     },
-    showTrialComments: function (trial) {
-      this.selectedTrial = trial
-
-      if (trial) {
-        this.$nextTick(() => this.$refs.trialCommentModal.show())
-      }
-    },
     trialPropertiesChanged: function (trialId) {
       if (this.trial && this.trial.localId === trialId) {
         this.loadTrial()
@@ -342,7 +329,6 @@ export default {
       this.textSynth = window.speechSynthesis
     }
 
-    emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.trialPropertiesChanged)
     emitter.on('plot-cache-changed', this.updateTraitProgress)
     emitter.on('trial-data-loaded', this.updateTraitProgress)
@@ -351,7 +337,6 @@ export default {
     // this.fakeGpsMovement()
   },
   beforeDestroy: function () {
-    emitter.off('show-trial-comments', this.showTrialComments)
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)
     emitter.off('plot-cache-changed', this.updateTraitProgress)
     emitter.off('trial-data-loaded', this.updateTraitProgress)

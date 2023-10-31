@@ -26,7 +26,7 @@
       <p>{{ $t('pageAboutGridScoreFundersText') }}</p>
       <b-row class="funders">
         <b-col cols=6 sm=4 xl=3 v-for="(funder, i) in funders" :key="'about-funders-' + i" class="text-center pb-5 col-xxl-2">
-          <div class="p-3 p-xl-4 img-container d-flex justify-content-center">
+          <div :class="`p-3 p-xl-4 img-container d-flex justify-content-center ${storeDarkMode ? 'bg-secondary' : 'bg-light'}`">
             <a :href="funder.href" :title="funder.name" target="_blank" rel="noopener noreferrer" class="align-self-center" v-if="funder.href">
               <b-img-lazy :src="require(`@/assets/img/funders/${funder.logo}`)" fluid alt="Funder logo" />
             </a>

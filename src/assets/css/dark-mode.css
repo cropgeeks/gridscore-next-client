@@ -7,6 +7,10 @@
   background-color: rgb(35, 38, 39) !important;
 }
 
+.dark-mode .bg-dark {
+  background-color: rgb(35, 50, 64) !important;
+}
+
 .dark-mode .text-dark {
   color: rgb(174, 194, 211) !important;
 }

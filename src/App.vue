@@ -6,6 +6,11 @@
         {{ $t('appTitle') }}
       </b-navbar-brand>
 
+      <!-- Trial information OUTSIDE of the collapse for small screens -->
+      <b-navbar-nav class="ml-auto mr-3 d-block d-xl-none">
+        <TrialInformationDropdown v-if="selectedTrial && showSelectedTrialMenuItem" :trial="selectedTrial" />
+      </b-navbar-nav>
+
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
@@ -28,6 +33,8 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <!-- Trial information INSIDE of the collapse for small screens -->
+          <TrialInformationDropdown v-if="selectedTrial && showSelectedTrialMenuItem" :trial="selectedTrial" class="d-none d-xl-block" />
           <b-nav-item href="#" @click.prevent="toggleDarkMode">
             <BIconMoon v-if="storeDarkMode" />
             <BIconSun v-else />
@@ -77,13 +84,17 @@
              :cancel-title="$t('buttonCancel')">
       <p>{{ $t('modalTextAppUpdateAvailable') }}</p>
     </b-modal>
+
+    <TrialCommentModal :trialId="trialForComments.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="trialForComments" />
   </div>
 </template>
 
 <script>
+import TrialInformationDropdown from '@/components/dropdowns/TrialInformationDropdown'
 import BrapiModal from '@/components/modals/BrapiModal'
 import ChangelogModal from '@/components/modals/ChangelogModal'
 import MissingTrialModal from '@/components/modals/MissingTrialModal'
+import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import { mapGetters } from 'vuex'
 import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
@@ -97,9 +108,10 @@ import { gridScoreVersion } from '@/plugins/constants'
 import { isOffline } from '@/plugins/misc'
 
 import { UAParser } from 'ua-parser-js'
-import { initDb } from './plugins/idb'
+import { getTrialById, initDb } from './plugins/idb'
 
 const emitter = require('tiny-emitter/instance')
+const trialInfoPages = ['data-entry', 'guided-walk', 'trial-export', 'visualization-heatmap', 'visualization-timeline', 'visualization-statistics', 'visualization-map']
 
 export default {
   components: {
@@ -118,7 +130,9 @@ export default {
     BIconCloudDownload,
     BrapiModal,
     ChangelogModal,
-    MissingTrialModal
+    MissingTrialModal,
+    TrialInformationDropdown,
+    TrialCommentModal
   },
   data: function () {
     return {
@@ -126,6 +140,8 @@ export default {
       loadingVisible: false,
       refreshing: false,
       registration: null,
+      selectedTrial: null,
+      trialForComments: null,
       updateExists: false,
       changelogVersionNumber: null,
       brapiErrorMessage: null
@@ -143,14 +159,47 @@ export default {
     ]),
     menuItemsDisabled: function () {
       return this.storeSelectedTrial === undefined || this.storeSelectedTrial === null
+    },
+    showSelectedTrialMenuItem: function () {
+      const page = this.$route.name
+
+      return trialInfoPages.includes(page)
     }
   },
   watch: {
     storeDarkMode: function (newValue) {
       document.documentElement.className = newValue ? 'dark-mode' : 'light-mode'
+    },
+    storeSelectedTrial: function () {
+      this.updateSelectedTrial()
     }
   },
   methods: {
+    showTrialComments: function (trial) {
+      this.trialForComments = trial
+
+      if (trial) {
+        this.$nextTick(() => this.$refs.trialCommentModal.show())
+      }
+    },
+    updateSelectedTrial: function () {
+      if (this.storeSelectedTrial) {
+        getTrialById(this.storeSelectedTrial)
+          .then(trial => {
+            this.selectedTrial = trial
+          })
+      } else {
+        this.selectedTrial = null
+      }
+    },
+    updateSelectedTrialData: function (localId) {
+      if (this.storeSelectedTrial === localId) {
+        getTrialById(this.storeSelectedTrial)
+          .then(trial => {
+            this.selectedTrial = trial
+          })
+      }
+    },
     onBrapiSettingsChanged: function (config) {
       emitter.emit('brapi-settings-changed', config)
     },
@@ -337,6 +386,8 @@ export default {
       this.$store.dispatch('setChangelogVersionNumber', gridScoreVersion)
     }
 
+    emitter.on('trial-properties-changed', this.updateSelectedTrialData)
+    emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('plausible-event', this.plausibleEvent)
     emitter.on('api-error', this.handleApiError)
     emitter.on('show-brapi-settings', this.showBrapiSettings)
@@ -349,8 +400,12 @@ export default {
     } else {
       this.handleOnline()
     }
+
+    this.updateSelectedTrial()
   },
   beforeDestroy: function () {
+    emitter.off('trial-properties-changed', this.updateSelectedTrialData)
+    emitter.off('show-trial-comments', this.showTrialComments)
     emitter.off('plausible-event', this.plausibleEvent)
     emitter.off('api-error', this.handleApiError)
     emitter.off('show-brapi-settings', this.showBrapiSettings)

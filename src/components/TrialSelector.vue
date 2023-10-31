@@ -319,13 +319,6 @@ export default {
           }
         })
     },
-    showTrialComments: function (trial) {
-      this.selectedTrial = trial
-
-      if (trial) {
-        this.$nextTick(() => this.$refs.trialCommentModal.show())
-      }
-    },
     update: function () {
       this.tabIndex = 0
 
@@ -355,12 +348,10 @@ export default {
 
     this.update()
 
-    emitter.on('show-trial-comments', this.showTrialComments)
     emitter.on('trial-properties-changed', this.update)
     emitter.on('trials-updated', this.update)
   },
   beforeDestroy: function () {
-    emitter.off('show-trial-comments', this.showTrialComments)
     emitter.off('trial-properties-changed', this.update)
     emitter.off('trials-updated', this.update)
   }

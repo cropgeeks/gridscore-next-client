@@ -1,12 +1,12 @@
 <template>
-  <b-dropdown v-if="trial" :title="$t('toolbarTrialInfo')" ref="dropdown" id="trial-information-dropdown">
+  <b-nav-item-dropdown v-if="trial" right :title="$t('toolbarTrialInfo')" ref="dropdown" id="trial-information-dropdown" menu-class="position-absolute">
     <template #button-content>
       <BIconInfoCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTrialInfo') }}</span>
     </template>
     <div class="b-dropdown-form trial-info">
       <TrialInformation class="m-0 p-0" :trial="trial" />
     </div>
-  </b-dropdown>
+  </b-nav-item-dropdown>
 </template>
 
 <script>
@@ -38,6 +38,6 @@ export default {
 <style scoped>
 .trial-info {
   max-width: 100vw;
-  min-width: 33vw;
+  min-width: 20vw;
 }
 </style>

@@ -2,16 +2,16 @@
   <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null" v-if="trial">
     <a href="#" @click.prevent="$emit('synchronize')" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
       <template v-if="trial.transactionCount > 0">
-        <div class="card-corner card-corner-local" v-b-tooltip="$t('tooltipTrialHasTransactions')" />
+        <div class="card-corner card-corner-local" v-b-tooltip.hover="$t('tooltipTrialHasTransactions')" />
         <BIconCloudUploadFill class="card-corner-icon" />
       </template>
       <template v-else-if="trial.hasRemoteUpdate">
-        <div class="card-corner card-corner-remote" v-b-tooltip="$t('tooltipTrialHasRemoteUpdate')" />
+        <div class="card-corner card-corner-remote" v-b-tooltip.hover="$t('tooltipTrialHasRemoteUpdate')" />
         <BIconCloudDownloadFill class="card-corner-icon" />
       </template>
     </a>
     <TrialInformation :trial="trial" />
-    <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
+    <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip.hover="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
       <BIconstack>
         <BIconCalendar stacked />
         <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
