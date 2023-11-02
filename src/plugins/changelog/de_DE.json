@@ -266,6 +266,11 @@
         "text": "Wir haben bessere Handhabung von Situationen wo Versuche via Code importiert werden die bereits auf dem Gerät existieren. Basierend auf den Berechtigungen des geteilten Versuchs und des lokalen werden Benutzern Optionen zum Aufwerten ihres lokalen Versuches oder der Import einer neuen, unabhängigen Kopie angeboten."
       },
       {
+        "type": "new",
+        "title": "Diagramm-Datenpunktauswahl",
+        "text": "Wir haben Unterstützung für die Auswahl von Datenpunkten zu Heatmaps und Boxplots hinzugefügt. Wenn ausgewählt, zeigt ein Dialogfenster die Datenpunkte für das ausgewählte Beet, Rep und Merkmal an."
+      },
+      {
         "type": "update",
         "title": "Versuchs-Teilstatus",
         "text": "Eine Angabe zum Versuchs-Teilstatus wurde zur Versuchsinformation hinzugefügt. Dies zeigt an ob man der 'Besitzer', 'Editor' oder 'Betrachter' für diesen Versuch ist."

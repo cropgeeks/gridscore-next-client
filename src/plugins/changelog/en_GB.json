@@ -266,6 +266,11 @@
         "text": "We've added better handling of cases where an already existing trial is imported via a share code again. Depending on the local permissions and the new shared ones, users will be able to either upgrade their permissions or import the trial as a new, independent copy."
       },
       {
+        "type": "new",
+        "title": "Plot data point selection",
+        "text": "We've added support for data point selection events to the heatmap and box plot visualizations. When selected, a popup will show the data point values for the selected plot, rep and trait."
+      },
+      {
         "type": "update",
         "title": "Trial share status",
         "text": "An indication of the trial share status has been added to the trial information. This will show you whether you have 'owner', 'editor' or 'viewer' permissions on the trial."
