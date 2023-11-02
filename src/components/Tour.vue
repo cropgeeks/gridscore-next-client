@@ -134,8 +134,6 @@ export default {
         if (this.currentIndex >= 0 && this.currentIndex < this.steps.length) {
           this.popoverTarget = document.querySelector(this.steps[this.currentIndex].target())
 
-          console.log(this.popoverTarget)
-
           if (this.popoverTarget) {
             this.popoverShow = true
 

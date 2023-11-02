@@ -8,30 +8,7 @@
     <div class="data-map" ref="map" />
 
     <div v-if="selectedFeature" ref="popupContent">
-      <h4>{{ selectedFeature.displayName }}</h4>
-      <p class="text-muted">{{ $t('pageVisualizationMapPlotInfo', { row: selectedFeature.row + 1, column: selectedFeature.column + 1 }) }}</p>
-
-      <div v-if="selectedFeature.measurements">
-        <section v-for="(trait, traitId) in traitMap" :key="`trait-section-${traitId}`" class="mt-3">
-          <h5 class="mb-1 mr-3">
-            <span :style="{ color: trait.color }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
-          </h5>
-          <b-list-group class="map-measurement-list" v-if="selectedFeature.measurements[traitId] && selectedFeature.measurements[traitId].length > 0">
-            <b-list-group-item class="flex-column align-items-start" v-for="(measure, index) in selectedFeature.measurements[traitId]" :key="`selected-measure-${traitId}-${index}`">
-              <div class="d-flex w-100 justify-content-between align-items-center">
-                <template v-if="trait.dataType === 'categorical'">
-                  {{ measure.values.map(v => trait.restrictions.categories[v]).join(', ') }}
-                </template>
-                <template v-else>
-                  {{ measure.values.join(', ') }}
-                </template>
-                <small v-b-tooltip="new Date(measure.timestamp).toLocaleString()"><BIconCalendar3 /> {{ getDaysAgoIn(measure.timestamp) }}</small>
-              </div>
-            </b-list-group-item>
-          </b-list-group>
-          <p v-else>{{ $t('pageVisualizationMapNoTraitData') }}</p>
-        </section>
-      </div>
+      <PlotDataSection :traits="trial.traits" :cell="selectedFeature" />
     </div>
   </div>
 </template>
@@ -39,10 +16,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { plotInfoToGeoJson } from '@/plugins/location'
-import { BIconCalendar3 } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
-import TraitIcon from '@/components/icons/TraitIcon'
+import PlotDataSection from '@/components/PlotDataSection'
 
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -62,24 +38,14 @@ L.Icon.Default.mergeOptions({
 
 export default {
   components: {
-    BIconCalendar3,
-    TraitIcon
+    PlotDataSection
   },
   computed: {
     ...mapGetters([
       'storeSelectedTrial',
       'storeDarkMode',
       'storeMapLayer'
-    ]),
-    traitMap: function () {
-      const result = {}
-      if (this.trial) {
-        this.trial.traits.forEach((t, i) => {
-          result[t.id] = t
-        })
-      }
-      return result
-    }
+    ])
   },
   data: function () {
     return {
@@ -99,16 +65,6 @@ export default {
     updateThemeLayer: function () {
       if (this.themeLayer) {
         this.themeLayer.setUrl(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`)
-      }
-    },
-    getDaysAgoIn: function (timestamp) {
-      const diffDays = Math.floor((new Date() - new Date(timestamp)) / (1000 * 60 * 60 * 24))
-      if (diffDays > -14 && diffDays < 0) {
-        return this.$tc('ttsDaysIn', Math.abs(diffDays))
-      } else if (diffDays < 14) {
-        return this.$tc('ttsDaysAgo', Math.abs(diffDays))
-      } else {
-        return new Date(timestamp).toLocaleDateString()
       }
     },
     initMap: function () {

@@ -34,6 +34,15 @@
           </div>
         </b-col>
       </b-row>
+
+      <!-- Translations -->
+      <section class="pb-3">
+        <h2>{{ $t('pageAboutTranslationsTitle') }}</h2>
+        <p>{{ $t('pageAboutTranslationsText') }}</p>
+        <ul>
+          <li v-for="translation in translations" :key="`translation-${translation.locale}`">{{ translation.text }}</li>
+        </ul>
+      </section>
     </b-container>
 
     <!-- Hutton banner -->
@@ -89,7 +98,7 @@ export default {
       funders: [
         {
           name: 'The James Hutton Institute',
-          href: 'http://www.hutton.ac.uk/',
+          href: 'https://www.hutton.ac.uk/',
           logo: 'hutton.svg'
         },
         {
@@ -114,7 +123,7 @@ export default {
         },
         {
           name: 'International Barley Hub',
-          href: 'http://www.barleyhub.org/',
+          href: 'https://www.barleyhub.org/',
           logo: 'ibh.svg'
         }
       ]
@@ -126,6 +135,18 @@ export default {
       'storeDarkMode',
       'storeDeviceConfig'
     ]),
+    translations: function () {
+      return [
+        {
+          locale: 'de-DE',
+          text: this.$t('pageAboutTranslationsGerman')
+        },
+        {
+          locale: 'vi-VN',
+          text: this.$t('pageAboutTranslationsVietnamese')
+        }
+      ]
+    },
     storeDeviceConfigString: function () {
       if (this.storeDeviceConfig) {
         let result = ''

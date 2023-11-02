@@ -20,6 +20,10 @@
 
     <!-- Heatmap element -->
     <div ref="heatmapRepCompareChart" />
+
+    <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
+      <PlotDataSection :cell="selectedCell" :traits="[selectedTrait]" />
+    </b-modal>
   </div>
 </template>
 
@@ -27,6 +31,7 @@
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { categoryColors, toLocalDateString } from '@/plugins/misc'
+import PlotDataSection from '@/components/PlotDataSection'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -38,6 +43,9 @@ Plotly.register([
 ])
 
 export default {
+  components: {
+    PlotDataSection
+  },
   props: {
     trial: {
       type: Object,
@@ -83,7 +91,8 @@ export default {
       currentTimepoint: 0,
       reps: [],
       allGermplasm: [],
-      germplasmMap: {}
+      germplasmMap: {},
+      selectedCell: null
     }
   },
   watch: {
@@ -362,16 +371,9 @@ export default {
             if (clicked && clicked.id) {
               const [row, column] = clicked.id.split('|').map(c => +c)
 
-              const cell = this.trialData[`${row}|${column}`]
+              this.selectedCell = this.trialData[`${row}|${column}`]
 
-              if (cell) {
-                // Get all sorted measurements for this trait and plot
-                const traitMeasurements = cell.measurements[this.selectedTrait.id] || []
-
-                const measurements = traitMeasurements.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-
-                console.log(cell.displayName, measurements)
-              }
+              this.$nextTick(() => this.$refs.plotModal.show())
             }
           }
         })

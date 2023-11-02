@@ -102,24 +102,6 @@ export default {
           })
         }
       }, {
-        title: () => this.$t('tourTitleDataEntryTrialInformation'),
-        text: () => this.$t('tourTextDataEntryTrialInformation'),
-        target: () => '#trial-information-dropdown .dropdown-menu',
-        beforeShow: () => {
-          return new Promise(resolve => {
-            this.$refs.trialInfoDropdown.show()
-
-            this.$nextTick(() => setTimeout(() => resolve(), 100))
-          })
-        },
-        afterShow: () => {
-          return new Promise(resolve => {
-            this.$refs.trialInfoDropdown.hide()
-
-            this.$nextTick(() => resolve())
-          })
-        }
-      }, {
         title: () => this.$t('tourTitleDataEntryGermplasmSearch'),
         text: () => this.$t('tourTextDataEntryGermplasmSearch'),
         target: () => '#germplasm-search',

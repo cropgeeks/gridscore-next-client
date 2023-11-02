@@ -22,6 +22,10 @@
       <!-- Heatmap element -->
       <div ref="heatmapChart"/>
     </div>
+
+    <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
+      <PlotDataSection :cell="selectedCell" :traits="[selectedTrait]" />
+    </b-modal>
   </div>
 </template>
 
@@ -30,6 +34,7 @@ import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import { categoryColors, toLocalDateString } from '@/plugins/misc'
+import PlotDataSection from '@/components/PlotDataSection'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -41,6 +46,9 @@ Plotly.register([
 ])
 
 export default {
+  components: {
+    PlotDataSection
+  },
   props: {
     trial: {
       type: Object,
@@ -68,7 +76,7 @@ export default {
       if (this.trial) {
         return this.trial.traits[this.selectedTraitIndex]
       } else {
-        return 0
+        return null
       }
     },
     safeTrialName: function () {
@@ -83,7 +91,8 @@ export default {
     return {
       selectedTraitIndex: null,
       timepoints: [],
-      currentTimepoint: 0
+      currentTimepoint: 0,
+      selectedCell: null
     }
   },
   watch: {
@@ -350,13 +359,9 @@ export default {
             const row = this.trial.layout.rows - clicked.y
             const column = clicked.x - 1
 
-            const cell = this.trialData[`${row}|${column}`]
+            this.selectedCell = this.trialData[`${row}|${column}`]
 
-            const traitMeasurements = cell.measurements[this.selectedTrait.id] || []
-
-            const measurements = traitMeasurements.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-
-            console.log(cell.displayName, measurements)
+            this.$nextTick(() => this.$refs.plotModal.show())
           }
         })
       }

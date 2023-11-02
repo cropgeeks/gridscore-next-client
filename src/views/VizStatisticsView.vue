@@ -23,6 +23,10 @@
         </b-row>
       </div>
     </b-container>
+
+    <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
+      <PlotDataSection :cell="selectedCell" :traits="[selectedTrait]" />
+    </b-modal>
   </div>
 </template>
 
@@ -33,6 +37,7 @@ import { getTrialDataCached } from '@/plugins/datastore'
 import { BIconArrowClockwise } from 'bootstrap-vue'
 import { getTrialById } from '@/plugins/idb'
 import { toLocalDateString } from '@/plugins/misc'
+import PlotDataSection from '@/components/PlotDataSection'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -47,7 +52,8 @@ Plotly.register([
 export default {
   components: {
     TraitHeading,
-    BIconArrowClockwise
+    BIconArrowClockwise,
+    PlotDataSection
   },
   computed: {
     ...mapGetters([
@@ -86,7 +92,9 @@ export default {
     return {
       trial: null,
       selectedTraitIndices: [],
-      selectedTraits: []
+      selectedTraits: [],
+      selectedTrait: null,
+      selectedCell: null
     }
   },
   watch: {
@@ -288,6 +296,7 @@ export default {
           const filename = trait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
           const config = {
             responsive: true,
+            modeBarButtonsToRemove: ['select2d', 'lasso2d'],
             toImageButtonOptions: {
               format: 'png',
               filename: `stats-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`,
@@ -299,8 +308,7 @@ export default {
 
           Plotly.newPlot(ref[0], data, layout, config)
 
-          ref[0].on('plotly_selected', eventData => {
-            console.log(eventData)
+          ref[0].on('plotly_click', eventData => {
             if (!eventData || (eventData.points.length < 1)) {
               Plotly.restyle(ref[0], { selectedpoints: [null] })
             } else {
@@ -317,7 +325,13 @@ export default {
               }).filter((value, index, self) => self.indexOf(value) === index)
 
               // TODO: Do something with the selection here now.
-              console.log(mapped)
+
+              if (mapped.length === 1) {
+                this.selectedCell = this.trialData[`${mapped[0].row}|${mapped[0].column}`]
+                this.selectedTrait = trait
+
+                this.$nextTick(() => this.$refs.plotModal.show())
+              }
             }
           })
         }
