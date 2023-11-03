@@ -1,5 +1,5 @@
 <template>
-  <b-nav-item-dropdown v-if="trial" right :title="$t('toolbarTrialInfo')" ref="dropdown" id="trial-information-dropdown" menu-class="position-absolute">
+  <b-nav-item-dropdown v-if="trial" right ref="dropdown" id="trial-information-dropdown" menu-class="position-absolute">
     <template #button-content>
       <BIconInfoCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTrialInfo') }}</span>
     </template>
