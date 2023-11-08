@@ -59,8 +59,11 @@ export default {
   watch: {
     layout: {
       deep: true,
-      handler: function () {
-        this.resetFormAndGermplasm()
+      handler: function (newValue, oldValue) {
+        if (!newValue || !oldValue || newValue.rows !== oldValue.rows || newValue.columns !== oldValue.columns) {
+          // Only update if one of the relevant properties of the layout changed.
+          this.resetFormAndGermplasm()
+        }
       }
     },
     initialGermplasm: {

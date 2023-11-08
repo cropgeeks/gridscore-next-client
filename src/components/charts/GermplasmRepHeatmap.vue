@@ -206,7 +206,7 @@ export default {
                   finalValue = m
                 }
 
-                if (this.selectedTrait.dataType === 'int' || this.selectedTrait === 'float') {
+                if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float') {
                   m.values.forEach(v => {
                     if (v !== undefined && v !== null) {
                       minValue = Math.min(minValue, +v)
@@ -230,10 +230,10 @@ export default {
                   const validValues = finalValue.values.filter(v => v !== undefined && v !== null)
                   const value = validValues.length > 0 ? finalValue.values.map(v => +v).reduce((a, b) => a + b) / finalValue.values.length : null
 
-                  if (value) {
-                    minValue = Math.min(minValue, value)
-                    maxValue = Math.max(maxValue, value)
-                  }
+                  // if (value) {
+                  //   minValue = Math.min(minValue, value)
+                  //   maxValue = Math.max(maxValue, value)
+                  // }
                   rowData.push(value)
                   rowCustomdata.push(null)
                 }
