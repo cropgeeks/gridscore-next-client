@@ -96,6 +96,7 @@
                                        @upgrade="upgradePermissions"
                                        @new="importAsNew"
                                        ref="importPermissionUpgradeModal" />
+    <TrialExistsModal ref="trialExistsModal" :trial="localTrialMatch" @new="importAsNew" v-if="localTrialMatch" />
   </div>
 </template>
 
@@ -104,6 +105,7 @@ import { mapGetters } from 'vuex'
 import BarcodeScanner from '@/components/BarcodeScanner'
 import TrialInformation from '@/components/TrialInformation'
 import TrialImportPermissionUpgradeModal from '@/components/modals/TrialImportPermissionUpgradeModal'
+import TrialExistsModal from '@/components/modals/TrialExistsModal'
 
 import { BIconSearch, BIconCollection } from 'bootstrap-vue'
 
@@ -118,7 +120,8 @@ export default {
     BIconCollection,
     BarcodeScanner,
     TrialInformation,
-    TrialImportPermissionUpgradeModal
+    TrialImportPermissionUpgradeModal,
+    TrialExistsModal
   },
   data: function () {
     return {
@@ -224,33 +227,13 @@ export default {
 
               if (this.localPermissionType === this.remotePermissionType) {
                 // Loaded a trial that already exists with the same permissions
-                this.$bvModal.msgBoxConfirm(this.$t('toastTextTrialShareCodeSameOrHigherPermission'), {
-                  title: this.$t('toastTitleTrialShareCodeSameOrHigherPermission'),
-                  okTitle: this.$t('buttonYes'),
-                  cancelTitle: this.$t('buttonNo'),
-                  okVariant: 'primary',
-                  cancelVariant: 'primary'
-                }).then(value => {
-                  if (value === true) {
-                    this.$nextTick(() => this.$refs.confirmationModal.show())
-                  }
-                })
+                this.$nextTick(() => this.$refs.trialExistsModal.show())
               } else if (this.isHigherPermission(this.remotePermissionType, this.localPermissionType)) {
                 // The new code that was used is a higher permission grade than the local one, so ask to update the local one's permission grade
                 this.$nextTick(() => this.$refs.importPermissionUpgradeModal.show())
               } else {
                 // The new code that was used is a lower permission grade than the local one, don't do anything, as this is pointless. Notify user.
-                this.$bvModal.msgBoxConfirm(this.$t('toastTextTrialShareCodeSameOrHigherPermission'), {
-                  title: this.$t('toastTitleTrialShareCodeSameOrHigherPermission'),
-                  okTitle: this.$t('buttonYes'),
-                  cancelTitle: this.$t('buttonNo'),
-                  okVariant: 'primary',
-                  cancelVariant: 'primary'
-                }).then(value => {
-                  if (value === true) {
-                    this.$nextTick(() => this.$refs.confirmationModal.show())
-                  }
-                })
+                this.$nextTick(() => this.$refs.trialExistsModal.show())
               }
             } else {
               this.$nextTick(() => this.$refs.confirmationModal.show())

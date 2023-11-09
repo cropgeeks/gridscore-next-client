@@ -19,7 +19,7 @@
     </b-button>
     <b-card-footer class="d-flex justify-content-between">
       <b-button @click="$emit('loadTrial')" variant="primary"><BIconJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
-      <b-dropdown right>
+      <b-dropdown right v-if="showDropdown">
         <template #button-content>
           <BIconGear />
         </template>
@@ -70,6 +70,10 @@ export default {
     trial: {
       type: Object,
       default: () => null
+    },
+    showDropdown: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
