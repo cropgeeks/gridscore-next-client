@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="h-100">
     <b-navbar toggleable="xl" type="dark" variant="dark" >
       <b-navbar-brand :to="{ name: 'home' }" class="d-flex align-items-center">
         <img src="img/gridscore-next.svg" height="40px" class="d-inline-block align-top mr-3" alt="GridScore">
@@ -54,7 +54,27 @@
       </b-collapse>
     </b-navbar>
 
-    <router-view/>
+    <div class="d-flex flex-column h-100">
+      <router-view/>
+
+      <footer class="mt-auto py-3 border-top border-light bg-light" v-if="$route.name !== 'data-entry'">
+      <b-container class="d-flex flex-wrap justify-content-between align-items-center">
+        <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-start">
+          <span class="text-muted">&copy; {{ new Date().getFullYear() }} GridScore: The James Hutton Institute</span>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+          <router-link :to="{ name: 'about', query: { showChangelog: true } }" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</router-link>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-center justify-content-md-end list-unstyled d-flex">
+          <li class="ml-3"><a class="text-muted" href="https://cropgeeks.github.io/gridscore-next-client"><BIconGlobe2 /></a></li>
+          <li class="ml-3"><a class="text-muted" href="https://twitter.com/GerminateHub"><BIconTwitter /></a></li>
+          <li class="ml-3"><a class="text-muted" href="https://github.com/cropgeeks/gridscore-next-client"><BIconGithub /></a></li>
+        </ul>
+      </b-container>
+    </footer>
+    </div>
 
     <BrapiModal ref="brapiSettingsModal"
                 :title="'modalTitleBrapiSettings'"
@@ -102,7 +122,7 @@ import { VuePlausible } from 'vue-plausible'
 import Vue from 'vue'
 import { axiosCall, getServerSettings } from '@/plugins/api'
 
-import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
+import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconGithub, BIconGlobe2, BIconTwitter, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
 import { isOffline } from '@/plugins/misc'
@@ -128,6 +148,9 @@ export default {
     BIconPinMapFill,
     BIconSun,
     BIconCloudDownload,
+    BIconGithub,
+    BIconGlobe2,
+    BIconTwitter,
     BrapiModal,
     ChangelogModal,
     MissingTrialModal,
@@ -136,6 +159,7 @@ export default {
   },
   data: function () {
     return {
+      gridScoreVersion,
       languages: locales,
       loadingVisible: false,
       refreshing: false,
@@ -168,7 +192,13 @@ export default {
   },
   watch: {
     storeDarkMode: function (newValue) {
-      document.documentElement.className = newValue ? 'dark-mode' : 'light-mode'
+      if (newValue) {
+        document.documentElement.classList.remove('light-mode')
+        document.documentElement.classList.add('dark-mode')
+      } else {
+        document.documentElement.classList.add('light-mode')
+        document.documentElement.classList.remove('dark-mode')
+      }
     },
     storeSelectedTrial: function () {
       this.updateSelectedTrial()
@@ -324,7 +354,13 @@ export default {
   mounted: function () {
     loadLanguageAsync(this.storeLocale.replace('_', '-'))
 
-    document.documentElement.className = this.storeDarkMode ? 'dark-mode' : 'light-mode'
+    if (this.storeDarkMode) {
+      document.documentElement.classList.remove('light-mode')
+      document.documentElement.classList.add('dark-mode')
+    } else {
+      document.documentElement.classList.add('light-mode')
+      document.documentElement.classList.remove('dark-mode')
+    }
 
     init()
 

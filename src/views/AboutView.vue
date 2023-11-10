@@ -107,7 +107,7 @@ export default {
           logo: 'crop-trust.svg'
         },
         {
-          name: 'The Norwegian Agency for Development Coorperation',
+          name: 'The Norwegian Agency for Development Cooperation',
           href: 'https://www.norad.no/en/',
           logo: 'norad.svg'
         },
@@ -162,6 +162,11 @@ export default {
       } else {
         return null
       }
+    }
+  },
+  mounted: function () {
+    if (this.$route.query && this.$route.query.showChangelog) {
+      this.$nextTick(() => this.$refs.changelogModal.show())
     }
   }
 }

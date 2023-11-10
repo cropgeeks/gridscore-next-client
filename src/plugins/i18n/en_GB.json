@@ -524,6 +524,7 @@
   "pageArchiveTextUpdatedOn": "Trial last updated on: {date}",
   "pageArchiveNoArchiveFound": "No archive has been found for your trial. This either means that it has been a long, long time since you last used GridScore or that there has been an issue with backups. Please get in touch with the maintainers of GridScore.",
   "pageGuidedWalkInvalidConfig": "Invalid configuration for guided walk. Please try again.",
+  "pageFooterVersion": "Version {version}",
   "tabTitleSettingsShareExport": "Share your settings",
   "tabTextSettingsShareExport": "The QR code below will let others load your settings and overwrite their own settings.",
   "tabTitleSettingsShareImport": "Load other settings",
