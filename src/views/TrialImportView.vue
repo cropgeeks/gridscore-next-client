@@ -92,7 +92,8 @@
 
     <TrialImportPermissionUpgradeModal :remotePermissionType="remotePermissionType"
                                        :localPermissionType="localPermissionType"
-                                       v-if="remotePermissionType && localPermissionType"
+                                       v-if="localTrialMatch && remotePermissionType && localPermissionType"
+                                       :trial="localTrialMatch"
                                        @upgrade="upgradePermissions"
                                        @new="importAsNew"
                                        ref="importPermissionUpgradeModal" />
