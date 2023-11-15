@@ -4,16 +4,42 @@
         v-model="selectedOrder"
         name="radio-options-order"
         v-if="visible">
-    <b-row class="guide-order" v-if="trialLayout">
-      <b-col v-for="option in precomputedOrders" :key="`guide-option-${option.type.name}`" cols=6 lg=3 class="mb-3">
-        <div class="rounded p-3 bg-light h-100 border">
-          <b-form-radio :value="option.type.name" :disabled="!option.valid" class="h-100">
-            <div class="guide-text-label">{{ $t(option.type.text) }}</div>
-            <b-img class="guide-image" fluid :src="option.type.image" />
-          </b-form-radio>
-        </div>
-      </b-col>
-    </b-row>
+    <b-tabs v-model="tabIndex" v-if="trialLayout" class="mt-3">
+      <b-tab>
+        <template #title>
+          <b-img class="tab-icon" fluid :src="snakeIcon" />
+          {{ $t('widgetGuideOrderTabSnake') }}
+        </template>
+
+        <b-row class="guide-order mt-3">
+          <b-col v-for="option in precomputedOrders['snake']" :key="`guide-option-${option.type.name}`" cols=6 lg=3 class="mb-3">
+            <div class="rounded p-3 bg-light h-100 border">
+              <b-form-radio :value="option.type.name" :disabled="!option.valid" class="h-100">
+                <div class="guide-text-label">{{ $t(option.type.text) }}</div>
+                <b-img class="guide-image" fluid :src="option.type.image" />
+              </b-form-radio>
+            </div>
+          </b-col>
+        </b-row>
+      </b-tab>
+      <b-tab>
+        <template #title>
+          <b-img class="tab-icon" fluid :src="zigzagIcon" />
+          {{ $t('widgetGuideOrderTabZigzag') }}
+        </template>
+
+        <b-row class="guide-order mt-3">
+          <b-col v-for="option in precomputedOrders['zigzag']" :key="`guide-option-${option.type.name}`" cols=6 lg=3 class="mb-3">
+            <div class="rounded p-3 bg-light h-100 border">
+              <b-form-radio :value="option.type.name" :disabled="!option.valid" class="h-100">
+                <div class="guide-text-label">{{ $t(option.type.text) }}</div>
+                <b-img class="guide-image" fluid :src="option.type.image" />
+              </b-form-radio>
+            </div>
+          </b-col>
+        </b-row>
+      </b-tab>
+    </b-tabs>
   </b-form-radio-group>
 </template>
 
@@ -41,22 +67,36 @@ export default {
   },
   computed: {
     precomputedOrders: function () {
-      return guideOrderTypes.map(o => {
-        return {
+      const result = {
+        zigzag: [],
+        snake: []
+      }
+
+      guideOrderTypes.forEach(o => {
+        result[o.type].push({
           type: o,
           valid: o.valid(this.column, this.row, this.trialLayout)
-        }
+        })
       })
+
+      return result
     }
   },
   data: function () {
     return {
-      selectedOrder: null
+      selectedOrder: null,
+      tabIndex: 0,
+      tabs: ['snake', 'zigzag'],
+      zigzagIcon: require('@/assets/img/guided-walk/scoring-order-u-l-b.svg'),
+      snakeIcon: require('@/assets/img/guided-walk/scoring-order-u-l.svg')
     }
   },
-  methods: {
-    getOrder: function () {
-      return this.selectedOrder
+  watch: {
+    tabIndex: function () {
+      this.selectedOrder = null
+    },
+    selectedOrder: function (newValue) {
+      this.$emit('order-selected', newValue)
     }
   }
 }
@@ -84,5 +124,9 @@ img.guide-image {
 }
 .guide-text-label {
   word-break: break-word;
+}
+.tab-icon {
+  width: 16px;
+  height: 16px;
 }
 </style>

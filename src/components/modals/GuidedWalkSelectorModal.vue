@@ -3,6 +3,7 @@
            :ok-title="$t('buttonStart')"
            no-fade
            size="lg"
+           :ok-disabled="!selectedOrder"
            @shown="guidedWalkVisible = true"
            @ok.prevent="onSubmit"
            @hidden="guidedWalkVisible = false"
@@ -10,7 +11,7 @@
     <div v-if="cell && trialLayout">
       <p>{{ $t('modalTextGuidedWalk') }}</p>
 
-      <GuideOrderSelector :row="cell.row" :column="cell.column" :trialLayout="trialLayout" :visible="guidedWalkVisible" ref="guideOrderSelector" />
+      <GuideOrderSelector :row="cell.row" :column="cell.column" :trialLayout="trialLayout" :visible="guidedWalkVisible" @order-selected="orderSelected" />
     </div>
   </b-modal>
 </template>
@@ -36,29 +37,23 @@ export default {
   },
   data: function () {
     return {
-      guidedWalkVisible: false
+      guidedWalkVisible: false,
+      selectedOrder: null
     }
   },
   methods: {
+    orderSelected: function (value) {
+      this.selectedOrder = value
+    },
     onSubmit: function () {
-      const order = this.$refs.guideOrderSelector.getOrder()
-
-      emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: order } })
-      this.$router.push({ name: 'guided-walk', query: { row: this.cell.row, column: this.cell.column, guidedWalkName: order } })
-
-      // this.$nextTick(() => this.hide())
-
-      // const order = this.$refs.guideOrderSelector.getOrder()
-      // this.$emit('change', order)
-
-      // emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: order } })
-
-      // this.$nextTick(() => this.hide())
+      emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: this.selectedOrder } })
+      this.$router.push({ name: 'guided-walk', query: { row: this.cell.row, column: this.cell.column, guidedWalkName: this.selectedOrder } })
     },
     /**
      * Shows and resets modal dialog
      */
     show: function () {
+      this.selectedOrder = null
       this.$refs.guidedWalkModal.show()
     },
     /**
