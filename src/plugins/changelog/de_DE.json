@@ -291,5 +291,21 @@
         "text": "Ein Problem beim Löschen von Versuchskommentaren wurde behoben."
       }
     ]
+  },
+  {
+    "version": "2.4.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Mehr Ordnungen für gelenkten Ablauf",
+        "text": "Zusätzlich zu den originalen 8 Ordnungen haben wir weitere 8 hinzugefügt. Während die originalen einen immer zurück gegen die Richtung aus der man kam geleitet haben damit man Beete auf dem Rückweg bewerten kann, springen die neuen zurück zum Anfang um von dort neu anzufangen. Dies erlaubt es alle Beete aus der gleichen Perspektive zu bewerten was in manchen Situationen, wie extremen Lichtverhältnissen, nützlich sein kann."
+      },
+      {
+        "type": "update",
+        "title": "Keimplasmaduplikat-Warnung",
+        "text": "Während GridScore bisher das Erstellen eines Versuches verhindert hat der Duplikate von Keimplasma-Rep-Identifikatoren beinhaltet, haben wir festgestellt, dass  es manchmal nötig sein kann dies zu erlauben. GridScore wird nun eine Warnung statt eines Fehlers anzeigen welche vom Nutzer akzeptiert werden muss bevor fortgefahren werden kann++."
+      }
+    ]
   }
 ]

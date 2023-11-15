@@ -291,5 +291,21 @@
         "text": "Fixed a bug where it wasn't possible to delete a trial comment."
       }
     ]
+  },
+  {
+    "version": "2.4.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "More guided walk orders",
+        "text": "In addition to the original 8 guided walk orders, we have added another 8. While the originals were always guiding you back against the direction you came from so you could score plots on the way back, the new ones let you skip back to the start and continue from there. This allows you to score all plots from the same perspective which may be useful in certain situations like extreme lighting conditions."
+      },
+      {
+        "type": "update",
+        "title": "Duplicate germplasm warning",
+        "text": "While so far, GridScore prevented you from creating a trial that contained duplicate germplasm-rep combinations, we realized that it may be useful to allow these. GridScore will now show a warning instead of an error, which the user has to accept before continuing."
+      }
+    ]
   }
 ]
