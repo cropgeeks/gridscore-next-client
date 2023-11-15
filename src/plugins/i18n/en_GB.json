@@ -75,6 +75,7 @@
   "buttonDisable": "Disable setting",
   "buttonIndividualTimepoints": "Individual timepoints",
   "buttonEvolvingTimepoints": "Evolving timepoints",
+  "buttonAcceptWarningsContinue": "Accept warning and proceed",
   "appTitle": "GridScore NEXT",
   "appTitleLegacy": "GridScore legacy",
   "changelogBadgeNew": "NEW",

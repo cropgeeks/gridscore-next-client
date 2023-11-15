@@ -214,7 +214,10 @@ export default {
       const feedback = []
 
       if (!this.tabCorrect.rowColumn) {
-        feedback.push(this.$t('formFeedbackSetupInvalidRowColumn', { row: this.layout.row, column: this.layout.column }))
+        feedback.push({
+          type: 'danger',
+          message: this.$t('formFeedbackSetupInvalidRowColumn', { row: this.layout.row, column: this.layout.column })
+        })
       }
 
       let germplasmCorrect = true
@@ -225,18 +228,27 @@ export default {
         const [row, column] = k.split('|').map(c => +c)
 
         if (!cell.germplasm || cell.germplasm === '') {
-          feedback.push(this.$t('formFeedbackSetupMissingGermplasm', { rowIndex: row + 1, columnIndex: column + 1 }))
+          feedback.push({
+            type: 'danger',
+            message: this.$t('formFeedbackSetupMissingGermplasm', { rowIndex: row + 1, columnIndex: column + 1 })
+          })
           germplasmCorrect = false
           return
         }
 
         if (row < 0 || row >= this.layout.rows) {
-          feedback.push(this.$t('formFeedbackSetupInvalidRow', { rowIndex: row + 1, germplasm: cell.germplasm, rep: cell.rep }))
+          feedback.push({
+            type: 'danger',
+            message: this.$t('formFeedbackSetupInvalidRow', { rowIndex: row + 1, germplasm: cell.germplasm, rep: cell.rep })
+          })
           germplasmCorrect = false
           return
         }
         if (column < 0 || column >= this.layout.columns) {
-          feedback.push(this.$t('formFeedbackSetupInvalidColumn', { columnIndex: column + 1, germplasm: cell.germplasm, rep: cell.rep }))
+          feedback.push({
+            type: 'danger',
+            message: this.$t('formFeedbackSetupInvalidColumn', { columnIndex: column + 1, germplasm: cell.germplasm, rep: cell.rep })
+          })
           germplasmCorrect = false
           return
         }
@@ -244,7 +256,10 @@ export default {
         const displayName = `${cell.germplasm}|${cell.rep}`
 
         if (germplasmSet.has(displayName)) {
-          feedback.push(this.$t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: column + 1, rowIndex: row + 1, germplasm: cell.germplasm, rep: cell.rep }))
+          feedback.push({
+            type: 'warning',
+            message: this.$t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: column + 1, rowIndex: row + 1, germplasm: cell.germplasm, rep: cell.rep || 'N/A' })
+          })
           germplasmCorrect = false
           // eslint-disable-next-line
           return
@@ -254,7 +269,10 @@ export default {
       })
 
       if (germplasmSet.size < 1) {
-        feedback.push(this.$t('formFeedbackSetupNoGermplasm'))
+        feedback.push({
+          type: 'danger',
+          message: this.$t('formFeedbackSetupNoGermplasm')
+        })
         germplasmCorrect = false
       }
 
@@ -264,7 +282,10 @@ export default {
         this.tabCorrect.corners = isGeographyValid(this.layout.corners) || isGeographyAllNull(this.layout.corners)
 
         if (!this.tabCorrect.corners) {
-          feedback.push(this.$t('formFeedbackSetupInvalidCorners'))
+          feedback.push({
+            type: 'danger',
+            message: this.$t('formFeedbackSetupInvalidCorners')
+          })
         }
       } else {
         this.tabCorrect.corners = true
@@ -274,7 +295,10 @@ export default {
         this.tabCorrect.markers = this.layout.markers === null || (this.layout.markers.anchor && this.layout.markers.everyRow > 0 && this.layout.markers.everyRow <= this.layout.rows && this.layout.markers.everyColumn > 0 && this.layout.markers.everyColumn <= this.layout.columns)
 
         if (!this.tabCorrect.markers) {
-          feedback.push(this.$t('formFeedbackSetupInvalidMarkers'))
+          feedback.push({
+            type: 'danger',
+            message: this.$t('formFeedbackSetupInvalidMarkers')
+          })
         }
       } else {
         this.tabCorrect.markers = true

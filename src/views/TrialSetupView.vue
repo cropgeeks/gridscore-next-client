@@ -134,7 +134,7 @@
             <BIconCardChecklist /> {{ $t('buttonCheck') }}
           </b-button>
         </div>
-        <b-button variant="danger" v-if="layoutFeedback && layoutFeedback.length > 0" class="align-self-center my-2" @click="$refs.layoutFeedbackModal.show()"><BIconExclamationTriangleFill /> {{ $tc('formFeedbackLayout', layoutFeedback.length) }}</b-button>
+        <b-button :variant="layoutFeedbackIsOnlyWarning ? 'warning' : 'danger'" v-if="layoutFeedback && layoutFeedback.length > 0" class="align-self-center my-2" @click="$refs.layoutFeedbackModal.show()"><BIconExclamationTriangleFill /> {{ $tc('formFeedbackLayout', layoutFeedback.length) }}</b-button>
       </template>
       <div class="px-3 py-2">
         <TrialLayoutComponent :initialLayout="layout" :initialGermplasm="germplasmMap" ref="trialSetupLayout" @change="updateTrialLayout" />
@@ -166,7 +166,7 @@
       </div>
     </b-sidebar>
 
-    <LayoutFeedbackModal :feedback="layoutFeedback" ref="layoutFeedbackModal" />
+    <LayoutFeedbackModal :feedback="layoutFeedback" @warnings-accepted="acceptWarnings" ref="layoutFeedbackModal" />
 
     <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="setupTour" />
   </b-container>
@@ -231,7 +231,9 @@ export default {
       traitFeedback: null,
       newTrialCreatedSuccessfully: false,
       trialToCopy: null,
-      copyData: false
+      copyData: false,
+      layoutFeedbackIsOnlyWarning: true,
+      warningsAccepted: false
     }
   },
   beforeRouteLeave: function (to, from, next) {
@@ -369,6 +371,10 @@ export default {
     }
   },
   methods: {
+    acceptWarnings: function () {
+      this.warningsAccepted = true
+      this.$refs.trialSetupLayout.checkData()
+    },
     updateTraitDefinitions: function (traits) {
       this.traits = traits
       this.traitSidebarVisible = false
@@ -377,7 +383,9 @@ export default {
       this.layoutDataIsValid = payload.layoutValid
       this.layoutFeedback = payload.feedback
 
-      if (payload.layoutValid) {
+      this.layoutFeedbackIsOnlyWarning = payload.feedback.length < 1 || !payload.feedback.some(f => f.type === 'danger')
+
+      if (this.layoutFeedbackIsOnlyWarning && this.warningsAccepted) {
         this.layout = payload.layout
         this.germplasmMap = payload.germplasmMap
         this.layoutSidebarVisible = false
