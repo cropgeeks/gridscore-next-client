@@ -348,7 +348,9 @@ export default {
         return false
       }
       if (this.layoutFeedback && this.layoutFeedback.length > 0) {
-        return false
+        if (!this.layoutFeedbackIsOnlyWarning || !this.warningsAccepted) {
+          return false
+        }
       }
       if (!this.layout.rows || !this.layout.columns) {
         return false
