@@ -387,7 +387,7 @@ export default {
 
       this.layoutFeedbackIsOnlyWarning = payload.feedback.length < 1 || !payload.feedback.some(f => f.type === 'danger')
 
-      if (!this.layoutFeedbackIsOnlyWarning || (this.layoutFeedbackIsOnlyWarning && this.warningsAccepted)) {
+      if (payload.feedback.length < 1 || (this.layoutFeedbackIsOnlyWarning && this.warningsAccepted)) {
         this.layout = payload.layout
         this.germplasmMap = payload.germplasmMap
         this.layoutSidebarVisible = false
