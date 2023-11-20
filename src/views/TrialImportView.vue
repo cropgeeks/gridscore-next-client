@@ -213,7 +213,17 @@ export default {
           .then(result => {
             this.trial = result
 
-            const match = this.existingTrials.filter(t => t.shareCodes.ownerCode === result.shareCodes.ownerCode || t.shareCodes.editorCode === result.shareCodes.editorCode || t.shareCodes.viewerCode === result.shareCodes.viewerCode)
+            const match = this.existingTrials.filter(t => {
+              if (t.shareCodes.ownerCode && result.shareCodes.ownerCode && (t.shareCodes.ownerCode === result.shareCodes.ownerCode)) {
+                return true
+              } else if (t.shareCodes.editorCode && result.shareCodes.editorCode && (t.shareCodes.editorCode === result.shareCodes.editorCode)) {
+                return true
+              } else if (t.shareCodes.viewerCode && result.shareCodes.viewerCode && (t.shareCodes.viewerCode === result.shareCodes.viewerCode)) {
+                return true
+              } else {
+                return false
+              }
+            })
 
             if (match && match.length > 0) {
               this.localTrialMatch = match[0]

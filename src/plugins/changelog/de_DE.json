@@ -305,6 +305,11 @@
         "type": "update",
         "title": "Keimplasmaduplikat-Warnung",
         "text": "Während GridScore bisher das Erstellen eines Versuches verhindert hat der Duplikate von Keimplasma-Rep-Identifikatoren beinhaltet, haben wir festgestellt, dass  es manchmal nötig sein kann dies zu erlauben. GridScore wird nun eine Warnung statt eines Fehlers anzeigen welche vom Nutzer akzeptiert werden muss bevor fortgefahren werden kann++."
+      },
+      {
+        "type": "bugfix",
+        "title": "Importieren von Versuchs-Teilcodes",
+        "text": "Fehler beim importieren von Teilcodes behoben wo fälschlicherweise eine Übereinstimmung mit einem lokalen Versuch angezeigt wird."
       }
     ]
   }

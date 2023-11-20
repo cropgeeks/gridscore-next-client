@@ -305,6 +305,11 @@
         "type": "update",
         "title": "Duplicate germplasm warning",
         "text": "While so far, GridScore prevented you from creating a trial that contained duplicate germplasm-rep combinations, we realized that it may be useful to allow these. GridScore will now show a warning instead of an error, which the user has to accept before continuing."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trial share code import",
+        "text": "Fixed a bug where importing a share code would falsely report a local match where there isn't one."
       }
     ]
   }
