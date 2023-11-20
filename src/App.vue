@@ -260,6 +260,8 @@ export default {
 
         this.$nextTick(() => {
           this.$plausible.enableAutoPageviews()
+
+          emitter.emit('plausible-event', { key: 'app-load', props: { version: this.gridScoreVersion } })
         })
       }
     },
