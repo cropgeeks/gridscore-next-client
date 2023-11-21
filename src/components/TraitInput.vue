@@ -46,14 +46,14 @@
                   :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : null"
                   :step="0.02" />
     <!-- For categorical traits -->
-    <!-- If there are more than 3 options, show a dropdown select -->
-    <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > 3" ref="input" :state="formState"
+    <!-- If there are more than 4 options, show a dropdown select -->
+    <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > 4" ref="input" :state="formState"
                     v-model="value"
                     :readonly="!editable"
                     :options="traitOptionsSelect"
                     @change="tts" />
     <!-- Else show a button group for easier selection -->
-    <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= 3" ref="input" :state="formState"
+    <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= 4" ref="input" :state="formState"
                         buttons
                         button-variant="outline-secondary"
                         @change="event => { value = event; tts() }"

@@ -312,5 +312,16 @@
         "text": "Fixed a bug where importing a share code would falsely report a local match where there isn't one."
       }
     ]
+  },
+  {
+    "version": "2.4.1",
+    "date": "2023-11-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "Vietnamese translation",
+        "text": "Thanks to our collaborator Huu Loi Nguyen, we have now added a Vietnamese translation to GridScore."
+      }
+    ]
   }
 ]

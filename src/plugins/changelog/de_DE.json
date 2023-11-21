@@ -312,5 +312,16 @@
         "text": "Fehler beim importieren von Teilcodes behoben wo fälschlicherweise eine Übereinstimmung mit einem lokalen Versuch angezeigt wird."
       }
     ]
+  },
+  {
+    "version": "2.4.1",
+    "date": "2023-11-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "Vietnamesische Übersetzung",
+        "text": "Dank unseres Kollaborateurs Huu Loi Nguyen haben wir eine vietnamesische Übersetzung zu GridScore hinzugefügt."
+      }
+    ]
   }
 ]
