@@ -80,14 +80,10 @@ export default {
       }
     },
     totalCount: function () {
-      if (this.prevVersion) {
-        return 1
+      if (this.totalChangelog) {
+        return this.totalChangelog.length
       } else {
-        if (this.changelog) {
-          return this.changelog.length
-        } else {
-          return 0
-        }
+        return 0
       }
     },
     changelog: function () {
@@ -97,7 +93,7 @@ export default {
         return enGB
       }
     },
-    visibleChangelog: function () {
+    totalChangelog: function () {
       let cl = []
       if (!this.prevVersion) {
         cl = this.changelog
@@ -111,7 +107,14 @@ export default {
         }
       }
 
-      return cl.slice((this.page - 1) * this.perPage, this.page * this.perPage)
+      return cl
+    },
+    visibleChangelog: function () {
+      if (this.totalChangelog) {
+        return this.totalChangelog.slice((this.page - 1) * this.perPage, this.page * this.perPage)
+      } else {
+        return []
+      }
     }
   },
   methods: {

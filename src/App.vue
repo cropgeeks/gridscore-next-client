@@ -58,22 +58,22 @@
       <router-view/>
 
       <footer class="mt-auto py-3 border-top border-light bg-light" v-if="$route.name !== 'data-entry'">
-      <b-container class="d-flex flex-wrap justify-content-between align-items-center">
-        <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-start">
-          <span class="text-muted">&copy; {{ new Date().getFullYear() }} GridScore: The James Hutton Institute</span>
-        </div>
+        <b-container class="d-flex no-gutters container-force flex-wrap justify-content-between align-items-center">
+          <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-start">
+            <span class="text-muted">&copy; {{ new Date().getFullYear() }} GridScore: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
+          </div>
 
-        <div class="col-md-4 d-flex align-items-center justify-content-center">
-          <router-link :to="{ name: 'about', query: { showChangelog: true } }" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</router-link>
-        </div>
+          <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <router-link :to="{ name: 'about', query: { showChangelog: true } }" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</router-link>
+          </div>
 
-        <ul class="nav col-md-4 justify-content-center justify-content-md-end list-unstyled d-flex">
-          <li class="ml-3"><a class="text-muted" href="https://cropgeeks.github.io/gridscore-next-client"><BIconGlobe2 /></a></li>
-          <li class="ml-3"><a class="text-muted" href="https://twitter.com/GerminateHub"><BIconTwitter /></a></li>
-          <li class="ml-3"><a class="text-muted" href="https://github.com/cropgeeks/gridscore-next-client"><BIconGithub /></a></li>
-        </ul>
-      </b-container>
-    </footer>
+          <ul class="nav col-md-4 justify-content-center justify-content-md-end list-unstyled d-flex">
+            <li class="ml-3"><a class="text-muted" href="https://cropgeeks.github.io/gridscore-next-client"><BIconGlobe2 /></a></li>
+            <li class="ml-3"><a class="text-muted" href="https://twitter.com/GerminateHub"><BIconTwitter /></a></li>
+            <li class="ml-3"><a class="text-muted" href="https://github.com/cropgeeks/gridscore-next-client"><BIconGithub /></a></li>
+          </ul>
+        </b-container>
+      </footer>
     </div>
 
     <BrapiModal ref="brapiSettingsModal"
@@ -556,5 +556,12 @@ body {
 
 .modal-banner {
   margin: -1rem -1rem 0 -1rem
+}
+</style>
+
+<style scoped>
+.container-force {
+  margin-right: auto;
+  margin-left: auto;
 }
 </style>
