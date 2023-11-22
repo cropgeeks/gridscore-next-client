@@ -119,9 +119,6 @@ export default {
     }
   },
   watch: {
-    plotData: function () {
-      this.plot()
-    },
     storeDarkMode: function () {
       this.plot()
     },

@@ -10,6 +10,16 @@
             <b-form-group :label="$t('formLabelStatisticsTrait')" :description="$t('formDescriptionStatisticsTrait')" label-for="trait">
               <b-form-select multiple v-model="selectedTraitIndices" :select-size="selectSize" :options="traitOptions" id="trait" />
             </b-form-group>
+          </b-col>
+          <b-col cols=12 md=6 lg=4 xl=3>
+            <b-form-group :label="$t('formLabelStatisticsGermplasm')" :description="$t('formDescriptionStatisticsGermplasm')" label-for="germplasmSearch">
+              <b-form-input v-model="searchTerm" type="search" :placeholder="$t('formPlaceholderTimelinePlotSearch')" id="germplasmSearch" />
+              <b-input-group>
+                <b-select multiple :options="filteredGermplasm" v-model="selectedGermplasm" />
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col cols=12>
             <b-button variant="primary" @click="updateTraits"><BIconArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
           </b-col>
         </b-row>
@@ -49,6 +59,8 @@ Plotly.register([
   require('plotly.js/lib/box')
 ])
 
+const GENERIC_TRACE = 'GENERIC_TRACE'
+
 export default {
   components: {
     TraitHeading,
@@ -86,6 +98,20 @@ export default {
       } else {
         return ''
       }
+    },
+    searchTermLowerCase: function () {
+      if (this.searchTerm) {
+        return this.searchTerm.toLowerCase()
+      } else {
+        return null
+      }
+    },
+    filteredGermplasm: function () {
+      if (this.searchTerm && this.allGermplasm) {
+        return this.allGermplasm.filter(g => g.toLowerCase().includes(this.searchTermLowerCase))
+      } else {
+        return this.allGermplasm
+      }
     }
   },
   data: function () {
@@ -94,7 +120,10 @@ export default {
       selectedTraitIndices: [],
       selectedTraits: [],
       selectedTrait: null,
-      selectedCell: null
+      selectedCell: null,
+      allGermplasm: [],
+      selectedGermplasm: [],
+      searchTerm: null
     }
   },
   watch: {
@@ -136,16 +165,18 @@ export default {
             case 'int':
             case 'date': {
               chartType = 'box'
-              const datapoints = []
+              const datapoints = {}
+              datapoints[GENERIC_TRACE] = []
 
               Object.keys(this.trialData).forEach(k => {
                 const cell = this.trialData[k]
 
                 if (cell.measurements && cell.measurements[trait.id]) {
+                  const isSelected = this.selectedGermplasm.includes(cell.displayName)
                   cell.measurements[trait.id].forEach(m => {
                     const dateString = new Date(m.timestamp).toLocaleString()
                     m.values.forEach((v, setIndex) => {
-                      datapoints.push({
+                      const dp = {
                         row: cell.row,
                         column: cell.column,
                         setIndex: setIndex,
@@ -154,26 +185,42 @@ export default {
                         rep: cell.rep,
                         date: dateString,
                         timestamp: m.timestamp
-                      })
+                      }
+
+                      if (isSelected) {
+                        if (!datapoints[cell.displayName]) {
+                          datapoints[cell.displayName] = []
+                        }
+
+                        datapoints[cell.displayName].push(dp)
+                      }
+
+                      datapoints[GENERIC_TRACE].push(dp)
                     })
                   })
                 }
               })
 
-              data.push({
-                x: datapoints.map(d => d.value),
-                text: datapoints.map(d => d.name),
-                customdata: datapoints.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
-                ids: datapoints.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
-                marker: {
-                  color: trait.color
-                },
-                name: '',
-                type: chartType,
-                jitter: 0.5,
-                pointpos: 2,
-                boxpoints: 'all',
-                hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>'
+              Object.keys(datapoints).forEach(k => {
+                const dps = datapoints[k]
+
+                if (dps && dps.length > 0) {
+                  data.push({
+                    x: dps.map(d => d.value),
+                    text: dps.map(d => d.name),
+                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
+                    ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
+                    marker: {
+                      color: k === GENERIC_TRACE ? trait.color : null
+                    },
+                    name: k === GENERIC_TRACE ? this.$t('widgetChartStatisticsBoxplotAllTrace') : k,
+                    type: chartType,
+                    jitter: 0.5,
+                    pointpos: 2,
+                    boxpoints: 'all',
+                    hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>'
+                  })
+                }
               })
               break
             }
@@ -232,6 +279,9 @@ export default {
             margin: {
               l: 30,
               r: 30
+            },
+            legend: {
+              traceorder: 'reversed'
             },
             autosize: true,
             yaxis: {
@@ -345,6 +395,14 @@ export default {
           this.trialData = getTrialDataCached()
           this.selectedTraits = []
           this.selectedTraitIndices = []
+
+          if (this.trialData) {
+            const result = Object.keys(this.trialData).map(k => this.trialData[k].displayName)
+            result.sort()
+            this.allGermplasm = result
+          } else {
+            this.allGermplasm = []
+          }
 
           if (this.trial) {
             this.$nextTick(() => this.update())
