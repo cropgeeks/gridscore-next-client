@@ -582,3 +582,29 @@
 .dark-mode .bs-popover-auto[x-placement^="top"] .popover-header::before {
   border-top-color: rgb(50, 54, 57);
 }
+
+.dark-mode .page-item.disabled .page-link {
+  color: rgb(161, 152, 140);
+  background-color: rgb(24, 26, 27);
+  border-color: rgb(56, 61, 63);
+}
+
+.dark-mode .page-item.active .page-link {
+  color: rgb(232, 230, 227);
+  background-color: rgb(29, 111, 165);
+  border-color: rgb(26, 99, 148);
+}
+
+.dark-mode .page-link {
+  color: rgb(70, 161, 222);
+  background-color: rgb(24, 26, 27);
+  border-color: rgb(56, 61, 63);
+}
+
+.dark-mode .page-link:hover {
+  color: rgb(96, 175, 227);
+  text-decoration-color: initial;
+  background-color: rgb(35, 38, 39);
+  border-color: rgb(56, 61, 63);
+}
+
