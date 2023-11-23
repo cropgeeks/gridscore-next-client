@@ -227,46 +227,60 @@ export default {
             case 'text':
             case 'categorical': {
               chartType = 'bar'
-              const map = {}
-              const datapoints = []
+              const datapoints = {}
+              datapoints[GENERIC_TRACE] = []
+
+              let keys = new Set()
 
               Object.keys(this.trialData).forEach(k => {
                 const cell = this.trialData[k]
 
                 if (cell.measurements && cell.measurements[trait.id]) {
+                  const isSelected = this.selectedGermplasm.includes(cell.displayName)
                   cell.measurements[trait.id].forEach(m => {
                     m.values.forEach(v => {
+                      let value
                       if (trait.dataType === 'categorical') {
-                        datapoints.push(trait.restrictions.categories[v])
+                        value = trait.restrictions.categories[v]
+                        keys.add(trait.restrictions.categories[v])
                       } else {
-                        datapoints.push(v)
+                        value = v
+                        keys.add(v)
                       }
+
+                      if (isSelected) {
+                        if (!datapoints[cell.displayName]) {
+                          datapoints[cell.displayName] = []
+                        }
+
+                        datapoints[cell.displayName].push(value)
+                      }
+
+                      datapoints[GENERIC_TRACE].push(value)
                     })
                   })
                 }
               })
 
-              datapoints.forEach(c => {
-                if (map[c]) {
-                  map[c] += 1
-                } else {
-                  map[c] = 1
-                }
-              })
-
-              let keys
               if (trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories) {
                 keys = trait.restrictions.categories
               } else {
-                keys = Object.keys(map).sort()
+                keys = [...keys].sort()
               }
 
-              data.push({
-                x: keys,
-                y: keys.map(k => map[k]),
-                type: chartType,
-                marker: {
-                  color: trait.color
+              Object.keys(datapoints).forEach(k => {
+                const dps = datapoints[k]
+
+                if (dps && dps.length > 0) {
+                  data.push({
+                    x: keys,
+                    y: keys.map(k => dps.filter(dp => dp === k).length),
+                    marker: {
+                      color: k === GENERIC_TRACE ? trait.color : null
+                    },
+                    name: k === GENERIC_TRACE ? this.$t('widgetChartStatisticsBoxplotAllTrace') : k,
+                    type: chartType
+                  })
                 }
               })
               break
@@ -276,6 +290,8 @@ export default {
           const layout = {
             paper_bgcolor: 'transparent',
             plot_bgcolor: 'transparent',
+            height: chartType === 'box' ? (this.selectedGermplasm.length * 50 + 400) : null,
+            barmode: 'group',
             margin: {
               l: 30,
               r: 30
@@ -298,7 +314,7 @@ export default {
               gridcolor: this.storeDarkMode ? '#111111' : '#eeeeee',
               showgrid: chartType === 'box'
             },
-            hovermode: 'closest',
+            hovermode: chartType === 'box' ? 'closest' : 'x',
             shapes: []
           }
 

@@ -323,5 +323,16 @@
         "text": "Dank unseres Kollaborateurs Huu Loi Nguyen haben wir eine vietnamesische Übersetzung zu GridScore hinzugefügt."
       }
     ]
+  },
+  {
+    "version": "2.5.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Keimplasmaauswahl",
+        "text": "Auf der Statistikseite kann nun eine Teilmenge des Keimplasmas ausgewählt werden um es gegen den Rest der Daten hervorzuheben und eine bessere Ansicht auf dessen Leistung zu geben."
+      }
+    ]
   }
 ]

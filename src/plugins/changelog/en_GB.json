@@ -323,5 +323,16 @@
         "text": "Thanks to our collaborator Huu Loi Nguyen, we have now added a Vietnamese translation to GridScore."
       }
     ]
+  },
+  {
+    "version": "2.5.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Germplasm selection",
+        "text": "On the trait statistics page you can now select specific germplasm to highlight against the rest of the data giving you a better idea of their performance."
+      }
+    ]
   }
 ]
