@@ -43,6 +43,21 @@
   color: rgb(196, 191, 183) !important;
 }
 
+.dark-mode .btn {
+  color: rgb(196, 191, 183);
+}
+
+.dark-mode .btn-outline-dark {
+  color: rgb(174, 194, 211);
+  border-color: rgb(77, 109, 141);
+}
+
+.dark-mode .btn-outline-dark:hover {
+  color: rgb(232, 230, 227);
+  background-color: rgb(35, 50, 64);
+  border-color: rgb(77, 109, 141);
+}
+
 .dark-mode .btn-secondary {
   color: rgb(232, 230, 227);
   background-color: rgb(92, 100, 104);
