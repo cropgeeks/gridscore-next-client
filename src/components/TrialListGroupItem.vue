@@ -1,6 +1,6 @@
 <template>
-  <b-list-group-item :variant="trial.localId === storeSelectedTrial ? 'light' : null" :class="{ 'horizontal-cards': true, 'border-primary': trial.localId === storeSelectedTrial }" v-if="trial">
-    <div class="content">
+  <b-list-group-item :class="{ 'horizontal-cards': true, 'border-primary': trial.localId === storeSelectedTrial }" v-if="trial">
+    <div :class="{ 'content': true, 'bg-light': trial.localId === storeSelectedTrial }">
       <div class="d-flex w-100 justify-content-between">
         <h4 class="mb-1 trial-name">{{ trial.name }}</h4>
         <small v-if="trial.updatedOn" :class="{ 'mr-4': trial.transactionCount > 0 || trial.hasRemoteUpdate }"><BIconCalendarDate /> {{ new Date(trial.updatedOn).toLocaleString() }}</small>
@@ -19,7 +19,7 @@
 
       <h6 :title="trial.description" class="trial-description" v-if="trial.description">{{ trial.description }}</h6>
 
-      <div v-if="trial.shareStatus !== TRIAL_STATE_NOT_SHARED"> <TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" /></div>
+      <div><TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" /></div>
 
       <div class="d-flex flex-wrap flex-row my-2">
         <div class="mr-3" v-b-tooltip.hover="trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned')"><BIconCollection /></div>
