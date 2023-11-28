@@ -107,6 +107,11 @@ export default {
           logo: 'crop-trust.svg'
         },
         {
+          name: 'Biodiversity for Opportunities, Livelihoods and Development',
+          href: 'https://bold.croptrust.org/',
+          logo: 'bold.svg'
+        },
+        {
           name: 'The Norwegian Agency for Development Cooperation',
           href: 'https://www.norad.no/en/',
           logo: 'norad.svg'

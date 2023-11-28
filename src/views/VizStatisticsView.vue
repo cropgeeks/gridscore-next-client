@@ -15,9 +15,22 @@
             <b-form-group :label="$t('formLabelStatisticsGermplasm')" :description="$t('formDescriptionStatisticsGermplasm')" label-for="germplasmSearch">
               <b-form-input v-model="searchTerm" type="search" :placeholder="$t('formPlaceholderTimelinePlotSearch')" id="germplasmSearch" />
               <b-input-group>
-                <b-select multiple :options="filteredGermplasm" v-model="selectedGermplasm" />
+                <b-select multiple :options="filteredGermplasm" v-model="selectedGermplasmTemp" />
+                <b-input-group-append>
+                  <b-button @click="addGermplasm"><BIconPlusSquareFill /></b-button>
+                </b-input-group-append>
               </b-input-group>
             </b-form-group>
+
+            <div v-if="selectedGermplasm && selectedGermplasm.length > 0">
+              <b-badge class="mr-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`" >
+                {{ germplasm }} <button type="button" class="close badge-close" @click="removeGermplasm(index)">×</button>
+              </b-badge>
+
+              <b-badge class="mr-2" variant="danger" href="#" @click.prevent="clearSelectedGermplasm" >
+                <BIconTrash /> {{ $t('buttonClear') }}
+              </b-badge>
+            </div>
           </b-col>
           <b-col cols=12>
             <b-button variant="primary" @click="updateTraits"><BIconArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
@@ -44,7 +57,7 @@
 import { mapGetters } from 'vuex'
 import TraitHeading from '@/components/TraitHeading'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { BIconArrowClockwise } from 'bootstrap-vue'
+import { BIconArrowClockwise, BIconPlusSquareFill, BIconTrash } from 'bootstrap-vue'
 import { getTrialById } from '@/plugins/idb'
 import { toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection'
@@ -65,6 +78,8 @@ export default {
   components: {
     TraitHeading,
     BIconArrowClockwise,
+    BIconPlusSquareFill,
+    BIconTrash,
     PlotDataSection
   },
   computed: {
@@ -123,6 +138,7 @@ export default {
       selectedCell: null,
       allGermplasm: [],
       selectedGermplasm: [],
+      selectedGermplasmTemp: [],
       searchTerm: null
     }
   },
@@ -135,9 +151,26 @@ export default {
     },
     selectedTraits: function () {
       this.$nextTick(() => this.update())
+    },
+    selectedGermplasm: function () {
+      this.update()
     }
   },
   methods: {
+    clearSelectedGermplasm: function () {
+      this.selectedGermplasm = []
+      this.selectedGermplasmTemp = []
+    },
+    removeGermplasm: function (index) {
+      this.selectedGermplasm.splice(index, 1)
+    },
+    addGermplasm: function () {
+      const set = new Set()
+      this.selectedGermplasm.forEach(g => set.add(g))
+      this.selectedGermplasmTemp.forEach(g => set.add(g))
+      this.selectedGermplasm = [...set].sort((a, b) => a.localeCompare(b))
+      this.selectedGermplasmTemp = []
+    },
     updateTraits: function () {
       this.selectedTraits = this.selectedTraitIndices.map(i => {
         return {
@@ -167,6 +200,9 @@ export default {
               chartType = 'box'
               const datapoints = {}
               datapoints[GENERIC_TRACE] = []
+              this.selectedGermplasm.forEach(g => {
+                datapoints[g] = []
+              })
 
               Object.keys(this.trialData).forEach(k => {
                 const cell = this.trialData[k]
@@ -201,19 +237,16 @@ export default {
                 }
               })
 
-              Object.keys(datapoints).forEach(k => {
+              this.selectedGermplasm.forEach(k => {
                 const dps = datapoints[k]
 
-                if (dps && dps.length > 0) {
-                  data.push({
+                if (dps) {
+                  data.unshift({
                     x: dps.map(d => d.value),
                     text: dps.map(d => d.name),
                     customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
                     ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
-                    marker: {
-                      color: k === GENERIC_TRACE ? trait.color : null
-                    },
-                    name: k === GENERIC_TRACE ? this.$t('widgetChartStatisticsBoxplotAllTrace') : k,
+                    name: k,
                     type: chartType,
                     jitter: 0.5,
                     pointpos: 2,
@@ -222,6 +255,26 @@ export default {
                   })
                 }
               })
+
+              const dps = datapoints[GENERIC_TRACE]
+              if (dps) {
+                data.push({
+                  x: dps.map(d => d.value),
+                  text: dps.map(d => d.name),
+                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
+                  ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
+                  marker: {
+                    color: trait.color
+                  },
+                  name: this.$t('widgetChartStatisticsBoxplotAllTrace'),
+                  type: chartType,
+                  jitter: 0.5,
+                  pointpos: 2,
+                  boxpoints: 'all',
+                  hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>'
+                })
+              }
+
               break
             }
             case 'text':
@@ -229,6 +282,9 @@ export default {
               chartType = 'bar'
               const datapoints = {}
               datapoints[GENERIC_TRACE] = []
+              this.selectedGermplasm.forEach(g => {
+                datapoints[g] = []
+              })
 
               let keys = new Set()
 
@@ -268,21 +324,32 @@ export default {
                 keys = [...keys].sort()
               }
 
-              Object.keys(datapoints).forEach(k => {
+              this.selectedGermplasm.forEach(k => {
                 const dps = datapoints[k]
 
-                if (dps && dps.length > 0) {
-                  data.push({
+                if (dps) {
+                  data.unshift({
                     x: keys,
                     y: keys.map(k => dps.filter(dp => dp === k).length),
-                    marker: {
-                      color: k === GENERIC_TRACE ? trait.color : null
-                    },
-                    name: k === GENERIC_TRACE ? this.$t('widgetChartStatisticsBoxplotAllTrace') : k,
+                    name: k,
                     type: chartType
                   })
                 }
               })
+
+              const dps = datapoints[GENERIC_TRACE]
+              if (dps) {
+                data.push({
+                  x: keys,
+                  y: keys.map(k => dps.filter(dp => dp === k).length),
+                  marker: {
+                    color: trait.color
+                  },
+                  name: this.$t('widgetChartStatisticsBoxplotAllTrace'),
+                  type: chartType
+                })
+              }
+
               break
             }
           }
@@ -438,5 +505,11 @@ export default {
 </script>
 
 <style scoped>
-
+.badge-close {
+  color: inherit;
+  font-size: 125%;
+  line-height: 1;
+  float: none;
+  margin-left: 0.25rem;
+}
 </style>
