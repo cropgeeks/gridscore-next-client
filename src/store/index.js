@@ -1,4 +1,4 @@
-import { CANVAS_DENSITY_LOW, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_SMALL, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -31,9 +31,9 @@ export default new Vuex.Store({
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     homeWidgetOrder: ['banners', 'trials'],
-    canvasDensity: CANVAS_DENSITY_LOW,
+    canvasDensity: CANVAS_DENSITY_MEDIUM,
     canvasShape: CANVAS_SHAPE_CIRCLE,
-    canvasSize: CANVAS_SIZE_SMALL,
+    canvasSize: CANVAS_SIZE_MEDIUM,
     selectedTrial: null,
     mapLayer: 'theme',
     trialListMode: TRIAL_LIST_ALL,

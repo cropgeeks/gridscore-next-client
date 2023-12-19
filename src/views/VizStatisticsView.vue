@@ -22,7 +22,7 @@
               </b-input-group>
             </b-form-group>
 
-            <div v-if="selectedGermplasm && selectedGermplasm.length > 0">
+            <div v-if="selectedGermplasm && selectedGermplasm.length > 0" class="germplasm-selection-badges">
               <b-badge class="mr-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`" >
                 {{ germplasm }} <button type="button" class="close badge-close" @click="removeGermplasm(index)">×</button>
               </b-badge>
@@ -511,5 +511,9 @@ export default {
   line-height: 1;
   float: none;
   margin-left: 0.25rem;
+}
+.germplasm-selection-badges {
+  max-height: 50vh;
+  overflow-y: auto;
 }
 </style>

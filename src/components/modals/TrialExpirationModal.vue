@@ -80,6 +80,7 @@ export default {
         })
         .catch(err => {
           console.error(err)
+          console.log(err.status)
         })
         .finally(() => emitter.emit('show-loading', false))
     },
