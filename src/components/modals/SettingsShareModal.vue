@@ -72,7 +72,8 @@ export default {
       'storeVoiceFeedbackEnabled',
       'storeRestrictInputToMarked',
       'storeNavigationMode',
-      'storeTraitColors'
+      'storeTraitColors',
+      'storeShowFullTraitDescription'
     ])
   },
   methods: {
@@ -154,6 +155,12 @@ export default {
           this.$store.commit('ON_TRAIT_COLORS_CHANGED', traitColors)
         }
 
+        if (parsed.ft === 1) {
+          this.$store.commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', true)
+        } else if (parsed.ft === 0) {
+          this.$store.commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', false)
+        }
+
         this.$emit('change')
 
         this.hide()
@@ -183,7 +190,8 @@ export default {
         vf: this.storeVoiceFeedbackEnabled ? 1 : 0,
         rm: this.storeRestrictInputToMarked ? 1 : 0,
         nm: this.storeNavigationMode === NAVIGATION_MODE_DRAG ? 1 : 0,
-        tc: this.storeTraitColors.map(c => c.replace('#', '')).join(',')
+        tc: this.storeTraitColors.map(c => c.replace('#', '')).join(','),
+        ft: this.storeShowFullTraitDescription ? 1 : 0
       })
 
       emitter.emit('plausible-event', { key: 'settings-shared', props: { type: 'share' } })

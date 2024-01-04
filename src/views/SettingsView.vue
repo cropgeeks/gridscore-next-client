@@ -92,6 +92,12 @@
               </b-form-checkbox>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsShowFullTraitDescription')" :description="$t('formDescriptionSettingsShowFullTraitDescription')" label-for="fullTraitDescription">
+              <b-form-checkbox id="fullTraitDescription" v-model="showFullTraitDescription" switch>
+                {{ showFullTraitDescription ? $t('genericYes') : $t('genericNo') }}
+              </b-form-checkbox>
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsMinCellWidth')" :description="$t('formDescriptionSettingsMinCellWidth')" label-for="displayMinCellWidth">
               <b-form-input id="displayMinCellWidth" type="range" :min=2 :max=10 v-model.number="displayMinCellWidth" />
               <small>{{ $t('formPreviewSettingsMinCellWidth', { value: $n(displayMinCellWidth) }) }}</small>
@@ -203,7 +209,8 @@ export default {
       restrictInputToMarked: false,
       navigationMode: null,
       traitColors: [],
-      newColor: '#000000'
+      newColor: '#000000',
+      showFullTraitDescription: true
     }
   },
   computed: {
@@ -221,7 +228,8 @@ export default {
       'storeCanvasSize',
       'storeNavigationMode',
       'storeHomeWidgetOrder',
-      'storeTraitColors'
+      'storeTraitColors',
+      'storeShowFullTraitDescription'
     ]),
     localeOptions: function () {
       return locales.map(l => {
@@ -300,6 +308,10 @@ export default {
       this.$store.dispatch('setCanvasSize', newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasSize: newValue } })
     },
+    showFullTraitDescription: function (newValue) {
+      this.$store.dispatch('setShowFullTraitDescription', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { showFullTraitDescription: newValue } })
+    },
     homeWidgetOrder: {
       deep: true,
       handler: function (newValue) {
@@ -336,6 +348,7 @@ export default {
       this.canvasDensity = this.storeCanvasDensity
       this.canvasShape = this.storeCanvasShape
       this.canvasSize = this.storeCanvasSize
+      this.showFullTraitDescription = this.storeShowFullTraitDescription
     }
   },
   mounted: function () {

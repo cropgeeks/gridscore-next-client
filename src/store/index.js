@@ -39,6 +39,7 @@ export default new Vuex.Store({
     trialListMode: TRIAL_LIST_ALL,
     trialListArrangement: TRIAL_LIST_GRID,
     hiddenTraits: [],
+    showFullTraitDescription: true,
     plausible: {
       plausibleDomain: null,
       plausibleHashMode: true,
@@ -79,7 +80,8 @@ export default new Vuex.Store({
     storeServerUrl: (state) => state.serverUrl,
     storeBrapiConfig: (state) => state.brapiConfig,
     storeChangelogVersionNumber: (state) => state.changelogVersionNumber,
-    storeDeviceConfig: (state) => state.deviceConfig
+    storeDeviceConfig: (state) => state.deviceConfig,
+    storeShowFullTraitDescription: (state) => state.showFullTraitDescription
   },
   mutations: {
     ON_IS_OFFLINE_CHANGED: function (state, newIsOffline) {
@@ -88,7 +90,7 @@ export default new Vuex.Store({
     ON_UNIQUE_CLIENT_ID_CHANGED: function (state, newUniqueClientId) {
       state.uniqueClientId = newUniqueClientId
     },
-    ON_RUN_COUNT_CHANGED_MUTATION: function (state, newRunCount) {
+    ON_RUN_COUNT_CHANGED: function (state, newRunCount) {
       state.runCount = newRunCount
     },
     ON_HIDDEN_TRAITS_CHANGED: function (state, newHiddenTraits) {
@@ -215,18 +217,25 @@ export default new Vuex.Store({
         }
       }
     },
-    ON_CHANGELOG_VERSION_NUMBER_CHANGED_MUTATION: function (state, newChangelogVersionNumber) {
+    ON_CHANGELOG_VERSION_NUMBER_CHANGED: function (state, newChangelogVersionNumber) {
       if (state.changelogVersionNumber === undefined) {
         Vue.set(state, 'changelogVersionNumber', newChangelogVersionNumber)
       } else {
         state.changelogVersionNumber = newChangelogVersionNumber
       }
     },
-    ON_DEVICE_CONFIG_CHANGED_MUTATION: function (state, newDeviceConfig) {
+    ON_DEVICE_CONFIG_CHANGED: function (state, newDeviceConfig) {
       if (state.deviceConfig === undefined) {
         Vue.set(state, 'deviceConfig', newDeviceConfig)
       } else {
         state.deviceConfig = newDeviceConfig
+      }
+    },
+    ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED: function (state, newShowFullTraitDescription) {
+      if (state.showFullTraitDescription === undefined) {
+        Vue.set(state, 'showFullTraitDescription', newShowFullTraitDescription)
+      } else {
+        state.showFullTraitDescription = newShowFullTraitDescription
       }
     }
   },
@@ -238,7 +247,7 @@ export default new Vuex.Store({
       commit('ON_UNIQUE_CLIENT_ID_CHANGED', uniqueClientId)
     },
     setRunCount: function ({ commit }, runCount) {
-      commit('ON_RUN_COUNT_CHANGED_MUTATION', runCount)
+      commit('ON_RUN_COUNT_CHANGED', runCount)
     },
     setHiddenTraits: function ({ commit }, hiddenTraits) {
       commit('ON_HIDDEN_TRAITS_CHANGED', hiddenTraits)
@@ -307,10 +316,13 @@ export default new Vuex.Store({
       commit('ON_BRAPI_CONFIG_CHANGED', brapiConfig)
     },
     setChangelogVersionNumber: function ({ commit }, changelogVersionNumber) {
-      commit('ON_CHANGELOG_VERSION_NUMBER_CHANGED_MUTATION', changelogVersionNumber)
+      commit('ON_CHANGELOG_VERSION_NUMBER_CHANGED', changelogVersionNumber)
     },
     setDeviceConfig: function ({ commit }, deviceConfig) {
-      commit('ON_DEVICE_CONFIG_CHANGED_MUTATION', deviceConfig)
+      commit('ON_DEVICE_CONFIG_CHANGED', deviceConfig)
+    },
+    setShowFullTraitDescription: function ({ commit }, showFullTraitDescription) {
+      commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', showFullTraitDescription)
     }
   },
   modules: {

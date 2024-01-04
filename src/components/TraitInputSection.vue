@@ -33,7 +33,7 @@
       <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&ge; {{ trait.timeframe.start }}</b-badge>
       <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&le; {{ trait.timeframe.end }}</b-badge>
     </div>
-    <p class="text-muted trait-description" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
+    <p :class="{ 'text-muted': true, 'trait-description': !storeShowFullTraitDescription }" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
     <b-form-group :label="$t('formLabelMeasurementSet', { position: $n(index) })"
                   v-for="index in (trait.setSize || 1)"
@@ -99,7 +99,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'storeCanvasShape'
+      'storeCanvasShape',
+      'storeShowFullTraitDescription'
     ]),
     hasHistoricData: function () {
       // Check if there's at least one measurement for the trait id

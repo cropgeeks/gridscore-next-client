@@ -270,6 +270,8 @@
   "formDescriptionTrialSetupTrialGroup": "Optional können Versuche zur Übersichtlichkeit in Gruppen sortiert werden.",
   "formLabelSettingsCitation": "Veröffentlichungsinformationen ausblenden",
   "formDescriptionSettingsCitation": "Entscheide ob die Veröffentlichungsinformation auf der Startseite ausgeblendet werden soll.",
+  "formLabelSettingsShowFullTraitDescription": "Komplette Merkmalsbeschreibung anzeigen",
+  "formDescriptionSettingsShowFullTraitDescription": "Falls aktiviert wird die komplette Merkmalsbeschreibung in der Dateneingabe angezeigt, falls deaktiviert wird eine auf eine Zeile verkürzte Version angezeigt.",
   "menuHome": "Home",
   "menuDataEntry": "Dateneingabe",
   "menuDataExport": "Exportieren",

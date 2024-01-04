@@ -273,6 +273,8 @@
   "formDescriptionSettingsCanvasSize": "Change the size of the data point shape on the main data display.",
   "formLabelSettingsCitation": "Hide citation message",
   "formDescriptionSettingsCitation": "Decide whether or not to hide the citation banner on the home page.",
+  "formLabelSettingsShowFullTraitDescription": "Show full trait description",
+  "formDescriptionSettingsShowFullTraitDescription": "If enabled, the full trait description will be shown on the data input screen, if disabled, it will be cropped to one line.",
   "genericDisabled": "Disabled",
   "genericEnabled": "Enabled",
   "genericYes": "Yes",
