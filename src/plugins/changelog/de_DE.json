@@ -332,6 +332,11 @@
         "type": "new",
         "title": "Keimplasmaauswahl",
         "text": "Auf der Statistikseite kann nun eine Teilmenge des Keimplasmas ausgewählt werden um es gegen den Rest der Daten hervorzuheben und eine bessere Ansicht auf dessen Leistung zu geben."
+      },
+      {
+        "type": "new",
+        "title": "Versuchsauswahl-Sortierung",
+        "text": "Option hinzugefügt zum Sortieren der Versuche in der Versuchsauswahl um das Finden des eigenen Versuches zu vereinfachen."
       }
     ]
   }

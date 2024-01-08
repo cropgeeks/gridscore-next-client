@@ -332,6 +332,11 @@
         "type": "new",
         "title": "Germplasm selection",
         "text": "On the trait statistics page you can now select specific germplasm to highlight against the rest of the data giving you a better idea of their performance."
+      },
+      {
+        "type": "new",
+        "title": "Trial selector sorting",
+        "text": "Added options for sorting of trials in the trial selector to more easily find your trial."
       }
     ]
   }

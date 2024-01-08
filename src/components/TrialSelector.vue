@@ -4,20 +4,37 @@
       <span>{{ $t('widgetTrialSelectorTitle') }}</span>
       <div>
         <b-button-group class="mr-2">
-          <b-button size="sm" v-b-tooltip="$t('tooltipTrialSelectorArrangementGrid')" :pressed="trialListArrangement === TRIAL_LIST_GRID" @click="trialListArrangement = TRIAL_LIST_GRID"><BIconGrid /></b-button>
-          <b-button size="sm" v-b-tooltip="$t('tooltipTrialSelectorArrangementList')" :pressed="trialListArrangement === TRIAL_LIST_LIST" @click="trialListArrangement = TRIAL_LIST_LIST"><BIconViewStacked /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementGrid')" :pressed="trialListArrangement === TRIAL_LIST_GRID" @click="trialListArrangement = TRIAL_LIST_GRID"><BIconGrid /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementList')" :pressed="trialListArrangement === TRIAL_LIST_LIST" @click="trialListArrangement = TRIAL_LIST_LIST"><BIconViewStacked /></b-button>
         </b-button-group>
         <b-button-group>
-          <b-button size="sm" v-b-tooltip="$t('tooltipTrialSelectorTabsNone')" :pressed="trialListMode === TRIAL_LIST_ALL" @click="trialListMode = TRIAL_LIST_ALL"><BIconListTask /></b-button>
-          <b-button size="sm" v-b-tooltip="$t('tooltipTrialSelectorTabsGroups')" :pressed="trialListMode === TRIAL_LIST_TABBED" @click="trialListMode = TRIAL_LIST_TABBED"><BIconSegmentedNav /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorTabsNone')" :pressed="trialListMode === TRIAL_LIST_ALL" @click="trialListMode = TRIAL_LIST_ALL"><BIconListTask /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorTabsGroups')" :pressed="trialListMode === TRIAL_LIST_TABBED" @click="trialListMode = TRIAL_LIST_TABBED"><BIconSegmentedNav /></b-button>
         </b-button-group>
       </div>
     </h2>
     <p>{{ $t('widgetTrialSelectorText') }}</p>
 
-    <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
-      <b-input v-model="searchTerm" trim id="search-term" type="search" />
-    </b-form-group>
+    <b-row>
+      <b-col cols=12 md=6 lg=4>
+        <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
+          <b-input v-model="searchTerm" trim id="search-term" type="search" />
+        </b-form-group>
+      </b-col>
+      <b-col cols=12 md=6 lg=4>
+        <b-form-group :label="$t('formLabelTrialSelectorOrderBy')" :description="$t('formDescriptionTrialSelectorOrderBy')" label-for="orderBy">
+          <b-form-select :options="sortOptions" v-model="sortOrder" id="orderBy" />
+        </b-form-group>
+      </b-col>
+      <b-col cols=12 md=6 lg=4>
+        <b-form-group :label="$t('formLabelTrialSelectorSortDescending')" :description="$t('formDescriptionTrialSelectorSortDescending')" label-for="order-asc">
+          <b-button-group>
+            <b-button variant="outline-secondary" @click="sortDescending = false" :pressed="sortDescending === false"><BIconSortDownAlt /> {{ $t('formCheckboxSortOrderAscending') }}</b-button>
+            <b-button variant="outline-secondary" @click="sortDescending = true" :pressed="sortDescending === true"><BIconSortDown /> {{ $t('formCheckboxSortOrderDescending') }}</b-button>
+          </b-button-group>
+        </b-form-group>
+      </b-col>
+    </b-row>
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
@@ -91,7 +108,7 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrialGroups, getTrials } from '@/plugins/idb'
-import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconstack, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
 const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
@@ -110,6 +127,8 @@ export default {
     AddGermplasmModal,
     TrialModificationModal,
     TrialExpirationModal,
+    BIconSortDown,
+    BIconSortDownAlt,
     BIconListTask,
     BIconSegmentedNav,
     BIconGrid,
@@ -119,12 +138,46 @@ export default {
     BIconCalendar,
     BIconExclamationTriangleFill
   },
+  data: function () {
+    return {
+      UNCATEGORIZED_TRIALS,
+      TRIAL_LIST_ALL,
+      TRIAL_LIST_TABBED,
+      TRIAL_LIST_GRID,
+      TRIAL_LIST_LIST,
+      TRIAL_STATE_NOT_SHARED,
+      TRIAL_STATE_OWNER,
+      trials: [],
+      tabIndex: 0,
+      selectedTrial: null,
+      trialUpdates: null,
+      searchTerm: null,
+      trialListMode: TRIAL_LIST_ALL,
+      trialListArrangement: TRIAL_LIST_GRID,
+      trialGroups: [UNCATEGORIZED_TRIALS],
+      sortOrder: 'latestUpdate',
+      sortDescending: true,
+      sorting: {
+        latestUpdate: (a, b) => this.sortDescending ? (new Date(b.updatedOn) - new Date(a.updatedOn)) : (new Date(a.updatedOn) - new Date(b.updatedOn)),
+        name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'storeSelectedTrial',
       'storeTrialListMode',
       'storeTrialListArrangement'
     ]),
+    sortOptions: function () {
+      return [{
+        text: this.$t('formSelectOptionTrialSortLastUpdate'),
+        value: 'latestUpdate'
+      }, {
+        text: this.$t('formSelectOptionTrialSortName'),
+        value: 'name'
+      }]
+    },
     sortedTrials: function () {
       if (this.trials) {
         const sortedAndFiltered = JSON.parse(JSON.stringify(this.trials))
@@ -149,7 +202,7 @@ export default {
               return true
             }
           })
-          .sort((a, b) => new Date(b.updatedOn) - new Date(a.updatedOn))
+          .sort(this.sorting[this.sortOrder])
           .map(t => {
             if (t.shareCodes && this.trialUpdates) {
               const shareCode = t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
@@ -214,25 +267,6 @@ export default {
         }
         return result
       }
-    }
-  },
-  data: function () {
-    return {
-      UNCATEGORIZED_TRIALS,
-      TRIAL_LIST_ALL,
-      TRIAL_LIST_TABBED,
-      TRIAL_LIST_GRID,
-      TRIAL_LIST_LIST,
-      TRIAL_STATE_NOT_SHARED,
-      TRIAL_STATE_OWNER,
-      trials: [],
-      tabIndex: 0,
-      selectedTrial: null,
-      trialUpdates: null,
-      searchTerm: null,
-      trialListMode: TRIAL_LIST_ALL,
-      trialListArrangement: TRIAL_LIST_GRID,
-      trialGroups: [UNCATEGORIZED_TRIALS]
     }
   },
   watch: {
