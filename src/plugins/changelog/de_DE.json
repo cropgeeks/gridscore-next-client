@@ -337,6 +337,11 @@
         "type": "new",
         "title": "Versuchsauswahl-Sortierung",
         "text": "Option hinzugefügt zum Sortieren der Versuche in der Versuchsauswahl um das Finden des eigenen Versuches zu vereinfachen."
+      },
+      {
+        "type": "new",
+        "title": "Teilen von Fotos auf Social-Media",
+        "text": "Fotos können jetzt direkt auf Social-Media geteilt werden. Der Inhalt von sozialen Posts kann als Teil des Versuchs vordefiniert werden."
       }
     ]
   }

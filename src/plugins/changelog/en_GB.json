@@ -337,6 +337,11 @@
         "type": "new",
         "title": "Trial selector sorting",
         "text": "Added options for sorting of trials in the trial selector to more easily find your trial."
+      },
+      {
+        "type": "new",
+        "title": "Photo social media sharing",
+        "text": "You can now share images you've taken directly to social media. Social post contents can be pre-defined as part of the trial."
       }
     ]
   }

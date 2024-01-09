@@ -7,8 +7,11 @@
            ref="imageModal"
            content-class="image-modal">
     <div v-if="trial">
-      <!-- Preview the image -->
-      <b-img fluid rounded :src="imageData" class="image" v-if="imageData" />
+      <template v-if="imageData">
+        <b-button v-if="canShare" class="mb-3" @click="share"><BIconShareFill /> {{ $t('buttonShareSocial') }}</b-button>
+        <!-- Preview the image -->
+        <b-img fluid rounded :src="imageData" class="image" />
+      </template>
       <!-- Input for selecting (or taking) the image -->
       <b-form-file v-model="imageFile" accept="image/*" capture class="file-selector" ref="imageInput" />
 
@@ -32,7 +35,7 @@
 import { mapGetters } from 'vuex'
 
 import exifr from 'exifr/dist/lite.umd.js'
-import { BIconCalendar3 } from 'bootstrap-vue'
+import { BIconCalendar3, BIconShareFill } from 'bootstrap-vue'
 import { toLocalDateTimeString, truncateAfterWords } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import { saveAs } from 'file-saver'
@@ -41,7 +44,8 @@ const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
-    BIconCalendar3
+    BIconCalendar3,
+    BIconShareFill
   },
   props: {
     trial: {
@@ -82,6 +86,9 @@ export default {
       'storeGpsEnabled',
       'storeDeviceConfig'
     ]),
+    canShare: function () {
+      return 'share' in navigator
+    },
     isIOS: function () {
       return this.storeDeviceConfig && this.storeDeviceConfig.os && this.storeDeviceConfig.os.name === 'iOS'
     },
@@ -185,6 +192,25 @@ export default {
     }
   },
   methods: {
+    share: async function () {
+      const files = [this.imageFile]
+      const shareData = {
+        text: `${this.displayName} ${this.trial.socialShareContent || ''} #GridScore`,
+        title: 'GridScore image share',
+        files
+      }
+      if (navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData)
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.error(err.name, err.message)
+          }
+        }
+      } else {
+        console.warn('Sharing not supported', shareData)
+      }
+    },
     /**
      * Converts the user selected file into base64
      * @param file The image file
