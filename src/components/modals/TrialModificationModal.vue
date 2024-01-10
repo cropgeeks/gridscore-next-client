@@ -42,13 +42,35 @@
               <b-form-textarea id="trial-description" :state="formState.trialDescription" v-model="trialDescription" />
             </b-form-group>
 
-            <!-- Trial social media sharing content -->
-            <b-form-group label-for="trial-social-content" :description="$t('formDescriptionTrialSetupTrialSocialContent')">
+            <!-- Trial social media sharing content; Commented out until feature becomes more consistent -->
+            <!-- <b-form-group label-for="trial-social-config" :description="$t('formDescriptionTrialSetupTrialSocialContent')">
               <template v-slot:label>
-                <BIconShareFill /><span> {{ $t('formLabelTrialSetupTrialSocialContent') }}</span>
+                <span class="cursor-pointer" @click="socialConfigVisible = !socialConfigVisible"><BIconCaretRightFill :rotate="socialConfigVisible ? 90 : 0" /><span> {{ $t('formLabelTrialSetupTrialSocialContent') }}</span></span>
               </template>
-              <b-form-textarea id="trial-social-content" :state="formState.trialSocialContent" v-model="trialSocialContent" />
-            </b-form-group>
+              <b-collapse v-model="socialConfigVisible">
+                <b-card>
+                  <b-card-text class="text-info"><span v-html="$t('formDescriptionTrialSetupTrialSocialContentExtended')" /></b-card-text>
+                  <b-form-group label-for="trial-social-title" :description="$t('formDescriptionTrialSetupTrialSocialTitle')">
+                    <template v-slot:label>
+                      <BIconCardHeading /> <span> {{ $t('formLabelTrialSetupTrialSocialTitle') }}</span>
+                    </template>
+                    <b-form-input id="trial-social-title" trim v-model="trialSocialConfig.title" />
+                  </b-form-group>
+                  <b-form-group label-for="trial-social-text" :description="$t('formDescriptionTrialSetupTrialSocialText')">
+                    <template v-slot:label>
+                      <BIconTextareaResize /> <span> {{ $t('formLabelTrialSetupTrialSocialText') }}</span>
+                    </template>
+                    <b-form-textarea id="trial-social-text" trim v-model="trialSocialConfig.text" />
+                  </b-form-group>
+                  <b-form-group label-for="trial-social-url" :description="$t('formDescriptionTrialSetupTrialSocialUrl')">
+                    <template v-slot:label>
+                      <BIconLink /> <span> {{ $t('formLabelTrialSetupTrialSocialUrl') }}</span>
+                    </template>
+                    <b-form-input id="trial-social-url" trim v-model="trialSocialConfig.url" />
+                  </b-form-group>
+                </b-card>
+              </b-collapse>
+            </b-form-group> -->
           </b-col>
         </b-row>
       </b-form>
@@ -129,7 +151,7 @@ import MarkerSetup from '@/components/MarkerSetup'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import TraitIcon from '@/components/icons/TraitIcon'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
-import { BIconTextareaT, BIconCardText, BIconArrowsFullscreen, BIconCollection, BIconShareFill, BIconBoundingBoxCircles, BIconTags, BIconCheck, BIconX, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconArrowsFullscreen, BIconCollection, BIconBoundingBoxCircles, BIconTags, BIconCheck, BIconX, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { updateTrialProperties, getTrialGroups } from '@/plugins/idb'
 
 const emitter = require('tiny-emitter/instance')
@@ -137,13 +159,16 @@ const emitter = require('tiny-emitter/instance')
 export default {
   components: {
     BIconTextareaT,
+    // BIconCardHeading,
     BIconCardText,
     BIconArrowsFullscreen,
     BIconBoundingBoxCircles,
+    // BIconCaretRightFill,
+    // BIconTextareaResize,
+    // BIconLink,
     BIconCheck,
     BIconTags,
     BIconCollection,
-    BIconShareFill,
     BIconX,
     BIconExclamationTriangleFill,
     LayoutFeedbackModal,
@@ -156,7 +181,12 @@ export default {
       tabIndex: 0,
       trialName: null,
       trialDescription: null,
-      trialSocialContent: null,
+      socialConfigVisible: false,
+      trialSocialConfig: {
+        title: null,
+        text: null,
+        url: null
+      },
       trialGroup: null,
       traits: [],
       layout: {
@@ -167,8 +197,7 @@ export default {
       },
       formState: {
         trialName: null,
-        trialDescription: null,
-        trialSocialContent: null
+        trialDescription: null
       },
       tabCorrect: {
         markers: null,
@@ -221,12 +250,13 @@ export default {
   },
   methods: {
     reset: function (useTrial = false) {
+      this.socialConfigVisible = false
       this.layoutFeedback = null
       this.tabIndex = 0
       if (useTrial && this.trial) {
         this.trialName = this.trial.name
         this.trialDescription = this.trial.description
-        this.trialSocialContent = this.trial.socialShareContent || null
+        this.trialSocialConfig = this.trial.socialShareConfig || { title: null, text: null, url: null }
         this.trialGroup = this.trial.group ? this.trial.group.name : null
         this.traits = JSON.parse(JSON.stringify(this.trial.traits))
         this.traits.forEach(t => {
@@ -238,7 +268,7 @@ export default {
       } else {
         this.trialName = null
         this.trialDescription = null
-        this.trialSocialContent = null
+        this.trialSocialConfig = { title: null, text: null, url: null }
         this.trialGroup = null
         this.traits = []
       }
@@ -246,7 +276,6 @@ export default {
       this.formState = {
         trialName: null,
         trialDescription: null,
-        trialSocialContent: null,
         trialGroup: null
       }
       this.tabCorrect = {
@@ -265,7 +294,6 @@ export default {
       this.formState = {
         trialName: this.trialName !== undefined && this.trialName !== null && this.trialName !== '',
         trialDescription: true,
-        trialSocialContent: true,
         trialGroup: true
       }
 
@@ -306,7 +334,7 @@ export default {
         updateTrialProperties(this.trial.localId, {
           name: this.trialName,
           description: this.trialDescription,
-          socialShareContent: this.trialSocialContent,
+          socialShareConfig: this.trialSocialConfig,
           group: { name: this.trialGroup },
           markers: this.layout.markers,
           corners: this.layout.corners,

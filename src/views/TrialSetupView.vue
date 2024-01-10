@@ -38,13 +38,35 @@
             <b-form-textarea id="trial-description" :state="formState.trialDescription" v-model="trialDescription" />
           </b-form-group>
 
-          <!-- Trial social media sharing content -->
-          <b-form-group label-for="trial-social-content" :description="$t('formDescriptionTrialSetupTrialSocialContent')">
+          <!-- Trial social media sharing content; Commented out until feature becomes more consistent -->
+          <!-- <b-form-group label-for="trial-social-config" :description="$t('formDescriptionTrialSetupTrialSocialContent')">
             <template v-slot:label>
-              <BIconShareFill /><span> {{ $t('formLabelTrialSetupTrialSocialContent') }}</span>
+              <span class="cursor-pointer" @click="socialConfigVisible = !socialConfigVisible"><BIconCaretRightFill :rotate="socialConfigVisible ? 90 : 0" /><span> {{ $t('formLabelTrialSetupTrialSocialContent') }}</span></span>
             </template>
-            <b-form-textarea id="trial-social-content" :state="formState.trialSocialContent" v-model="trialSocialContent" />
-          </b-form-group>
+            <b-collapse v-model="socialConfigVisible">
+              <b-card>
+                <b-card-text class="text-info"><span v-html="$t('formDescriptionTrialSetupTrialSocialContentExtended')" /></b-card-text>
+                <b-form-group label-for="trial-social-title" :description="$t('formDescriptionTrialSetupTrialSocialTitle')">
+                  <template v-slot:label>
+                    <BIconCardHeading /> <span> {{ $t('formLabelTrialSetupTrialSocialTitle') }}</span>
+                  </template>
+                  <b-form-input id="trial-social-title" trim v-model="trialSocialConfig.title" />
+                </b-form-group>
+                <b-form-group label-for="trial-social-text" :description="$t('formDescriptionTrialSetupTrialSocialText')">
+                  <template v-slot:label>
+                    <BIconTextareaResize /> <span> {{ $t('formLabelTrialSetupTrialSocialText') }}</span>
+                  </template>
+                  <b-form-textarea id="trial-social-text" trim v-model="trialSocialConfig.text" />
+                </b-form-group>
+                <b-form-group label-for="trial-social-url" :description="$t('formDescriptionTrialSetupTrialSocialUrl')">
+                  <template v-slot:label>
+                    <BIconLink /> <span> {{ $t('formLabelTrialSetupTrialSocialUrl') }}</span>
+                  </template>
+                  <b-form-input id="trial-social-url" trim v-model="trialSocialConfig.url" />
+                </b-form-group>
+              </b-card>
+            </b-collapse>
+          </b-form-group> -->
         </b-col>
         <b-col cols=12 class="mb-3">
           <b-form-group v-if="trialToCopy" :label="$t('formLabelDuplicateTrialCopyData')" :description="$t('formDescriptionDuplicateTrialCopyData')" label-for="copyData">
@@ -181,7 +203,7 @@
 </template>
 
 <script>
-import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconShareFill, BIconCollection, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
@@ -196,6 +218,7 @@ export default {
   components: {
     BIconTextareaT,
     BIconCardText,
+    // BIconCardHeading,
     BIconCheck,
     BIconPencilSquare,
     BIconX,
@@ -203,9 +226,11 @@ export default {
     BIconJournalPlus,
     BIconCardChecklist,
     BIconExclamationTriangleFill,
+    // BIconCaretRightFill,
+    // BIconTextareaResize,
+    // BIconLink,
     BIconSave,
     BIconCollection,
-    BIconShareFill,
     Tour,
     TrialLayoutComponent,
     TraitDefinitionComponent,
@@ -215,9 +240,14 @@ export default {
     return {
       layoutSidebarVisible: false,
       traitSidebarVisible: false,
+      socialConfigVisible: false,
       trialName: null,
       trialDescription: null,
-      trialSocialContent: null,
+      trialSocialConfig: {
+        title: 'GridScore',
+        text: '#GridScore',
+        url: 'https://gridscore.huttona.ac.uk'
+      },
       trialGroup: null,
       trialGroups: [],
       layout: {
@@ -233,7 +263,6 @@ export default {
       formState: {
         trialName: null,
         trialDescription: null,
-        trialSocialContent: null,
         trialGroup: null,
         layout: null
       },
@@ -464,7 +493,7 @@ export default {
           const finalTrial = {
             name: this.trialName,
             description: this.trialDescription,
-            socialShareContent: this.trialSocialContent,
+            socialShareConfig: this.trialSocialConfig,
             group: (this.trialGroup && this.trialGroup.length > 0) ? { name: this.trialGroup } : null,
             layout: this.layout,
             traits: this.traits,
@@ -521,7 +550,7 @@ export default {
           if (trial) {
             this.trialName = this.$t('modalTextTrialDuplicateOfName', { original: trial.name })
             this.trialDescription = this.$t('modalTextTrialDuplicateOfDate', { original: trial.description, date: new Date().toLocaleDateString() })
-            this.trialSocialContent = trial.socialShareContent || null
+            this.trialSocialConfig = trial.socialShareConfig || { title: 'GridScore', text: '#GridScore', url: 'https://gridscore.hutton.ac.uk' }
             this.trialGroup = trial.group ? trial.group.name : null
             this.layout = JSON.parse(JSON.stringify(trial.layout))
             this.traits = JSON.parse(JSON.stringify(trial.traits)).map(t => {

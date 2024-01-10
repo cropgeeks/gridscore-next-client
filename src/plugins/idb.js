@@ -247,7 +247,7 @@ const updateTrialProperties = async (localId, updates) => {
 
     trial.name = updates.name
     trial.description = updates.description
-    trial.socialShareContent = updates.socialShareContent
+    trial.socialShareConfig = updates.socialShareConfig
     trial.layout.markers = updates.markers
     trial.layout.corners = updates.corners
     trial.traits = updates.traits
@@ -279,14 +279,14 @@ const updateTrialProperties = async (localId, updates) => {
         const match = originalTraits.find(ot => ot.id === t.id)
 
         // If either the name, the description or the group has changed, then store in the transaction.
-        if (match.name !== t.name || match.description !== t.description || match.socialShareContent !== t.socialShareContent || JSON.stringify(match.group) !== JSON.stringify(t.group)) {
+        if (match.name !== t.name || match.description !== t.description || JSON.stringify(match.socialShareConfig) !== JSON.stringify(t.socialShareConfig) || JSON.stringify(match.group) !== JSON.stringify(t.group)) {
           const transMatch = transaction.traitChangeTransactions.find(tr => tr.id === t.id)
 
           if (transMatch) {
             // If there is an old transaction entry, update it
             transMatch.name = t.name
             transMatch.description = t.description
-            transMatch.socialShareContent = t.socialShareContent
+            transMatch.socialShareConfig = t.socialShareConfig
             transMatch.group = t.group.name
             transMatch.timestamp = new Date().toISOString()
           } else {
@@ -295,7 +295,7 @@ const updateTrialProperties = async (localId, updates) => {
               id: t.id,
               name: t.name,
               description: t.description,
-              socialShareContent: t.socialShareContent,
+              socialShareConfig: t.socialShareConfig,
               group: t.group.name,
               timestamp: new Date().toISOString()
             })
@@ -681,7 +681,7 @@ const addTrial = async (trial) => {
     shareCodes: trial.shareCodes,
     name: trial.name,
     description: trial.description,
-    socialShareContent: trial.socialShareContent || null,
+    socialShareConfig: trial.socialShareConfig || null,
     group: trial.group || null,
     layout: trial.layout,
     traits: trial.traits,

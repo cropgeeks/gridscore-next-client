@@ -195,8 +195,9 @@ export default {
     share: async function () {
       const files = [this.imageFile]
       const shareData = {
-        text: `${this.displayName} ${this.trial.socialShareContent || ''} #GridScore`,
-        title: 'GridScore image share',
+        text: `${this.displayName} ${(this.trial.socialShareConfig ? this.trial.socialShareConfig.text : '') || '#GridScore'}`,
+        title: (this.trial.socialShareConfig ? this.trial.socialShareConfig.title : '') || 'GridScore image share',
+        url: (this.trial.socialShareConfig ? this.trial.socialShareConfig.url : '') || 'https://gridscore.hutton.ac.uk',
         files
       }
       if (navigator.canShare(shareData)) {
