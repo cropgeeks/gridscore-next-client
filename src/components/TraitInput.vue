@@ -47,13 +47,13 @@
                   :step="0.02" />
     <!-- For categorical traits -->
     <!-- If there are more than 4 options, show a dropdown select -->
-    <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > 4" ref="input" :state="formState"
+    <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > storeCategoryCountInline" ref="input" :state="formState"
                     v-model="value"
                     :readonly="!editable"
                     :options="traitOptionsSelect"
                     @change="tts" />
     <!-- Else show a button group for easier selection -->
-    <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= 4" ref="input" :state="formState"
+    <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= storeCategoryCountInline" ref="input" :state="formState"
                         buttons
                         button-variant="outline-secondary"
                         @change="event => { value = event; tts() }"
@@ -77,6 +77,7 @@
 <script>
 import { BIconCaretLeftFill, BIconCalendar3, BIconCaretRightFill, BIconSlashCircle } from 'bootstrap-vue'
 import { checkDataMatchesTraitType, toLocalDateString } from '@/plugins/misc'
+import { mapGetters } from 'vuex'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -120,6 +121,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeCategoryCountInline'
+    ]),
     traitOptionsSelect: function () {
       if (this.trait && this.trait.dataType === 'categorical') {
         return [{ value: null, text: this.$t('formSelectCategory') }, ...this.trait.restrictions.categories.map((c, i) => {

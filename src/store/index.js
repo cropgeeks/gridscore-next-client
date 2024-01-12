@@ -40,6 +40,7 @@ export default new Vuex.Store({
     trialListArrangement: TRIAL_LIST_GRID,
     hiddenTraits: [],
     showFullTraitDescription: true,
+    categoryCountInline: 4,
     plausible: {
       plausibleDomain: null,
       plausibleHashMode: true,
@@ -81,7 +82,8 @@ export default new Vuex.Store({
     storeBrapiConfig: (state) => state.brapiConfig,
     storeChangelogVersionNumber: (state) => state.changelogVersionNumber,
     storeDeviceConfig: (state) => state.deviceConfig,
-    storeShowFullTraitDescription: (state) => state.showFullTraitDescription
+    storeShowFullTraitDescription: (state) => state.showFullTraitDescription,
+    storeCategoryCountInline: (state) => state.categoryCountInline
   },
   mutations: {
     ON_IS_OFFLINE_CHANGED: function (state, newIsOffline) {
@@ -237,6 +239,13 @@ export default new Vuex.Store({
       } else {
         state.showFullTraitDescription = newShowFullTraitDescription
       }
+    },
+    ON_CATEGORY_COUNT_INLINE_CHANGED: function (state, newCategoryCountInline) {
+      if (state.categoryCountInline === undefined) {
+        Vue.set(state, 'categoryCountInline', newCategoryCountInline)
+      } else {
+        state.categoryCountInline = newCategoryCountInline
+      }
     }
   },
   actions: {
@@ -323,6 +332,9 @@ export default new Vuex.Store({
     },
     setShowFullTraitDescription: function ({ commit }, showFullTraitDescription) {
       commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', showFullTraitDescription)
+    },
+    setCategoryCountInline: function ({ commit }, categoryCountInline) {
+      commit('ON_CATEGORY_COUNT_INLINE_CHANGED', categoryCountInline)
     }
   },
   modules: {

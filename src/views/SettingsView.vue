@@ -50,6 +50,11 @@
               </b-button-group>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsCategoryCountInline')" :description="$t('formDescriptionSettingsCategoryCountInline')" label-for="categoryCountInline">
+              <b-form-input id="categoryCountInline" type="range" :min=2 :max=10 v-model.number="categoryCountInline" />
+              <small>{{ $t('formPreviewSettingsCategoryCountInline', { value: $n(categoryCountInline) }) }}</small>
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsVoiceFeedback')" :description="$t('formDescriptionSettingsVoiceFeedback')" label-for="voiceFeedback">
               <b-form-checkbox id="voiceFeedback" v-model="voiceFeedbackEnabled" switch>
                 {{ voiceFeedbackEnabled ? $t('genericEnabled') : $t('genericDisabled') }}
@@ -200,6 +205,7 @@ export default {
       hideCitationMessage: false,
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
+      categoryCountInline: 4,
       homeWidgetOrder: ['banners', 'trials'],
       canvasDensity: CANVAS_DENSITY_LOW,
       canvasShape: CANVAS_SHAPE_CIRCLE,
@@ -229,7 +235,8 @@ export default {
       'storeNavigationMode',
       'storeHomeWidgetOrder',
       'storeTraitColors',
-      'storeShowFullTraitDescription'
+      'storeShowFullTraitDescription',
+      'storeCategoryCountInline'
     ]),
     localeOptions: function () {
       return locales.map(l => {
@@ -275,6 +282,10 @@ export default {
     displayMinCellWidth: function (newValue) {
       this.$store.dispatch('setDisplayMinCellWidth', newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMinCellWidth: newValue } })
+    },
+    categoryCountInline: function (newValue) {
+      this.$store.dispatch('setCategoryCountInline', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { categoryCountInline: newValue } })
     },
     gpsEnabled: function (newValue) {
       this.$store.dispatch('setGpsEnabled', newValue)
@@ -339,6 +350,7 @@ export default {
       this.hideCitationMessage = this.storeHideCitationMessage
       this.displayMarkerIndicators = this.storeDisplayMarkerIndicators
       this.displayMinCellWidth = this.storeDisplayMinCellWidth
+      this.categoryCountInline = this.storeCategoryCountInline
       this.gpsEnabled = this.storeGpsEnabled
       this.voiceFeedbackEnabled = this.storeVoiceFeedbackEnabled
       this.restrictInputToMarked = this.storeRestrictInputToMarked

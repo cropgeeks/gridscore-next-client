@@ -73,7 +73,8 @@ export default {
       'storeRestrictInputToMarked',
       'storeNavigationMode',
       'storeTraitColors',
-      'storeShowFullTraitDescription'
+      'storeShowFullTraitDescription',
+      'storeCategoryCountInline'
     ])
   },
   methods: {
@@ -104,7 +105,10 @@ export default {
           this.$store.commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', false)
         }
         if (parsed.cw !== undefined && parsed.cw !== null) {
-          this.$store.commit('ON_DISPLAY_MIN_CELL_WIDTH_CHANGED', parsed.cw.split(','))
+          this.$store.commit('ON_DISPLAY_MIN_CELL_WIDTH_CHANGED', +parsed.cw)
+        }
+        if (parsed.cc !== undefined && parsed.cc !== null) {
+          this.$store.commit('ON_CATEGORY_COUNT_INLINE_CHANGED', +parsed.cc)
         }
         if (parsed.ge === 1) {
           this.$store.commit('ON_GPS_ENABLED_CHANGED', true)
@@ -191,7 +195,8 @@ export default {
         rm: this.storeRestrictInputToMarked ? 1 : 0,
         nm: this.storeNavigationMode === NAVIGATION_MODE_DRAG ? 1 : 0,
         tc: this.storeTraitColors.map(c => c.replace('#', '')).join(','),
-        ft: this.storeShowFullTraitDescription ? 1 : 0
+        ft: this.storeShowFullTraitDescription ? 1 : 0,
+        cc: this.storeCategoryCountInline
       })
 
       emitter.emit('plausible-event', { key: 'settings-shared', props: { type: 'share' } })
