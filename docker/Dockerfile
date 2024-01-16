@@ -35,6 +35,19 @@ FROM tomcat:10.1-jdk11
 
 LABEL maintainer="sebastian.raubach@hutton.ac.uk"
 
+RUN apt-get update && \
+    apt-get --yes --force-yes install unzip zip && \
+    # Obscuring server info
+    cd ${CATALINA_HOME}/lib && \
+    mkdir -p org/apache/catalina/util/ && \
+    unzip -j catalina.jar org/apache/catalina/util/ServerInfo.properties -d org/apache/catalina/util/ && \
+    sed -i 's/server.info=.*/server.info=Apache Tomcat/g' org/apache/catalina/util/ServerInfo.properties && \
+    zip -ur catalina.jar org/apache/catalina/util/ServerInfo.properties && \
+    rm -rf org && cd ${CATALINA_HOME} && \
+    # Add a default error page mapping to hide the exception message
+    sed -i 's/<\/web-app>/    <error-page>\n        <exception-type>java.lang.Throwable<\/exception-type>\n        <location>\/dev\/null<\/location>\n    <\/error-page>\n<\/web-app>/g' conf/web.xml && \
+    sed -i 's/<\/Host>/  <Valve className="org.apache.catalina.valves.ErrorReportValve" showReport="false" showServerInfo="false" \/>\n      <\/Host>/g' conf/server.xml
+
 RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT
 
