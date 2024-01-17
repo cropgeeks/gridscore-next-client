@@ -342,6 +342,11 @@
         "type": "new",
         "title": "Photo social media sharing",
         "text": "You can now share images you've taken directly to social media. Social post contents can be pre-defined as part of the trial."
+      },
+      {
+        "type": "new",
+        "title": "Easier synchronization",
+        "text": "We added a synchronization button to the top of the data input page so you can access it straight from there without having to go back to the home page first."
       }
     ]
   }

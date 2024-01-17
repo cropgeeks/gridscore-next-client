@@ -342,6 +342,11 @@
         "type": "new",
         "title": "Teilen von Fotos auf Social-Media",
         "text": "Fotos können jetzt direkt auf Social-Media geteilt werden. Der Inhalt von sozialen Posts kann als Teil des Versuchs vordefiniert werden."
+      },
+      {
+        "type": "new",
+        "title": "Vereinfachte Synchronisierung",
+        "text": "Es wurde ein Synchronisierungs-Knopf direkt zur Dateneingabe hinzugefügt um schneller und einfacher synchronisieren zu können ohne wieder zur Startseite zurück gehen zu müssen."
       }
     ]
   }
