@@ -4,6 +4,7 @@
       <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
       <JumpToDropdown :trial="trial" />
       <b-button :title="$t('toolbarHelp')" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
+      <b-button v-if="trial.transactionCount > 0" @click="synchronize" variant="info"><BIconCloudUploadFill /> {{ $tc('toolbarSyncInfo', trial.transactionCount) }}</b-button>
       <!-- <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
         <BIconFullscreen v-if="!isFullscreen" /><BIconFullscreenExit v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarFullscreen') }}</span>
       </b-button> -->
@@ -24,7 +25,7 @@
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
-    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" />
+    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @change="loadTrial" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
     <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataTour" />
@@ -44,7 +45,7 @@ import { getTrialById } from '@/plugins/idb'
 import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 // import { BIconFullscreen, BIconFullscreenExit } from 'bootstrap-vue'
-import { BIconSearch, BIconQuestionCircle } from 'bootstrap-vue'
+import { BIconSearch, BIconQuestionCircle, BIconCloudUploadFill } from 'bootstrap-vue'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
 const emitter = require('tiny-emitter/instance')
@@ -59,6 +60,7 @@ export default {
     DataViewJumpControl,
     ScanQRCodeModal,
     Tour,
+    BIconCloudUploadFill,
     BIconSearch,
     BIconQuestionCircle
     // BIconFullscreen,
@@ -286,8 +288,11 @@ export default {
         }, 100)
       }, 10000)
     },
+    synchronize: function () {
+      this.$router.push({ name: 'home', query: { synchronize: this.trial.localId } })
+    },
     startGeoTracking: function () {
-      if (navigator.geolocation && this.storeGpsEnabled) {
+      if (navigator.geolocation && this.storeGpsEnabled && !this.geolocationWatchId) {
         const options = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
         this.geolocationWatchId = navigator.geolocation.watchPosition(position => {
           if (position && position.coords) {

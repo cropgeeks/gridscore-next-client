@@ -576,6 +576,7 @@
   "toolbarJumpTo": "Jump to",
   "toolbarFullscreen": "Toggle fullscreen",
   "toolbarHelp": "Help",
+  "toolbarSyncInfo": "No changes|One change|{count} changes",
   "tooltipChartHeatmapRow": "Row",
   "tooltipChartHeatmapColumn": "Column",
   "tooltipChartHeatmapValue": "Value",

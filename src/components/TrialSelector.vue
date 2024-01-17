@@ -107,7 +107,7 @@ import AddGermplasmModal from '@/components/modals/AddGermplasmModal'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
-import { deleteTrial, getTrialGroups, getTrials } from '@/plugins/idb'
+import { deleteTrial, getTrialById, getTrialGroups, getTrials } from '@/plugins/idb'
 import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
@@ -373,6 +373,19 @@ export default {
         })
         .then(result => {
           this.trialUpdates = result
+        })
+        .finally(() => {
+          if (this.$route.query && this.$route.query.synchronize) {
+            const id = this.$route.query.synchronize
+
+            getTrialById(id).then(trial => {
+              if (trial) {
+                this.synchronize(trial)
+
+                this.$router.replace({ query: null })
+              }
+            })
+          }
         })
     }
   },

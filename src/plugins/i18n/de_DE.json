@@ -567,6 +567,7 @@
   "toolbarJumpTo": "Springe nach",
   "toolbarFullscreen": "Vollbild umschalten",
   "toolbarHelp": "Hilfe",
+  "toolbarSyncInfo": "Keine Änderungen|Eine Änderung|{count} Änderungen",
   "tooltipChartHeatmapRow": "Zeile",
   "tooltipChartHeatmapColumn": "Spalte",
   "tooltipChartHeatmapValue": "Wert",

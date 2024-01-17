@@ -606,7 +606,10 @@ export default {
                 this.hide()
               }
 
-              this.$nextTick(() => emitter.emit('plot-data-changed', row, column, trialId))
+              this.$nextTick(() => {
+                emitter.emit('plot-data-changed', row, column, trialId)
+                this.$emit('change')
+              })
             })
         } else {
           if (this.isGuidedWalk) {
