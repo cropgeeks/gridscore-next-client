@@ -19,6 +19,14 @@
         <b-form-select :options="traitOptions" multiple v-model="selectedTraits" id="trait-selector" />
       </b-form-group>
 
+      <b-form-group class="mt-2" label-for="filename-postfix" :label="$t('formLabelImageTagFilenamePostfix')">
+        <b-form-input v-model="postfix" id="filename-postfix" />
+      </b-form-group>
+
+      <b-form-group class="mt-2" label-for="filename-preview" :label="$t('formLabelImageTagFilenamePreview')">
+        <b-form-input readonly :value="filename" id="filename-preview" />
+      </b-form-group>
+
       <!-- Show image date if available -->
       <b-badge v-if="imageDate"><BIconCalendar3 /> {{ imageDate.toLocaleString() }}</b-badge><br/>
       <!-- Show a link to GeoHack website if geolocation is available. This is the resource Wikipedia uses and it link out to many other resources. -->
@@ -78,7 +86,8 @@ export default {
       imageGps: null,
       supportsSaving: false,
       supportsGps: false,
-      selectedTraits: null
+      selectedTraits: [],
+      postfix: null
     }
   },
   computed: {
@@ -112,6 +121,15 @@ export default {
         return truncateAfterWords(this.trial.name, 3)
       } else {
         return 'NA'
+      }
+    },
+    filename: function () {
+      if (this.trial && this.imageFile) {
+        const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (this.row + 1) : (this.trial.layout.rows - this.row)
+        const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (this.column + 1) : (this.trial.layout.columns - this.column)
+        return `${this.shortTrialName}_${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}${this.postfix ? ('_' + this.postfix) : ''}.${this.imageFile.name.split('.').pop()}`
+      } else {
+        return ''
       }
     }
   },
@@ -237,13 +255,13 @@ export default {
      */
     downloadImage: async function () {
       if (this.trial && this.imageFile) {
-        const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (this.row + 1) : (this.trial.layout.rows - this.row)
-        const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (this.column + 1) : (this.trial.layout.columns - this.column)
-        const filename = `${this.shortTrialName}_${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}.${this.imageFile.name.split('.').pop()}`
+        // const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (this.row + 1) : (this.trial.layout.rows - this.row)
+        // const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (this.column + 1) : (this.trial.layout.columns - this.column)
+        // const filename = `${this.shortTrialName}_${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}.${this.imageFile.name.split('.').pop()}`
         if (this.supportsSaving) {
           // create a new handle
           const newHandle = await window.showSaveFilePicker({
-            suggestedName: filename,
+            suggestedName: this.filename,
             excludeAcceptAllOption: true,
             types: [{
               description: 'Image file',
@@ -259,7 +277,7 @@ export default {
           // close the file and write the contents to disk.
           await writableStream.close()
         } else {
-          saveAs(this.imageData, filename)
+          saveAs(this.imageData, this.filename)
         }
       }
 
@@ -271,6 +289,7 @@ export default {
     show: function () {
       this.supportsSaving = window.showSaveFilePicker !== undefined
       this.supportsGps = navigator.geolocation !== undefined && navigator.geolocation !== null
+      this.postfix = null
 
       if (this.preferredTraitId) {
         this.selectedTraits = [this.preferredTraitId]
