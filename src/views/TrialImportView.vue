@@ -50,7 +50,7 @@
         <div v-if="showCamera">
           <p class="mt-3">{{ $t('pageImportCameraText') }}</p>
           <div class="camera-wrapper d-flex justify-content-center" v-if="showCamera">
-            <BarcodeScanner @code-scanned="onDecode" ref="scanner" />
+            <BarcodeScanner @code-scanned="onDecode" :isValidFormat="checkQRCodeFormat" ref="scanner" />
           </div>
         </div>
 
@@ -58,7 +58,7 @@
 
         <b-button @click="checkCode" variant="primary" :disabled="buttonDisabled"><BIconSearch /> {{ $t('buttonCheckShareCode') }}</b-button>
 
-        <p class="text-danger mt-3" v-if="serverError">{{ serverError }}</p>
+        <p class="text-danger mt-3" v-if="serverError"><span v-html="serverError" /></p>
       </b-form>
 
       <b-modal :cancel-title="$t('buttonNo')"
@@ -156,12 +156,39 @@ export default {
     }
   },
   methods: {
+    checkQRCodeFormat: function (code) {
+      if (code.lastIndexOf('/') === -1) {
+        // There are no slashes, this could be a valid code
+        return true
+      } else {
+        const href = code
+
+        const searchFor = '/trial-import'
+        const index = href.indexOf(searchFor)
+
+        if (index !== -1) {
+          const remainder = href.substring(index + searchFor.length)
+
+          if (remainder.indexOf('/') !== -1 && remainder.length > 1) {
+            return true
+          }
+        }
+      }
+
+      this.serverError = this.$t('modalTextTrialImportNoValidQRCode', { code: code })
+
+      this.$nextTick(() => window.scrollTo(0, document.body.scrollHeight))
+
+      return false
+    },
     onDecode: function (shareCode) {
       if (shareCode.indexOf('/') !== -1) {
         this.shareCode = shareCode.substring(shareCode.lastIndexOf('/') + 1)
       } else {
         this.shareCode = shareCode
       }
+
+      this.showCamera = false
 
       this.checkCode()
     },

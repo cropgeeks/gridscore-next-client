@@ -1,6 +1,6 @@
 <template>
   <b-card class="h-100" no-body :border-variant="trial.localId === storeSelectedTrial ? 'primary' : null" :bg-variant="trial.localId === storeSelectedTrial ? 'light' : null" v-if="trial">
-    <a href="#" @click.prevent="$emit('synchronize')" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
+    <a href="#" @click.prevent="$emit('synchronize')" v-if="showSyncButtons && trial.transactionCount > 0 || trial.hasRemoteUpdate">
       <template v-if="trial.transactionCount > 0">
         <div class="card-corner card-corner-local" v-b-tooltip.hover="$t('tooltipTrialHasTransactions')" />
         <BIconCloudUploadFill class="card-corner-icon" />
@@ -74,6 +74,10 @@ export default {
     showDropdown: {
       type: Boolean,
       default: true
+    },
+    showSyncButtons: {
+      type: Boolean,
+      defaul: true
     }
   },
   data: function () {

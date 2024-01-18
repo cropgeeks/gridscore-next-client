@@ -347,6 +347,11 @@
         "type": "new",
         "title": "Easier synchronization",
         "text": "We added a synchronization button to the top of the data input page so you can access it straight from there without having to go back to the home page first."
+      },
+      {
+        "type": "update",
+        "title": "Trial QR code import",
+        "text": "The workflow of importing a trial using a QR code has been reworked to improve the user experience. Better feedback has been added and important user interface elements are automatically scrolled into view."
       }
     ]
   }

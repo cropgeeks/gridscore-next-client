@@ -8,7 +8,7 @@
            ref="trialExistsModal">
     <p>{{ $t('toastTextTrialShareCodeSameOrHigherPermission') }}</p>
 
-    <TrialCard :trial="trial" @loadTrial="loadTrial" :showDropdown="false" />
+    <TrialCard :trial="trial" @loadTrial="loadTrial" :showSyncButtons="false" :showDropdown="false" />
   </b-modal>
 </template>
 

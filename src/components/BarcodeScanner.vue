@@ -13,6 +13,10 @@ export default {
     autostart: {
       type: Boolean,
       default: true
+    },
+    isValidFormat: {
+      type: Function,
+      default: () => true
     }
   },
   data: function () {
@@ -43,14 +47,13 @@ export default {
       this.scanner = new Html5QrcodeScanner('reader', {
         fps: 10,
         rememberLastUsedCamera: true,
-        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-        videoConstraints: {
-          facingMode: 'environment'
-        }
+        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
       }, false)
       this.scanner.render(result => {
-        this.pause()
-        this.$emit('code-scanned', result)
+        if (this.isValidFormat(result)) {
+          this.pause()
+          this.$emit('code-scanned', result)
+        }
       })
 
       this.$nextTick(() => window.scrollTo(0, document.body.scrollHeight))
