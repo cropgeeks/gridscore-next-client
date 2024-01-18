@@ -47,12 +47,12 @@
             </b-input-group-addon>
           </b-input-group>
         </b-form-group>
-        <b-collapse v-model="showCamera">
+        <div v-if="showCamera">
           <p class="mt-3">{{ $t('pageImportCameraText') }}</p>
           <div class="camera-wrapper d-flex justify-content-center" v-if="showCamera">
             <BarcodeScanner @code-scanned="onDecode" ref="scanner" />
           </div>
-        </b-collapse>
+        </div>
 
         <b-card bg-variant="warning" border-variant="warning" class="mb-3" v-if="gridScoreVersion === 'legacy'"><b-card-text>{{ $t('pageImportLegacyWarning') }}</b-card-text></b-card>
 
@@ -256,6 +256,7 @@ export default {
             } else {
               this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
             }
+            window.scrollTo(0, document.body.scrollHeight)
           })
       }
     },

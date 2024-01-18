@@ -45,7 +45,7 @@ export default {
         rememberLastUsedCamera: true,
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         videoConstraints: {
-          facingMode: { exact: 'environment' }
+          facingMode: 'environment'
         }
       }, false)
       this.scanner.render(result => {
