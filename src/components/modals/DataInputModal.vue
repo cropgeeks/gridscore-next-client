@@ -104,6 +104,8 @@
       <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" />
       <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" @change="onSelectGuidedWalk" />
 
+      <DataInputCloseModal ref="closeModal" @close="hide" @save="validate" />
+
       <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataInputTour" />
     </div>
   </b-modal>
@@ -115,6 +117,7 @@ import TraitInputSection from '@/components/TraitInputSection'
 import ImageModal from '@/components/modals/ImageModal'
 import PlotCommentModal from '@/components/modals/PlotCommentModal'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
+import DataInputCloseModal from '@/components/modals/DataInputCloseModal'
 import TrialPreviewCanvas from '@/components/canvas/TrialPreviewCanvas'
 import Tour from '@/components/Tour'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
@@ -131,6 +134,7 @@ export default {
     TraitInputSection,
     PlotCommentModal,
     GuidedWalkSelectorModal,
+    DataInputCloseModal,
     Tour,
     TrialPreviewCanvas,
     BIconChatRightTextFill,
@@ -427,7 +431,7 @@ export default {
             }
           })
       } else {
-        this.hide()
+        this.$refs.closeModal.show()
       }
     },
     onGuidedWalkClicked: function () {

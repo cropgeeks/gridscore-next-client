@@ -376,6 +376,8 @@
   "modalTextSearchMatchColumn": "Spalte: {column}",
   "modalTextStopGuidedWalk": "Sicher, dass der gelenkte Ablauf beendet werden soll?",
   "modalTitleStopGuidedWalk": "Gelenkten Ablauf beenden",
+  "modalTextConfirmCloseDataInput": "Sicher, dass die Dateneingabe beendet werden soll? Bitte entweder abbrechen, schließen oder speichern auswählen.<dl class='mt-2'><dt>Abbrechen</dt><dd>Kehre zur Dateneingabe zurück.</dd><dt>Schließen</dt><dd>Schließt die Dateneingabe <em>ohne</em> die Daten zu speichern.</dd><dt>Speichern</dt><dd>Schließt die Dateneingabe <em>nachdem</em> die Daten gespeichert wurden.</dd></dl>",
+  "modalTitleConfirmCloseDataInput": "Dateneingabe beenden",
   "modalTitleGermplasmSearchNoMatchFound": "Keimplasmasuche",
   "modalTextGermplasmSearchNoMatchFound": "Kein Treffer gefunden für den eingegebenen/gescannten Identifikator.",
   "modalTitleLoading": "Lade...",

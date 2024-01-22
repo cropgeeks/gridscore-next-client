@@ -385,6 +385,8 @@
   "modalTextSearchMatchColumn": "Column: {column}",
   "modalTextStopGuidedWalk": "Are you sure you want to stop the guided walk?",
   "modalTitleStopGuidedWalk": "Stop guided walk",
+  "modalTextConfirmCloseDataInput": "Are you sure you want to close the data input? Please select whether to cancel, close or save.<dl class='mt-2'><dt>Cancel</dt><dd>Returns to the data input.</dd><dt>Close</dt><dd>Closes the data input <em>without</em> saving any data.</dd><dt>Save</dt><dd>Closes the data input <em>after</em> saving the data.</dd></dl>",
+  "modalTitleConfirmCloseDataInput": "Close data input",
   "modalTitleGermplasmSearchNoMatchFound": "Germplasm search",
   "modalTextGermplasmSearchNoMatchFound": "No match found for the entered/scanned identifier.",
   "modalTitleLoading": "Loading...",
