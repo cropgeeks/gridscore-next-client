@@ -88,7 +88,19 @@ export default {
     },
     changelog: function () {
       if (this.storeLocale in changelogMap) {
-        return changelogMap[this.storeLocale]
+        // Get the translated changelog
+        const other = changelogMap[this.storeLocale]
+        // Start with the English
+        const result = JSON.parse(JSON.stringify(enGB))
+
+        // For each English entry
+        return result.map(c => {
+          // Check if a translation exists
+          const match = other.find(o => o.version === c.version)
+
+          // Then use that translation match or fall back to original English version
+          return match || c
+        })
       } else {
         return enGB
       }
