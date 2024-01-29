@@ -33,7 +33,7 @@
         </b-form-group>
         <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
           <b-input-group>
-            <b-input trim v-model="shareCode" autofocus />
+            <b-input trim v-model="shareCode" autofocus @keyup.enter="checkCode" />
             <b-input-group-addon>
               <b-button @click="showCamera = !showCamera">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16">
