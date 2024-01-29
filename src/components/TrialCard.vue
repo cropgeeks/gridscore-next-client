@@ -77,7 +77,7 @@ export default {
     },
     showSyncButtons: {
       type: Boolean,
-      defaul: true
+      default: true
     }
   },
   data: function () {
