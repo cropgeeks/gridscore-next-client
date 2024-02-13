@@ -211,6 +211,7 @@ import Tour from '@/components/Tour'
 import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { brapiGetObservationUnits, brapiGetStudies } from '@/plugins/brapi'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -574,6 +575,69 @@ export default {
             this.trialToCopy = trial
           }
         })
+    } else if (this.$route.query && this.$route.query.germinateConfig) {
+      const cf = JSON.parse(this.$route.query.germinateConfig)
+
+      if (cf.brapiConfig && cf.brapiConfig.url && cf.brapiConfig.token && cf.datasetId) {
+        this.$store.commit('ON_BRAPI_CONFIG_CHANGED', cf.brapiConfig)
+
+        brapiGetStudies({ studyDbId: cf.datasetId }).then(result => {
+          if (result && result.length > 0) {
+            this.trialName = result[0].studyName
+            this.trialDescription = result[0].studyDescription
+            // TODO: Set brapi id
+          }
+        })
+
+        brapiGetObservationUnits(cf.datasetId).then(result => {
+          if (result && result.length > 0) {
+            let rows = 1
+            let columns = 1
+
+            const map = {}
+
+            result.forEach(c => {
+              const cell = {
+                // TODO: Set brapi id
+                germplasm: c.germplasmName,
+                rep: null
+              }
+              if (c.observationUnitPosition) {
+                const pos = c.observationUnitPosition
+                if (pos.observationLevel && pos.observationLevel.levelName === 'rep') {
+                  cell.rep = pos.observationLevel.levelCode
+                }
+
+                let row = null
+                let column = null
+                if (pos.positionCoordinateXType === 'GRID_COL') {
+                  column = +pos.positionCoordinateY
+                  columns = Math.max(columns, column)
+                }
+                if (pos.positionCoordinateYType === 'GRID_ROW') {
+                  row = +pos.positionCoordinateX
+                  rows = Math.max(rows, row)
+                }
+
+                map[`${row}|${column}`] = cell
+              }
+            })
+
+            this.layout = {
+              rows: rows + 1,
+              columns: columns + 1,
+              corners: null,
+              markers: null,
+              rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+              columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+            }
+
+            // TODO: Preset order to be FielDHub default?
+
+            this.germplasmMap = map
+          }
+        })
+      }
     }
   }
 }

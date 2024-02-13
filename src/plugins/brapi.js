@@ -260,6 +260,17 @@ const brapiPostObservationVariableSearch = (params) => {
     })
 }
 
+const brapiGetObservationUnits = (studyDbId) => {
+  return brapiAxios('observationunits', 'observationunits', { studyDbId: studyDbId, includeObservations: false }, 'get', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
 const brapiPostObservationUnits = (params) => {
   return brapiAxios('observationunits', 'observationunits', params, 'post', true)
     .then(result => {
@@ -291,6 +302,7 @@ export {
   brapiGetStudyTypes,
   brapiGetStudies,
   brapiPostGermplasmSearch,
+  brapiGetObservationUnits,
   brapiPostObservationUnits,
   brapiPostObservationVariables,
   brapiPostObservationVariableSearch,
