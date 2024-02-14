@@ -5,6 +5,7 @@
            :ok-disabled="okDisabled"
            scrollable
            no-fade
+           @ok="$emit('submit')"
            :size="size"
            ref="brapiModal">
     <b-form @submit.prevent="updateBrapiUrl">

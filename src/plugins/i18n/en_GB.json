@@ -351,6 +351,8 @@
   "modalTextLeaveSetup": "Are you sure you want to leave the setup screen? Your progress on the creation of this trial will be lost and you have to start over.",
   "modalTitleCreateTrial": "Create trial",
   "modalTextCreateTrial": "Are you sure you want to create a new trial with the specified configuration? After creation, the trial layout cannot be modified.",
+  "modalTextCreateTrialGerminateImport": "Are you sure you want to import the external trial the following with name? '{trialName}'",
+  "modalTitleCreateTrialGerminateImport": "Import external trial",
   "modalTitleTraitImportJson": "GridScore trait import",
   "modalTitleTraitExportJson": "GridScore trait export",
   "modalTitleTraitImportGerminate": "Germinate trait import",

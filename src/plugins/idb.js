@@ -680,6 +680,7 @@ const addTrial = async (trial) => {
     localId: id,
     shareCodes: trial.shareCodes,
     name: trial.name,
+    brapiId: trial.brapiId || null,
     description: trial.description,
     socialShareConfig: trial.socialShareConfig || null,
     group: trial.group || null,

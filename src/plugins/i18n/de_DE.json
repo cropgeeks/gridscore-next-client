@@ -343,6 +343,8 @@
   "modalTextLeaveSetup": "Sicher, dass der Versuchsaufbau abgebrochen werden soll? Jeglicher Fortschritt beim Erstellen der Versuches geht verloren und es muss erneut angefangen werden.",
   "modalTitleCreateTrial": "Versuch erstellen",
   "modalTextCreateTrial": "Sicher, dass der Versuch mit dem angegebenen Aufbau erstellt werden soll? Nach der Erstellung kann der Aufbau nicht mehr verändert werden.",
+  "modalTextCreateTrialGerminateImport": "Sicher, dass der externe Versuch mit folgendem Namen importiert werden soll? '{trialName}'",
+  "modalTitleCreateTrialGerminateImport": "Externen Versuch importiere",
   "modalTitleTraitImportJson": "GridScore Merkmalsimport",
   "modalTitleTraitExportJson": "GridScore Merkmalsexport",
   "modalTitleTraitImportGerminate": "Germinate Merkmalsimport",

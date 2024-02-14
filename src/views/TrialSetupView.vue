@@ -244,10 +244,11 @@ export default {
       socialConfigVisible: false,
       trialName: null,
       trialDescription: null,
+      trialBrapiId: null,
       trialSocialConfig: {
         title: 'GridScore',
         text: '#GridScore',
-        url: 'https://gridscore.huttona.ac.uk'
+        url: 'https://gridscore.hutton.ac.uk'
       },
       trialGroup: null,
       trialGroups: [],
@@ -267,6 +268,7 @@ export default {
         trialGroup: null,
         layout: null
       },
+      brapiConfig: null,
       layoutFeedback: null,
       layoutDataIsValid: false,
       traitFeedback: null,
@@ -494,6 +496,8 @@ export default {
           const finalTrial = {
             name: this.trialName,
             description: this.trialDescription,
+            brapiId: this.trialBrapiId,
+            brapiConfig: this.brapiConfig,
             socialShareConfig: this.trialSocialConfig,
             group: (this.trialGroup && this.trialGroup.length > 0) ? { name: this.trialGroup } : null,
             layout: this.layout,
@@ -551,6 +555,7 @@ export default {
           if (trial) {
             this.trialName = this.$t('modalTextTrialDuplicateOfName', { original: trial.name })
             this.trialDescription = this.$t('modalTextTrialDuplicateOfDate', { original: trial.description, date: new Date().toLocaleDateString() })
+            this.trialBrapiId = trial.brapiId || null
             this.trialSocialConfig = trial.socialShareConfig || { title: 'GridScore', text: '#GridScore', url: 'https://gridscore.hutton.ac.uk' }
             this.trialGroup = trial.group ? trial.group.name : null
             this.layout = JSON.parse(JSON.stringify(trial.layout))
@@ -581,60 +586,71 @@ export default {
       if (cf.brapiConfig && cf.brapiConfig.url && cf.brapiConfig.token && cf.datasetId) {
         this.$store.commit('ON_BRAPI_CONFIG_CHANGED', cf.brapiConfig)
 
+        this.brapiConfig = JSON.parse(JSON.stringify(cf.brapiConfig))
+
         brapiGetStudies({ studyDbId: cf.datasetId }).then(result => {
           if (result && result.length > 0) {
-            this.trialName = result[0].studyName
-            this.trialDescription = result[0].studyDescription
-            // TODO: Set brapi id
-          }
-        })
+            this.$bvModal.msgBoxConfirm(this.$t('modalTextCreateTrialGerminateImport', { trialName: result[0].studyName }), {
+              title: this.$t('modalTitleCreateTrialGerminateImport'),
+              okTitle: this.$t('buttonYes'),
+              okVariant: 'success',
+              cancelTitle: this.$t('buttonNo')
+            }).then(value => {
+              if (value) {
+                this.trialName = result[0].studyName
+                this.trialDescription = result[0].studyDescription
+                this.trialBrapiId = `${cf.datasetId}`
 
-        brapiGetObservationUnits(cf.datasetId).then(result => {
-          if (result && result.length > 0) {
-            let rows = 1
-            let columns = 1
+                brapiGetObservationUnits(cf.datasetId).then(result => {
+                  if (result && result.length > 0) {
+                    let rows = 1
+                    let columns = 1
 
-            const map = {}
+                    const map = {}
 
-            result.forEach(c => {
-              const cell = {
-                // TODO: Set brapi id
-                germplasm: c.germplasmName,
-                rep: null
-              }
-              if (c.observationUnitPosition) {
-                const pos = c.observationUnitPosition
-                if (pos.observationLevel && pos.observationLevel.levelName === 'rep') {
-                  cell.rep = pos.observationLevel.levelCode
-                }
+                    result.forEach(c => {
+                      const cell = {
+                        germplasm: c.germplasmName,
+                        rep: null,
+                        brapiId: c.germplasmDbId
+                      }
+                      if (c.observationUnitPosition) {
+                        const pos = c.observationUnitPosition
+                        if (pos.observationLevel && pos.observationLevel.levelName === 'rep') {
+                          cell.rep = pos.observationLevel.levelCode
+                        }
 
-                let row = null
-                let column = null
-                if (pos.positionCoordinateXType === 'GRID_COL') {
-                  column = +pos.positionCoordinateY
-                  columns = Math.max(columns, column)
-                }
-                if (pos.positionCoordinateYType === 'GRID_ROW') {
-                  row = +pos.positionCoordinateX
-                  rows = Math.max(rows, row)
-                }
+                        let row = null
+                        let column = null
+                        if (pos.positionCoordinateXType === 'GRID_COL') {
+                          column = +pos.positionCoordinateY
+                          columns = Math.max(columns, column)
+                        }
+                        if (pos.positionCoordinateYType === 'GRID_ROW') {
+                          row = +pos.positionCoordinateX
+                          rows = Math.max(rows, row)
+                        }
 
-                map[`${row}|${column}`] = cell
+                        map[`${row}|${column}`] = cell
+                      }
+                    })
+
+                    this.layout = {
+                      rows: rows + 1,
+                      columns: columns + 1,
+                      corners: null,
+                      markers: null,
+                      rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+                      columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+                    }
+
+                    // TODO: Preset order to be FielDHub default?
+
+                    this.germplasmMap = map
+                  }
+                })
               }
             })
-
-            this.layout = {
-              rows: rows + 1,
-              columns: columns + 1,
-              corners: null,
-              markers: null,
-              rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-              columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
-            }
-
-            // TODO: Preset order to be FielDHub default?
-
-            this.germplasmMap = map
           }
         })
       }

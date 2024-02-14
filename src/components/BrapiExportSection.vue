@@ -504,7 +504,13 @@ export default {
           this.studies = result
 
           if (result && result.length > 0) {
-            this.selectedStudy = result[0]
+            if (this.trial.brapiId) {
+              const match = result.find(r => r.studyDbId === `${this.trial.brapiId}`)
+
+              this.selectedStudy = match || result[0]
+            } else {
+              this.selectedStudy = result[0]
+            }
           } else {
             this.selectedStudy = null
           }
