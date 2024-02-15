@@ -354,5 +354,26 @@
         "text": "The workflow of importing a trial using a QR code has been reworked to improve the user experience. Better feedback has been added and important user interface elements are automatically scrolled into view."
       }
     ]
+  },
+  {
+    "version": "2.5.1",
+    "date": "XXXX-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "External trial import",
+        "text": "GridScore now supports importing a trial via a URL link. The main use-case is currently the trial creation from Germinate via FielDHub."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trait import",
+        "text": "Fixed an issues when importing traits from another existing trial."
+      },
+      {
+        "type": "bugfix",
+        "title": "Germplasm selection",
+        "text": "Fixed an issues with germplasm selection in statistical plots."
+      }
+    ]
   }
 ]

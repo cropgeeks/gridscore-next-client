@@ -111,7 +111,7 @@ export default {
             setSize: t.setSize,
             restrictions: t.restrictions,
             group: t.group ? t.group.name : null,
-            timeframe: t.timeframe
+            timeframe: t.timeframe || null
           }
         })
 

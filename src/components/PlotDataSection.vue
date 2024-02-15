@@ -1,7 +1,7 @@
 <template>
   <div v-if="cell && traits && traits.length > 0">
     <h4>{{ cell.displayName }}</h4>
-    <p class="text-muted">{{ $t('pageVisualizationMapPlotInfo', { row: cell.row + 1, column: cell.column + 1 }) }}</p>
+    <p class="text-muted">{{ $t('pageVisualizationMapPlotInfo', { row: rowIndex, column: columnIndex }) }}</p>
 
     <div v-if="cell.measurements">
       <section v-for="trait in traits" :key="`trait-section-${trait.id}`" class="mt-3">
@@ -30,6 +30,7 @@
 <script>
 import TraitIcon from '@/components/icons/TraitIcon'
 import { BIconCalendar3 } from 'bootstrap-vue'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
 export default {
   components: {
@@ -37,6 +38,10 @@ export default {
     TraitIcon
   },
   props: {
+    trial: {
+      type: Object,
+      default: () => null
+    },
     traits: {
       type: Array,
       default: () => []
@@ -44,6 +49,22 @@ export default {
     cell: {
       type: Object,
       default: () => null
+    }
+  },
+  computed: {
+    rowIndex: function () {
+      if (this.trial && this.cell) {
+        return this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - this.cell.row) : (this.cell.row + 1)
+      } else {
+        return null
+      }
+    },
+    columnIndex: function () {
+      if (this.trial && this.cell) {
+        return this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (this.trial.layout.columns - this.cell.column) : (this.cell.column + 1)
+      } else {
+        return null
+      }
     }
   },
   methods: {

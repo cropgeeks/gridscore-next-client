@@ -48,7 +48,7 @@
     </b-container>
 
     <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
-      <PlotDataSection :cell="selectedCell" :traits="[selectedTrait]" />
+      <PlotDataSection :trial="trial" :cell="selectedCell" :traits="[selectedTrait]" />
     </b-modal>
   </div>
 </template>
@@ -61,6 +61,7 @@ import { BIconArrowClockwise, BIconPlusSquareFill, BIconTrash } from 'bootstrap-
 import { getTrialById } from '@/plugins/idb'
 import { toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -193,6 +194,8 @@ export default {
           const data = []
           let chartType
 
+          let supportsClicking = true
+
           switch (trait.dataType) {
             case 'float':
             case 'int':
@@ -213,6 +216,8 @@ export default {
                     const dateString = new Date(m.timestamp).toLocaleString()
                     m.values.forEach((v, setIndex) => {
                       const dp = {
+                        displayColumn: this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (this.trial.layout.columns - cell.column) : (cell.column + 1),
+                        displayRow: this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - cell.row) : (cell.row + 1),
                         row: cell.row,
                         column: cell.column,
                         setIndex: setIndex,
@@ -244,7 +249,7 @@ export default {
                   data.unshift({
                     x: dps.map(d => d.value),
                     text: dps.map(d => d.name),
-                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
+                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn })),
                     ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                     name: k,
                     type: chartType,
@@ -261,7 +266,7 @@ export default {
                 data.push({
                   x: dps.map(d => d.value),
                   text: dps.map(d => d.name),
-                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.row, column: d.column })),
+                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn })),
                   ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                   marker: {
                     color: trait.color
@@ -279,6 +284,7 @@ export default {
             }
             case 'text':
             case 'categorical': {
+              supportsClicking = false
               chartType = 'bar'
               const datapoints = {}
               datapoints[GENERIC_TRACE] = []
@@ -441,32 +447,34 @@ export default {
 
           Plotly.newPlot(ref[0], data, layout, config)
 
-          ref[0].on('plotly_click', eventData => {
-            if (!eventData || (eventData.points.length < 1)) {
-              Plotly.restyle(ref[0], { selectedpoints: [null] })
-            } else {
-              const mapped = eventData.points.map(p => {
-                const [row, column, setIndex, timestamp, value] = p.id.split('|')
+          if (supportsClicking) {
+            ref[0].on('plotly_click', eventData => {
+              if (!eventData || (eventData.points.length < 1)) {
+                Plotly.restyle(ref[0], { selectedpoints: [null] })
+              } else {
+                const mapped = eventData.points.map(p => {
+                  const [row, column, setIndex, timestamp, value] = p.id.split('|')
 
-                return {
-                  row: +row,
-                  column: +column,
-                  setIndex: +setIndex,
-                  timestamp,
-                  value
+                  return {
+                    row: +row,
+                    column: +column,
+                    setIndex: +setIndex,
+                    timestamp,
+                    value
+                  }
+                }).filter((value, index, self) => self.indexOf(value) === index)
+
+                // TODO: Do something with the selection here now.
+
+                if (mapped.length === 1) {
+                  this.selectedCell = this.trialData[`${mapped[0].row}|${mapped[0].column}`]
+                  this.selectedTrait = trait
+
+                  this.$nextTick(() => this.$refs.plotModal.show())
                 }
-              }).filter((value, index, self) => self.indexOf(value) === index)
-
-              // TODO: Do something with the selection here now.
-
-              if (mapped.length === 1) {
-                this.selectedCell = this.trialData[`${mapped[0].row}|${mapped[0].column}`]
-                this.selectedTrait = trait
-
-                this.$nextTick(() => this.$refs.plotModal.show())
               }
-            }
-          })
+            })
+          }
         }
       })
     },

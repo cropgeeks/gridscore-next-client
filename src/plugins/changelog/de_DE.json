@@ -354,5 +354,26 @@
         "text": "Der Ablauf des Imports von Versuchen via QR-Code wurde umgebaut um die User-Erfahrung zu verbessern. Bessere Rückmeldungen wurden hinzugefügt und wichtige Nutzeroberflächenelemente werden nun automatisch in den Blick gerückt."
       }
     ]
+  },
+  {
+    "version": "2.5.1",
+    "date": "XXXX-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Externer Versuchsimport",
+        "text": "GridScore kann nun Versuche basieren an URL-Parametern importieren. Der Haupt-Anwendungsfall ist die Versuchserstellung von Germinate mithilfe von FielDHub."
+      },
+      {
+        "type": "bugfix",
+        "title": "Merkmalsimport",
+        "text": "Behebt einen Fehler beim Importieren von Merkmalen aus anderen bereits existierenden Versuchen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Keimplasmaauswahl",
+        "text": "Behebt einen Fehler bei der Keimplasmaauswahl auf der Statistikseite."
+      }
+    ]
   }
 ]
