@@ -375,5 +375,26 @@
         "text": "Fixed an issues with germplasm selection in statistical plots."
       }
     ]
+  },
+  {
+    "version": "2.5.2",
+    "date": "XXXX-XX-XX",
+    "items": [
+      {
+        "type": "update",
+        "title": "Data input error highlight",
+        "text": "The data input will now scroll to the first error in the data input if an error is detected. This will help users identify errors in their data input more easily."
+      },
+      {
+        "type": "update",
+        "title": "Disabled chart interaction",
+        "text": "Chart interactions are now disabled by default. They can be enabled by using the switch-toggle button next to the data visualization."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trial geolocation",
+        "text": "Fixed an issues where recorded geolocations (GPS locations) are lost when synchronizing a shared trial."
+      }
+    ]
   }
 ]

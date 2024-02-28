@@ -184,10 +184,15 @@ export default {
         this.dimensions.circleRows = Math.ceil(this.dimensions.visibleTraitCount / this.dimensions.circlesPerRow)
         this.dimensions.scaledCanvasHeight = this.dimensions.canvasHeight * window.devicePixelRatio
         this.dimensions.scaledCanvasWidth = this.dimensions.canvasWidth * window.devicePixelRatio
-        let tempHeight = Math.max(this.dimensions.textPartHeight + this.dimensions.circleRows * (this.dimensions.circleRadius * 2 + this.dimensions.padding), this.dimensions.canvasHeight / this.trial.layout.rows)
+
+        const heightProportion = this.dimensions.canvasHeight / this.trial.layout.rows
+        let tempHeight = Math.max(this.dimensions.textPartHeight + this.dimensions.circleRows * (this.dimensions.circleRadius * 2 + this.dimensions.padding), heightProportion)
 
         if (this.dimensions.visibleTraitCount === 1) {
-          tempHeight += this.dimensions.textPartHeight - this.dimensions.padding
+          // Check if we need to increase the minimum height to allow space for the display of the trait value below the circles
+          if (tempHeight > heightProportion) {
+            tempHeight += this.dimensions.textPartHeight - this.dimensions.padding
+          }
         }
 
         this.dimensions.cellHeight = tempHeight

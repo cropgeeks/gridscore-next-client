@@ -375,5 +375,26 @@
         "text": "Behebt einen Fehler bei der Keimplasmaauswahl auf der Statistikseite."
       }
     ]
+  },
+  {
+    "version": "2.5.2",
+    "date": "XXXX-XX-XX",
+    "items": [
+      {
+        "type": "update",
+        "title": "Hervorhebung von Dateneingabefehlern",
+        "text": "Die Dateneingabe scrollt nun zum ersten Fehler in der Eingabe wenn ein Fehler gefunden wurde. Dies sollte Nutzen bei der Identifikation von Fehlern helfen."
+      },
+      {
+        "type": "update",
+        "title": "Diagramminteraktionen deaktiviert",
+        "text": "Diagramminteraktionen sind nun standardmäßig deaktiviert. Sie können durch Umschalten des Schalters in der Nähe des Diagramms aktiviert werden."
+      },
+      {
+        "type": "bugfix",
+        "title": "Versuchsortung",
+        "text": "Ein Fehler beim Synchronisieren von aufgezeichneten GPS-Informationen wurde behoben. Diese konnten zuvor verloren gehen."
+      }
+    ]
   }
 ]

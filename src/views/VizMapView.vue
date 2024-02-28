@@ -191,8 +191,8 @@ export default {
     updateTrialDataCache: function () {
       getTrialById(this.storeSelectedTrial)
         .then(trial => {
-          this.trial = trial
           this.trialData = getTrialDataCached()
+          this.trial = trial
         })
     },
     fakeGpsMovement: function () {

@@ -15,6 +15,11 @@
             <b-form-input type="range" v-model.number="currentTimepoint" :min="0" :max="timepoints.length - 1" />
           </b-form-group>
         </b-col>
+        <b-col cols=12 md=6 xl=4>
+          <b-form-group :label="$t('formCheckboxChartInteractEnabled')" label-for="interactivityRep">
+            <b-form-checkbox id="interactivityRep" switch v-model="chartInteractionEnabled"> {{ $t(chartInteractionEnabled ? 'genericYes' : 'genericNo') }}</b-form-checkbox>
+          </b-form-group>
+        </b-col>
       </b-row>
     </b-form>
 
@@ -92,10 +97,21 @@ export default {
       reps: [],
       allGermplasm: [],
       germplasmMap: {},
-      selectedCell: null
+      selectedCell: null,
+      chartInteractionEnabled: false
     }
   },
   watch: {
+    chartInteractionEnabled: function () {
+      if (this.$refs.heatmapRepCompareChart && this.selectedTrait) {
+        const layoutDelta = {
+          'xaxis.fixedrange': !this.chartInteractionEnabled,
+          'yaxis.fixedrange': !this.chartInteractionEnabled
+        }
+
+        Plotly.relayout(this.$refs.heatmapRepCompareChart, layoutDelta)
+      }
+    },
     storeDarkMode: function () {
       this.update()
     },
@@ -341,7 +357,8 @@ export default {
             tickvals: this.reps.map((r, i) => i),
             ticktext: this.reps.map(r => r || this.$t('widgetChartNoRep')),
             title: { text: this.$t('widgetChartHeatmapAxisTitleRep'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
-            tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            fixedrange: !this.chartInteractionEnabled
           },
           yaxis: {
             automargin: true,
@@ -350,7 +367,8 @@ export default {
             tickvals: Array.from(Array(this.allGermplasm.length).keys()).map(i => this.allGermplasm.length - i),
             ticktext: this.allGermplasm,
             title: { text: this.$t('widgetChartHeatmapAxisTitleGermplasm'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
-            tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            fixedrange: !this.chartInteractionEnabled
           }
         }
 

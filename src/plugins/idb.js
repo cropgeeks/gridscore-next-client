@@ -174,6 +174,7 @@ const getTrials = async () => {
           t.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
           t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
           t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+          t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
           t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
           t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
           t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
@@ -464,6 +465,7 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
         trial.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
         trial.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+        trial.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
         trial.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
         trial.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
         trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
@@ -562,6 +564,8 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
         }
       })
 
+      let centerTransaction = null
+
       // If there is a new geolocation
       if (geolocation && geolocation.lat !== undefined && geolocation.lat !== null && geolocation.lng !== undefined && geolocation.lng !== null) {
         // Check if either, there isn't a geolocation or there isn't a center or either lat or lng are missing
@@ -573,10 +577,14 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
               lng: geolocation.lng
             }
           }
+
+          centerTransaction = cell.geography.center
         } else {
           // Otherwise, take the average
-          cell.geography.lat = (cell.geography.lat + geolocation.lat) / 2
-          cell.geography.lng = (cell.geography.lng + geolocation.lng) / 2
+          cell.geography.center.lat = (cell.geography.center.lat + geolocation.lat) / 2
+          cell.geography.center.lng = (cell.geography.center.lng + geolocation.lng) / 2
+
+          centerTransaction = cell.geography.center
         }
       }
 
@@ -590,13 +598,21 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
           traitMap[t.id] = t
         })
 
+        const key = `${row}|${column}`
+
         // Create an array if it doesn't exist already
-        if (!transaction.plotTraitDataChangeTransactions[`${row}|${column}`]) {
-          transaction.plotTraitDataChangeTransactions[`${row}|${column}`] = []
+        if (!transaction.plotTraitDataChangeTransactions[key]) {
+          transaction.plotTraitDataChangeTransactions[key] = []
+        }
+
+        if (centerTransaction) {
+          transaction.plotGeographyChangeTransactions[key] = {
+            center: centerTransaction
+          }
         }
 
         // Get all trait data transactions for this plot
-        const cellDataTs = transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+        const cellDataTs = transaction.plotTraitDataChangeTransactions[key]
 
         if (cellDataTs.length > 0) {
           // For each new data change
@@ -631,11 +647,11 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
           })
         } else {
           // Simply add them all as new items
-          transaction.plotTraitDataChangeTransactions[`${row}|${column}`].push(...data)
+          transaction.plotTraitDataChangeTransactions[key].push(...data)
         }
 
-        if (transaction.plotTraitDataChangeTransactions[`${row}|${column}`].length < 1) {
-          delete transaction.plotTraitDataChangeTransactions[`${row}|${column}`]
+        if (transaction.plotTraitDataChangeTransactions[key].length < 1) {
+          delete transaction.plotTraitDataChangeTransactions[key]
         }
       }
 
@@ -779,6 +795,7 @@ const getEmptyTransaction = (trialId) => {
     plotCommentDeletedTransactions: {},
     plotMarkedTransactions: {},
     plotTraitDataChangeTransactions: {},
+    plotGeographyChangeTransactions: {},
     trialCommentAddedTransactions: [],
     trialCommentDeletedTransactions: [],
     trialGermplasmAddedTransactions: [],

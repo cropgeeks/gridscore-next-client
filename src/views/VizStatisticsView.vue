@@ -37,8 +37,11 @@
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols=12 lg=6 v-for="t in selectedTraits" :key="`trait-heading-${t.trait.id}`">
-            <h2><TraitHeading :short="true" :trait="t.trait" :traitIndex="t.index" /></h2>
+          <b-col cols=12 lg=6 v-for="(t, tIndex) in selectedTraits" :key="`trait-heading-${t.trait.id}`">
+            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap">
+              <h2><TraitHeading :short="true" :trait="t.trait" :traitIndex="t.index" /></h2>
+              <b-form-checkbox switch v-model="chartInteractionEnabled[tIndex]" @input="toggleChartInteraction(tIndex)"> {{ $t(chartInteractionEnabled[tIndex] ? 'formCheckboxChartInteractEnabled' : 'formCheckboxChartInteractDisabled') }}</b-form-checkbox>
+            </div>
             <p v-if="t.trait.description">{{ t.trait.description }}</p>
 
             <div :ref="`trait-stats-chart-${t.trait.id}`" />
@@ -140,7 +143,8 @@ export default {
       allGermplasm: [],
       selectedGermplasm: [],
       selectedGermplasmTemp: [],
-      searchTerm: null
+      searchTerm: null,
+      chartInteractionEnabled: null
     }
   },
   watch: {
@@ -180,7 +184,21 @@ export default {
         }
       })
     },
+    toggleChartInteraction: function (traitIndex) {
+      const ref = this.$refs[`trait-stats-chart-${this.trial.traits[traitIndex].id}`]
+
+      if (ref) {
+        const layoutDelta = {
+          'xaxis.fixedrange': !this.chartInteractionEnabled[traitIndex],
+          'yaxis.fixedrange': !this.chartInteractionEnabled[traitIndex]
+        }
+
+        Plotly.relayout(ref[0], layoutDelta)
+      }
+    },
     update: function () {
+      this.chartInteractionEnabled = this.selectedTraits.map(_ => false)
+
       this.selectedTraits.forEach(t => {
         const trait = t.trait
         const ref = this.$refs[`trait-stats-chart-${trait.id}`]
@@ -378,14 +396,16 @@ export default {
               title: { text: '', font: { color: this.storeDarkMode ? 'white' : 'black' } },
               tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
               gridcolor: this.storeDarkMode ? '#111111' : '#eeeeee',
-              showgrid: chartType === 'bar'
+              showgrid: chartType === 'bar',
+              fixedrange: true
             },
             xaxis: {
               zeroline: false,
               title: { text: '', font: { color: this.storeDarkMode ? 'white' : 'black' } },
               tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
               gridcolor: this.storeDarkMode ? '#111111' : '#eeeeee',
-              showgrid: chartType === 'box'
+              showgrid: chartType === 'box',
+              fixedrange: true
             },
             hovermode: chartType === 'box' ? 'closest' : 'x',
             shapes: []

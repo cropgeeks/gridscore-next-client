@@ -148,6 +148,9 @@ export default {
       this.cellTraitMeasurements = JSON.parse(JSON.stringify(this.cell.measurements[this.trait.id]))
       this.$nextTick(() => this.$refs.traitDataHistoryModal.show())
     },
+    focus: function () {
+      this.$refs[`${this.trait.id}-${1}`][0].focus()
+    },
     handleTraverse: function (index) {
       if (index === this.trait.setSize) {
         this.$emit('traverse')

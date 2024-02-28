@@ -13,7 +13,12 @@
           </b-col>
           <b-col cols=12 md=6 xl=4>
             <b-form-group :label="$t('formLabelHeatmapTimeline')" label-for="timepoint" v-if="timepoints && timepoints.length > 0" :description="$t('formDescriptionCurrentTimepoint', { date: new Date(timepoints[currentTimepoint]).toLocaleDateString() })">
-              <b-form-input type="range" v-model.number="currentTimepoint" :min="0" :max="timepoints.length - 1" />
+              <b-form-input id="timepoint" type="range" v-model.number="currentTimepoint" :min="0" :max="timepoints.length - 1" />
+            </b-form-group>
+          </b-col>
+          <b-col cols=12 md=6 xl=4>
+            <b-form-group :label="$t('formCheckboxChartInteractEnabled')" label-for="interactivity">
+              <b-form-checkbox id="interactivity" switch v-model="chartInteractionEnabled"> {{ $t(chartInteractionEnabled ? 'genericYes' : 'genericNo') }}</b-form-checkbox>
             </b-form-group>
           </b-col>
         </b-row>
@@ -92,10 +97,21 @@ export default {
       selectedTraitIndex: null,
       timepoints: [],
       currentTimepoint: 0,
-      selectedCell: null
+      selectedCell: null,
+      chartInteractionEnabled: false
     }
   },
   watch: {
+    chartInteractionEnabled: function () {
+      if (this.$refs.heatmapChart && this.selectedTrait) {
+        const layoutDelta = {
+          'xaxis.fixedrange': !this.chartInteractionEnabled,
+          'yaxis.fixedrange': !this.chartInteractionEnabled
+        }
+
+        Plotly.relayout(this.$refs.heatmapChart, layoutDelta)
+      }
+    },
     storeDarkMode: function () {
       this.update()
     },
@@ -330,7 +346,8 @@ export default {
             tickvals: Array.from(Array(this.trial.layout.columns).keys()).map(i => i + 1),
             ticktext: xTicks,
             title: { text: this.$t('widgetChartHeatmapAxisTitleCol'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
-            tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            fixedrange: !this.chartInteractionEnabled
           },
           yaxis: {
             automargin: true,
@@ -339,7 +356,8 @@ export default {
             tickvals: Array.from(Array(this.trial.layout.rows).keys()).map(i => i + 1),
             ticktext: yTicks,
             title: { text: this.$t('widgetChartHeatmapAxisTitleRow'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
-            tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+            tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+            fixedrange: !this.chartInteractionEnabled
           }
         }
 

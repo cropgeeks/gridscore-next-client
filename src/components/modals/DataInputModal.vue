@@ -83,7 +83,7 @@
           <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.next.column) : $n(guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.next.row) : $n(guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
-      <b-tabs v-model="traitGroupTabIndex" id="trait-group-tabs">
+      <b-tabs no-fade v-model="traitGroupTabIndex" id="trait-group-tabs">
         <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
           :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
           :title-link-class="(tabStates && tabStates[groupIndex] === false) ? 'text-white bg-danger' : null">
@@ -547,12 +547,32 @@ export default {
         this.hide()
       }
 
+      const traitStates = []
       this.tabStates = this.traitsByGroup.map(g => {
-        const traitStates = g.traits.map(t => this.$refs[`trait-section-${t.id}`][0].validate())
-        return traitStates.every(t => t)
+        const ts = g.traits.map(t => this.$refs[`trait-section-${t.id}`][0].validate())
+        traitStates.push(ts)
+        return ts.every(t => t)
       })
 
-      if (this.tabStates.every(t => t)) {
+      if (!this.tabStates.every(t => t)) {
+        const errorTabIndex = this.tabStates.findIndex(t => !t)
+
+        this.traitGroupTabIndex = errorTabIndex
+
+        this.$nextTick(() => {
+          let traitToScrollIntoView = null
+          this.traitsByGroup[this.traitGroupTabIndex].traits.forEach((et, eti) => {
+            if (!traitStates[this.traitGroupTabIndex][eti]) {
+              traitToScrollIntoView = et
+            }
+          })
+
+          this.$nextTick(() => {
+            this.$refs[`trait-section-${traitToScrollIntoView.id}`][0].$el.scrollIntoView()
+            this.$refs[`trait-section-${traitToScrollIntoView.id}`][0].focus()
+          })
+        })
+      } else {
         const now = new Date()
         const date = now
 

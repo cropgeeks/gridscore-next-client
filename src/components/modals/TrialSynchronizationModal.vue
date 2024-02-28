@@ -114,6 +114,17 @@
             </p>
           </b-list-group-item>
 
+          <!-- PLOT GEOGRAPHY CHANGED -->
+          <b-list-group-item v-if="transaction.plotGeographyChangeTransactions && Object.keys(transaction.plotGeographyChangeTransactions).length > 0">
+            <h5 class="mb-1">
+              <BIconGeo /> {{ $t('transactionTypePlotGeographyChanged') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypePlotGeographyChangedCount', Object.keys(transaction.plotGeographyChangeTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
           <!-- PLOT MARKED CHANGED -->
           <b-list-group-item v-if="transaction.plotMarkedTransactions && Object.keys(transaction.plotMarkedTransactions).length > 0">
             <h5 class="mb-1">
@@ -170,7 +181,7 @@ import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
 import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
 
-import { BIconChatLeft, BIconstack, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
+import { BIconChatLeft, BIconstack, BIconGeo, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
 import IconBrapi from '@/components/icons/IconBrapi'
 
@@ -182,6 +193,7 @@ export default {
     BIconUiChecksGrid,
     BIconstack,
     BIconPlus,
+    BIconGeo,
     BIconDash,
     BIconPencilSquare,
     BIconTags,
