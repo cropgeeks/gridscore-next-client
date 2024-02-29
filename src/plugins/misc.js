@@ -20,6 +20,8 @@ const getTraitTypeText = (trait, short = false) => {
       return i18n.t(short ? 'traitTypeShortInt' : 'traitTypeInt')
     case 'float':
       return i18n.t(short ? 'traitTypeShortFloat' : 'traitTypeFloat')
+    case 'percentage':
+      return i18n.t(short ? 'traitTypeShortPercentage' : 'traitTypePercentage')
     case 'text':
       return i18n.t(short ? 'traitTypeShortText' : 'traitTypeText')
     case 'categorical':
@@ -229,10 +231,10 @@ const isOffline = () => 'onLine' in navigator && !navigator.onLine
 const checkDataMatchesTraitType = (trait, value, checkDatesAndCategories = true) => {
   const trimmed = (typeof value === 'string') ? value.trim() : value
 
-  if (trait.dataType === 'int' || trait.dataType === 'float') {
+  if (trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'percentage') {
     try {
       const int = Number(trimmed)
-      if (isNaN(trimmed) || isNaN(int) || (trait.dataType === 'int' && !Number.isInteger(int))) {
+      if (isNaN(trimmed) || isNaN(int) || ((trait.dataType === 'int' || trait.dataType === 'percentage') && !Number.isInteger(int))) {
         return false
       }
 
@@ -346,7 +348,7 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
               const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
 
               if (onDate.length > 0) {
-                if (t.dataType === 'float' || t.dataType === 'int') {
+                if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'percentage') {
                   result += `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
                 } else if (t.dataType === 'categorical') {
                   result += `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`

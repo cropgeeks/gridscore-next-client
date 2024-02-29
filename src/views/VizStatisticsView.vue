@@ -217,6 +217,7 @@ export default {
           switch (trait.dataType) {
             case 'float':
             case 'int':
+            case 'percentage':
             case 'date': {
               chartType = 'box'
               const datapoints = {}

@@ -136,6 +136,7 @@ export default {
       switch (type) {
         case 'int':
         case 'float':
+        case 'percentage':
           return 'numeric'
         default:
           return type

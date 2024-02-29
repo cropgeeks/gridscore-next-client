@@ -459,8 +459,8 @@ export default {
       if (copy.dataType === 'boolean') {
         copy.dataType = 'categorical'
         copy.restrictions.categories = 'true\nfalse'
-      } else if (copy.dataType === 'percentage') {
-        copy.dataType = 'int'
+      }
+      if (copy.dataType === 'percentage') {
         copy.restrictions.min = 0
         copy.restrictions.max = 100
       }

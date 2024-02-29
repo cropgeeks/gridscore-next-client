@@ -45,6 +45,19 @@
                   :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : null"
                   :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : null"
                   :step="0.02" />
+    <!-- For percentage types, show a range slider -->
+    <b-form-input :id="id"
+                  v-else-if="trait.dataType === 'percentage'"
+                  ref="input"
+                  :state="formState"
+                  @wheel="$event.target.blur()"
+                  type="range"
+                  v-model="value"
+                  :readonly="!editable"
+                  @change="tts"
+                  :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : null"
+                  :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : null"
+                  :step="1" />
     <!-- For categorical traits -->
     <!-- If there are more than 4 options, show a dropdown select -->
     <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > storeCategoryCountInline" ref="input" :state="formState"
@@ -67,9 +80,13 @@
         <b-button v-b-tooltip="$t('tooltipDataEntryDateMinusOne')" @click="setDateMinusOne" :disabled="!editable"><BIconCaretLeftFill /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryDateToday')" @click="setDateToday" :disabled="!editable"><BIconCalendar3 /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><BIconCaretRightFill /></b-button>
-        <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetDate" :disabled="!editable"><BIconSlashCircle /></b-button>
+        <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetValue" :disabled="!editable"><BIconSlashCircle /></b-button>
       </template>
       <b-button v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
+    </b-input-group-append>
+    <b-input-group-append v-else-if="trait.dataType === 'percentage'">
+      <b-input-group-text>{{ (value !== undefined && value !== null) ? value : 'N/A' }}</b-input-group-text>
+      <b-button v-b-tooltip="$t('tooltipDataEntryPercentageReset')" variant="danger" @click="resetValue" :disabled="!editable"><BIconSlashCircle /></b-button>
     </b-input-group-append>
   </b-input-group>
 </template>
@@ -109,7 +126,8 @@ export default {
     return {
       value: null,
       formState: null,
-      dateInput: ''
+      dateInput: '',
+      rangeChanged: false
     }
   },
   watch: {
@@ -151,7 +169,7 @@ export default {
   },
   methods: {
     getValue: function () {
-      if (this.value === undefined || this.value === null || this.value === '') {
+      if (this.value === undefined || this.value === null || this.value === '' || (this.trait.dataType === 'percentage' && !this.rangeChanged)) {
         return null
       } else {
         return this.value
@@ -302,9 +320,11 @@ export default {
       }
     },
     tts: function () {
+      this.rangeChanged = true
       emitter.emit('tts', this.trait.dataType === 'categorical' ? this.trait.restrictions.categories[this.value] : this.value)
     },
-    resetDate: function () {
+    resetValue: function () {
+      this.rangeChanged = false
       this.value = null
     }
   }
