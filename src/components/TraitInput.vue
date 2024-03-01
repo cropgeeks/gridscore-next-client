@@ -52,9 +52,9 @@
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="range"
-                  v-model="value"
+                  :value="value"
                   :readonly="!editable"
-                  @change="tts"
+                  @change="ttsAndSet"
                   :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : 0"
                   :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : 100"
                   :step="1" />
@@ -319,8 +319,12 @@ export default {
         emitter.emit('tts', toLocalDateString(current))
       }
     },
-    tts: function () {
+    ttsAndSet: function (value) {
+      this.value = value
       this.rangeChanged = true
+      this.tts()
+    },
+    tts: function () {
       emitter.emit('tts', this.trait.dataType === 'categorical' ? this.trait.restrictions.categories[this.value] : this.value)
     },
     resetValue: function () {
