@@ -396,5 +396,16 @@
         "text": "Ein Fehler beim Synchronisieren von aufgezeichneten GPS-Informationen wurde behoben. Diese konnten zuvor verloren gehen."
       }
     ]
+  },
+  {
+    "version": "2.5.3",
+    "date": "XXXX-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Wert in Bereich Datentyp",
+        "text": "Ein neuer Datentyp wurde hinzugefügt. Der 'Wert in Bereich' Datentyp lässt die Auswahl eines Wertes zwischen Minimum und Maximum mithilfe eines Schiebereglers zu. Dies erlaubt die schnellere Auswahl des korrekten Wertes. Ein gutes Anwendungsbeispiel ist eine Prozentauswahl für etwas wie 'Lagerung' wo schnell ein Prozentwert zwischen 0 und 100 ausgewählt werden kann."
+      }
+    ]
   }
 ]

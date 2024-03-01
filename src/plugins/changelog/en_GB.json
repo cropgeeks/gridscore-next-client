@@ -396,5 +396,16 @@
         "text": "Fixed an issues where recorded geolocations (GPS locations) are lost when synchronizing a shared trial."
       }
     ]
+  },
+  {
+    "version": "2.5.3",
+    "date": "XXXX-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Value in range data type",
+        "text": "A new data type has been added. The 'value in range' type will let you choose a value between the minimum and maximum using a range slider control. This allows faster selection of the correct value. A good use-case is a percentage slider for things like 'lodging' where you can quickly select a value between 0 and 100."
+      }
+    ]
   }
 ]
