@@ -45,9 +45,9 @@
                   :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : null"
                   :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : null"
                   :step="0.02" />
-    <!-- For percentage types, show a range slider -->
+    <!-- For range types, show a range slider -->
     <b-form-input :id="id"
-                  v-else-if="trait.dataType === 'percentage'"
+                  v-else-if="trait.dataType === 'range'"
                   ref="input"
                   :state="formState"
                   @wheel="$event.target.blur()"
@@ -55,8 +55,8 @@
                   v-model="value"
                   :readonly="!editable"
                   @change="tts"
-                  :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : null"
-                  :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : null"
+                  :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : 0"
+                  :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : 100"
                   :step="1" />
     <!-- For categorical traits -->
     <!-- If there are more than 4 options, show a dropdown select -->
@@ -84,9 +84,9 @@
       </template>
       <b-button v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
     </b-input-group-append>
-    <b-input-group-append v-else-if="trait.dataType === 'percentage'">
-      <b-input-group-text>{{ (value !== undefined && value !== null) ? value : 'N/A' }}</b-input-group-text>
-      <b-button v-b-tooltip="$t('tooltipDataEntryPercentageReset')" variant="danger" @click="resetValue" :disabled="!editable"><BIconSlashCircle /></b-button>
+    <b-input-group-append v-else-if="trait.dataType === 'range'">
+      <b-input-group-text :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></b-input-group-text>
+      <b-button v-b-tooltip="$t('tooltipDataEntryRangeReset')" variant="danger" @click="resetValue" :disabled="!editable"><BIconSlashCircle /></b-button>
     </b-input-group-append>
   </b-input-group>
 </template>
@@ -169,7 +169,7 @@ export default {
   },
   methods: {
     getValue: function () {
-      if (this.value === undefined || this.value === null || this.value === '' || (this.trait.dataType === 'percentage' && !this.rangeChanged)) {
+      if (this.value === undefined || this.value === null || this.value === '' || (this.trait.dataType === 'range' && !this.rangeChanged)) {
         return null
       } else {
         return this.value
@@ -337,5 +337,10 @@ input.number-input::-webkit-outer-spin-button,
 input.number-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.range-value {
+  min-width: 3ch;
+  text-align: center;
 }
 </style>

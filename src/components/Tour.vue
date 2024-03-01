@@ -3,7 +3,7 @@
     <!-- The backdrop prevents input on the background -->
     <div class="backdrop" />
     <!-- The popover appears next to the element -->
-    <b-popover :target="popoverTarget" :placement="steps[currentIndex].position" ref="popover" :show="popoverShow" >
+    <b-popover :target="popoverTarget" :placement="steps[currentIndex].position" ref="popover" :show="popoverShow" boundary="window" container="body" >
       <template v-slot:title>
         <button @click="popoverShow = false" size="sm" class="ml-1 close" aria-label="Close">
           ×

@@ -213,7 +213,7 @@ export default {
                   finalValue = m
                 }
 
-                if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float' || this.selectedTrait.dataType === 'percentage') {
+                if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float' || this.selectedTrait.dataType === 'range') {
                   m.values.forEach(v => {
                     if (v !== undefined && v !== null) {
                       minValue = Math.min(minValue, +v)
@@ -288,7 +288,7 @@ export default {
             : `${this.$t('tooltipChartHeatmapRow')}: %{y}<br>${this.$t('tooltipChartHeatmapColumn')}: %{x}<br>${this.$t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`
         }]
 
-        if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float' || this.selectedTrait.dataType === 'percentage') {
+        if (this.selectedTrait.dataType === 'int' || this.selectedTrait.dataType === 'float' || this.selectedTrait.dataType === 'range') {
           traces[0].zauto = false
           traces[0].zmin = minValue
           traces[0].zmax = maxValue

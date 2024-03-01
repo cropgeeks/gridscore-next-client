@@ -102,7 +102,7 @@ The trait definition section can look a bit overwhelming the first time you use 
 - **Data type**: This defines what type the data will be in that's collected for this trait. The current options include:
   - `Whole number` (e.g. 3, 2004, -1)
   - `Decimal number` (e.g. 2.1, 3.5, 200.5)
-  - `Percentage` (allows values between 0 and 100)
+  - `Value in range` (shows a range slider for values between minimum and maximum)
   - `Category` (requires specification of valid values)
   - `Truth value` (either `true` or `false`)
   - `Date` (a date for when a certain event has taken place)

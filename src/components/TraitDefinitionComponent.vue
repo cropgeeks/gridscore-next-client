@@ -46,13 +46,13 @@
             </template>
             <b-form-textarea v-model="newTrait.restrictions.categories" :rows="4" :placeholder="$t('formPlaceholderTraitRestrictionsCategories')" required id="trait-categories" :state="formState.categories" />
           </b-form-group>
-          <b-row v-if="newTrait.dataType === 'int' || newTrait.dataType === 'float'">
+          <b-row v-if="newTrait.dataType === 'int' || newTrait.dataType === 'float' || newTrait.dataType === 'range'">
             <b-col cols=6>
               <b-form-group :description="$t('formDescriptionTraitRestrictionsMin')" label-for="trait-min">
                 <template #label>
                   <BIconChevronBarDown /> {{ $t('formLabelTraitRestrictionsMin') }}
                 </template>
-                <b-input type="number" :step="1" number v-model="newTrait.restrictions.min" id="trait-min" />
+                <b-input type="number" :step="1" number v-model="newTrait.restrictions.min" id="trait-min" :state="formState.min" />
               </b-form-group>
             </b-col>
             <b-col cols=6>
@@ -60,7 +60,7 @@
                 <template #label>
                   <BIconChevronBarUp /> {{ $t('formLabelTraitRestrictionsMax') }}
                 </template>
-                <b-input type="number" :step="1" number v-model="newTrait.restrictions.max" id="trait-max" />
+                <b-input type="number" :step="1" number v-model="newTrait.restrictions.max" id="trait-max" :state="formState.max" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -256,6 +256,8 @@ export default {
       formState: {
         name: null,
         categories: null,
+        min: null,
+        max: null,
         setSize: null
       },
       traitsToExport: null
@@ -317,8 +319,8 @@ export default {
         text: this.$t('traitTypeFloat'),
         value: 'float'
       }, {
-        text: this.$t('traitTypePercentage'),
-        value: 'percentage'
+        text: this.$t('traitTypeRange'),
+        value: 'range'
       }, {
         text: this.$t('traitTypeCategorical'),
         value: 'categorical'
@@ -460,9 +462,13 @@ export default {
         copy.dataType = 'categorical'
         copy.restrictions.categories = 'true\nfalse'
       }
-      if (copy.dataType === 'percentage') {
-        copy.restrictions.min = 0
-        copy.restrictions.max = 100
+      if (copy.dataType === 'range') {
+        if (copy.restrictions.min === undefined || copy.restrictions.min === null || copy.restrictions.min === '') {
+          copy.restrictions.min = 0
+        }
+        if (copy.restrictions.max === undefined || copy.restrictions.max === null || copy.restrictions.max === '') {
+          copy.restrictions.max = 100
+        }
       }
 
       if (copy.restrictions.min === undefined || copy.restrictions.min === null || copy.restrictions.min === '') {
@@ -505,6 +511,19 @@ export default {
         this.formState.categories = false
       } else {
         this.formState.categories = true
+      }
+
+      if (this.newTrait.dataType === 'range') {
+        if (this.newTrait.restrictions.min === undefined || this.newTrait.restrictions.min === null || this.newTrait.restrictions.min === '') {
+          this.formState.min = false
+        } else {
+          this.formState.min = true
+        }
+        if (this.newTrait.restrictions.max === undefined || this.newTrait.restrictions.max === null || this.newTrait.restrictions.max === '') {
+          this.formState.max = false
+        } else {
+          this.formState.max = true
+        }
       }
 
       if (this.newTrait.setSize === undefined || this.newTrait.setSize === null || this.newTrait.setSize === '' || this.newTrait.setSize < 1) {
@@ -564,6 +583,8 @@ export default {
       this.formState = {
         name: null,
         categories: null,
+        min: null,
+        max: null,
         setSize: null
       }
 

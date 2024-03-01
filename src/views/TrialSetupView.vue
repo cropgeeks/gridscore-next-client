@@ -339,7 +339,7 @@ export default {
     },
     numericTraitCount: function () {
       if (this.traits) {
-        return this.traits.filter(t => t.dataType === 'int' || t.dataType === 'float' || t.dataType === 'percentage').length
+        return this.traits.filter(t => t.dataType === 'int' || t.dataType === 'float' || t.dataType === 'range').length
       } else {
         return 0
       }

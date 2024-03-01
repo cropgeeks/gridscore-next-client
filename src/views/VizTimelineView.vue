@@ -65,7 +65,7 @@ export default {
             index: i,
             trait: t
           }
-        }).filter(t => t.trait.allowRepeats && (t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'percentage'))
+        }).filter(t => t.trait.allowRepeats && (t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'range'))
       } else {
         return []
       }
@@ -77,7 +77,7 @@ export default {
             index: i,
             trait: t
           }
-        }).filter(t => !t.trait.allowRepeats || !(t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'percentage'))
+        }).filter(t => !t.trait.allowRepeats || !(t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'range'))
       } else {
         return []
       }

@@ -227,7 +227,7 @@ export default {
               break
             case 'float':
             case 'int':
-            case 'percentage':
+            case 'range':
               scale.dataType = 'Numeric'
               break
             case 'categorical':
@@ -355,7 +355,7 @@ export default {
                   matches = t.dataType === 'text'
                   break
                 case 'Numeric':
-                  matches = t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'percentage'
+                  matches = t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range'
                   break
                 case 'Duration':
                   matches = t.dataType === 'int'
