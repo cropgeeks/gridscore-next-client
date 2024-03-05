@@ -27,7 +27,7 @@
     <div ref="heatmapRepCompareChart" />
 
     <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
-      <PlotDataSection :cell="selectedCell" :traits="[selectedTrait]" />
+      <PlotDataSection :trial="trial" :cell="selectedCell" :traits="[selectedTrait]" />
     </b-modal>
   </div>
 </template>

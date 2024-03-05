@@ -80,6 +80,10 @@
           </template>
           <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
         </b-tab>
+        <!-- New Tab Button (Using tabs-end slot) -->
+        <template #tabs-end>
+          <b-nav-item role="presentation" class="ml-auto" @click.prevent="update" href="#"><BIconArrowClockwise /></b-nav-item>
+        </template>
       </b-tabs>
     </b-card>
 
@@ -108,7 +112,7 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrialById, getTrialGroups, getTrials } from '@/plugins/idb'
-import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconArrowClockwise, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
 const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
@@ -131,6 +135,7 @@ export default {
     BIconSortDownAlt,
     BIconListTask,
     BIconSegmentedNav,
+    BIconArrowClockwise,
     BIconGrid,
     BIconCloudDownloadFill,
     BIconViewStacked,
@@ -362,6 +367,8 @@ export default {
         this.trialGroups = result.concat(groups)
       })
 
+      emitter.emit('show-loading', true)
+
       getTrials()
         .then(trials => {
           this.trials = trials
@@ -386,6 +393,7 @@ export default {
               }
             })
           }
+          emitter.emit('show-loading', false)
         })
     }
   },
