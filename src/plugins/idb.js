@@ -11,7 +11,7 @@ const getDb = async () => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 2, {
+      openDB('gridscore-next-' + window.location.pathname, 3, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -47,6 +47,10 @@ const getDb = async () => {
           if (oldVersion < 2) {
             trials = transaction.objectStore('trials')
             trials.createIndex('group', 'group', { unique: false })
+          }
+          if (oldVersion < 3) {
+            trials = transaction.objectStore('trials')
+            trials.createIndex('events', 'events', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -178,6 +182,8 @@ const getTrials = async () => {
           t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
           t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
           t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
+          t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
+          t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
           t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
           t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
           t.transactionCount += transaction.trialEditTransaction ? 1 : 0
@@ -469,6 +475,8 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
         trial.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
         trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
+        trial.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
+        trial.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
         trial.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
         trial.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
         trial.transactionCount += transaction.trialEditTransaction ? 1 : 0
@@ -706,7 +714,8 @@ const addTrial = async (trial) => {
     createdOn: trial.createdOn || new Date().toISOString(),
     updatedOn: trial.updatedOn || new Date().toISOString(),
     lastSyncedOn: trial.lastSyncedOn,
-    comments: trial.comments || []
+    comments: trial.comments || [],
+    events: trial.events || []
   })
 
   return new Promise(resolve => {
@@ -798,6 +807,8 @@ const getEmptyTransaction = (trialId) => {
     plotGeographyChangeTransactions: {},
     trialCommentAddedTransactions: [],
     trialCommentDeletedTransactions: [],
+    trialEventAddedTransactions: [],
+    trialEventDeletedTransactions: [],
     trialGermplasmAddedTransactions: [],
     trialTraitAddedTransactions: [],
     traitChangeTransactions: [],
@@ -832,6 +843,38 @@ const deleteTrialComment = async (trialId, comment) => {
       } else {
         // Remove the match
         transaction.trialCommentAddedTransactions.splice(match, 1)
+      }
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
+const deleteTrialEvent = async (trialId, event) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+    trial.events = trial.events.filter(c => c.timestamp !== event.timestamp && c.content !== event.content)
+    trial.updatedOn = new Date().toISOString()
+    // Make sure there's no data stored in the `trials` table
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      const match = transaction.trialEventAddedTransactions.findIndex(c => c.content === event.content && c.timestamp === event.timestamp && c.type === event.type && c.impact === event.impact)
+
+      if (match === -1) {
+        // No match, add a new DELETE transaction
+        transaction.trialEventDeletedTransactions.push(event)
+      } else {
+        // Remove the match
+        transaction.trialEventAddedTransactions.splice(match, 1)
       }
 
       // Store it back
@@ -1053,6 +1096,39 @@ const addTrialComment = async (trialId, commentContent) => {
   }
 }
 
+const addTrialEvent = async (trialId, eventContent, eventType, eventImpact) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    if (!trial.events) {
+      trial.events = []
+    }
+
+    const newEvent = {
+      content: eventContent,
+      type: eventType,
+      impact: eventImpact,
+      timestamp: new Date().toISOString()
+    }
+
+    trial.events.push(newEvent)
+    trial.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialEventAddedTransactions.push(newEvent)
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
 const setPlotMarked = async (trialId, row, column, isMarked) => {
   const trial = await getTrialById(trialId)
   const cell = await getCell(trialId, row, column)
@@ -1189,8 +1265,10 @@ export {
   initDb,
   deleteTrial,
   addTrial,
+  deleteTrialEvent,
   deleteTrialComment,
   deletePlotComment,
+  addTrialEvent,
   addPlotComment,
   addTrialComment,
   setPlotMarked,

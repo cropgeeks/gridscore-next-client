@@ -72,7 +72,7 @@
               size="md"
               ref="confirmationModal">
         <p class="text-info">{{ $t('pageImportTrialMatchInfo') }}</p>
-        <TrialInformation :showComments="false" :trial="trial" class="border" />
+        <TrialInformation :showComments="false" :showEvents="false" :trial="trial" class="border" />
 
         <!-- Trial group -->
         <b-form-group label-for="trial-group" :description="$t('formDescriptionTrialSetupTrialGroup')" class="mt-3">

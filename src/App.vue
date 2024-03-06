@@ -106,6 +106,7 @@
     </b-modal>
 
     <TrialCommentModal :trialId="trialForComments.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="trialForComments" />
+    <TrialEventModal :trialId="trialForEvents.localId" @hidden="showTrialEvents(null)" ref="trialEventModal" v-if="trialForEvents" />
   </div>
 </template>
 
@@ -115,6 +116,7 @@ import BrapiModal from '@/components/modals/BrapiModal'
 import ChangelogModal from '@/components/modals/ChangelogModal'
 import MissingTrialModal from '@/components/modals/MissingTrialModal'
 import TrialCommentModal from '@/components/modals/TrialCommentModal'
+import TrialEventModal from '@/components/modals/TrialEventModal'
 import { mapGetters } from 'vuex'
 import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
@@ -155,7 +157,8 @@ export default {
     ChangelogModal,
     MissingTrialModal,
     TrialInformationDropdown,
-    TrialCommentModal
+    TrialCommentModal,
+    TrialEventModal
   },
   data: function () {
     return {
@@ -166,6 +169,7 @@ export default {
       registration: null,
       selectedTrial: null,
       trialForComments: null,
+      trialForEvents: null,
       updateExists: false,
       changelogVersionNumber: null,
       brapiErrorMessage: null
@@ -207,9 +211,18 @@ export default {
   methods: {
     showTrialComments: function (trial) {
       this.trialForComments = trial
+      this.trialForEvents = null
 
       if (trial) {
         this.$nextTick(() => this.$refs.trialCommentModal.show())
+      }
+    },
+    showTrialEvents: function (trial) {
+      this.trialForComments = null
+      this.trialForEvents = trial
+
+      if (trial) {
+        this.$nextTick(() => this.$refs.trialEventModal.show())
       }
     },
     updateSelectedTrial: function () {
@@ -426,6 +439,7 @@ export default {
 
     emitter.on('trial-properties-changed', this.updateSelectedTrialData)
     emitter.on('show-trial-comments', this.showTrialComments)
+    emitter.on('show-trial-events', this.showTrialEvents)
     emitter.on('plausible-event', this.plausibleEvent)
     emitter.on('api-error', this.handleApiError)
     emitter.on('show-brapi-settings', this.showBrapiSettings)
@@ -444,6 +458,7 @@ export default {
   beforeDestroy: function () {
     emitter.off('trial-properties-changed', this.updateSelectedTrialData)
     emitter.off('show-trial-comments', this.showTrialComments)
+    emitter.off('show-trial-events', this.showTrialEvents)
     emitter.off('plausible-event', this.plausibleEvent)
     emitter.off('api-error', this.handleApiError)
     emitter.off('show-brapi-settings', this.showBrapiSettings)

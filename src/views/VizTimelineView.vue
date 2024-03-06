@@ -171,7 +171,36 @@ export default {
             title: { text: this.$t('widgetChartTimeseriesAxisTitlePlotsScored'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
           },
-          legend: { orientation: 'h', font: { color: this.storeDarkMode ? 'white' : 'black' } }
+          legend: { orientation: 'h', font: { color: this.storeDarkMode ? 'white' : 'black' } },
+          annotations: [],
+          shapes: []
+        }
+
+        if (this.trial.events && this.trial.events.length > 0) {
+          this.trial.events.forEach(e => {
+            layout.annotations.push({
+              yref: 'paper',
+              x: new Date(e.timestamp),
+              y: 1,
+              text: e.content,
+              showarrow: true,
+              arrowhead: 7,
+              ax: 0,
+              ay: -40
+            })
+            layout.shapes.push({
+              type: 'line',
+              yref: 'paper',
+              x0: new Date(e.timestamp),
+              y0: 0,
+              x1: new Date(e.timestamp),
+              y1: 1,
+              line: {
+                width: 1.5,
+                dash: 'dot'
+              }
+            })
+          })
         }
 
         Plotly.newPlot(this.$refs.noRepeatTraits, traces, layout, {

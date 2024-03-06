@@ -163,6 +163,34 @@
               {{ $tc('transactionTypeTrialCommentDeletedCount', Object.keys(transaction.trialCommentDeletedTransactions).length) }}
             </p>
           </b-list-group-item>
+
+          <!-- TRIAL EVENT ADDED -->
+          <b-list-group-item v-if="transaction.trialEventAddedTransactions && transaction.trialEventAddedTransactions.length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconFlag stacked />
+                <BIconPlus stacked :scale="0.7" :shift-v="3" />
+              </BIconstack> {{ $t('transactionTypeTrialEventAdded') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypeTrialEventAddedCount', Object.keys(transaction.trialEventAddedTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
+          <!-- TRIAL EVENT DELETED -->
+          <b-list-group-item v-if="transaction.trialEventDeletedTransactions && transaction.trialEventDeletedTransactions.length > 0">
+            <h5 class="mb-1">
+              <BIconstack>
+                <BIconFlag stacked />
+                <BIconDash stacked :scale="0.7" :shift-v="3" />
+              </BIconstack> {{ $t('transactionTypeTrialEventDeleted') }}
+            </h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypeTrialEventDeletedCount', Object.keys(transaction.trialEventDeletedTransactions).length) }}
+            </p>
+          </b-list-group-item>
         </b-list-group>
       </div>
       <div v-else>
@@ -181,7 +209,7 @@ import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
 import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
 
-import { BIconChatLeft, BIconstack, BIconGeo, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
+import { BIconChatLeft, BIconFlag, BIconstack, BIconGeo, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
 import IconBrapi from '@/components/icons/IconBrapi'
 
@@ -193,6 +221,7 @@ export default {
     BIconUiChecksGrid,
     BIconstack,
     BIconPlus,
+    BIconFlag,
     BIconGeo,
     BIconDash,
     BIconPencilSquare,

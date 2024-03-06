@@ -80,9 +80,9 @@
           </template>
           <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
         </b-tab>
-        <!-- New Tab Button (Using tabs-end slot) -->
+        <!-- Refresh button (Using tabs-end slot) -->
         <template #tabs-end>
-          <b-nav-item role="presentation" class="ml-auto" @click.prevent="update" href="#"><BIconArrowClockwise /></b-nav-item>
+          <b-nav-item role="presentation" class="ml-auto" @click.prevent="update" v-b-tooltip="$t('tooltipTrialSelectorRefresh')" href="#"><BIconArrowClockwise /></b-nav-item>
         </template>
       </b-tabs>
     </b-card>

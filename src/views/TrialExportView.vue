@@ -59,6 +59,23 @@
       </b-tab>
       <b-tab>
         <template #title>
+          <BIconFlag /> {{ $t('pageExportTabTitleEvents') }}
+        </template>
+
+        <p class="mt-3" v-html="$t('pageExportTrialFormatEvent')" />
+
+        <b-card class="mb-3" :title="$t('pageExportTrialFormatEventTrialCardTitle')" :sub-title="$t('pageExportTrialFormatEventTrialCardSubtitle')">
+          <b-card-text :class="trialEventCount < 1 ? 'text-danger' : null">{{ $tc('pageExportTrialFormatEventTrialCount', trialEventCount) }}</b-card-text>
+
+          <b-button @click="exportTrialEvents" variant="primary" :disabled="trialEventCount < 1">
+            <BIconstack>
+              <BIconFlag stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="-5" />
+            </BIconstack> {{ $t('buttonExport') }}
+          </b-button>
+        </b-card>
+      </b-tab>
+      <b-tab>
+        <template #title>
           <IconGerminate /> Germinate
         </template>
         <div v-if="storeIsOffline" class="modal-banner bg-danger text-white text-center mb-3 mt-0 p-2">
@@ -109,9 +126,9 @@ import { exportToGerminate, exportToShapefile, shareTrial } from '@/plugins/api'
 import IconGerminate from '@/components/icons/IconGerminate'
 import IconBrapi from '@/components/icons/IconBrapi'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
-import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload, BIconChatRightQuoteFill, BIconstack, BIconChatRight, BIconArrowDown } from 'bootstrap-vue'
+import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload, BIconFlag, BIconChatRightQuoteFill, BIconstack, BIconChatRight, BIconArrowDown } from 'bootstrap-vue'
 import { downloadText, toLocalDateString, trialsDataToMatrix } from '@/plugins/misc'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, TRIAL_EVENT_TYPE_MANAGEMENT, TRIAL_EVENT_TYPE_OTHER, TRIAL_EVENT_TYPE_WEATHER } from '@/plugins/constants'
 import BrapiExportSection from '@/components/BrapiExportSection'
 
 const emitter = require('tiny-emitter/instance')
@@ -123,6 +140,7 @@ export default {
     BIconDownload,
     BIconChatRightQuoteFill,
     BIconstack,
+    BIconFlag,
     BIconChatRight,
     BIconArrowDown,
     BrapiExportSection,
@@ -161,6 +179,13 @@ export default {
       } else {
         return 0
       }
+    },
+    trialEventCount: function () {
+      if (this.trial) {
+        return this.trial.events ? this.trial.events.length : 0
+      } else {
+        return 0
+      }
     }
   },
   methods: {
@@ -172,6 +197,27 @@ export default {
       })
 
       downloadText(result, `gridscore-trial-comments-${this.safeTrialName}.txt`)
+    },
+    exportTrialEvents: function () {
+      let result = 'Date\tEvent\tType\tImpact'
+
+      this.trial.events.forEach(c => {
+        let typeString
+        switch (c.type) {
+          case TRIAL_EVENT_TYPE_MANAGEMENT:
+            typeString = this.$t('formSelectOptionEventTypeManagement')
+            break
+          case TRIAL_EVENT_TYPE_WEATHER:
+            typeString = this.$t('formSelectOptionEventTypeWeather')
+            break
+          case TRIAL_EVENT_TYPE_OTHER:
+            typeString = this.$t('formSelectOptionEventTypeOther')
+            break
+        }
+        result += `\n${toLocalDateString(new Date(c.timestamp))}\t${c.content}\t${typeString}\t${c.impact}`
+      })
+
+      downloadText(result, `gridscore-trial-events-${this.safeTrialName}.txt`)
     },
     exportPlotComments: function () {
       let result = 'Germplasm\tRep\tRow\tColumn\tDate\tComment'

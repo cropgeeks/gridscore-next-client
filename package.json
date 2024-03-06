@@ -1,6 +1,6 @@
 {
   "name": "gridscore",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",

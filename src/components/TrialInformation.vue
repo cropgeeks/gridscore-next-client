@@ -16,6 +16,10 @@
         <BIconChatLeftText /> <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
         <span v-else>{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</span>
       </b-card-text>
+      <b-card-text>
+        <BIconFlag /> <a href="#" @click.prevent="onShowTrialEventsClicked" v-if="showEvents">{{ $tc('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</a>
+        <span v-else>{{ $tc('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</span>
+      </b-card-text>
       <b-card-text v-if="trial.updatedOn"><BIconCalendarDate /> {{ new Date(trial.updatedOn).toLocaleString() }}</b-card-text>
     </div>
 
@@ -26,7 +30,7 @@
 <script>
 import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
-import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
+import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconFlag, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
@@ -37,6 +41,7 @@ export default {
     BIconCollection,
     BIconTags,
     BIconCalendarRange,
+    BIconFlag,
     BIconCalendarDate,
     BIconChatLeftText,
     TrialShareTypeIcon,
@@ -48,6 +53,10 @@ export default {
       default: null
     },
     showComments: {
+      type: Boolean,
+      default: true
+    },
+    showEvents: {
       type: Boolean,
       default: true
     }
@@ -69,6 +78,9 @@ export default {
   methods: {
     onShowTrialCommentsClicked: function () {
       emitter.emit('show-trial-comments', this.trial)
+    },
+    onShowTrialEventsClicked: function () {
+      emitter.emit('show-trial-events', this.trial)
     }
   }
 }

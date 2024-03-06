@@ -405,6 +405,11 @@
         "type": "new",
         "title": "Wert in Bereich Datentyp",
         "text": "Ein neuer Datentyp wurde hinzugefügt. Der 'Wert in Bereich' Datentyp lässt die Auswahl eines Wertes zwischen Minimum und Maximum mithilfe eines Schiebereglers zu. Dies erlaubt die schnellere Auswahl des korrekten Wertes. Ein gutes Anwendungsbeispiel ist eine Prozentauswahl für etwas wie 'Lagerung' wo schnell ein Prozentwert zwischen 0 und 100 ausgewählt werden kann."
+      },
+      {
+        "type": "new",
+        "title": "Versuchsereignisse",
+        "text": "Versuchsereignisse wurden hinzugefügt. Zeichne Informationen über Wetterereignisse und Bewirtschaftungsereignisse (z.B. Pestizidanwendung) als Versuchsereignisse auf."
       }
     ]
   }
