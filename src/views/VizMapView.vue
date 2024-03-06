@@ -8,7 +8,7 @@
     <div class="data-map" ref="map" />
 
     <div v-if="selectedFeature" ref="popupContent">
-      <PlotDataSection :traits="trial.traits" :cell="selectedFeature" />
+      <PlotDataSection :trial="trial" :traits="trial.traits" :cell="selectedFeature" />
     </div>
   </div>
 </template>
@@ -23,6 +23,9 @@ import PlotDataSection from '@/components/PlotDataSection'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -141,8 +144,12 @@ export default {
     },
     update: async function () {
       // Remove the old geojson layer if required
-      if (this.geoJsonLayer) {
-        this.map.removeLayer(this.geoJsonLayer)
+      if (this.clusterer) {
+        this.clusterer.clearLayers()
+      } else {
+        this.clusterer = L.markerClusterGroup({
+          chunkedLoading: true
+        })
       }
 
       // Extract all the individual polygons from the data
@@ -166,7 +173,7 @@ export default {
 
         // Create the geojson and the layer, then add to the map
         const geoJson = plotInfoToGeoJson(plotInfo)
-        this.geoJsonLayer = L.geoJSON(geoJson, {
+        const geoJsonLayer = L.geoJSON(geoJson, {
           fillColor: '#00a0f1',
           color: '#00a0f1',
           weight: 1,
@@ -179,10 +186,12 @@ export default {
             })
           }
         })
-        this.geoJsonLayer.addTo(this.map)
+
+        this.clusterer.addLayer(geoJsonLayer)
+        this.map.addLayer(this.clusterer)
 
         // Get the bounds and fit the map to them
-        const bounds = this.geoJsonLayer.getBounds()
+        const bounds = geoJsonLayer.getBounds()
         if (bounds && bounds.isValid()) {
           this.map.fitBounds(bounds, { padding: [50, 50] })
         }

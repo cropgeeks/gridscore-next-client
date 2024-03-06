@@ -20,6 +20,7 @@
     "idb": "^7.1.1",
     "leaflet": "^1.9.4",
     "leaflet.locatecontrol": "^0.79.0",
+    "leaflet.markercluster": "^1.5.3",
     "plotly.js": "^2.24.3",
     "qr-code-styling": "^1.6.0-rc.1",
     "register-service-worker": "^1.7.2",

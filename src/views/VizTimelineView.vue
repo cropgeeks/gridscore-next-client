@@ -177,7 +177,9 @@ export default {
         }
 
         if (this.trial.events && this.trial.events.length > 0) {
-          this.trial.events.forEach(e => {
+          this.trial.events.forEach((e, i) => {
+            const ay = 20 + (i / Math.max(1, this.trial.events.length - 1)) * 60
+            console.log(i, ay)
             layout.annotations.push({
               yref: 'paper',
               x: new Date(e.timestamp),
@@ -186,7 +188,7 @@ export default {
               showarrow: true,
               arrowhead: 7,
               ax: 0,
-              ay: -40
+              ay: -ay
             })
             layout.shapes.push({
               type: 'line',
