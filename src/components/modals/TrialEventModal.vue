@@ -4,7 +4,7 @@
            ok-only
            no-fade
            @hidden="$emit('hidden')"
-           size="md"
+           size="lg"
            ref="trialEventModal">
     <div v-if="trial">
       <p>{{ $t('modalTextTrialEvent') }}</p>
@@ -54,14 +54,23 @@
           </b-button-group>
         </b-form-group>
 
-        <b-form-group :label="$t('formLabelEventImpact')" :description="$t('formDescriptionEventImpact')" label-for="event-impact">
-          <b-input-group>
-            <b-form-input type="range" :min="1" :max="5" v-model.number="newEventImpact" id="event-impact" />
-            <b-input-group-append is-text>
-              {{ newEventImpact }}
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
+        <b-row>
+          <b-col cols=6>
+            <b-form-group :label="$t('formLabelEventImpact')" :description="$t('formDescriptionEventImpact')" label-for="event-impact">
+              <b-input-group>
+                <b-form-input type="range" :min="1" :max="5" v-model.number="newEventImpact" id="event-impact" />
+                <b-input-group-append is-text>
+                  {{ newEventImpact }}
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col cols=6>
+            <b-form-group :label="$t('formLabelEventDate')" :description="$t('formDescriptionEventDate')" label-for="event-date">
+              <b-form-datepicker value-as-date v-model="newEventDate" id="event-date" />
+            </b-form-group>
+          </b-col>
+        </b-row>
 
         <b-form-group :label="$t('formLabelEventContent')" :description="$t('formDescriptionEventContent')" label-for="event-content">
           <SpeechRecognitionTextarea id="event-content" :rows="5" :tooltip="$t('tooltipDataEntryCommentMicrophone')" ref="input" @change="updateEvent" />
@@ -112,6 +121,7 @@ export default {
       newEventContent: null,
       newEventType: TRIAL_EVENT_TYPE_OTHER,
       newEventImpact: 3,
+      newEventDate: new Date(),
       eventFormVisible: false,
       TRIAL_EVENT_TYPE_MANAGEMENT,
       TRIAL_EVENT_TYPE_WEATHER,
@@ -167,12 +177,13 @@ export default {
         })
     },
     createEvent: function () {
-      addTrialEvent(this.trial.localId, this.newEventContent, this.newEventType, this.newEventImpact)
+      addTrialEvent(this.trial.localId, this.newEventContent, this.newEventType, this.newEventImpact, this.newEventDate)
         .then(() => {
           this.$refs.input.reset()
           this.newEventContent = null
           this.newEventType = TRIAL_EVENT_TYPE_OTHER
           this.newEventImpact = 3
+          this.newEventDate = new Date()
           this.eventFormVisible = false
           emitter.emit('trial-properties-changed', this.trial.localId)
           emitter.emit('plausible-event', { key: 'trial-event', props: { type: 'added' } })

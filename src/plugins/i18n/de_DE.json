@@ -307,6 +307,8 @@
   "formDescriptionEventType": "Wähle den Typ des Ereignisses das aufgezeichnet werden soll.",
   "formLabelEventImpact": "Ereignisauswirkung",
   "formDescriptionEventImpact": "Beurteile die Auswirkung des Ereignisses auf den Versuch von niedrig (1) zu hoch (5).",
+  "formLabelEventDate": "Ereignisdatum",
+  "formDescriptionEventDate": "Wähle das Datum aus an dem das Eregnis stattfand. Dies ist standardmäßig Heute.",
   "menuHome": "Home",
   "menuDataEntry": "Dateneingabe",
   "menuDataExport": "Exportieren",

@@ -367,8 +367,6 @@ export default {
         this.trialGroups = result.concat(groups)
       })
 
-      emitter.emit('show-loading', true)
-
       getTrials()
         .then(trials => {
           this.trials = trials
@@ -393,7 +391,6 @@ export default {
               }
             })
           }
-          emitter.emit('show-loading', false)
         })
     }
   },

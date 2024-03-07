@@ -1096,7 +1096,7 @@ const addTrialComment = async (trialId, commentContent) => {
   }
 }
 
-const addTrialEvent = async (trialId, eventContent, eventType, eventImpact) => {
+const addTrialEvent = async (trialId, eventContent, eventType, eventImpact, eventDate) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -1108,7 +1108,7 @@ const addTrialEvent = async (trialId, eventContent, eventType, eventImpact) => {
       content: eventContent,
       type: eventType,
       impact: eventImpact,
-      timestamp: new Date().toISOString()
+      timestamp: eventDate.toISOString()
     }
 
     trial.events.push(newEvent)

@@ -312,6 +312,8 @@
   "formDescriptionEventType": "Choose what type of event you want to record.",
   "formLabelEventImpact": "Event impact",
   "formDescriptionEventImpact": "Estimate the impact of the event on the trial ranging from low (1) to high (5).",
+  "formLabelEventDate": "Event date",
+  "formDescriptionEventDate": "Select the date when this event took place. This defaults to today.",
   "genericDisabled": "Disabled",
   "genericEnabled": "Enabled",
   "genericYes": "Yes",
