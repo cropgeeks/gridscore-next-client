@@ -410,6 +410,11 @@
         "type": "new",
         "title": "Versuchsereignisse",
         "text": "Versuchsereignisse wurden hinzugefügt. Zeichne Informationen über Wetterereignisse und Bewirtschaftungsereignisse (z.B. Pestizidanwendung) als Versuchsereignisse auf."
+      },
+      {
+        "type": "update",
+        "title": "Aussehen der Versuchsauswahl",
+        "text": "Die Versuchsauswahl-Karten sehen leicht anders aus. Statt einer Liste wird nun ein Raster an Elementen angezeigt."
       }
     ]
   }

@@ -15,17 +15,17 @@
         <b-row>
           <b-col :cols=12 :md=4>
             <b-button :disabled="!trial.shareCodes.ownerCode" :variant="selectedShareCode === trial.shareCodes.ownerCode ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="selectedShareCode = trial.shareCodes.ownerCode">
-              <TrialShareTypeIcon iconTag="h2" :shareStatus="TRIAL_STATE_OWNER" />
+              <TrialShareTypeIcon iconTag="h2" :shareStatus="TRIAL_STATE_OWNER" :isLink="false" />
             </b-button>
           </b-col>
           <b-col :cols=12 :md=4>
             <b-button :disabled="!trial.shareCodes.editorCode" :variant="selectedShareCode === trial.shareCodes.editorCode ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="selectedShareCode = trial.shareCodes.editorCode">
-              <TrialShareTypeIcon iconTag="h2" :shareStatus="TRIAL_STATE_EDITOR" />
+              <TrialShareTypeIcon iconTag="h2" :shareStatus="TRIAL_STATE_EDITOR" :isLink="false" />
             </b-button>
           </b-col>
           <b-col :cols=12 :md=4>
             <b-button :variant="selectedShareCode === trial.shareCodes.viewerCode ? 'primary' : 'outline-dark'" class="w-100 d-flex flex-column align-items-center" @click="selectedShareCode = trial.shareCodes.viewerCode">
-              <TrialShareTypeIcon iconTag="h2" :shareStatus="TRIAL_STATE_VIEWER" />
+              <TrialShareTypeIcon iconTag="h2" :shareStatus="TRIAL_STATE_VIEWER" :isLink="false" />
             </b-button>
           </b-col>
         </b-row>

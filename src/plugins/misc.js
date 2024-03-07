@@ -8,6 +8,32 @@ import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from './cons
 
 const categoryColors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
+const DIVISIONS = [
+  { amount: 60, name: 'seconds' },
+  { amount: 60, name: 'minutes' },
+  { amount: 24, name: 'hours' },
+  { amount: 7, name: 'days' },
+  { amount: 4.34524, name: 'weeks' },
+  { amount: 12, name: 'months' },
+  { amount: Number.POSITIVE_INFINITY, name: 'years' }
+]
+
+const formatTimeAgo = (date) => {
+  const formatter = new Intl.RelativeTimeFormat((store.getters.storeLocale || 'en-GB').split('-')[0], {
+    numeric: 'always'
+  })
+
+  let duration = (new Date(date) - new Date()) / 1000
+
+  for (let i = 0; i <= DIVISIONS.length; i++) {
+    const division = DIVISIONS[i]
+    if (Math.abs(duration) < division.amount) {
+      return formatter.format(Math.round(duration), division.name)
+    }
+    duration /= division.amount
+  }
+}
+
 /**
  * For the given trait, return the i18n text
  * @param trait The trait for which to return the text
@@ -491,5 +517,6 @@ export {
   isValidDateString,
   categoryColors,
   getNumberWithSuffix,
-  truncateAfterWords
+  truncateAfterWords,
+  formatTimeAgo
 }

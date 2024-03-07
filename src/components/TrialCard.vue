@@ -10,7 +10,7 @@
         <BIconCloudDownloadFill class="card-corner-icon" />
       </template>
     </a>
-    <TrialInformation :trial="trial" />
+    <TrialInformation :trial="trial" @on-share-clicked="$emit('showShareCodes')" />
     <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip.hover="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
       <BIconstack>
         <BIconCalendar stacked />

@@ -410,6 +410,11 @@
         "type": "new",
         "title": "Trial events",
         "text": "Trial events have been added. Record information about weather events or trial management (e.g. pesticide application) as a trial event."
+      },
+      {
+        "type": "update",
+        "title": "Trial selector visuals",
+        "text": "The trial selector cards have changed slightly. Instead of showing the items as a list, they're now displayed as a grid of elements."
       }
     ]
   }

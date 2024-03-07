@@ -7,7 +7,7 @@
     <div class="text-center">
       <b-row>
         <b-col cols=6 class="mb-3">
-          <TrialShareTypeIcon iconTag="h5" iconClass="mb-0" :shareStatus="trial.shareStatus" :isTextCode="false" />
+          <TrialShareTypeIcon iconTag="h5" iconClass="mb-0" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="$emit('on-share-clicked')" />
         </b-col>
         <b-col cols=6 class="mb-3">
           <h5 class="mb-0"><BIconCollection /></h5>
@@ -38,7 +38,7 @@
         </b-col>
         <b-col cols=6 class="mb-3" v-if="trial.updatedOn">
           <h5 class="mb-0"><BIconCalendarDate /></h5>
-          <span>{{ new Date(trial.updatedOn).toLocaleString() }}</span>
+          <span v-b-tooltip.bottom="new Date(trial.updatedOn).toLocaleString()">{{ formatTimeAgo(trial.updatedOn) }}</span>
         </b-col>
       </b-row>
     </div>
@@ -52,6 +52,7 @@ import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
 import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconFlag, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
+import { formatTimeAgo } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -96,6 +97,7 @@ export default {
     }
   },
   methods: {
+    formatTimeAgo,
     onShowTrialCommentsClicked: function () {
       emitter.emit('show-trial-comments', this.trial)
     },

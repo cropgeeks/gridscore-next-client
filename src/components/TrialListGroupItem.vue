@@ -3,7 +3,7 @@
     <div :class="{ 'content': true, 'bg-light': trial.localId === storeSelectedTrial }">
       <div class="d-flex w-100 justify-content-between">
         <h4 class="mb-1 trial-name">{{ trial.name }}</h4>
-        <small v-if="trial.updatedOn" :class="{ 'mr-4': trial.transactionCount > 0 || trial.hasRemoteUpdate }"><BIconCalendarDate /> {{ new Date(trial.updatedOn).toLocaleString() }}</small>
+        <small v-if="trial.updatedOn" :class="{ 'mr-4': trial.transactionCount > 0 || trial.hasRemoteUpdate }" v-b-tooltip="new Date(trial.updatedOn).toLocaleString()"><BIconCalendarDate /> {{ formatTimeAgo(trial.updatedOn) }}</small>
       </div>
 
       <a href="#" @click.prevent="$emit('synchronize')" v-if="trial.transactionCount > 0 || trial.hasRemoteUpdate">
@@ -19,7 +19,7 @@
 
       <h6 :title="trial.description" class="trial-description" v-if="trial.description">{{ trial.description }}</h6>
 
-      <div><TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" /></div>
+      <div><TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="$emit('showShareCodes')" /></div>
 
       <div class="d-flex flex-wrap flex-row my-2">
         <div class="mr-3" v-b-tooltip.hover="trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned')"><BIconCollection /></div>
@@ -74,6 +74,7 @@ import { BIconCalendarDate, BIconJournalArrowUp, BIconGear, BIconCloud, BIconExc
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
 import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
+import { formatTimeAgo } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -126,6 +127,7 @@ export default {
     }
   },
   methods: {
+    formatTimeAgo,
     onShowTrialCommentsClicked: function () {
       emitter.emit('show-trial-comments', this.trial)
     }
