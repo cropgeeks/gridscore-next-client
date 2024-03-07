@@ -38,7 +38,7 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab lazy v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
+        <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
           <template #title>
             <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
             <BIconCloudDownloadFill class="ml-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
@@ -47,42 +47,45 @@
               <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
             </BIconstack>
           </template>
-          <template v-if="trialGroup.trials && trialGroup.trials.length > 0">
-            <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
-              <TrialListGroupItem :trial="trial"
-                                  v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`"
-                                  @loadTrial="loadTrial(trial)"
-                                  @handleTrialExpiration="handleTrialExpiration(trial)"
-                                  @showShareCodes="showShareCodes(trial)"
-                                  @synchronize="synchronize(trial)"
-                                  @duplicateTrial="duplicateTrial(trial)"
-                                  @addTrait="addTrait(trial)"
-                                  @showTrialEdit="showTrialEdit(trial)"
-                                  @addGermplasm="addGermplasm(trial)"
-                                  @importData="importData(trial)"
-                                  @deleteTrial="deleteTrial(trial)"/>
-            </b-list-group>
-            <b-row v-else>
-              <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
-                <TrialCard :trial="trial"
-                          @loadTrial="loadTrial(trial)"
-                          @handleTrialExpiration="handleTrialExpiration(trial)"
-                          @showShareCodes="showShareCodes(trial)"
-                          @synchronize="synchronize(trial)"
-                          @duplicateTrial="duplicateTrial(trial)"
-                          @addTrait="addTrait(trial)"
-                          @showTrialEdit="showTrialEdit(trial)"
-                          @addGermplasm="addGermplasm(trial)"
-                          @importData="importData(trial)"
-                          @deleteTrial="deleteTrial(trial)"/>
-              </b-col>
-            </b-row>
-          </template>
-          <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
+          <b-progress variant="primary" striped animated :value="100" v-if="isLoading" height="4px" />
+          <b-card-body :class="isLoading ? '' : 'mt-1'">
+            <template v-if="trialGroup.trials && trialGroup.trials.length > 0">
+              <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
+                <TrialListGroupItem :trial="trial"
+                                    v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`"
+                                    @loadTrial="loadTrial(trial)"
+                                    @handleTrialExpiration="handleTrialExpiration(trial)"
+                                    @showShareCodes="showShareCodes(trial)"
+                                    @synchronize="synchronize(trial)"
+                                    @duplicateTrial="duplicateTrial(trial)"
+                                    @addTrait="addTrait(trial)"
+                                    @showTrialEdit="showTrialEdit(trial)"
+                                    @addGermplasm="addGermplasm(trial)"
+                                    @importData="importData(trial)"
+                                    @deleteTrial="deleteTrial(trial)"/>
+              </b-list-group>
+              <b-row v-else>
+                <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
+                  <TrialCard :trial="trial"
+                            @loadTrial="loadTrial(trial)"
+                            @handleTrialExpiration="handleTrialExpiration(trial)"
+                            @showShareCodes="showShareCodes(trial)"
+                            @synchronize="synchronize(trial)"
+                            @duplicateTrial="duplicateTrial(trial)"
+                            @addTrait="addTrait(trial)"
+                            @showTrialEdit="showTrialEdit(trial)"
+                            @addGermplasm="addGermplasm(trial)"
+                            @importData="importData(trial)"
+                            @deleteTrial="deleteTrial(trial)"/>
+                </b-col>
+              </b-row>
+            </template>
+            <p class="text-warning" v-else>{{ $t('widgetTrialSelectorNoMatchFound') }}</p>
+          </b-card-body>
         </b-tab>
         <!-- Refresh button (Using tabs-end slot) -->
         <template #tabs-end>
-          <b-nav-item role="presentation" class="ml-auto" @click.prevent="update" v-b-tooltip="$t('tooltipTrialSelectorRefresh')" href="#"><BIconArrowClockwise /></b-nav-item>
+          <b-nav-item role="presentation" class="ml-auto" :disabled="isLoading" @click.prevent="update" v-b-tooltip="$t('tooltipTrialSelectorRefresh')" href="#"><BIconArrowClockwise /></b-nav-item>
         </template>
       </b-tabs>
     </b-card>
@@ -112,7 +115,7 @@ import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationM
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrialById, getTrialGroups, getTrials } from '@/plugins/idb'
-import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconArrowClockwise, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconArrowClockwise, BProgress, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
 const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
@@ -141,7 +144,8 @@ export default {
     BIconViewStacked,
     BIconstack,
     BIconCalendar,
-    BIconExclamationTriangleFill
+    BIconExclamationTriangleFill,
+    BProgress
   },
   data: function () {
     return {
@@ -162,6 +166,7 @@ export default {
       trialGroups: [UNCATEGORIZED_TRIALS],
       sortOrder: 'latestUpdate',
       sortDescending: true,
+      isLoading: false,
       sorting: {
         latestUpdate: (a, b) => this.sortDescending ? (new Date(b.updatedOn) - new Date(a.updatedOn)) : (new Date(a.updatedOn) - new Date(b.updatedOn)),
         name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
@@ -359,6 +364,7 @@ export default {
         })
     },
     update: function () {
+      this.isLoading = true
       this.tabIndex = 0
 
       getTrialGroups().then(groups => {
@@ -380,6 +386,8 @@ export default {
           this.trialUpdates = result
         })
         .finally(() => {
+          this.isLoading = false
+
           if (this.$route.query && this.$route.query.synchronize) {
             const id = this.$route.query.synchronize
 
