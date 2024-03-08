@@ -415,6 +415,11 @@
         "type": "update",
         "title": "Aussehen der Versuchsauswahl",
         "text": "Die Versuchsauswahl-Karten sehen leicht anders aus. Statt einer Liste wird nun ein Raster an Elementen angezeigt."
+      },
+      {
+        "type": "update",
+        "title": "Replikat-Heatmap",
+        "text": "Die Replikat-Heatmap wurde entfernt in Fällen wo Replikate definiert sind aber alle Replikatwerte einzigartig sind und somit keine echten Replikate vorhanden sind. Zuvor wurde hier eine riesige leere und größtenteils nutzlose Heatmap generiert."
       }
     ]
   }

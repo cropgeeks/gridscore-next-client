@@ -421,7 +421,26 @@ export default {
         this.allGermplasm = [...Object.keys(germplasmMap)].sort((a, b) => a.localeCompare(b))
         this.germplasmMap = germplasmMap
 
-        this.$emit('rep-count-changed', this.reps.filter(r => r !== undefined && r !== null).length)
+        const hasActualReps = Object.values(germplasmMap).filter(m => {
+          const localSet = new Set()
+
+          m.forEach(mm => {
+            if (mm.rep !== undefined && mm.rep !== null && mm.rep !== '') {
+              localSet.add(mm.rep)
+            }
+          })
+
+          return localSet.size > 1
+        }).length > 0
+
+        if (hasActualReps) {
+          this.$emit('rep-count-changed', this.reps.filter(r => r !== undefined && r !== null).length)
+        } else {
+          this.reps = []
+          this.allGermplasm = []
+          this.germplasmMap = {}
+          this.$emit('rep-count-changed', 0)
+        }
       }
     }
   },

@@ -415,6 +415,11 @@
         "type": "update",
         "title": "Trial selector visuals",
         "text": "The trial selector cards have changed slightly. Instead of showing the items as a list, they're now displayed as a grid of elements."
+      },
+      {
+        "type": "update",
+        "title": "Replicate heatmap",
+        "text": "Removed the replicate heatmap for those trials where replicates are defined, but they are all unique, so not actual replicates. Before this generated a huge and empty and therefore rather useless heatmap."
       }
     ]
   }
