@@ -2,7 +2,7 @@
   <b-container fluid class="py-3 h-100 d-flex flex-column justify-content-between align-items-start" v-if="trial">
     <div>
       <b-card-title class="trial-name">{{ trial.name }}</b-card-title>
-      <b-card-sub-title class="trial-description mb-3" v-if="trial.description" :title="trial.description">{{ trial.description }}</b-card-sub-title>
+      <b-card-sub-title @click="trialDescriptionExpanded = !trialDescriptionExpanded" :class="{ 'trial-description': !trialDescriptionExpanded, 'mb-3': true }" v-if="trial.description" :title="trial.description">{{ trial.description }}</b-card-sub-title>
     </div>
     <div class="text-center">
       <b-row>
@@ -84,7 +84,8 @@ export default {
   },
   data: function () {
     return {
-      TRIAL_STATE_NOT_SHARED
+      TRIAL_STATE_NOT_SHARED,
+      trialDescriptionExpanded: false
     }
   },
   computed: {

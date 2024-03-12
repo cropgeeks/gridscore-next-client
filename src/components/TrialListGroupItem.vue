@@ -17,7 +17,7 @@
         </template>
       </a>
 
-      <h6 :title="trial.description" class="trial-description" v-if="trial.description">{{ trial.description }}</h6>
+      <h6 :title="trial.description" @click="trialDescriptionExpanded = !trialDescriptionExpanded" :class="trialDescriptionExpanded ? '' : 'trial-description'" v-if="trial.description">{{ trial.description }}</h6>
 
       <div><TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="$emit('showShareCodes')" /></div>
 
@@ -111,7 +111,8 @@ export default {
   data: function () {
     return {
       TRIAL_STATE_NOT_SHARED,
-      TRIAL_STATE_OWNER
+      TRIAL_STATE_OWNER,
+      trialDescriptionExpanded: false
     }
   },
   computed: {

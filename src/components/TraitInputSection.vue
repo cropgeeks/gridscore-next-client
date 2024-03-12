@@ -33,7 +33,7 @@
       <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&ge; {{ trait.timeframe.start }}</b-badge>
       <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&le; {{ trait.timeframe.end }}</b-badge>
     </div>
-    <p :class="{ 'text-muted': true, 'trait-description': !storeShowFullTraitDescription }" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
+    <p @click="toggleExpanded" :class="{ 'text-muted': true, 'trait-description': !trialDescriptionExpanded }" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
     <b-form-group :label="$t('formLabelMeasurementSet', { position: $n(index) })"
                   v-for="index in (trait.setSize || 1)"
@@ -94,7 +94,8 @@ export default {
     return {
       CANVAS_SHAPE_SQUARE,
       values: [],
-      cellTraitMeasurements: null
+      cellTraitMeasurements: null,
+      trialDescriptionExpanded: false
     }
   },
   computed: {
@@ -143,6 +144,11 @@ export default {
   },
   methods: {
     getTraitTypeText,
+    toggleExpanded: function () {
+      if (!this.storeShowFullTraitDescription) {
+        this.trialDescriptionExpanded = !this.trialDescriptionExpanded
+      }
+    },
     showHistoryModal: function () {
       // Take a copy of the current values and open the modal
       this.cellTraitMeasurements = JSON.parse(JSON.stringify(this.cell.measurements[this.trait.id]))
@@ -180,6 +186,9 @@ export default {
 
       return values
     }
+  },
+  mounted: function () {
+    this.trialDescriptionExpanded = this.storeShowFullTraitDescription || false
   }
 }
 </script>
