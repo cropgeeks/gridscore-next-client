@@ -11,7 +11,7 @@ const getDb = async () => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 3, {
+      openDB('gridscore-next-' + window.location.pathname, 4, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -51,6 +51,10 @@ const getDb = async () => {
           if (oldVersion < 3) {
             trials = transaction.objectStore('trials')
             trials.createIndex('events', 'events', { unique: false })
+          }
+          if (oldVersion < 4) {
+            data = transaction.objectStore('data')
+            data.createIndex('categories', 'categories', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -737,7 +741,8 @@ const addTrial = async (trial) => {
         measurements: cell.measurements,
         geography: cell.geography,
         comments: cell.comments || [],
-        isMarked: cell.isMarked
+        isMarked: cell.isMarked,
+        categories: cell.categories || []
       })
     })
 
@@ -995,7 +1000,8 @@ const addTrialGermplasm = async (trialId, germplasm) => {
         brapiId: null,
         measurements: {},
         geography: {},
-        comments: []
+        comments: [],
+        categories: []
       }
 
       trial.traits.forEach(t => {

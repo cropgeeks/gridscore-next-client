@@ -1,3 +1,5 @@
+import { BIconCheckSquareFill } from 'bootstrap-vue'
+
 const gridScoreVersion = '2.5.3'
 
 const NAVIGATION_MODE_DRAG = 'DRAG'
@@ -36,6 +38,12 @@ const TRIAL_EVENT_TYPE_MANAGEMENT = 'MANAGEMENT'
 const TRIAL_EVENT_TYPE_WEATHER = 'WEATHER'
 const TRIAL_EVENT_TYPE_OTHER = 'OTHER'
 
+const CELL_CATEGORY_CONTROL = 'control'
+
+const CELL_CATEGORIES = {}
+
+CELL_CATEGORIES[CELL_CATEGORY_CONTROL] = { title: 'cellCategoryControl', icon: BIconCheckSquareFill, variant: 'info' }
+
 export {
   gridScoreVersion,
   NAVIGATION_MODE_DRAG,
@@ -64,5 +72,7 @@ export {
   TRIAL_LIST_LIST,
   TRIAL_EVENT_TYPE_MANAGEMENT,
   TRIAL_EVENT_TYPE_WEATHER,
-  TRIAL_EVENT_TYPE_OTHER
+  TRIAL_EVENT_TYPE_OTHER,
+  CELL_CATEGORY_CONTROL,
+  CELL_CATEGORIES
 }

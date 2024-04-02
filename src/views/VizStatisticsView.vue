@@ -62,9 +62,9 @@ import TraitHeading from '@/components/TraitHeading'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { BIconArrowClockwise, BIconPlusSquareFill, BIconTrash } from 'bootstrap-vue'
 import { getTrialById } from '@/plugins/idb'
-import { toLocalDateString } from '@/plugins/misc'
+import { invertHex, toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
+import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -244,7 +244,8 @@ export default {
                         name: cell.displayName,
                         rep: cell.rep,
                         date: dateString,
-                        timestamp: m.timestamp
+                        timestamp: m.timestamp,
+                        categories: cell.categories
                       }
 
                       if (isSelected) {
@@ -285,10 +286,10 @@ export default {
                 data.push({
                   x: dps.map(d => d.value),
                   text: dps.map(d => d.name),
-                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn })),
+                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => this.$t(CELL_CATEGORIES[c].title)).join(', ') })),
                   ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                   marker: {
-                    color: trait.color
+                    color: dps.map(d => (d.categories && d.categories.includes(CELL_CATEGORY_CONTROL)) ? invertHex(trait.color) : trait.color)
                   },
                   name: this.$t('widgetChartStatisticsBoxplotAllTrace'),
                   type: chartType,
@@ -465,6 +466,8 @@ export default {
             },
             displaylogo: false
           }
+
+          console.log(data)
 
           Plotly.newPlot(ref[0], data, layout, config)
 

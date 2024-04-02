@@ -33,6 +33,9 @@ export default {
     fillStyleHiddenTrait: function () {
       return this.storeDarkMode ? '#2c2c2c' : '#d3d3d3'
     },
+    fillStyleControl: function () {
+      return this.storeDarkMode ? '#0a3d62' : '#82ccdd'
+    },
     circleCount: function () {
       return this.traits.length + 1
     }
@@ -62,7 +65,7 @@ export default {
     reset: function () {
       const scale = window.devicePixelRatio
       const width = this.circleCount * this.circleRadius * 2 + this.circleCount + 1
-      const height = this.circleRadius * 30 + this.circleCount + 1
+      const height = this.circleRadius * 35 + this.circleCount + 1
       canvas.width = width * scale
       canvas.height = height * scale
 
@@ -93,7 +96,7 @@ export default {
       // Clear everything
       ctx.clearRect(0, 0, this.circleCount * this.circleRadius * 2 + this.circleCount + 1, this.circleRadius * 12 + this.circleCount + 1)
       // For each background colour
-      for (let b = 0; b < 5; b++) {
+      for (let b = 0; b < 6; b++) {
         if (b === 0) {
           ctx.fillStyle = this.fillStyleWhite
         } else if (b === 1) {
@@ -104,12 +107,14 @@ export default {
           ctx.fillStyle = this.fillStyleMarked
         } else if (b === 4) {
           ctx.fillStyle = this.fillStyleHighlight
+        } else if (b === 5) {
+          ctx.fillStyle = this.fillStyleControl
         }
 
         // Calculate y position
         const y = b * (this.circleRadius * 6 + 1)
         // Fill background
-        ctx.fillRect(0, y, this.circleCount * this.circleRadius * 2 + this.circleCount + 1, this.circleRadius * 6 + 2)
+        ctx.fillRect(0, y, this.circleCount * this.circleRadius * 2 + this.circleCount + 1, this.circleRadius * 7 + 2)
         // Draw trait circles
         this.traits.forEach((t, i) => {
           if (this.storeCanvasShape === CANVAS_SHAPE_SQUARE) {

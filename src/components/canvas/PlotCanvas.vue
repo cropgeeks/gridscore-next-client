@@ -15,7 +15,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import OffscreenCanvas from '@/components/canvas/OffscreenCanvas'
-import { NAVIGATION_MODE_DRAG } from '@/plugins/constants'
+import { CELL_CATEGORY_CONTROL, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import { projectToEuclidean } from '@/plugins/location'
 import { getTrialDataCached } from '@/plugins/datastore'
 
@@ -27,6 +27,8 @@ const userPositionImg = new Image()
 userPositionImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="cursor fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84"%3E%3Cg %3E%3Cpath d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
 const bookmarkImg = new Image()
 bookmarkImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="bookmark check fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84" %3E%3Cg %3E%3Cpath fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
+const controlImg = new Image()
+controlImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="bookmark check fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84" %3E%3Cg %3E%3Cpath fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm10.03 4.97a.75.75 0 0 1 .011 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.75.75 0 0 1 1.08-.022z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
 
 export default {
   components: {
@@ -189,6 +191,9 @@ export default {
     },
     fillStyleText: function () {
       return this.storeDarkMode ? '#ffffff' : '#000000'
+    },
+    fillStyleControl: function () {
+      return this.storeDarkMode ? '#0a3d62' : '#82ccdd'
     }
   },
   watch: {
@@ -673,7 +678,10 @@ export default {
       const cell = this.trialData[`${row}|${col}`]
 
       let count = 0
-      if ((this.markedRows && this.markedRows[row]) || (this.markedColumns && this.markedColumns[col])) {
+      if (cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)) {
+        count = 5
+        this.ctx.fillStyle = this.fillStyleControl
+      } else if ((this.markedRows && this.markedRows[row]) || (this.markedColumns && this.markedColumns[col])) {
         count = 3
         this.ctx.fillStyle = this.fillStyleMarked
       } else {
@@ -766,17 +774,23 @@ export default {
 
       // Add a bookmark symbol if required
       if (cell.isMarked) {
-        this.drawBookmark(x + this.dimensions.cellWidth - 20, y, 15, 21)
+        this.drawBookmark(x + this.dimensions.cellWidth - 20, y)
       }
       if (cell.comments && cell.comments.length > 0) {
         this.drawComment(x + 5, y + 5)
+      }
+      if (cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)) {
+        this.drawControl(x + this.dimensions.cellWidth - 20, y + this.dimensions.cellHeight - 20)
       }
     },
     drawComment: function (x, y) {
       this.ctx.drawImage(commentImg, x, y)
     },
-    drawBookmark: function (x, y, w, h) {
+    drawBookmark: function (x, y) {
       this.ctx.drawImage(bookmarkImg, x, y)
+    },
+    drawControl: function (x, y) {
+      this.ctx.drawImage(controlImg, x, y)
     },
     moveInDirection: function (direction) {
       switch (direction) {

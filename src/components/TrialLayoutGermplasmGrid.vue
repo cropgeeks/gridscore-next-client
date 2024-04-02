@@ -24,7 +24,7 @@ import Vue from 'vue'
 import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal'
 import FielDBookInputModal from '@/components/modals/FielDBookInputModal'
 import { BIconFileEarmarkPlus, BIconTable, BIconFileEarmarkSpreadsheet } from 'bootstrap-vue'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 export default {
   components: {
@@ -207,6 +207,21 @@ export default {
           } else {
             rep.value = ''
           }
+          // Add the control
+          const container = this.createElement(cell, 'div')
+          const control = this.createElement(container, 'input')
+          control.setAttribute('type', 'checkbox')
+          control.className = 'mr-1'
+          control.id = `control-${row}-${column}`
+          const label = this.createElement(container, 'label')
+          label.htmlFor = `control-${row}-${column}`
+          label.appendChild(document.createTextNode(this.$t(CELL_CATEGORIES[CELL_CATEGORY_CONTROL].title)))
+          // Set previous value
+          if (dataCell) {
+            control.checked = dataCell.control
+          } else {
+            control.checked = false
+          }
         }
       }
 
@@ -218,11 +233,13 @@ export default {
         for (let column = 0; column < this.layout.columns; column++) {
           const germplasm = document.querySelector(`#germplasm-${row}-${column}`).value
           const rep = document.querySelector(`#rep-${row}-${column}`).value
+          const control = document.querySelector(`#control-${row}-${column}`).checked
 
           if (germplasm !== '' || rep !== '') {
             tempMap[`${row}|${column}`] = {
               germplasm: germplasm === '' ? null : germplasm,
-              rep: rep === '' ? null : rep
+              rep: rep === '' ? null : rep,
+              control: control
             }
           }
         }

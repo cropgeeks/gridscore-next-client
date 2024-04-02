@@ -18,6 +18,8 @@ const DIVISIONS = [
   { amount: Number.POSITIVE_INFINITY, name: 'years' }
 ]
 
+const invertHex = (hex) => (Number(`0x1${hex.replace('#', '')}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
+
 const formatTimeAgo = (date) => {
   const formatter = new Intl.RelativeTimeFormat((store.getters.storeLocale || 'en-GB').split('-')[0], {
     numeric: 'always'
@@ -508,6 +510,7 @@ const truncateAfterWords = (str, words) => {
 export {
   trialsDataToMatrix,
   getTraitTypeText,
+  invertHex,
   downloadText,
   toLocalDateString,
   toLocalDateTimeString,

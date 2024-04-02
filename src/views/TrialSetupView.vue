@@ -210,7 +210,7 @@ import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import Tour from '@/components/Tour'
 import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import { brapiGetObservationUnits, brapiGetStudies } from '@/plugins/brapi'
 
 const emitter = require('tiny-emitter/instance')
@@ -479,6 +479,12 @@ export default {
               }
             })
             c.comments = []
+
+            if (c.control) {
+              c.categories = [CELL_CATEGORY_CONTROL]
+            } else {
+              c.categories = []
+            }
           })
 
           const now = new Date().toISOString()
@@ -571,6 +577,7 @@ export default {
               Object.values(copy).forEach(c => {
                 delete c.isMarked
                 c.comments = []
+                c.control = (c.categories || []).includes(CELL_CATEGORY_CONTROL)
               })
               this.germplasmMap = copy
             } else {

@@ -83,6 +83,11 @@
           <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.next.column) : $n(guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.next.row) : $n(guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
+      <p v-if="cell && cell.categories">
+        <b-badge v-for="cat in cell.categories" :key="`cell-category-${cell.row}-${cell.column}-${cat}`" :variant="CELL_CATEGORIES[cat].variant">
+          <component :is="CELL_CATEGORIES[cat].icon" /> {{ $t(CELL_CATEGORIES[cat].title) }}
+        </b-badge>
+      </p>
       <b-tabs no-fade v-model="traitGroupTabIndex" id="trait-group-tabs">
         <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
           :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
@@ -124,7 +129,7 @@ import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/
 import { mapGetters } from 'vuex'
 import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconCalendarEvent, BIconSignpostSplitFill, BIconQuestionCircle, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM, CELL_CATEGORIES } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -165,6 +170,7 @@ export default {
   },
   data: function () {
     return {
+      CELL_CATEGORIES,
       DISPLAY_ORDER_BOTTOM_TO_TOP,
       DISPLAY_ORDER_LEFT_TO_RIGHT,
       DISPLAY_ORDER_RIGHT_TO_LEFT,
