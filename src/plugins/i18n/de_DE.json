@@ -137,6 +137,8 @@
   "formDescriptionSettingsRestrictInputToMarked": "Falls aktiviert, ist die Auswahl von Beeten in der Dateneingabe nur in markierten Zeilen oder Spalten möglich.",
   "formLabelSettingsWidgetOrder": "Home-Widget-Ordnung",
   "formDescriptionSettingsWidgetOrder": "Nutze die Griff in der oberen rechten Ecke um die Widgets auf der Homepage anzuordnen.",
+  "formLabelSettingsHighlightControls": "Kontrollen hervorheben",
+  "formDescriptionSettingsHighlightControls": "Sollen Kontrollen in der Datenansicht und Visualisierungen hervorgehoben werden?",
   "formPlaceholderTimelinePlotSearch": "Keimplasma suchen",
   "formLabelStatisticsTrait": "Merkmal",
   "formDescriptionStatisticsTrait": "Die Merkmale für welche die Statistiken dargestellt werden sollen.",

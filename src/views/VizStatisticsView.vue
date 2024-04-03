@@ -62,7 +62,7 @@ import TraitHeading from '@/components/TraitHeading'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { BIconArrowClockwise, BIconPlusSquareFill, BIconTrash } from 'bootstrap-vue'
 import { getTrialById } from '@/plugins/idb'
-import { invertHex, toLocalDateString } from '@/plugins/misc'
+import { hexToRgba, invertHex, toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
@@ -88,6 +88,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'storeHighlightControls',
       'storeSelectedTrial',
       'storeDarkMode',
       'storeLocale'
@@ -289,14 +290,18 @@ export default {
                   customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => this.$t(CELL_CATEGORIES[c].title)).join(', ') })),
                   ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                   marker: {
-                    color: dps.map(d => (d.categories && d.categories.includes(CELL_CATEGORY_CONTROL)) ? invertHex(trait.color) : trait.color)
+                    color: this.storeHighlightControls ? dps.map(d => (d.categories && d.categories.includes(CELL_CATEGORY_CONTROL)) ? invertHex(trait.color) : trait.color) : trait.color
                   },
                   name: this.$t('widgetChartStatisticsBoxplotAllTrace'),
                   type: chartType,
                   jitter: 0.5,
                   pointpos: 2,
                   boxpoints: 'all',
-                  hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>'
+                  hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>',
+                  fillcolor: hexToRgba(trait.color, 0.5),
+                  hoverlabel: {
+                    bgcolor: trait.color
+                  }
                 })
               }
 

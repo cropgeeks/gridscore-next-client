@@ -142,6 +142,8 @@
   "formDescriptionSettingsWidgetOrder": "Use the handle in the top right to drag and reorder the widgets on the home page.",
   "formLabelSettingsCategoryCountInline": "Category count inline",
   "formDescriptionSettingsCategoryCountInline": "Decide up to how many trait category values are shown as buttons inline before showing a dropdown box.",
+  "formLabelSettingsHighlightControls": "Highlight controls",
+  "formDescriptionSettingsHighlightControls": "Should controls/checks be highlighted in the main data display and data visualizations?",
   "formPlaceholderTimelinePlotSearch": "Search germplasm",
   "formLabelStatisticsTrait": "Trait",
   "formDescriptionStatisticsTrait": "The traits for which to plot the statistics.",

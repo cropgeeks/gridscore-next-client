@@ -18,6 +18,18 @@ const DIVISIONS = [
   { amount: Number.POSITIVE_INFINITY, name: 'years' }
 ]
 
+const hexToRgba = (hex, a) => {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+
+  if (a) {
+    return `rgba(${r},${g},${b},${a})`
+  } else {
+    return `rgba(${r},${g},${b})`
+  }
+}
+
 const invertHex = (hex) => (Number(`0x1${hex.replace('#', '')}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
 
 const formatTimeAgo = (date) => {
@@ -511,6 +523,7 @@ export {
   trialsDataToMatrix,
   getTraitTypeText,
   invertHex,
+  hexToRgba,
   downloadText,
   toLocalDateString,
   toLocalDateTimeString,

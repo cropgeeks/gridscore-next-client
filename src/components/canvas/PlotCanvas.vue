@@ -82,7 +82,8 @@ export default {
       'storeDarkMode',
       'storeHiddenTraits',
       'storeDisplayMarkerIndicators',
-      'storeRestrictInputToMarked'
+      'storeRestrictInputToMarked',
+      'storeHighlightControls'
     ]),
     userPosition: function () {
       if (this.geolocation && this.gridProjection) {
@@ -678,7 +679,7 @@ export default {
       const cell = this.trialData[`${row}|${col}`]
 
       let count = 0
-      if (cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)) {
+      if (this.storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)) {
         count = 5
         this.ctx.fillStyle = this.fillStyleControl
       } else if ((this.markedRows && this.markedRows[row]) || (this.markedColumns && this.markedColumns[col])) {

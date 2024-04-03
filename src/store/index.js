@@ -23,6 +23,7 @@ export default new Vuex.Store({
     locale: 'en-GB',
     darkMode: false,
     hideCitationMessage: false,
+    highlightControls: true,
     displayMarkerIndicators: true,
     displayMinCellWidth: 4,
     gpsEnabled: true,
@@ -61,6 +62,7 @@ export default new Vuex.Store({
     storeCalendarLocale: (state) => (state.locale || 'en-GB').replace('_', '-'),
     storeDarkMode: (state) => state.darkMode,
     storeHideCitationMessage: (state) => state.hideCitationMessage,
+    storeHighlightControls: (state) => state.highlightControls,
     storeDisplayMarkerIndicators: (state) => state.displayMarkerIndicators,
     storeDisplayMinCellWidth: (state) => state.displayMinCellWidth,
     storeGpsEnabled: (state) => state.gpsEnabled,
@@ -135,6 +137,13 @@ export default new Vuex.Store({
     },
     ON_HIDE_CITATION_MESSAGE_CHANGED: function (state, newHideCitationMessage) {
       state.hideCitationMessage = newHideCitationMessage
+    },
+    ON_HIGHLIGHT_CONTROLS_CHANGED: function (state, newHighlightControls) {
+      if (Object.prototype.hasOwnProperty.call(state, 'highlightControls')) {
+        state.highlightControls = newHighlightControls
+      } else {
+        Vue.set(state, 'highlightControls', newHighlightControls)
+      }
     },
     ON_DISPLAY_MARKER_INDICATORS_CHANGED: function (state, newDisplayMarkerIndicators) {
       state.displayMarkerIndicators = newDisplayMarkerIndicators
@@ -275,6 +284,9 @@ export default new Vuex.Store({
     },
     setHideCitationMessage: function ({ commit }, hideCitationMessage) {
       commit('ON_HIDE_CITATION_MESSAGE_CHANGED', hideCitationMessage)
+    },
+    setHighlightControls: function ({ commit }, highlightControls) {
+      commit('ON_HIGHLIGHT_CONTROLS_CHANGED', highlightControls)
     },
     setDisplayMarkerIndicators: function ({ commit }, displayMarkerIndicators) {
       commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', displayMarkerIndicators)

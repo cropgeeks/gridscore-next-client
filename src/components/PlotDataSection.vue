@@ -1,6 +1,13 @@
 <template>
   <div v-if="cell && traits && traits.length > 0">
     <h4>{{ cell.displayName }}</h4>
+
+    <p v-if="cell && cell.categories">
+      <b-badge v-for="cat in cell.categories" :key="`cell-category-${cell.row}-${cell.column}-${cat}`" :variant="CELL_CATEGORIES[cat].variant">
+        <component :is="CELL_CATEGORIES[cat].icon" /> {{ $t(CELL_CATEGORIES[cat].title) }}
+      </b-badge>
+    </p>
+
     <p class="text-muted">{{ $t('pageVisualizationMapPlotInfo', { row: rowIndex, column: columnIndex }) }}</p>
 
     <div v-if="cell.measurements">
@@ -28,9 +35,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TraitIcon from '@/components/icons/TraitIcon'
 import { BIconCalendar3 } from 'bootstrap-vue'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
+import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
 export default {
   components: {
@@ -51,7 +59,22 @@ export default {
       default: () => null
     }
   },
+  data: function () {
+    return {
+      CELL_CATEGORIES
+    }
+  },
   computed: {
+    ...mapGetters([
+      'storeHighlightControls'
+    ]),
+    isControl: function () {
+      if (this.trial && this.cell) {
+        return this.storeHighlightControls && (this.cell.categories || []).includes(CELL_CATEGORY_CONTROL)
+      } else {
+        return null
+      }
+    },
     rowIndex: function () {
       if (this.trial && this.cell) {
         return this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - this.cell.row) : (this.cell.row + 1)

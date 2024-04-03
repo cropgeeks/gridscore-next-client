@@ -91,6 +91,12 @@
               </b-input-group>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsHighlightControls')" :description="$t('formDescriptionSettingsHighlightControls')" label-for="highlightControls">
+              <b-form-checkbox id="highlightControls" v-model="highlightControls" switch>
+                {{ highlightControls ? $t('genericYes') : $t('genericNo') }}
+              </b-form-checkbox>
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsDisplayMarkerIndicators')" :description="$t('formDescriptionSettingsDisplayMarkerIndicators')" label-for="markerIndicators">
               <b-form-checkbox id="markerIndicators" v-model="displayMarkerIndicators" switch>
                 {{ displayMarkerIndicators ? $t('genericYes') : $t('genericNo') }}
@@ -203,6 +209,7 @@ export default {
       locale: null,
       darkMode: false,
       hideCitationMessage: false,
+      highlightControls: true,
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
       categoryCountInline: 4,
@@ -224,6 +231,7 @@ export default {
       'storeLocale',
       'storeDarkMode',
       'storeHideCitationMessage',
+      'storeHighlightControls',
       'storeDisplayMarkerIndicators',
       'storeDisplayMinCellWidth',
       'storeGpsEnabled',
@@ -274,6 +282,10 @@ export default {
     hideCitationMessage: function (newValue) {
       this.$store.dispatch('setHideCitationMessage', newValue)
       emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: newValue } })
+    },
+    highlightControls: function (newValue) {
+      this.$store.dispatch('setHighlightControls', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { highlightControls: newValue } })
     },
     displayMarkerIndicators: function (newValue) {
       this.$store.dispatch('setDisplayMarkerIndicators', newValue)
@@ -348,6 +360,7 @@ export default {
       this.locale = this.storeLocale
       this.darkMode = this.storeDarkMode
       this.hideCitationMessage = this.storeHideCitationMessage
+      this.highlightControls = this.storeHighlightControls
       this.displayMarkerIndicators = this.storeDisplayMarkerIndicators
       this.displayMinCellWidth = this.storeDisplayMinCellWidth
       this.categoryCountInline = this.storeCategoryCountInline

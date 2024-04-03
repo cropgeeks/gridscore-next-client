@@ -61,6 +61,7 @@ export default {
     ...mapGetters([
       'storeLocale',
       'storeDarkMode',
+      'storeHighlightControls',
       'storeHideCitationMessage',
       'storeDisplayMarkerIndicators',
       'storeCanvasDensity',
@@ -125,6 +126,11 @@ export default {
         } else if (parsed.hc === 0) {
           this.$store.commit('ON_HIDE_CITATION_MESSAGE_CHANGED', false)
         }
+        if (parsed.hi === 1) {
+          this.$store.commit('ON_HIGHLIGHT_CONTROLS_CHANGED', true)
+        } else if (parsed.hi === 0) {
+          this.$store.commit('ON_HIGHLIGHT_CONTROLS_CHANGED', false)
+        }
         if (parsed.rm === 1) {
           this.$store.commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', true)
         } else if (parsed.rm === 0) {
@@ -186,6 +192,7 @@ export default {
         cs: this.storeCanvasShape === CANVAS_SHAPE_SQUARE ? 1 : 0,
         lc: this.storeLocale,
         hc: this.storeHideCitationMessage ? 1 : 0,
+        hi: this.storeHighlightControls ? 1 : 0,
         dm: this.storeDarkMode ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,
         hw: this.storeHomeWidgetOrder.join(','),

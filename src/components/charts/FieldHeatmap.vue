@@ -37,8 +37,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { categoryColors, toLocalDateString } from '@/plugins/misc'
+import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { categoryColors, invertHex, toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection'
 
 const emitter = require('tiny-emitter/instance')
@@ -63,7 +63,8 @@ export default {
   computed: {
     ...mapGetters([
       'storeDarkMode',
-      'storeLocale'
+      'storeLocale',
+      'storeHighlightControls'
     ]),
     traitOptions: function () {
       if (this.trial) {
@@ -172,6 +173,7 @@ export default {
         const z = []
         const text = []
         const customdata = []
+        const shapes = []
         for (let row = this.trial.layout.rows - 1; row >= 0; row--) {
           const rowData = []
           const rowText = []
@@ -184,6 +186,24 @@ export default {
               rowText.push('')
               rowCustomdata.push(null)
               continue
+            }
+
+            if (this.storeHighlightControls && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)) {
+              shapes.push({
+                type: 'rect',
+                // x-reference is assigned to the x-values
+                xref: 'x',
+                // y-reference is assigned to the plot paper [0,1]
+                yref: 'y',
+                x0: cell.column + 0.5,
+                y0: this.trial.layout.rows - 1 - cell.row + 0.5,
+                x1: cell.column + 1.5,
+                y1: this.trial.layout.rows - 1 - cell.row + 1.5,
+                line: {
+                  width: 2,
+                  color: invertHex(this.selectedTrait.color)
+                }
+              })
             }
 
             rowText.push(cell.displayName)
@@ -358,7 +378,8 @@ export default {
             title: { text: this.$t('widgetChartHeatmapAxisTitleRow'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
             fixedrange: !this.chartInteractionEnabled
-          }
+          },
+          shapes: shapes
         }
 
         const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()

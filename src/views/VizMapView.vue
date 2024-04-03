@@ -26,6 +26,7 @@ import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import { CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -47,7 +48,8 @@ export default {
     ...mapGetters([
       'storeSelectedTrial',
       'storeDarkMode',
-      'storeMapLayer'
+      'storeMapLayer',
+      'storeHighlightControls'
     ])
   },
   data: function () {
@@ -163,7 +165,8 @@ export default {
                 germplasm: this.trialData[td].germplasm,
                 rep: this.trialData[td].rep,
                 row: row,
-                column: column
+                column: column,
+                categories: this.trialData[td].categories || []
               },
               corners: this.trialData[td].geography.corners,
               center: this.trialData[td].geography.center
@@ -174,9 +177,14 @@ export default {
         // Create the geojson and the layer, then add to the map
         const geoJson = plotInfoToGeoJson(plotInfo)
         const geoJsonLayer = L.geoJSON(geoJson, {
-          fillColor: '#00a0f1',
-          color: '#00a0f1',
-          weight: 1,
+          style: (feature) => {
+            const color = (this.storeHighlightControls && feature.properties.categories.includes(CELL_CATEGORY_CONTROL)) ? '#910080' : '#00a0f1'
+            return {
+              fillColor: color,
+              color: color,
+              weight: 1
+            }
+          },
           onEachFeature: (feature, layer) => {
             layer.bindPopup('', { maxHeight: 200 })
             layer.on('popupopen', e => {
