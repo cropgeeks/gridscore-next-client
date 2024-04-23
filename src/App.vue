@@ -28,6 +28,7 @@
             <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-map' }"><BIconPinMapFill /> {{ $t('menuVisualizationMap') }}</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item :disabled="menuItemsDisabled" :active="$route.name === 'trial-export'" :to="{ name: 'trial-export' }"><BIconCloudDownload /> {{ $t('menuDataExport') }}</b-nav-item>
+          <b-nav-item :active="$route.name === 'data-statistics'" :to="{ name: 'data-statistics' }"><BIconClipboardData /> {{ $t('menuDataStatistics') }}</b-nav-item>
           <b-nav-item :active="$route.name === 'settings'" :to="{ name: 'settings' }"><BIconGear /> {{ $t('menuSettings') }}</b-nav-item>
         </b-navbar-nav>
 
@@ -124,7 +125,7 @@ import { VuePlausible } from 'vue-plausible'
 import Vue from 'vue'
 import { axiosCall, getServerSettings } from '@/plugins/api'
 
-import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconGithub, BIconGlobe2, BIconTwitter, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
+import { BIconInfoCircle, BIconFlag, BIconHouse, BIconGear, BIconGithub, BIconGlobe2, BIconClipboardData, BIconTwitter, BIconUiChecksGrid, BIconGraphUp, BIconPinMapFill, BIconGridFill, BIconBarChartSteps, BIconEasel, BIconMoon, BIconSun, BIconCloudDownload } from 'bootstrap-vue'
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
 import { isOffline } from '@/plugins/misc'
@@ -150,6 +151,7 @@ export default {
     BIconPinMapFill,
     BIconSun,
     BIconCloudDownload,
+    BIconClipboardData,
     BIconGithub,
     BIconGlobe2,
     BIconTwitter,

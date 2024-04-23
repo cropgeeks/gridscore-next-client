@@ -81,7 +81,7 @@ const trialLayoutToPlots = (corners, rows, cols) => {
   return result
 }
 
-const plotInfoToGeoJson = (plotInfo) => {
+const plotInfoToGeoJson = (plotInfo, includePoints = true) => {
   const geoJson = {
     type: 'FeatureCollection',
     features: []
@@ -104,7 +104,7 @@ const plotInfoToGeoJson = (plotInfo) => {
             ]]
           }
         })
-      } else if (p.center) {
+      } else if (p.center && includePoints) {
         geoJson.features.push({
           type: 'Feature',
           geometry: {
@@ -188,6 +188,49 @@ const isGeographyValid = (geography) => {
   return topLeft && topRight && bottomRight && bottomLeft
 }
 
+const removeMiddle = (a, b, c) => {
+  const cross = (a.x - b.x) * (c.y - b.y) - (a.y - b.y) * (c.x - b.x)
+  const dot = (a.x - b.x) * (c.x - b.x) + (a.y - b.y) * (c.y - b.y)
+  return cross < 0 || (cross === 0 && dot <= 0)
+}
+
+const convexHull = (points) => {
+  points.sort((a, b) => a.x !== b.x ? a.x - b.x : a.y - b.y)
+
+  const n = points.length
+  const hull = []
+
+  for (let i = 0; i < 2 * n; i++) {
+    const j = i < n ? i : 2 * n - 1 - i
+    while (hull.length >= 2 && removeMiddle(hull[hull.length - 2], hull[hull.length - 1], points[j])) {
+      hull.pop()
+    }
+    hull.push(points[j])
+  }
+
+  hull.pop()
+  return hull
+}
+
+const toRadians = (angleInDegrees) => (angleInDegrees * Math.PI) / 180
+
+const geodesicArea = (latLngs) => {
+  let area = 0
+  const len = latLngs.length
+  let x1 = latLngs[latLngs.length - 1].lng
+  let y1 = latLngs[latLngs.length - 1].lat
+
+  for (let i = 0; i < len; i++) {
+    const x2 = latLngs[i].lng
+    const y2 = latLngs[i].lat
+    area += toRadians(x2 - x1) * (2 + Math.sin(toRadians(y1)) + Math.sin(toRadians(y2)))
+    x1 = x2
+    y1 = y2
+  }
+
+  return Math.abs((area * 6378137.0 * 6378137.0) / 2.0)
+}
+
 export {
   euclideanSpace,
   projectToEuclidean,
@@ -197,5 +240,7 @@ export {
   plotInfoToGeoJson,
   isLocationValid,
   isGeographyValid,
-  isGeographyAllNull
+  isGeographyAllNull,
+  convexHull,
+  geodesicArea
 }

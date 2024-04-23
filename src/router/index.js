@@ -93,6 +93,10 @@ const routes = [
     path: '/visualization/map',
     name: 'visualization-map',
     component: () => import('@/views/VizMapView.vue')
+  }, {
+    path: '/data-statistics',
+    name: 'data-statistics',
+    component: () => import('@/views/DataStatistics.vue')
   }
 ]
 
