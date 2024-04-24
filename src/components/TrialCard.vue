@@ -32,6 +32,7 @@
         <b-dropdown-divider v-if="trial.editable" />
         <b-dropdown-item @click="$emit('showTrialEdit')" v-if="trial.editable && (trial.shareStatus === TRIAL_STATE_NOT_SHARED || trial.shareStatus === TRIAL_STATE_OWNER)"><BIconPencilSquare /> {{  $t('buttonEditTrial') }}</b-dropdown-item>
         <b-dropdown-item @click="$emit('addTrait')" v-if="trial.editable"><BIconTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
+        <b-dropdown-item @click="$emit('addPerson')" v-if="trial.editable"><BIconPersonPlus /> {{ $t('buttonAddPerson') }}</b-dropdown-item>
         <b-dropdown-item @click="$emit('addGermplasm')" v-if="trial.editable && trial.layout.columns === 1"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
         <b-dropdown-item @click="$emit('importData')" v-if="trial.editable"><BIconFileEarmarkArrowUp /> {{ $t('buttonUploadData') }}</b-dropdown-item>
         <b-dropdown-divider />
@@ -44,12 +45,13 @@
 <script>
 import TrialInformation from '@/components/TrialInformation'
 import { mapGetters } from 'vuex'
-import { BIconCloudUploadFill, BIconCloudDownloadFill, BIconCalendar, BIconExclamationTriangleFill, BIconJournalArrowUp, BIconGear, BIconstack, BIconCloud, BIconArrowDownUp, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash } from 'bootstrap-vue'
+import { BIconCloudUploadFill, BIconCloudDownloadFill, BIconPersonPlus, BIconCalendar, BIconExclamationTriangleFill, BIconJournalArrowUp, BIconGear, BIconstack, BIconCloud, BIconArrowDownUp, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 
 export default {
   components: {
     TrialInformation,
+    BIconPersonPlus,
     BIconCloudUploadFill,
     BIconCloudDownloadFill,
     BIconCalendar,

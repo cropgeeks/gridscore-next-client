@@ -57,6 +57,7 @@
         <b-dropdown-divider v-if="trial.editable" />
         <b-dropdown-item @click="$emit('showTrialEdit')" v-if="trial.editable && (trial.shareStatus === TRIAL_STATE_NOT_SHARED || trial.shareStatus === TRIAL_STATE_OWNER)"><BIconPencilSquare /> {{  $t('buttonEditTrial') }}</b-dropdown-item>
         <b-dropdown-item @click="$emit('addTrait')" v-if="trial.editable"><BIconTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
+        <b-dropdown-item @click="$emit('addPerson')" v-if="trial.editable"><BIconPersonPlus /> {{ $t('buttonAddPerson') }}</b-dropdown-item>
         <b-dropdown-item @click="$emit('addGermplasm')" v-if="trial.editable && trial.layout.columns === 1"><BIconNodePlus :rotate="90" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
         <b-dropdown-item @click="$emit('importData')" v-if="trial.editable"><BIconFileEarmarkArrowUp /> {{ $t('buttonUploadData') }}</b-dropdown-item>
         <b-dropdown-divider />
@@ -70,7 +71,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCalendarDate, BIconJournalArrowUp, BIconGear, BIconCloud, BIconExclamationTriangleFill, BIconCloudUploadFill, BIconCloudDownloadFill, BIconArrowDownUp, BIconstack, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash, BIconCollection, BIconLayoutThreeColumns, BIconCalendarRange, BIconChatLeftText } from 'bootstrap-vue'
+import { BIconCalendarDate, BIconJournalArrowUp, BIconGear, BIconCloud, BIconPersonPlus, BIconExclamationTriangleFill, BIconCloudUploadFill, BIconCloudDownloadFill, BIconArrowDownUp, BIconstack, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash, BIconCollection, BIconLayoutThreeColumns, BIconCalendarRange, BIconChatLeftText } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
 import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
@@ -87,6 +88,7 @@ export default {
     BIconGear,
     BIconCloud,
     BIconExclamationTriangleFill,
+    BIconPersonPlus,
     BIconArrowDownUp,
     BIconstack,
     BIconJournals,

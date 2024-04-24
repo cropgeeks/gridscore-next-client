@@ -38,6 +38,33 @@
             <b-form-textarea id="trial-description" :state="formState.trialDescription" v-model="trialDescription" />
           </b-form-group>
 
+          <!-- Trial people -->
+          <b-form-group label-for="trial-people" :description="$t('formDescriptionTrialSetupTrialPeople')">
+            <template v-slot:label>
+              <BIconPeopleFill /><span> {{ $t('formLabelTrialSetupTrialPeople') }}</span>
+            </template>
+            <h5 v-for="(person, personIndex) in people" :key="`person-${person.id}`" class="d-inline-block">
+              <b-badge variant="light">
+                <BIconPersonCheckFill class="mr-1" v-if="person.types.includes(PERSON_TYPE_QUALITY_CHECKER)" :style="{ color: personStyle[PERSON_TYPE_QUALITY_CHECKER] }" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="mr-1 bi b-icon bi-person-fill-up" viewBox="0 0 16 16" v-if="person.types.includes(PERSON_TYPE_DATA_SUBMITTER)"  :style="{ color: personStyle[PERSON_TYPE_DATA_SUBMITTER] }">
+                  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                  <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
+                </svg>
+                <BIconPersonLinesFill class="mr-1" v-if="person.types.includes(PERSON_TYPE_DATA_COLLECTOR)"  :style="{ color: personStyle[PERSON_TYPE_DATA_COLLECTOR] }" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="mr-1 bi b-icon bi-person-fill-exclamation" viewBox="0 0 16 16" v-if="person.types.includes(PERSON_TYPE_CORRESPONDING_AUTHOR)"  :style="{ color: personStyle[PERSON_TYPE_CORRESPONDING_AUTHOR] }">
+                  <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
+                  <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 1 0V11a.5.5 0 0 0-.5-.5m0 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+                </svg>
+                {{ person.name }}
+              </b-badge>
+              <b-badge variant="danger" href="#" @click="deletePerson(personIndex)" class="mr-2">
+                <BIconTrash />
+              </b-badge>
+            </h5>
+          </b-form-group>
+
+          <b-button @click="$refs.editPeopleModal.show()"><BIconPersonPlusFill /> {{ $t('buttonAdd') }}</b-button>
+
           <!-- Trial social media sharing content; Commented out until feature becomes more consistent -->
           <!-- <b-form-group label-for="trial-social-config" :description="$t('formDescriptionTrialSetupTrialSocialContent')">
             <template v-slot:label>
@@ -197,20 +224,23 @@
     </b-sidebar>
 
     <LayoutFeedbackModal :feedback="layoutFeedback" @warnings-accepted="acceptWarnings" ref="layoutFeedbackModal" />
+    <EditPeopleModal ref="editPeopleModal" @person-added="addPerson" />
 
     <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="setupTour" />
   </b-container>
 </template>
 
 <script>
-import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { mapGetters } from 'vuex'
+import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconPeopleFill, BIconPersonCheckFill, BIconPersonPlusFill, BIconTrash, BIconPersonLinesFill, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
+import EditPeopleModal from '@/components/modals/EditPeopleModal'
 import Tour from '@/components/Tour'
 import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
-import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_DATA_SUBMITTER, PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_QUALITY_CHECKER } from '@/plugins/constants'
 import { brapiGetObservationUnits, brapiGetStudies } from '@/plugins/brapi'
 
 const emitter = require('tiny-emitter/instance')
@@ -221,11 +251,16 @@ export default {
     BIconCardText,
     // BIconCardHeading,
     BIconCheck,
+    BIconTrash,
     BIconPencilSquare,
     BIconX,
     BIconQuestionCircle,
+    BIconPersonPlusFill,
     BIconJournalPlus,
     BIconCardChecklist,
+    BIconPersonCheckFill,
+    BIconPersonLinesFill,
+    BIconPeopleFill,
     BIconExclamationTriangleFill,
     // BIconCaretRightFill,
     // BIconTextareaResize,
@@ -234,6 +269,7 @@ export default {
     BIconCollection,
     Tour,
     TrialLayoutComponent,
+    EditPeopleModal,
     TraitDefinitionComponent,
     LayoutFeedbackModal
   },
@@ -252,6 +288,7 @@ export default {
       },
       trialGroup: null,
       trialGroups: [],
+      people: [],
       layout: {
         rows: 1,
         columns: 1,
@@ -276,7 +313,11 @@ export default {
       trialToCopy: null,
       copyData: false,
       layoutFeedbackIsOnlyWarning: true,
-      warningsAccepted: false
+      warningsAccepted: false,
+      PERSON_TYPE_DATA_COLLECTOR,
+      PERSON_TYPE_DATA_SUBMITTER,
+      PERSON_TYPE_CORRESPONDING_AUTHOR,
+      PERSON_TYPE_QUALITY_CHECKER
     }
   },
   beforeRouteLeave: function (to, from, next) {
@@ -297,6 +338,18 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeTraitColors'
+    ]),
+    personStyle: function () {
+      const result = {}
+      result[PERSON_TYPE_CORRESPONDING_AUTHOR] = this.storeTraitColors[0]
+      result[PERSON_TYPE_DATA_COLLECTOR] = this.storeTraitColors[1]
+      result[PERSON_TYPE_QUALITY_CHECKER] = this.storeTraitColors[2]
+      result[PERSON_TYPE_DATA_SUBMITTER] = this.storeTraitColors[3]
+
+      return result
+    },
     tourSteps: function () {
       return [{
         title: () => this.$t('tourTitleSetupStart'),
@@ -416,6 +469,12 @@ export default {
     }
   },
   methods: {
+    deletePerson: function (index) {
+      this.people.splice(index, 1)
+    },
+    addPerson: function (newPerson) {
+      this.people.push(newPerson)
+    },
     acceptWarnings: function () {
       this.warningsAccepted = true
       this.$refs.trialSetupLayout.checkData()
@@ -508,6 +567,7 @@ export default {
             group: (this.trialGroup && this.trialGroup.length > 0) ? { name: this.trialGroup } : null,
             layout: this.layout,
             traits: this.traits,
+            people: this.people,
             data: data,
             comments: [],
             updatedOn: now,
@@ -565,6 +625,7 @@ export default {
             this.trialSocialConfig = trial.socialShareConfig || { title: 'GridScore', text: '#GridScore', url: 'https://gridscore.hutton.ac.uk' }
             this.trialGroup = trial.group ? trial.group.name : null
             this.layout = JSON.parse(JSON.stringify(trial.layout))
+            this.people = JSON.parse(JSON.stringify(trial.people))
             this.traits = JSON.parse(JSON.stringify(trial.traits)).map(t => {
               if (t.group && t.group.name) {
                 t.group = t.group.name

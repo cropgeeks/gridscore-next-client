@@ -11,7 +11,7 @@ const getDb = async () => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 4, {
+      openDB('gridscore-next-' + window.location.pathname, 5, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -55,6 +55,10 @@ const getDb = async () => {
           if (oldVersion < 4) {
             data = transaction.objectStore('data')
             data.createIndex('categories', 'categories', { unique: false })
+          }
+          if (oldVersion < 5) {
+            trials = transaction.objectStore('trials')
+            trials.createIndex('people', 'people', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -188,6 +192,7 @@ const getTrials = async () => {
           t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
           t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
           t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
+          t.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
           t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
           t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
           t.transactionCount += transaction.trialEditTransaction ? 1 : 0
@@ -481,6 +486,7 @@ const getTrialById = async (localId) => {
         trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
         trial.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
         trial.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
+        trial.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
         trial.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
         trial.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
         trial.transactionCount += transaction.trialEditTransaction ? 1 : 0
@@ -719,7 +725,8 @@ const addTrial = async (trial) => {
     updatedOn: trial.updatedOn || new Date().toISOString(),
     lastSyncedOn: trial.lastSyncedOn,
     comments: trial.comments || [],
-    events: trial.events || []
+    events: trial.events || [],
+    people: trial.people || []
   })
 
   return new Promise(resolve => {
@@ -814,6 +821,7 @@ const getEmptyTransaction = (trialId) => {
     trialCommentDeletedTransactions: [],
     trialEventAddedTransactions: [],
     trialEventDeletedTransactions: [],
+    trialPersonAddedTransactions: [],
     trialGermplasmAddedTransactions: [],
     trialTraitAddedTransactions: [],
     traitChangeTransactions: [],
@@ -1025,6 +1033,37 @@ const addTrialGermplasm = async (trialId, germplasm) => {
         })
         .catch(e => reject(e))
     })
+  }
+}
+
+const addTrialPeople = async (trialId, people) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialPersonAddedTransactions.push(...people)
+
+      await db.put('transactions', transaction)
+    }
+
+    if (!trial.people) {
+      trial.people = []
+    }
+
+    people.forEach(p => {
+      trial.people.push(p)
+    })
+    trial.updatedOn = new Date().toISOString()
+
+    await db.put('trials', trial)
+
+    return new Promise(resolve => resolve(trial))
+  } else {
+    return new Promise(resolve => resolve(trial))
   }
 }
 
@@ -1283,6 +1322,7 @@ export {
   updateTrialBrapiConfig,
   updateTrialProperties,
   addTrialTraits,
+  addTrialPeople,
   getTransactionForTrial,
   changeTrialsData,
   getTrialValidPlots,

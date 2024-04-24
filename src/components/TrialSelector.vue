@@ -59,6 +59,7 @@
                                     @synchronize="synchronize(trial)"
                                     @duplicateTrial="duplicateTrial(trial)"
                                     @addTrait="addTrait(trial)"
+                                    @addPerson="addPerson(trial)"
                                     @showTrialEdit="showTrialEdit(trial)"
                                     @addGermplasm="addGermplasm(trial)"
                                     @importData="importData(trial)"
@@ -73,6 +74,7 @@
                             @synchronize="synchronize(trial)"
                             @duplicateTrial="duplicateTrial(trial)"
                             @addTrait="addTrait(trial)"
+                            @addPerson="addPerson(trial)"
                             @showTrialEdit="showTrialEdit(trial)"
                             @addGermplasm="addGermplasm(trial)"
                             @importData="importData(trial)"
@@ -93,6 +95,7 @@
     <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
     <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial" />
     <AddTraitsModal :trial="selectedTrial" ref="addTraitsModal" v-if="selectedTrial && selectedTrial.editable" />
+    <EditPeopleModal :trialId="selectedTrial.localId" ref="addPersonModal" v-if="selectedTrial && selectedTrial.editable" />
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate)" />
     <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial" />
@@ -107,6 +110,7 @@ import TrialListGroupItem from '@/components/TrialListGroupItem'
 import TrialCommentModal from '@/components/modals/TrialCommentModal'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal'
 import AddTraitsModal from '@/components/modals/AddTraitsModal'
+import EditPeopleModal from '@/components/modals/EditPeopleModal'
 import TrialModificationModal from '@/components/modals/TrialModificationModal'
 import TrialExpirationModal from '@/components/modals/TrialExpirationModal'
 import TrialDataImportModal from '@/components/modals/TrialDataImportModal'
@@ -134,6 +138,7 @@ export default {
     AddGermplasmModal,
     TrialModificationModal,
     TrialExpirationModal,
+    EditPeopleModal,
     BIconSortDown,
     BIconSortDownAlt,
     BIconListTask,
@@ -334,6 +339,11 @@ export default {
     loadTrial: function (trial) {
       this.$store.commit('ON_SELECTED_TRIAL_CHANGED', trial.localId)
       this.$router.push({ name: 'data-entry' })
+    },
+    addPerson: function (trial) {
+      this.selectedTrial = trial
+
+      this.$nextTick(() => this.$refs.addPersonModal.show())
     },
     addTrait: function (trial) {
       this.selectedTrial = trial
