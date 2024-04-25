@@ -28,9 +28,15 @@
         <div class="mr-3" v-b-tooltip.hover="$tc('widgetTrialSelectorTraits', trial.traits.length)"><BIconTags /> <span>{{ trial.traits.length }}</span>
           <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
         </div>
+        <div class="mr-3" v-b-tooltip.hover="$tc('widgetTrialSelectorPeople', (trial.people || []).length)"><BIconPerson /> {{ (trial.people || []).length }}</div>
+
         <div class="mr-3" v-b-tooltip.hover="$tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0)">
           <BIconChatLeftText /> <a href="#" @click.prevent="onShowTrialCommentsClicked">{{ trial.comments ? trial.comments.length : 0 }}</a>
         </div>
+        <div class="mr-3" v-b-tooltip.hover="$tc('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0)">
+          <BIconFlag /> <a href="#" @click.prevent="onShowTrialEventsClicked">{{ trial.events ? trial.events.length : 0 }}</a>
+        </div>
+        <div class="mr-3" v-b-tooltip.hover="$tc('widgetTrialSelectorTrialDuration', trialDuration)"><BIconCalendarRange /> {{ trialDuration }}</div>
       </div>
     </div>
 
@@ -71,11 +77,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCalendarDate, BIconJournalArrowUp, BIconGear, BIconCloud, BIconPersonPlus, BIconExclamationTriangleFill, BIconCloudUploadFill, BIconCloudDownloadFill, BIconArrowDownUp, BIconstack, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash, BIconCollection, BIconLayoutThreeColumns, BIconCalendarRange, BIconChatLeftText } from 'bootstrap-vue'
+import { BIconCalendarDate, BIconJournalArrowUp, BIconGear, BIconCloud, BIconFlag, BIconPersonPlus, BIconPerson, BIconCalendarRange, BIconExclamationTriangleFill, BIconCloudUploadFill, BIconCloudDownloadFill, BIconArrowDownUp, BIconstack, BIconJournals, BIconPencilSquare, BIconTags, BIconNodePlus, BIconFileEarmarkArrowUp, BIconTrash, BIconCollection, BIconLayoutThreeColumns, BIconChatLeftText } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
 import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
-import { formatTimeAgo } from '@/plugins/misc'
+import { formatTimeAgo, toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -84,7 +90,9 @@ export default {
     TrialTraitTimeframeModal,
     TrialShareTypeIcon,
     BIconCalendarDate,
+    BIconFlag,
     BIconJournalArrowUp,
+    BIconPerson,
     BIconGear,
     BIconCloud,
     BIconExclamationTriangleFill,
@@ -121,6 +129,16 @@ export default {
     ...mapGetters([
       'storeSelectedTrial'
     ]),
+    trialDuration: function () {
+      if (this.trial && this.trial.createdOn && this.trial.updatedOn) {
+        const start = toLocalDateString(this.trial.createdOn)
+        const end = toLocalDateString(this.trial.updatedOn)
+
+        return (new Date(end).getTime() - new Date(start).getTime()) / (24 * 60 * 60 * 1000) + 1
+      } else {
+        return 1
+      }
+    },
     hasTimeframe: function () {
       if (this.trial && this.trial.traits) {
         return this.trial.traits.filter(t => t.timeframe).length > 0
@@ -133,6 +151,9 @@ export default {
     formatTimeAgo,
     onShowTrialCommentsClicked: function () {
       emitter.emit('show-trial-comments', this.trial)
+    },
+    onShowTrialEventsClicked: function () {
+      emitter.emit('show-trial-events', this.trial)
     }
   }
 }

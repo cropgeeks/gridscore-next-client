@@ -22,28 +22,22 @@
         <b-row>
           <b-col :cols=12 :md=3>
             <b-button :variant="isCorrespondingAuthor ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_CORRESPONDING_AUTHOR)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[0] }"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi b-icon bi-person-fill-exclamation" viewBox="0 0 16 16">
-                <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
-                <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 1 0V11a.5.5 0 0 0-.5-.5m0 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-              </svg></h2> <span>{{ $t('personTypeCorrespondingAuthor') }}</span>
+              <h2 :style="{ color: storeTraitColors[0] }"><PersonTypeIcon :personType="PERSON_TYPE_CORRESPONDING_AUTHOR" /></h2> <span>{{ $t('personTypeCorrespondingAuthor') }}</span>
             </b-button>
           </b-col>
           <b-col :cols=12 :md=3>
             <b-button :variant="isDataCollector ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_DATA_COLLECTOR)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[1] }"><BIconPersonLinesFill /></h2> <span>{{ $t('personTypeDataCollector') }}</span>
+              <h2 :style="{ color: storeTraitColors[1] }"><PersonTypeIcon :personType="PERSON_TYPE_DATA_COLLECTOR" /></h2> <span>{{ $t('personTypeDataCollector') }}</span>
             </b-button>
           </b-col>
           <b-col :cols=12 :md=3>
             <b-button :variant="isQualityChecker ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_QUALITY_CHECKER)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[2] }"><BIconPersonCheckFill /></h2> <span>{{ $t('personTypeQualityChecker') }}</span>
+              <h2 :style="{ color: storeTraitColors[2] }"><PersonTypeIcon :personType="PERSON_TYPE_QUALITY_CHECKER" /></h2> <span>{{ $t('personTypeQualityChecker') }}</span>
             </b-button>
           </b-col>
           <b-col :cols=12 :md=3>
             <b-button :variant="isSubmitter ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_DATA_SUBMITTER)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[3] }"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi b-icon bi-person-fill-up" viewBox="0 0 16 16">
-                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
-              </svg></h2> <span>{{ $t('personTypeDataSubmitter') }}</span>
+              <h2 :style="{ color: storeTraitColors[3] }"><PersonTypeIcon :personType="PERSON_TYPE_DATA_SUBMITTER" /></h2> <span>{{ $t('personTypeDataSubmitter') }}</span>
             </b-button>
           </b-col>
         </b-row>
@@ -56,15 +50,14 @@
 
 <script>
 import { PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_QUALITY_CHECKER, PERSON_TYPE_DATA_SUBMITTER } from '@/plugins/constants'
-import { BIconPersonLinesFill, BIconPersonCheckFill } from 'bootstrap-vue'
+import PersonTypeIcon from '@/components/icons/PersonTypeIcon'
 import { getId } from '@/plugins/id'
 import { mapGetters } from 'vuex'
 import { addTrialPeople } from '@/plugins/idb'
 
 export default {
   components: {
-    BIconPersonLinesFill,
-    BIconPersonCheckFill
+    PersonTypeIcon
   },
   props: {
     trialId: {
@@ -171,7 +164,10 @@ export default {
 
       if (this.trialId) {
         addTrialPeople(this.trialId, [{ id: getId(), name: this.name, email: this.email, types: this.types }])
-          .then(() => this.hide())
+          .then(() => {
+            this.$emit('person-added')
+            this.hide()
+          })
       } else {
         this.$emit('person-added', { id: getId(), name: this.name, email: this.email, types: this.types })
         this.hide()

@@ -422,5 +422,21 @@
         "text": "Removed the replicate heatmap for those trials where replicates are defined, but they are all unique, so not actual replicates. Before this generated a huge and empty and therefore rather useless heatmap."
       }
     ]
+  },
+  {
+    "version": "2.6.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Trial people",
+        "text": "We've added support for adding individuals to a trial in the form of defining people and their role within the trial (e.g. data collector, corresponding author, etc). This will currently not affect the way GridScore behaves, but if people are defined for a trial you will have to select who is recording data. This has been put in place to allow GridScore to pre-fill data templates during data export."
+      },
+      {
+        "type": "new",
+        "title": "Data statistics",
+        "text": "An overview trial statistics page has been added to GridScore that shows various views onto the data like a calendar heatmap showing busy data collection days as well as stats on the size of area covered by data collection and many others."
+      }
+    ]
   }
 ]

@@ -95,7 +95,7 @@
     <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
     <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial" />
     <AddTraitsModal :trial="selectedTrial" ref="addTraitsModal" v-if="selectedTrial && selectedTrial.editable" />
-    <EditPeopleModal :trialId="selectedTrial.localId" ref="addPersonModal" v-if="selectedTrial && selectedTrial.editable" />
+    <EditPeopleModal :trialId="selectedTrial.localId" ref="addPersonModal" @person-added="update" v-if="selectedTrial && selectedTrial.editable" />
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate)" />
     <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial" />
@@ -398,16 +398,28 @@ export default {
         .finally(() => {
           this.isLoading = false
 
-          if (this.$route.query && this.$route.query.synchronize) {
-            const id = this.$route.query.synchronize
+          if (this.$route.query) {
+            if (this.$route.query.synchronize) {
+              const id = this.$route.query.synchronize
 
-            getTrialById(id).then(trial => {
-              if (trial) {
-                this.synchronize(trial)
+              getTrialById(id).then(trial => {
+                if (trial) {
+                  this.synchronize(trial)
 
-                this.$router.replace({ query: null })
-              }
-            })
+                  this.$router.replace({ query: null })
+                }
+              })
+            } else if (this.$route.query.addPerson) {
+              const id = this.$route.query.addPerson
+
+              getTrialById(id).then(trial => {
+                if (trial) {
+                  this.addPerson(trial)
+
+                  this.$router.replace({ query: null })
+                }
+              })
+            }
           }
         })
     }

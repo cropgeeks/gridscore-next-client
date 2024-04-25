@@ -31,6 +31,15 @@
             </p>
           </b-list-group-item>
 
+          <!-- PERSON ADDED -->
+          <b-list-group-item v-if="transaction.trialPersonAddedTransactions && transaction.trialPersonAddedTransactions.length > 0">
+            <h5 class="mb-1"><BIconPersonPlus /> {{ $t('transactionTypePeopleAdded') }}</h5>
+
+            <p class="mb-1">
+              {{ $tc('transactionTypePeopleAddedCount', Object.keys(transaction.trialPersonAddedTransactions).length) }}
+            </p>
+          </b-list-group-item>
+
           <!-- TRAIT DETAILS CHANGED -->
           <b-list-group-item v-if="transaction.traitChangeTransactions && transaction.traitChangeTransactions.length > 0">
             <h5 class="mb-1">
@@ -209,7 +218,7 @@ import { mapGetters } from 'vuex'
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
 import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
 
-import { BIconChatLeft, BIconFlag, BIconstack, BIconGeo, BIconPlus, BIconDash, BIconPencilSquare, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
+import { BIconChatLeft, BIconFlag, BIconstack, BIconGeo, BIconPlus, BIconDash, BIconPencilSquare, BIconPersonPlus, BIconTags, BIconTag, BIconPencilFill, BIconNodePlus, BIconBookmarkStar, BIconUiChecksGrid } from 'bootstrap-vue'
 
 import IconBrapi from '@/components/icons/IconBrapi'
 
@@ -221,6 +230,7 @@ export default {
     BIconUiChecksGrid,
     BIconstack,
     BIconPlus,
+    BIconPersonPlus,
     BIconFlag,
     BIconGeo,
     BIconDash,

@@ -422,5 +422,21 @@
         "text": "Die Replikat-Heatmap wurde entfernt in Fällen wo Replikate definiert sind aber alle Replikatwerte einzigartig sind und somit keine echten Replikate vorhanden sind. Zuvor wurde hier eine riesige leere und größtenteils nutzlose Heatmap generiert."
       }
     ]
+  },
+  {
+    "version": "2.6.0",
+    "date": "xxxx-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Versuchspersonen",
+        "text": "Wir haben Unterstützung für das Hinzufügen von Individuen zu Versuchen hinzugefügt welches das Definieren derer Rolle (Datensammler, Korrespondenzautor usw.) innerhalb des Versuches erlaubt. Dies beeinflusst aktuell nicht die Funktionsweise von GridScore, jedoch muss die Person die Daten sammelt ausgewählt werden falls Personen definiert sind. Dies wurde hinzugefügt um das Ausfüllen von Datenvorlagen beim Exportieren zu erleichtern."
+      },
+      {
+        "type": "new",
+        "title": "Datensatatistiken",
+        "text": "Eine Datenstatistk-Übersichtsseite wurde zu GridScore hinzugefügt welche verschiedene Ansichten auf die Daten erlaubt, z.B. eine Kalendarheatmap welche arbeitsreiche Tage hervorhebt sowie die Fläche die durch Datensammlung abgedeckt wurde und Vieles mehr."
+      }
+    ]
   }
 ]

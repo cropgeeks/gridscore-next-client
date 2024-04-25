@@ -44,19 +44,7 @@
               <BIconPeopleFill /><span> {{ $t('formLabelTrialSetupTrialPeople') }}</span>
             </template>
             <h5 v-for="(person, personIndex) in people" :key="`person-${person.id}`" class="d-inline-block">
-              <b-badge variant="light">
-                <BIconPersonCheckFill class="mr-1" v-if="person.types.includes(PERSON_TYPE_QUALITY_CHECKER)" :style="{ color: personStyle[PERSON_TYPE_QUALITY_CHECKER] }" />
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="mr-1 bi b-icon bi-person-fill-up" viewBox="0 0 16 16" v-if="person.types.includes(PERSON_TYPE_DATA_SUBMITTER)"  :style="{ color: personStyle[PERSON_TYPE_DATA_SUBMITTER] }">
-                  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                  <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
-                </svg>
-                <BIconPersonLinesFill class="mr-1" v-if="person.types.includes(PERSON_TYPE_DATA_COLLECTOR)"  :style="{ color: personStyle[PERSON_TYPE_DATA_COLLECTOR] }" />
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="mr-1 bi b-icon bi-person-fill-exclamation" viewBox="0 0 16 16" v-if="person.types.includes(PERSON_TYPE_CORRESPONDING_AUTHOR)"  :style="{ color: personStyle[PERSON_TYPE_CORRESPONDING_AUTHOR] }">
-                  <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
-                  <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 1 0V11a.5.5 0 0 0-.5-.5m0 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-                </svg>
-                {{ person.name }}
-              </b-badge>
+              <b-badge variant="light"><PersonTypeIcon class="mr-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" /> {{ person.name }}</b-badge>
               <b-badge variant="danger" href="#" @click="deletePerson(personIndex)" class="mr-2">
                 <BIconTrash />
               </b-badge>
@@ -232,11 +220,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconPeopleFill, BIconPersonCheckFill, BIconPersonPlusFill, BIconTrash, BIconPersonLinesFill, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
+import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconPeopleFill, BIconPersonPlusFill, BIconTrash, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import TrialLayoutComponent from '@/components/TrialLayoutComponent'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
 import EditPeopleModal from '@/components/modals/EditPeopleModal'
+import PersonTypeIcon from '@/components/icons/PersonTypeIcon'
 import Tour from '@/components/Tour'
 import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
@@ -248,6 +237,7 @@ const emitter = require('tiny-emitter/instance')
 export default {
   components: {
     BIconTextareaT,
+    PersonTypeIcon,
     BIconCardText,
     // BIconCardHeading,
     BIconCheck,
@@ -258,8 +248,6 @@ export default {
     BIconPersonPlusFill,
     BIconJournalPlus,
     BIconCardChecklist,
-    BIconPersonCheckFill,
-    BIconPersonLinesFill,
     BIconPeopleFill,
     BIconExclamationTriangleFill,
     // BIconCaretRightFill,

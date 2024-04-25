@@ -3,6 +3,7 @@
     <b-button-toolbar>
       <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
       <JumpToDropdown :trial="trial" />
+      <b-button :title="$t('toolbarPersonSelector')" @click="forcePersonSelector = true" v-if="trial.people && trial.people.length > 1"><BIconPersonLinesFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPersonSelector') }}</span></b-button>
       <b-button :title="$t('toolbarHelp')" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
       <b-button v-if="trial.transactionCount > 0" @click="synchronize" variant="info"><BIconCloudUploadFill /> {{ $tc('toolbarSyncInfo', trial.transactionCount) }}</b-button>
       <!-- <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
@@ -28,6 +29,7 @@
     <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @change="loadTrial" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
+    <TrialPersonSelectModal :trial="trial" :shown="showTrialPersonSelector || forcePersonSelector" @personSelected="forcePersonSelector = false" @addPersonClicked="addPerson" v-if="trial && (showTrialPersonSelector || forcePersonSelector)" />
     <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataTour" />
   </b-container>
 </template>
@@ -38,6 +40,7 @@ import TraitDropdown from '@/components/dropdowns/TraitDropdown'
 import DataInputModal from '@/components/modals/DataInputModal'
 import SearchMatchModal from '@/components/modals/SearchMatchModal'
 import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal'
+import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal'
 import DataViewJumpControl from '@/components/DataViewJumpControl'
 import JumpToDropdown from '@/components/dropdowns/JumpToDropdown'
 import Tour from '@/components/Tour'
@@ -45,7 +48,7 @@ import { getTrialById } from '@/plugins/idb'
 import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 // import { BIconFullscreen, BIconFullscreenExit } from 'bootstrap-vue'
-import { BIconSearch, BIconQuestionCircle, BIconCloudUploadFill } from 'bootstrap-vue'
+import { BIconSearch, BIconQuestionCircle, BIconCloudUploadFill, BIconPersonLinesFill } from 'bootstrap-vue'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
 const emitter = require('tiny-emitter/instance')
@@ -57,10 +60,12 @@ export default {
     JumpToDropdown,
     SearchMatchModal,
     DataInputModal,
+    TrialPersonSelectModal,
     DataViewJumpControl,
     ScanQRCodeModal,
     Tour,
     BIconCloudUploadFill,
+    BIconPersonLinesFill,
     BIconSearch,
     BIconQuestionCircle
     // BIconFullscreen,
@@ -72,8 +77,16 @@ export default {
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeNavigationMode',
-      'storeVoiceFeedbackEnabled'
+      'storeVoiceFeedbackEnabled',
+      'storeSelectedTrialPerson'
     ]),
+    showTrialPersonSelector: function () {
+      if (this.trial && this.trial.people && this.trial.people.length > 0) {
+        return !this.storeSelectedTrialPerson || !this.trial.people.some(p => p.id === this.storeSelectedTrialPerson)
+      } else {
+        return false
+      }
+    },
     tourSteps: function () {
       return [{
         title: () => this.$t('tourTitleDataEntryStart'),
@@ -158,7 +171,8 @@ export default {
       hasFullscreenEventListener: false,
       searchTerm: null,
       searchMatches: [],
-      geolocation: null
+      geolocation: null,
+      forcePersonSelector: false
     }
   },
   methods: {
@@ -287,6 +301,9 @@ export default {
           }
         }, 100)
       }, 10000)
+    },
+    addPerson: function () {
+      this.$router.push({ name: 'home', query: { addPerson: this.trial.localId } })
     },
     synchronize: function () {
       this.$router.push({ name: 'home', query: { synchronize: this.trial.localId } })

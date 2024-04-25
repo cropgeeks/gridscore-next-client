@@ -130,9 +130,33 @@ export default {
 
           // Create the description
           if (this.trait.allowRepeats) {
-            return values.map(v => this.$t('widgetTraitInputPreviousMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color }))
+            return values.map(v => {
+              if (this.trial.people && last.personId) {
+                const person = this.trial.people.find(p => p.id === last.personId)
+
+                if (person) {
+                  return this.$t('widgetTraitInputPreviousMeasuresTakenBy', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color, by: person.name })
+                } else {
+                  return this.$t('widgetTraitInputPreviousMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color })
+                }
+              } else {
+                return this.$t('widgetTraitInputPreviousMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color })
+              }
+            })
           } else {
-            return values.map(v => this.$t('widgetTraitInputCurrentMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color }))
+            return values.map(v => {
+              if (this.trial.people && last.personId) {
+                const person = this.trial.people.find(p => p.id === last.personId)
+
+                if (person) {
+                  return this.$t('widgetTraitInputCurrentMeasuresTakenBy', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color, by: person.name })
+                } else {
+                  return this.$t('widgetTraitInputCurrentMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color })
+                }
+              } else {
+                return this.$t('widgetTraitInputCurrentMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: this.trait.color })
+              }
+            })
           }
         } else {
           return null

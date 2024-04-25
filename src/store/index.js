@@ -32,6 +32,7 @@ export default new Vuex.Store({
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     homeWidgetOrder: ['banners', 'trials'],
+    selectedTrialPerson: null,
     canvasDensity: CANVAS_DENSITY_MEDIUM,
     canvasShape: CANVAS_SHAPE_CIRCLE,
     canvasSize: CANVAS_SIZE_MEDIUM,
@@ -71,6 +72,7 @@ export default new Vuex.Store({
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
     storeHomeWidgetOrder: (state) => state.homeWidgetOrder,
+    storeSelectedTrialPerson: (state) => state.selectedTrialPerson,
     storeCanvasDensity: (state) => state.canvasDensity,
     storeCanvasShape: (state) => state.canvasShape,
     storeCanvasSize: (state) => state.canvasSize,
@@ -100,10 +102,25 @@ export default new Vuex.Store({
     ON_HIDDEN_TRAITS_CHANGED: function (state, newHiddenTraits) {
       state.hiddenTraits = newHiddenTraits
     },
+    ON_SELECTED_TRIAL_PERSON_CHANGED: function (state, newSelectedTrialPerson) {
+      if (Object.prototype.hasOwnProperty.call(state, 'selectedTrialPerson')) {
+        state.selectedTrialPerson = newSelectedTrialPerson
+      } else {
+        Vue.set(state, 'selectedTrialPerson', newSelectedTrialPerson)
+      }
+    },
     ON_SELECTED_TRIAL_CHANGED: function (state, newSelectedTrial) {
       /* Remember to reset everything here */
+      const currentId = state.selectedTrial
       state.selectedTrial = newSelectedTrial
       state.hiddenTraits = []
+      if (currentId !== newSelectedTrial) {
+        if (Object.prototype.hasOwnProperty.call(state, 'selectedTrialPerson')) {
+          state.selectedTrialPerson = null
+        } else {
+          Vue.set(state, 'selectedTrialPerson', null)
+        }
+      }
 
       if (newSelectedTrial) {
         getTrialById(newSelectedTrial)
@@ -269,6 +286,9 @@ export default new Vuex.Store({
     },
     setHiddenTraits: function ({ commit }, hiddenTraits) {
       commit('ON_HIDDEN_TRAITS_CHANGED', hiddenTraits)
+    },
+    setSelectedTrialPerson: function ({ commit }, selectedTrialPerson) {
+      commit('ON_SELECTED_TRIAL_PERSON_CHANGED', selectedTrialPerson)
     },
     setSelectedTrial: function ({ commit }, selectedTrial) {
       commit('ON_SELECTED_TRIAL_CHANGED', selectedTrial)

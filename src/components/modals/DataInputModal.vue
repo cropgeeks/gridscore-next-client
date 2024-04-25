@@ -187,7 +187,8 @@ export default {
     ...mapGetters([
       'storeSelectedTrial',
       'storeHiddenTraits',
-      'storeCalendarLocale'
+      'storeCalendarLocale',
+      'storeSelectedTrialPerson'
     ]),
     tourSteps: function () {
       return [{
@@ -605,6 +606,7 @@ export default {
           if (!values.every(v => v === undefined || v === null || v === '')) {
             mapping.push({
               traitId: t.id,
+              personId: this.storeSelectedTrialPerson,
               values: values,
               timestamp: date.toISOString()
             })

@@ -36,6 +36,14 @@
           <span>{{ $tc('widgetTrialSelectorTraits', trial.traits.length) }}</span>
           <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
         </b-col>
+        <b-col cols=6 class="mb-3">
+          <h5 class="mb-0"><BIconPerson /></h5>
+          <span>{{ $tc('widgetTrialSelectorPeople', (trial.people || []).length) }}</span>
+        </b-col>
+        <b-col cols=6 class="mb-3" v-if="trial.updatedOn">
+          <h5 class="mb-0"><BIconCalendarRange /></h5>
+          <span>{{ $tc('widgetTrialSelectorTrialDuration', trialDuration) }}</span>
+        </b-col>
         <b-col cols=6 class="mb-3" v-if="trial.updatedOn">
           <h5 class="mb-0"><BIconCalendarDate /></h5>
           <span v-b-tooltip.bottom="new Date(trial.updatedOn).toLocaleString()">{{ formatTimeAgo(trial.updatedOn) }}</span>
@@ -50,9 +58,9 @@
 <script>
 import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
-import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconFlag, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
+import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconFlag, BIconPerson, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
 import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
-import { formatTimeAgo } from '@/plugins/misc'
+import { formatTimeAgo, toLocalDateString } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -62,6 +70,7 @@ export default {
     BIconCollection,
     BIconTags,
     BIconCalendarRange,
+    BIconPerson,
     BIconFlag,
     BIconCalendarDate,
     BIconChatLeftText,
@@ -89,6 +98,16 @@ export default {
     }
   },
   computed: {
+    trialDuration: function () {
+      if (this.trial && this.trial.createdOn && this.trial.updatedOn) {
+        const start = toLocalDateString(this.trial.createdOn)
+        const end = toLocalDateString(this.trial.updatedOn)
+
+        return (new Date(end).getTime() - new Date(start).getTime()) / (24 * 60 * 60 * 1000) + 1
+      } else {
+        return 1
+      }
+    },
     hasTimeframe: function () {
       if (this.trial && this.trial.traits) {
         return this.trial.traits.filter(t => t.timeframe).length > 0

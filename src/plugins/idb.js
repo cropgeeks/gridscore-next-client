@@ -556,9 +556,11 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
             if (match) {
               // Update the values
               match.values = d.values
+              match.personId = d.personId
             } else {
               // If no match is found, simply append to the end
               cell.measurements[d.traitId].push({
+                personId: d.personId,
                 values: d.values,
                 timestamp: d.timestamp
               })
@@ -571,9 +573,11 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
               // If it exists, update it
               match.values = d.values
               match.timestamp = d.timestamp
+              match.personId = d.personId
             } else {
               // If not, create a new one
               cell.measurements[d.traitId].push({
+                personId: d.personId,
                 values: d.values,
                 timestamp: d.timestamp
               })
@@ -659,6 +663,7 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
               }
 
               // In any case, update the values and timestamp
+              match.personId = d.personId
               match.values = d.values
               match.timestamp = d.timestamp
             }
