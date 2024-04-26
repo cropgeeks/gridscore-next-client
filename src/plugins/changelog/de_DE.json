@@ -429,6 +429,11 @@
     "items": [
       {
         "type": "new",
+        "title": "Kontrollbeete",
+        "text": "Beete können jetzt als Kontrollbeete definiert werden während der Erstellung eines Versuches. Dies hebt die Beete auf der Hauptdateneingabe sowie auf allen Visualisierungen hervor um den Rest der Daten gegen die Kontrollen darzustellen."
+      },
+      {
+        "type": "new",
         "title": "Versuchspersonen",
         "text": "Wir haben Unterstützung für das Hinzufügen von Individuen zu Versuchen hinzugefügt welches das Definieren derer Rolle (Datensammler, Korrespondenzautor usw.) innerhalb des Versuches erlaubt. Dies beeinflusst aktuell nicht die Funktionsweise von GridScore, jedoch muss die Person die Daten sammelt ausgewählt werden falls Personen definiert sind. Dies wurde hinzugefügt um das Ausfüllen von Datenvorlagen beim Exportieren zu erleichtern."
       },

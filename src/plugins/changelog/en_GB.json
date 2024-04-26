@@ -429,6 +429,11 @@
     "items": [
       {
         "type": "new",
+        "title": "Control/check plots",
+        "text": "You can now define plots as control/check plots during trial setup. This will highlight them on the data input screen as well as on any data visualization so you can compare the rest of the data against the controls/checks."
+      },
+      {
+        "type": "new",
         "title": "Trial people",
         "text": "We've added support for adding individuals to a trial in the form of defining people and their role within the trial (e.g. data collector, corresponding author, etc). This will currently not affect the way GridScore behaves, but if people are defined for a trial you will have to select who is recording data. This has been put in place to allow GridScore to pre-fill data templates during data export."
       },
