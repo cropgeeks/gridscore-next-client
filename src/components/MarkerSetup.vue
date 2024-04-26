@@ -187,7 +187,7 @@ export default {
           }
 
           // Draw the circle
-          this.ctx.fillStyle = this.storeTraitColors[1]
+          this.ctx.fillStyle = this.storeTraitColors[1 % this.storeTraitColors.length]
           this.ctx.beginPath()
           this.ctx.arc(finalX, finalY, 6, 0, 2 * Math.PI)
           this.ctx.fill()

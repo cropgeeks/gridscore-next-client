@@ -69,7 +69,7 @@
           </div>
 
           <ul class="nav col-md-4 justify-content-center justify-content-md-end list-unstyled d-flex">
-            <li class="ml-3"><a class="text-muted" href="https://cropgeeks.github.io/gridscore-next-client"><BIconGlobe2 /></a></li>
+            <li class="ml-3"><a class="text-muted" href="https://ics.hutton.ac.uk/get-gridscore"><BIconGlobe2 /></a></li>
             <li class="ml-3"><a class="text-muted" href="https://twitter.com/GerminateHub"><BIconTwitter /></a></li>
             <li class="ml-3"><a class="text-muted" href="https://github.com/cropgeeks/gridscore-next-client"><BIconGithub /></a></li>
           </ul>

@@ -6,8 +6,6 @@ import store from '@/store'
 import { saveAs } from 'file-saver'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from './constants'
 
-const categoryColors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-
 const DIVISIONS = [
   { amount: 60, name: 'seconds' },
   { amount: 60, name: 'minutes' },
@@ -531,7 +529,6 @@ export {
   isOffline,
   checkDataMatchesTraitType,
   isValidDateString,
-  categoryColors,
   getNumberWithSuffix,
   truncateAfterWords,
   formatTimeAgo

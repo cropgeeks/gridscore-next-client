@@ -436,6 +436,11 @@
         "type": "new",
         "title": "Datensatatistiken",
         "text": "Eine Datenstatistk-Übersichtsseite wurde zu GridScore hinzugefügt welche verschiedene Ansichten auf die Daten erlaubt, z.B. eine Kalendarheatmap welche arbeitsreiche Tage hervorhebt sowie die Fläche die durch Datensammlung abgedeckt wurde und Vieles mehr."
+      },
+      {
+        "type": "new",
+        "title": "Farbpaletten",
+        "text": "Eine Vorauswahl von vordefinierten Farbpaletten wurde hinzugefügt. Diese beinhalten die Standard GridScore Palette sowie gängige Farbpaletten."
       }
     ]
   }

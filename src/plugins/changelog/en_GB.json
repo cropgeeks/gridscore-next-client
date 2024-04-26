@@ -436,6 +436,11 @@
         "type": "new",
         "title": "Data statistics",
         "text": "An overview trial statistics page has been added to GridScore that shows various views onto the data like a calendar heatmap showing busy data collection days as well as stats on the size of area covered by data collection and many others."
+      },
+      {
+        "type": "new",
+        "title": "Color palettes",
+        "text": "Added a pre-selection of color palettes to choose from. These include the default GridScore palette as well as other well-known color palettes."
       }
     ]
   }

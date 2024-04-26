@@ -91,6 +91,20 @@
               </b-input-group>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsTraitColorPreset')" label-for="preset-color" :description="$t('formDescriptionSettingsTraitColorPreset')" class="settings-colors">
+              <b-input-group>
+                <b-dropdown id="preset-color" :text="$t('dropdownSettingsTraitColorPreset')">
+                  <b-dropdown-group :header="colorKey" v-for="colorKey in Object.keys(categoricalColors)" :key="`color-preset-${colorKey}`">
+                    <b-dropdown-item @click="selectColorPreset(categoricalColors[colorKey])">
+                      <div class="d-flex flex-row gradient">
+                        <div v-for="color in categoricalColors[colorKey]" :key="`color-preset-${colorKey}-${color}`" :style="{ background: color }" />
+                      </div>
+                    </b-dropdown-item>
+                  </b-dropdown-group>
+                </b-dropdown>
+              </b-input-group>
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsHighlightControls')" :description="$t('formDescriptionSettingsHighlightControls')" label-for="highlightControls">
               <b-form-checkbox id="highlightControls" v-model="highlightControls" switch>
                 {{ highlightControls ? $t('genericYes') : $t('genericNo') }}
@@ -175,6 +189,7 @@ import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconAr
 import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 import draggable from 'vuedraggable'
+import { categoricalColors } from '@/plugins/color'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -223,7 +238,8 @@ export default {
       navigationMode: null,
       traitColors: [],
       newColor: '#000000',
-      showFullTraitDescription: true
+      showFullTraitDescription: true,
+      categoricalColors
     }
   },
   computed: {
@@ -344,6 +360,9 @@ export default {
     }
   },
   methods: {
+    selectColorPreset: function (colors) {
+      this.traitColors = colors.concat()
+    },
     addColor: function () {
       this.traitColors.push(this.newColor)
       this.newColor = '#000000'
@@ -354,7 +373,7 @@ export default {
       }
     },
     resetColors: function () {
-      this.traitColors = ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600']
+      this.traitColors = categoricalColors.GridScoreDefault
     },
     reset: function () {
       this.locale = this.storeLocale
@@ -397,5 +416,15 @@ export default {
 
 .drag-handle:hover {
   cursor: move;
+}
+</style>
+
+<style scoped>
+.gradient {
+  min-width: 250px;
+  height: 30px;
+}
+.gradient > div {
+  flex-grow: 1;
 }
 </style>

@@ -22,22 +22,22 @@
         <b-row>
           <b-col :cols=12 :md=3>
             <b-button :variant="isCorrespondingAuthor ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_CORRESPONDING_AUTHOR)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[0] }"><PersonTypeIcon :personType="PERSON_TYPE_CORRESPONDING_AUTHOR" /></h2> <span>{{ $t('personTypeCorrespondingAuthor') }}</span>
+              <h2 :style="{ color: storeTraitColors[0 % storeTraitColors.length] }"><PersonTypeIcon :personType="PERSON_TYPE_CORRESPONDING_AUTHOR" /></h2> <span>{{ $t('personTypeCorrespondingAuthor') }}</span>
             </b-button>
           </b-col>
           <b-col :cols=12 :md=3>
             <b-button :variant="isDataCollector ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_DATA_COLLECTOR)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[1] }"><PersonTypeIcon :personType="PERSON_TYPE_DATA_COLLECTOR" /></h2> <span>{{ $t('personTypeDataCollector') }}</span>
+              <h2 :style="{ color: storeTraitColors[1 % storeTraitColors.length] }"><PersonTypeIcon :personType="PERSON_TYPE_DATA_COLLECTOR" /></h2> <span>{{ $t('personTypeDataCollector') }}</span>
             </b-button>
           </b-col>
           <b-col :cols=12 :md=3>
             <b-button :variant="isQualityChecker ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_QUALITY_CHECKER)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[2] }"><PersonTypeIcon :personType="PERSON_TYPE_QUALITY_CHECKER" /></h2> <span>{{ $t('personTypeQualityChecker') }}</span>
+              <h2 :style="{ color: storeTraitColors[2 % storeTraitColors.length] }"><PersonTypeIcon :personType="PERSON_TYPE_QUALITY_CHECKER" /></h2> <span>{{ $t('personTypeQualityChecker') }}</span>
             </b-button>
           </b-col>
           <b-col :cols=12 :md=3>
             <b-button :variant="isSubmitter ? 'dark' : 'outline-dark'" @click="toggle(PERSON_TYPE_DATA_SUBMITTER)" class="w-100 person-type-button d-flex flex-column align-items-center">
-              <h2 :style="{ color: storeTraitColors[3] }"><PersonTypeIcon :personType="PERSON_TYPE_DATA_SUBMITTER" /></h2> <span>{{ $t('personTypeDataSubmitter') }}</span>
+              <h2 :style="{ color: storeTraitColors[3 % storeTraitColors.length] }"><PersonTypeIcon :personType="PERSON_TYPE_DATA_SUBMITTER" /></h2> <span>{{ $t('personTypeDataSubmitter') }}</span>
             </b-button>
           </b-col>
         </b-row>

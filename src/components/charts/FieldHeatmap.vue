@@ -38,7 +38,8 @@
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { categoryColors, invertHex, toLocalDateString } from '@/plugins/misc'
+import { invertHex, toLocalDateString } from '@/plugins/misc'
+import { categoricalColors } from '@/plugins/color'
 import PlotDataSection from '@/components/PlotDataSection'
 
 const emitter = require('tiny-emitter/instance')
@@ -298,7 +299,7 @@ export default {
           colorscale: this.selectedTrait.dataType === 'categorical'
             ? restrictions.categories.map((_, i) => {
               const l = restrictions.categories.length
-              const c = categoryColors[i % categoryColors.length]
+              const c = categoricalColors.D3schemeCategory10[i % categoricalColors.D3schemeCategory10.length]
               return [[i / l, c], [(i + 1) / l, c]]
             }).flat()
             : [[0, this.storeDarkMode ? '#444444' : '#dddddd'], [1, this.selectedTrait.color]],

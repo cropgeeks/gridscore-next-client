@@ -68,10 +68,10 @@ export default {
     ]),
     personStyle: function () {
       const result = {}
-      result[PERSON_TYPE_CORRESPONDING_AUTHOR] = this.storeTraitColors[0]
-      result[PERSON_TYPE_DATA_COLLECTOR] = this.storeTraitColors[1]
-      result[PERSON_TYPE_QUALITY_CHECKER] = this.storeTraitColors[2]
-      result[PERSON_TYPE_DATA_SUBMITTER] = this.storeTraitColors[3]
+      result[PERSON_TYPE_CORRESPONDING_AUTHOR] = this.storeTraitColors[0 % this.storeTraitColors.length]
+      result[PERSON_TYPE_DATA_COLLECTOR] = this.storeTraitColors[1 % this.storeTraitColors.length]
+      result[PERSON_TYPE_QUALITY_CHECKER] = this.storeTraitColors[2 % this.storeTraitColors.length]
+      result[PERSON_TYPE_DATA_SUBMITTER] = this.storeTraitColors[3 % this.storeTraitColors.length]
 
       return result
     }
