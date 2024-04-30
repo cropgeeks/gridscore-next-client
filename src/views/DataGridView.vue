@@ -1,6 +1,6 @@
 <template>
   <div class="data-grid-wrapper" ref="wrapper">
-    <div v-if="trial && trialData" class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, minmax(${$refs.wrapper.offsetWidth / trial.layout.columns}px, auto))`, gridTemplateRows: `repeat(${trial.layout.rows}, minmax(${$refs.wrapper.offsetHeight / trial.layout.rows}px, auto))` }">
+    <div v-if="trial && trialData" class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, minmax(${$refs.wrapper.offsetHeight / trial.layout.rows}px, auto))` }">
       <template v-for="row of trial.layout.rows">
         <template v-for="column of trial.layout.columns">
           <div :class="`cell text-center p-1 cell-${(((row - 1) % 2 === 0) ? 1 : 0) + (((column - 1) % 2 === 0) ? 1 : 0)}`" :key="`cell-${row}-${column}`">
@@ -33,12 +33,15 @@ export default {
   data: function () {
     return {
       trial: null,
-      trialData: null
+      trialData: null,
+      dataPointDiameter: 22,
+      cellWidth: 100
     }
   },
   computed: {
     ...mapGetters([
-      'storeSelectedTrial'
+      'storeSelectedTrial',
+      'storeDisplayMinCellWidth'
     ])
   },
   methods: {
@@ -50,12 +53,16 @@ export default {
       })
     },
     reset: function () {
+      this.updateDimensions()
       this.trialData = getTrialDataCached()
       console.log(this.trialData)
 
       if (!this.trialData) {
         // TODO
       }
+    },
+    updateDimensions: function () {
+      this.cellWidth = Math.max(this.$refs.wrapper.offsetWidth / this.trial.layout.columns, this.storeDisplayMinCellWidth * this.dataPointDiameter + (this.storeDisplayMinCellWidth - 1) * 10)
     }
   },
   mounted: function () {
@@ -64,9 +71,11 @@ export default {
     }
 
     emitter.on('trial-data-loaded', this.reset)
+    window.addEventListener('resize', this.updateDimensions)
   },
   beforeDestroy: function () {
     emitter.off('trial-data-loaded', this.reset)
+    window.removeEventListener('resize', this.updateDimensions)
   }
 }
 </script>
