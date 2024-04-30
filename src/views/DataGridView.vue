@@ -110,10 +110,8 @@ export default {
       }
     },
     syncScroll: function () {
-      window.requestAnimationFrame(() => {
-        this.$refs.rowHeader.scrollTop = this.$refs.wrapper.scrollTop
-        this.$refs.columnHeader.scrollLeft = this.$refs.wrapper.scrollLeft
-      })
+      this.$refs.rowHeader.scrollTop = this.$refs.wrapper.scrollTop
+      this.$refs.columnHeader.scrollLeft = this.$refs.wrapper.scrollLeft
     }
   },
   mounted: function () {
