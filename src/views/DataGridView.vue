@@ -35,6 +35,7 @@
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
+import { debounce } from '@/plugins/misc'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -110,8 +111,10 @@ export default {
       }
     },
     syncScroll: function () {
-      this.$refs.rowHeader.scrollTop = this.$refs.wrapper.scrollTop
-      this.$refs.columnHeader.scrollLeft = this.$refs.wrapper.scrollLeft
+      window.requestAnimationFrame(() => {
+        this.$refs.rowHeader.scrollTop = this.$refs.wrapper.scrollTop
+        this.$refs.columnHeader.scrollLeft = this.$refs.wrapper.scrollLeft
+      })
     }
   },
   mounted: function () {
@@ -120,11 +123,11 @@ export default {
     }
 
     emitter.on('trial-data-loaded', this.reset)
-    window.addEventListener('resize', this.updateDimensions)
+    window.addEventListener('resize', debounce(this.updateDimensions, 100))
   },
   beforeDestroy: function () {
     emitter.off('trial-data-loaded', this.reset)
-    window.removeEventListener('resize', this.updateDimensions)
+    window.removeEventListener('resize', debounce(this.updateDimensions, 100))
 
     if (this.scrollSynced && this.$refs.wrapper) {
       this.$refs.wrapper.removeEventListener('scroll', this.syncScroll)

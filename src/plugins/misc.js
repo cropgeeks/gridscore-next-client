@@ -517,6 +517,19 @@ const truncateAfterWords = (str, words) => {
   }
 }
 
+const debounce = (fn, wait) => {
+  let timer
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    const context = this
+    timer = setTimeout(() => {
+      fn.apply(context, args)
+    }, wait)
+  }
+}
+
 export {
   trialsDataToMatrix,
   getTraitTypeText,
@@ -531,5 +544,6 @@ export {
   isValidDateString,
   getNumberWithSuffix,
   truncateAfterWords,
-  formatTimeAgo
+  formatTimeAgo,
+  debounce
 }
