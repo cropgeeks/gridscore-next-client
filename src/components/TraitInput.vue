@@ -62,6 +62,7 @@
     <!-- If there are more than 4 options, show a dropdown select -->
     <b-form-select :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length > storeCategoryCountInline" ref="input" :state="formState"
                     v-model="value"
+                    :disabled="!editable"
                     :readonly="!editable"
                     :options="traitOptionsSelect"
                     @change="tts" />

@@ -457,7 +457,8 @@ export default {
         }
 
         if (bounds && bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [50, 50] })
+          const size = map.getSize()
+          map.fitBounds(bounds, { padding: [size.x / 4, size.y / 4] })
         }
       })
     }

@@ -1,6 +1,6 @@
 import { BIconCheckSquareFill } from 'bootstrap-vue'
 
-const gridScoreVersion = '2.5.3'
+const gridScoreVersion = '2.6.0'
 
 const NAVIGATION_MODE_DRAG = 'DRAG'
 const NAVIGATION_MODE_JUMP = 'JUMP'

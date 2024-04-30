@@ -623,3 +623,14 @@
   border-color: rgb(56, 61, 63);
 }
 
+.dark-mode .data-grid .cell-2 {
+  background: #1f1f1f;
+}
+
+.dark-mode .data-grid .cell-1 {
+  background: #0d0d0d;
+}
+
+.dark-mode .data-grid .cell-0 {
+  background: #000000;
+}
