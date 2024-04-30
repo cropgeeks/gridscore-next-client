@@ -54,8 +54,8 @@ const routes = [
     name: 'data-entry',
     component: () => import('@/views/DataEntryView.vue')
   }, {
-    path: '/data-grid-test',
-    name: 'data-grid-text',
+    path: '/data-grid',
+    name: 'data-grid',
     component: () => import('@/views/DataGridView.vue')
   }, {
     path: '/guided-walk',

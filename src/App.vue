@@ -58,7 +58,7 @@
     <div class="d-flex flex-column h-100">
       <router-view/>
 
-      <footer class="mt-auto py-3 border-top border-light bg-light" v-if="$route.name !== 'data-entry'">
+      <footer class="mt-auto py-3 border-top border-light bg-light" v-if="$route.name !== 'data-entry' && $route.name !== 'data-grid'">
         <b-container class="d-flex no-gutters container-force flex-wrap justify-content-between align-items-center">
           <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-start">
             <span class="text-muted">&copy; {{ new Date().getFullYear() }} GridScore: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
