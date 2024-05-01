@@ -22,7 +22,8 @@
       </b-input-group>
     </b-button-toolbar>
 
-    <DataCanvas :geolocation="geolocation" id="data-canvas" />
+    <DataCanvas :geolocation="geolocation" id="data-canvas" v-if="plotCount > 1000" />
+    <DataGridComponent v-else />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
@@ -36,6 +37,7 @@
 
 <script>
 import DataCanvas from '@/components/canvas/DataCanvas'
+import DataGridComponent from '@/components/canvas/DataGridComponent'
 import TraitDropdown from '@/components/dropdowns/TraitDropdown'
 import DataInputModal from '@/components/modals/DataInputModal'
 import SearchMatchModal from '@/components/modals/SearchMatchModal'
@@ -56,6 +58,7 @@ const emitter = require('tiny-emitter/instance')
 export default {
   components: {
     DataCanvas,
+    DataGridComponent,
     TraitDropdown,
     JumpToDropdown,
     SearchMatchModal,
@@ -80,6 +83,13 @@ export default {
       'storeVoiceFeedbackEnabled',
       'storeSelectedTrialPerson'
     ]),
+    plotCount: function () {
+      if (this.trial) {
+        return this.trial.layout.rows * this.trial.layout.columns
+      } else {
+        return 1
+      }
+    },
     showTrialPersonSelector: function () {
       if (this.trial && this.trial.people && this.trial.people.length > 0) {
         return !this.storeSelectedTrialPerson || !this.trial.people.some(p => p.id === this.storeSelectedTrialPerson)

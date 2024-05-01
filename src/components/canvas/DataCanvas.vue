@@ -9,11 +9,11 @@
                   ref="colHead" />
     <div class="corner" />
     <RowHeader :dimensions="dimensions"
-               :trial="trial"
-               :y="origin.y"
-               :markedRows="markedRows"
-               @row-marked="onRowMarked"
-               ref="rowHead" />
+              :trial="trial"
+              :y="origin.y"
+              :markedRows="markedRows"
+              @row-marked="onRowMarked"
+              ref="rowHead" />
     <PlotCanvas :geolocation="geolocation" :dimensions="dimensions" :markedColumns="markedColumns" :markedRows="markedRows" :trial="trial" @origin-changed="setOrigin" ref="plotCanvas" />
     <VScroll :dimensions="dimensions" :y="origin.y" :rows="trial.layout.rows" ref="vScroll" />
     <div class="corner" />

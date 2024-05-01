@@ -478,7 +478,10 @@ export default {
             this.$emit('origin-changed', { x: newX, y: newY })
 
             if (requestAnimationFrame in window) {
-              requestAnimationFrame(() => this.update())
+              if (this.timer) {
+                window.cancelAnimationFrame(this.timer)
+              }
+              this.timer = window.requestAnimationFrame(() => this.update())
             } else {
               this.update()
             }
@@ -523,7 +526,10 @@ export default {
             this.drag.position = ev
 
             if (requestAnimationFrame in window) {
-              requestAnimationFrame(() => this.update())
+              if (this.timer) {
+                window.cancelAnimationFrame(this.timer)
+              }
+              this.timer = window.requestAnimationFrame(() => this.update())
             } else {
               this.update()
             }
@@ -882,7 +888,10 @@ export default {
       this.$emit('origin-changed', { x: this.origin.x, y: this.origin.y })
 
       if (requestAnimationFrame in window) {
-        requestAnimationFrame(() => this.update())
+        if (this.timer) {
+          window.cancelAnimationFrame(this.timer)
+        }
+        this.timer = window.requestAnimationFrame(() => this.update())
       } else {
         this.update()
       }

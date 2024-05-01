@@ -623,14 +623,22 @@
   border-color: rgb(56, 61, 63);
 }
 
-.dark-mode .data-grid .cell-2 {
-  background: #1f1f1f;
+.dark-mode .cell {
+  background: #000000;
 }
-
-.dark-mode .data-grid .cell-1 {
+.dark-mode .cell-row,
+.dark-mode .cell-column {
   background: #0d0d0d;
 }
-
-.dark-mode .data-grid .cell-0 {
-  background: #000000;
+.dark-mode .cell-row.cell-column {
+  background: #1f1f1f;
+}
+.dark-mode .cell-marked {
+  background: #415971 !important;
+}
+.dark-mode .header-marked {
+  background: #364a5e;
+}
+.dark-mode .cell-control {
+  background: #0a3d62 !important;
 }
