@@ -23,7 +23,7 @@
     </b-button-toolbar>
 
     <DataCanvas :geolocation="geolocation" id="data-canvas" v-if="plotCount > 1000" />
-    <DataGridComponent v-else />
+    <DataGridComponent :geolocation="geolocation" id="data-canvas" v-else />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 

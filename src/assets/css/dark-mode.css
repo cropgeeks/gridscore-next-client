@@ -642,3 +642,6 @@
 .dark-mode .cell-control {
   background: #0a3d62 !important;
 }
+.dark-mode .cell-highlight {
+  background: #833471 !important;
+}

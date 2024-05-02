@@ -297,6 +297,7 @@ export default {
 }
 .leaflet-popup-content {
   min-width: 200px!important;
+  max-height: 50vh;
   line-height: 1em;
   overflow-x: hidden;
   height: auto !important;

@@ -24,7 +24,9 @@ const emitter = require('tiny-emitter/instance')
 const commentImg = new Image()
 commentImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="chat right text fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84"%3E%3Cg %3E%3Cpath d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353V2zM3.5 3h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zm0 2.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zm0 2.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
 const userPositionImg = new Image()
-userPositionImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="cursor fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84"%3E%3Cg %3E%3Cpath d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
+userPositionImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IiM4ZThjODQiIHZpZXdCb3g9IjAgMCAxNiAxNiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPiA8cGF0aCBkPSJNIDcuOTk5ODcxMiwwLjk5OTU3OTg5IEEgMC41LDAuNSAwIDAgMSA4LjQ2NjU2MTcsMS4zMjA2MDY0IEwgMTMuNDY2NTE0LDE0LjMyMDc2NSBhIDAuNSwwLjUgMCAwIDEgLTAuNjUzMzY3LDAuNjQzNDY3IEwgNy45OTk4NzEyLDEzLjAzNzM2NiAzLjE4NTE4MTEsMTQuOTY0MjMyIEEgMC41LDAuNSAwIDAgMSAyLjUzMzIyODcsMTQuMzIwNzY1IEwgNy41MzMxODA3LDEuMzIwNjA2NCBBIDAuNSwwLjUgMCAwIDEgNy45OTkxNjQxLDEuMDAwMjg3IFoiIC8+IDwvc3ZnPg=='
+const userPositionNoHeadingImg = new Image()
+userPositionNoHeadingImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM4ZThjODQiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgY2xhc3M9ImJpIGJpLXJlY29yZC1jaXJjbGUiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgPHBhdGggZD0iTTggMTVBNyA3IDAgMSAxIDggMWE3IDcgMCAwIDEgMCAxNG0wIDFBOCA4IDAgMSAwIDggMGE4IDggMCAwIDAgMCAxNiIvPgogIDxwYXRoIGQ9Ik0xMSA4YTMgMyAwIDEgMS02IDAgMyAzIDAgMCAxIDYgMCIvPgo8L3N2Zz4='
 const bookmarkImg = new Image()
 bookmarkImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="bookmark check fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84" %3E%3Cg %3E%3Cpath fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
 const controlImg = new Image()
@@ -58,7 +60,7 @@ export default {
   },
   data: function () {
     return {
-      followGps: true,
+      followGps: false,
       isDrawing: false,
       drag: {
         active: false,
@@ -97,6 +99,34 @@ export default {
         } else {
           const dataWidth = this.dimensions.cellWidth * this.trial.layout.columns
           const dataHeight = this.dimensions.cellHeight * this.trial.layout.rows
+
+          let rotate
+
+          if (this.geolocation.heading !== undefined && this.geolocation.heading !== null) {
+            const topX = (this.trial.layout.corners.topRight.lng + this.trial.layout.corners.topLeft.lng) / 2
+            const bottomX = topX
+            const topY = (this.trial.layout.corners.topRight.lat + this.trial.layout.corners.topLeft.lat) / 2
+            const bottomY = topY + 1
+
+            const topProjected = this.gridProjection(topX, topY)
+            const bottomProjected = this.gridProjection(bottomX, bottomY)
+
+            const dAx = topProjected.x - bottomProjected.x
+            const dAy = topProjected.y - bottomProjected.y
+            const dBx = 0
+            const dBy = 0 - 100
+            let angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy)
+            if (angle < 0) {
+              angle = angle * -1
+            }
+            rotate = angle * (180 / Math.PI)
+            console.log(rotate)
+            rotate = (rotate + this.geolocation.heading) % 360
+            console.log(rotate)
+          } else {
+            rotate = null
+          }
+
           return {
             column: highlightColumn,
             row: highlightRow,
@@ -104,7 +134,7 @@ export default {
             y: this.origin.y + dataHeight * euclideanPosition.y / 100,
             euclideanX: euclideanPosition.x,
             euclideanY: euclideanPosition.y,
-            heading: this.geolocation.heading
+            rotate: rotate
           }
         }
       } else {
@@ -660,12 +690,12 @@ export default {
 
         this.uctx.save()
         this.uctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, this.userPosition.x * window.devicePixelRatio, this.userPosition.y * window.devicePixelRatio)
-        if (this.userPosition.heading) {
-          this.uctx.rotate(((this.userPosition.heading + 45) % 360) * Math.PI / 180)
+        if (this.userPosition.rotate !== undefined && this.userPosition.rotate !== null) {
+          this.uctx.rotate(this.userPosition.rotate * Math.PI / 180)
+          this.uctx.drawImage(userPositionImg, -8, -8)
         } else {
-          this.uctx.rotate(-45 * Math.PI / 180)
+          this.uctx.drawImage(userPositionNoHeadingImg, -8, -8)
         }
-        this.uctx.drawImage(userPositionImg, -8, -8)
         this.uctx.restore()
 
         if (this.followGps) {
