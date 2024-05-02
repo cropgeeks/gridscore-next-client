@@ -19,7 +19,7 @@
         'header-marked': row.marked
       }" :key="`row-${row.index}`" @click="row.marked = !row.marked">{{ row.text }}</div>
     </div>
-    <div class="data-grid-wrapper" ref="wrapper">
+    <div :class="`data-grid-wrapper ${disableScroll ? 'no-scroll' : ''}`" ref="wrapper">
       <template v-if="userPosition">
         <BIconCursorFill class="grid-icon gps-position" :style="{
           left: `${userPosition.x}px`,
@@ -31,6 +31,7 @@
           top: `${userPosition.y}px`
         }" v-else />
       </template>
+      <BIconCircleFill class="grid-icon position-absolute marker" v-for="(marker, mIndex) in markers" :key="`marker-${mIndex}`" :style="{ left: marker[0], top: marker[1] }" />
       <div class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, ${cellHeight}px)` }">
         <template v-for="row in rows">
           <template v-for="column in columns">
@@ -47,30 +48,22 @@
                 'cell-row': row.index % 2 === 0,
                 'cell-control': storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)
               }">
-              <template>
-                <template v-if="storeDisplayMarkerIndicators && markers[`${row.index}|${column.index}`]">
-                  <BIconCircleFill class="grid-icon marker-top-left" v-if="markers[`${row.index}|${column.index}`].topLeft" />
-                  <BIconCircleFill class="grid-icon marker-top-right" v-if="markers[`${row.index}|${column.index}`].topRight" />
-                  <BIconCircleFill class="grid-icon marker-bottom-left" v-if="markers[`${row.index}|${column.index}`].bottomLeft" />
-                  <BIconCircleFill class="grid-icon marker-bottom-right" v-if="markers[`${row.index}|${column.index}`].bottomRight" />
-                </template>
-                <template v-if="cell">
-                  <BIconBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
-                  <BIconChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
-                  <BIconCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
-                  <div class="cell-text my-1">{{ cell.displayName }}</div>
-                  <template v-for="trait in visibleTraits">
-                    <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
-                      <span class="circle-full mx-1" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="{ background: trait.color }" />
-                    </template>
-                    <template v-else>
-                      <span class="circle-empty mx-1" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="{ borderColor: trait.color }" />
-                    </template>
+            <template v-if="cell">
+                <BIconBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
+                <BIconChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
+                <BIconCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
+                <div class="cell-text my-1">{{ cell.displayName }}</div>
+                <template v-for="trait in visibleTraits">
+                  <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
+                    <span class="circle-full mx-1" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="{ background: trait.color }" />
                   </template>
-                  <div class="cell-text" v-if="visibleTraits.length === 1">
-                    {{ singleTraitValues[`${row.index}|${column.index}`] }}
-                  </div>
+                  <template v-else>
+                    <span class="circle-empty mx-1" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="{ borderColor: trait.color }" />
+                  </template>
                 </template>
+                <div class="cell-text" v-if="visibleTraits.length === 1">
+                  {{ singleTraitValues[`${row.index}|${column.index}`] }}
+                </div>
               </template>
             </div>
           </template>
@@ -84,7 +77,7 @@
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT, CELL_CATEGORY_CONTROL } from '@/plugins/constants'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { BIconBookmarkCheckFill, BIconChatRightTextFill, BIconCheckSquareFill, BIconCircleFill, BIconRecordCircle, BIconCursorFill } from 'bootstrap-vue'
 import { projectToEuclidean } from '@/plugins/location'
 
@@ -126,8 +119,12 @@ export default {
       'storeSelectedTrial',
       'storeDisplayMinCellWidth',
       'storeHighlightControls',
-      'storeDisplayMarkerIndicators'
+      'storeDisplayMarkerIndicators',
+      'storeNavigationMode'
     ]),
+    disableScroll: function () {
+      return this.storeNavigationMode === NAVIGATION_MODE_JUMP
+    },
     userPosition: function () {
       if (this.geolocation && this.gridProjection) {
         const euclideanPosition = this.gridProjection(this.geolocation.lng, this.geolocation.lat)
@@ -220,6 +217,35 @@ export default {
     }
   },
   methods: {
+    moveInDirection: function (direction) {
+      const w = this.$refs.wrapper
+      switch (direction) {
+        case 'topLeft':
+          w.scroll({ left: w.scrollLeft - this.cellWidth, top: w.scrollTop - this.cellHeight })
+          break
+        case 'top':
+          w.scroll({ top: w.scrollTop - this.cellHeight })
+          break
+        case 'topRight':
+          w.scroll({ left: w.scrollLeft + this.cellWidth, top: w.scrollTop - this.cellHeight })
+          break
+        case 'left':
+          w.scroll({ left: w.scrollLeft - this.cellWidth })
+          break
+        case 'right':
+          w.scroll({ left: w.scrollLeft + this.cellWidth })
+          break
+        case 'bottomLeft':
+          w.scroll({ left: w.scrollLeft - this.cellWidth, top: w.scrollTop + this.cellHeight })
+          break
+        case 'bottom':
+          w.scroll({ top: w.scrollTop + this.cellHeight })
+          break
+        case 'bottomRight':
+          w.scroll({ left: w.scrollLeft + this.cellWidth, top: w.scrollTop + this.cellHeight })
+          break
+      }
+    },
     jumpToCorner: function (corner) {
       const w = this.$refs.wrapper
       switch (corner) {
@@ -251,7 +277,9 @@ export default {
           w.scroll({ left: w.scrollWidth / 2 - w.clientWidth / 2, top: w.scrollHeight / 2 - w.clientHeight / 2 })
           break
         case 'gps':
-          // TODO
+          if (this.userPosition) {
+            w.scroll({ left: w.scrollWidth * this.userPosition.euclideanX / 100, top: w.scrollHeight * this.userPosition.euclideanY / 100 })
+          }
           break
       }
     },
@@ -293,60 +321,6 @@ export default {
           ])
         } else {
           this.gridProjection = null
-        }
-
-        if (this.storeDisplayMarkerIndicators && this.trial.layout.markers && this.trial.layout.markers.anchor && this.trial.layout.markers.everyRow && this.trial.layout.markers.everyColumn) {
-          const m = this.trial.layout.markers
-          const markers = {}
-
-          if (m.anchor === 'topLeft') {
-            for (let y = 0; y < this.trial.layout.rows; y++) {
-              for (let x = 0; x < this.trial.layout.columns; x++) {
-                if (y % m.everyRow === 0 && x % m.everyColumn === 0) {
-                  // Top left circle
-                  if (!markers[`${y}|${x}`]) {
-                    markers[`${y}|${x}`] = {}
-                  }
-                  const cell = markers[`${y}|${x}`]
-                  cell.topLeft = true
-                }
-
-                if (y === this.trial.layout.rows - 1 && x === this.trial.layout.columns - 1) {
-                  if ((y + 1) % m.everyRow === 0 && (x + 1) % m.everyColumn === 0) {
-                    // Bottom right circle
-                    if (!markers[`${y}|${x}`]) {
-                      markers[`${y}|${x}`] = {}
-                    }
-                    const cell = markers[`${y}|${x}`]
-                    cell.bottomRight = true
-                  }
-                } else {
-                  if (y === this.trial.layout.rows - 1) {
-                    if ((y + 1) % m.everyRow === 0 && x % m.everyColumn === 0) {
-                      // Bottom right circle
-                      if (!markers[`${y}|${x}`]) {
-                        markers[`${y}|${x}`] = {}
-                      }
-                      const cell = markers[`${y}|${x}`]
-                      cell.bottomLeft = true
-                    }
-                  }
-                  if (x === this.trial.layout.columns - 1) {
-                    if (y % m.everyRow === 0 && (x + 1) % m.everyColumn === 0) {
-                      // Bottom right circle
-                      if (!markers[`${y}|${x}`]) {
-                        markers[`${y}|${x}`] = {}
-                      }
-                      const cell = markers[`${y}|${x}`]
-                      cell.topRight = true
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-          this.markers = markers
         }
 
         this.reset()
@@ -393,6 +367,45 @@ export default {
 
         this.cellHeight = Math.floor(tempHeight)
 
+        if (this.storeDisplayMarkerIndicators && this.trial.layout.markers && this.trial.layout.markers.anchor && this.trial.layout.markers.everyRow && this.trial.layout.markers.everyColumn) {
+          const markV = this.cellHeight * this.trial.layout.markers.everyRow
+          const markH = this.cellWidth * this.trial.layout.markers.everyColumn
+
+          const coords = []
+
+          const width = this.trial.layout.columns * this.cellWidth
+          const height = this.trial.layout.rows * this.cellHeight
+          let x = 0
+          let y = 0
+          const iconWidth = 16
+          while (x <= width) {
+            while (y <= height) {
+              let finalX = x
+              let finalY = y
+
+              switch (this.trial.layout.markers.anchor) {
+                case 'topRight':
+                  finalX = width - x
+                  break
+                case 'bottomLeft':
+                  finalY = height - y
+                  break
+                case 'bottomRight':
+                  finalX = width - x
+                  finalY = height - y
+                  break
+              }
+
+              coords.push([finalX - iconWidth / 2, finalY - iconWidth / 2])
+              y += markV
+            }
+            x += markH
+            y = 0
+          }
+
+          this.markers = coords
+        }
+
         if (!this.scrollSynced) {
           this.$refs.wrapper.addEventListener('scroll', this.syncScroll)
         }
@@ -421,12 +434,14 @@ export default {
 
     emitter.on('trial-data-loaded', this.reset)
     emitter.on('jump-to-corner', this.jumpToCorner)
+    emitter.on('move-to-corner', this.moveInDirection)
     emitter.on('plot-cache-changed', this.updateCellCache)
     window.addEventListener('resize', this.updateDimensions)
   },
   beforeDestroy: function () {
     emitter.off('trial-data-loaded', this.reset)
     emitter.off('jump-to-corner', this.jumpToCorner)
+    emitter.off('move-to-corner', this.moveInDirection)
     emitter.off('plot-cache-changed', this.updateCellCache)
     window.removeEventListener('resize', this.updateDimensions)
 
@@ -446,6 +461,10 @@ export default {
   overflow: auto;
   scrollbar-width: thin;
   position: relative;
+}
+
+.data-grid-wrapper.no-scroll {
+  overflow: hidden;
 }
 
 .page-grid:hover {
@@ -513,26 +532,10 @@ export default {
 }
 .grid-icon {
   color: #8e8c84;
+  pointer-events: none;
 }
-.cell .marker-top-left {
-  position: absolute;
-  top: -7.5px;
-  left: -7.5px;
-}
-.cell .marker-top-right {
-  position: absolute;
-  top: -7.5px;
-  right: -7.5px;
-}
-.cell .marker-bottom-left {
-  position: absolute;
-  bottom: -7.5px;
-  left: -7.5px;
-}
-.cell .marker-bottom-right {
-  position: absolute;
-  bottom: -7.5px;
-  right: -7.5px;
+.marker {
+  z-index: 1;
 }
 .cell .bookmark {
   position: absolute;
