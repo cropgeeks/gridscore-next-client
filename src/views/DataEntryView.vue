@@ -22,7 +22,7 @@
       </b-input-group>
     </b-button-toolbar>
 
-    <DataCanvas :geolocation="geolocation" id="data-canvas" v-if="plotCount > 1000" />
+    <DataCanvas :geolocation="geolocation" id="data-canvas" v-if="showCanvas" />
     <DataGridComponent :geolocation="geolocation" id="data-canvas" v-else />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
@@ -47,7 +47,7 @@ import DataViewJumpControl from '@/components/DataViewJumpControl'
 import JumpToDropdown from '@/components/dropdowns/JumpToDropdown'
 import Tour from '@/components/Tour'
 import { getTrialById } from '@/plugins/idb'
-import { NAVIGATION_MODE_JUMP } from '@/plugins/constants'
+import { MAIN_DISPLAY_MODE_CANVAS_ONLY, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 // import { BIconFullscreen, BIconFullscreenExit } from 'bootstrap-vue'
 import { BIconSearch, BIconQuestionCircle, BIconCloudUploadFill, BIconPersonLinesFill } from 'bootstrap-vue'
@@ -81,13 +81,18 @@ export default {
       'storeHiddenTraits',
       'storeNavigationMode',
       'storeVoiceFeedbackEnabled',
-      'storeSelectedTrialPerson'
+      'storeSelectedTrialPerson',
+      'storeMainDisplayMode'
     ]),
-    plotCount: function () {
-      if (this.trial) {
-        return this.trial.layout.rows * this.trial.layout.columns
+    showCanvas: function () {
+      if (this.storeMainDisplayMode === MAIN_DISPLAY_MODE_CANVAS_ONLY) {
+        return true
       } else {
-        return 1
+        if (this.trial) {
+          return this.trial.layout.rows * this.trial.layout.columns > 1000
+        } else {
+          return true
+        }
       }
     },
     showTrialPersonSelector: function () {

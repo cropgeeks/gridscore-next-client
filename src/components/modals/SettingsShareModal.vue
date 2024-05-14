@@ -37,7 +37,7 @@ import { mapGetters } from 'vuex'
 
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { BIconBoxArrowInUpRight, BIconBoxArrowDownRight } from 'bootstrap-vue'
-import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, MAIN_DISPLAY_MODE_CANVAS_ONLY, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 
 import StyledQRCode from '@/components/StyledQRCode'
 import BarcodeScanner from '@/components/BarcodeScanner'
@@ -75,7 +75,8 @@ export default {
       'storeNavigationMode',
       'storeTraitColors',
       'storeShowFullTraitDescription',
-      'storeCategoryCountInline'
+      'storeCategoryCountInline',
+      'storeMainDisplayMode'
     ])
   },
   methods: {
@@ -160,6 +161,11 @@ export default {
         } else if (parsed.sz === 2) {
           this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_LARGE)
         }
+        if (parsed.md === 0) {
+          this.$store.commit('ON_MAIN_DISPLAY_MODE_CHANGED', MAIN_DISPLAY_MODE_AUTO)
+        } else if (parsed.md === 1) {
+          this.$store.commit('ON_MAIN_DISPLAY_MODE_CHANGED', MAIN_DISPLAY_MODE_CANVAS_ONLY)
+        }
         if (parsed.tc) {
           const traitColors = parsed.tc.split(',').map(c => `#${c}`)
           this.$store.commit('ON_TRAIT_COLORS_CHANGED', traitColors)
@@ -190,6 +196,7 @@ export default {
         cd: this.storeCanvasDensity === CANVAS_DENSITY_HIGH ? 0 : (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM ? 1 : 2),
         sz: this.storeCanvasSize === CANVAS_SIZE_LARGE ? 2 : (this.storeCanvasSize === CANVAS_SIZE_MEDIUM ? 1 : 0),
         cs: this.storeCanvasShape === CANVAS_SHAPE_SQUARE ? 1 : 0,
+        md: this.storeMainDisplayMode === MAIN_DISPLAY_MODE_CANVAS_ONLY ? 1 : 0,
         lc: this.storeLocale,
         hc: this.storeHideCitationMessage ? 1 : 0,
         hi: this.storeHighlightControls ? 1 : 0,

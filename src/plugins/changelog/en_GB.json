@@ -425,7 +425,7 @@
   },
   {
     "version": "2.6.0",
-    "date": "xxxx-xx-xx",
+    "date": "2024-05-15",
     "items": [
       {
         "type": "new",
@@ -446,6 +446,11 @@
         "type": "new",
         "title": "Color palettes",
         "text": "Added a pre-selection of color palettes to choose from. These include the default GridScore palette as well as other well-known color palettes."
+      },
+      {
+        "type": "new",
+        "title": "Main display mode",
+        "text": "Starting from this release, the main display of GridScore will be rendered differently for smaller trials. If you encounter any performance issues, please change the main display mode in the settings to 'Canvas only'."
       }
     ]
   }

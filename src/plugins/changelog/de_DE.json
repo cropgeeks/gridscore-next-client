@@ -425,7 +425,7 @@
   },
   {
     "version": "2.6.0",
-    "date": "xxxx-xx-xx",
+    "date": "2024-05-15",
     "items": [
       {
         "type": "new",
@@ -446,6 +446,11 @@
         "type": "new",
         "title": "Farbpaletten",
         "text": "Eine Vorauswahl von vordefinierten Farbpaletten wurde hinzugefügt. Diese beinhalten die Standard GridScore Palette sowie gängige Farbpaletten."
+      },
+      {
+        "type": "new",
+        "title": "Hauptansicht-Darstellungsmodus",
+        "text": "Angefangen mit dieser Version werden kleinere Versuche in GridScore anders dargestellt. Falls dies zu Leistungseinfälle führen sollte, bitte den Hauptansicht-Darstellungsmodus auf 'Nur Leinwand' einstellen."
       }
     ]
   }

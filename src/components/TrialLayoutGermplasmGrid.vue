@@ -237,8 +237,8 @@ export default {
 
           if (germplasm !== '' || rep !== '') {
             tempMap[`${row}|${column}`] = {
-              germplasm: germplasm === '' ? null : germplasm,
-              rep: rep === '' ? null : rep,
+              germplasm: germplasm === '' ? null : germplasm.trim(),
+              rep: rep === '' ? null : rep.trim(),
               control: control
             }
           }

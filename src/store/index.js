@@ -1,4 +1,4 @@
-import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -43,6 +43,7 @@ export default new Vuex.Store({
     hiddenTraits: [],
     showFullTraitDescription: true,
     categoryCountInline: 4,
+    mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
     plausible: {
       plausibleDomain: null,
       plausibleHashMode: true,
@@ -76,6 +77,7 @@ export default new Vuex.Store({
     storeCanvasDensity: (state) => state.canvasDensity,
     storeCanvasShape: (state) => state.canvasShape,
     storeCanvasSize: (state) => state.canvasSize,
+    storeMainDisplayMode: (state) => state.mainDisplayMode || MAIN_DISPLAY_MODE_AUTO,
     storeTrialListMode: (state) => state.trialListMode,
     storeTrialListArrangement: (state) => state.trialListArrangement,
     storeMapLayer: (state) => state.mapLayer,
@@ -142,6 +144,13 @@ export default new Vuex.Store({
       }
 
       emitter.emit('trial-selected')
+    },
+    ON_MAIN_DISPLAY_MODE_CHANGED: function (state, newMainDisplayMode) {
+      if (Object.prototype.hasOwnProperty.call(state, 'mainDisplayMode')) {
+        state.mainDisplayMode = newMainDisplayMode
+      } else {
+        Vue.set(state, 'mainDisplayMode', newMainDisplayMode)
+      }
     },
     ON_DARK_MODE_CHANGED: function (state, newDarkMode) {
       state.darkMode = newDarkMode
@@ -316,6 +325,9 @@ export default new Vuex.Store({
     },
     setGpsEnabled: function ({ commit }, gpsEnabled) {
       commit('ON_GPS_ENABLED_CHANGED', gpsEnabled)
+    },
+    setMainDisplayMode: function ({ commit }, mainDisplayMode) {
+      commit('ON_MAIN_DISPLAY_MODE_CHANGED', mainDisplayMode)
     },
     setCanvasDensity: function ({ commit }, canvasDensity) {
       commit('ON_CANVAS_DENSITY_CHANGED', canvasDensity)

@@ -173,6 +173,15 @@
                   </BIconstack> {{ $t('buttonCanvasDensityHigh') }}</b-button>
               </b-button-group>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsMainDisplayMode')" :description="$t('formDescriptionSettingsMainDisplayMode')" label-for="mainDisplayMode">
+              <b-button-group class="w-100 canvas-density">
+                <b-button variant="outline-secondary" :pressed="mainDisplayMode === MAIN_DISPLAY_MODE_AUTO" @click="mainDisplayMode = MAIN_DISPLAY_MODE_AUTO">
+                  <BIconTable /> {{ $t('buttonMainDisplayModeAuto') }}</b-button>
+                <b-button variant="outline-secondary" :pressed="mainDisplayMode === MAIN_DISPLAY_MODE_CANVAS_ONLY" @click="mainDisplayMode = MAIN_DISPLAY_MODE_CANVAS_ONLY">
+                  <BIconEasel /> {{ $t('buttonMainDisplayModeCanvasOnly') }}</b-button>
+              </b-button-group>
+            </b-form-group>
           </b-card>
         </b-col>
       </b-row>
@@ -185,8 +194,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { BIconHandIndex, BIconX, BIconShare, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg, BIconCircleFill, BIconSquareFill, BIconGripVertical } from 'bootstrap-vue'
-import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
+import { BIconHandIndex, BIconX, BIconShare, BIconTable, BIconEasel, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg, BIconCircleFill, BIconSquareFill, BIconGripVertical } from 'bootstrap-vue'
+import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, MAIN_DISPLAY_MODE_AUTO, MAIN_DISPLAY_MODE_CANVAS_ONLY, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal'
 import draggable from 'vuedraggable'
 import { categoricalColors } from '@/plugins/color'
@@ -203,6 +212,8 @@ export default {
     BIconGripVertical,
     BIconstack,
     BIconDashLg,
+    BIconTable,
+    BIconEasel,
     BIconArrowClockwise,
     BIconCircleFill,
     BIconSquareFill,
@@ -221,6 +232,8 @@ export default {
       CANVAS_SIZE_SMALL,
       CANVAS_SIZE_MEDIUM,
       CANVAS_SIZE_LARGE,
+      MAIN_DISPLAY_MODE_AUTO,
+      MAIN_DISPLAY_MODE_CANVAS_ONLY,
       locale: null,
       darkMode: false,
       hideCitationMessage: false,
@@ -238,6 +251,7 @@ export default {
       navigationMode: null,
       traitColors: [],
       newColor: '#000000',
+      mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
       showFullTraitDescription: true,
       categoricalColors
     }
@@ -260,7 +274,8 @@ export default {
       'storeHomeWidgetOrder',
       'storeTraitColors',
       'storeShowFullTraitDescription',
-      'storeCategoryCountInline'
+      'storeCategoryCountInline',
+      'storeMainDisplayMode'
     ]),
     localeOptions: function () {
       return locales.map(l => {
@@ -351,6 +366,10 @@ export default {
       this.$store.dispatch('setShowFullTraitDescription', newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { showFullTraitDescription: newValue } })
     },
+    mainDisplayMode: function (newValue) {
+      this.$store.dispatch('setMainDisplayMode', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { mainDisplayMode: newValue } })
+    },
     homeWidgetOrder: {
       deep: true,
       handler: function (newValue) {
@@ -393,6 +412,7 @@ export default {
       this.canvasShape = this.storeCanvasShape
       this.canvasSize = this.storeCanvasSize
       this.showFullTraitDescription = this.storeShowFullTraitDescription
+      this.mainDisplayMode = this.storeMainDisplayMode || MAIN_DISPLAY_MODE_AUTO
     }
   },
   mounted: function () {
@@ -408,6 +428,7 @@ export default {
   width: revert;
 }
 
+.settings-form .display-mode,
 .settings-form .canvas-density,
 .settings-form .canvas-shape,
 .settings-form .canvas-size {
