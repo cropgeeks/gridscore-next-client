@@ -39,15 +39,13 @@
             {{ (cell = trialData[`${row.index}|${column.index}`], null) }}
             <div
               :key="`cell-${row.index}-${column.index}`" @click="plotClicked(row.index, column.index)"
-              :class="{
-                cell: true,
-                'text-center': true,
+              :class="[{
                 'cell-marked': column.marked || row.marked,
                 'cell-column': column.index % 2 === 0,
                 'cell-highlight': userPosition && userPosition.column === column.index && userPosition.row === row.index,
                 'cell-row': row.index % 2 === 0,
                 'cell-control': storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)
-              }">
+              }, cellClass]">
             <template v-if="cell">
                 <BIconBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
                 <BIconChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
@@ -55,10 +53,10 @@
                 <div class="cell-text my-1">{{ cell.displayName }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
-                    <span class="circle-full mx-1" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="{ background: trait.color }" />
+                    <span class="circle circle-full" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="[{ background: trait.color }, circleStyle]" />
                   </template>
                   <template v-else>
-                    <span class="circle-empty mx-1" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="{ borderColor: trait.color }" />
+                    <span class="circle circle-empty" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="[{ borderColor: trait.color }, circleStyle]" />
                   </template>
                 </template>
                 <div class="cell-text" v-if="visibleTraits.length === 1">
@@ -77,7 +75,7 @@
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_LOW, CANVAS_SHAPE_SQUARE, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE, CANVAS_SIZE_MEDIUM } from '@/plugins/constants'
 import { BIconBookmarkCheckFill, BIconChatRightTextFill, BIconCheckSquareFill, BIconCircleFill, BIconRecordCircle, BIconCursorFill } from 'bootstrap-vue'
 import { projectToEuclidean } from '@/plugins/location'
 
@@ -103,7 +101,6 @@ export default {
       CELL_CATEGORY_CONTROL,
       trial: null,
       trialData: null,
-      dataPointDiameter: 22,
       cellWidth: 100,
       cellHeight: 40,
       scrollSynced: false,
@@ -120,8 +117,54 @@ export default {
       'storeDisplayMinCellWidth',
       'storeHighlightControls',
       'storeDisplayMarkerIndicators',
-      'storeNavigationMode'
+      'storeNavigationMode',
+      'storeCanvasSize',
+      'storeCanvasShape',
+      'storeCanvasDensity'
     ]),
+    cellClass: function () {
+      return {
+        cell: true,
+        small: this.storeCanvasSize === CANVAS_SIZE_SMALL,
+        medium: this.storeCanvasSize === CANVAS_SIZE_MEDIUM,
+        large: this.storeCanvasSize === CANVAS_SIZE_LARGE,
+        'rounded-dp': this.storeCanvasShape !== CANVAS_SHAPE_SQUARE,
+        'text-center': true
+      }
+    },
+    circleDiameter: function () {
+      if (this.storeCanvasSize) {
+        if (this.storeCanvasSize === CANVAS_SIZE_SMALL) {
+          return 16
+        } else if (this.storeCanvasSize === CANVAS_SIZE_MEDIUM) {
+          return 20
+        } else if (this.storeCanvasSize === CANVAS_SIZE_LARGE) {
+          return 24
+        }
+      }
+
+      return 20
+    },
+    circlePadding: function () {
+      let result = this.circleDiameter / 4 * 1.25
+
+      if (this.storeCanvasDensity) {
+        if (this.storeCanvasDensity === CANVAS_DENSITY_LOW) {
+          result = this.circleDiameter / 4 * 2
+        } else if (this.storeCanvasDensity === CANVAS_DENSITY_MEDIUM) {
+          result = this.circleDiameter / 4 * 1.25
+        } else if (this.storeCanvasDensity === CANVAS_DENSITY_HIGH) {
+          result = this.circleDiameter / 4 * 0.5
+        }
+      }
+
+      return result
+    },
+    circleStyle: function () {
+      return {
+        margin: `${this.circlePadding / 2}px`
+      }
+    },
     disableScroll: function () {
       return this.storeNavigationMode === NAVIGATION_MODE_JUMP
     },
@@ -328,7 +371,6 @@ export default {
     },
     reset: function () {
       this.trialData = getTrialDataCached()
-      console.log(this.trialData)
 
       if (!this.trialData) {
         // TODO
@@ -338,13 +380,13 @@ export default {
     },
     updateDimensions: function () {
       if (this.$refs.wrapper) {
-        const padding = 10
-        this.cellWidth = Math.floor(Math.max(this.$refs.wrapper.clientWidth / this.trial.layout.columns, this.storeDisplayMinCellWidth * this.dataPointDiameter + (this.storeDisplayMinCellWidth - 1) * padding))
-        const coreWidth = this.cellWidth - padding * 2
+        const padding = this.circlePadding
+        this.cellWidth = Math.floor(Math.max(this.$refs.wrapper.clientWidth / this.trial.layout.columns, this.storeDisplayMinCellWidth * this.circleDiameter + (this.storeDisplayMinCellWidth - 1) * padding))
+        const coreWidth = this.cellWidth
 
         let circlesPerRow = 1
         for (let t = this.visibleTraits.length; t > 0; t--) {
-          const x = this.dataPointDiameter * t + padding / 2 * (t - 1)
+          const x = (this.circleDiameter + this.circlePadding) * t
 
           if (x <= coreWidth) {
             circlesPerRow = t
@@ -356,12 +398,12 @@ export default {
 
         const heightProportion = this.$refs.wrapper.clientHeight / this.trial.layout.rows
         const textHeight = 30
-        let tempHeight = Math.max(textHeight + circleRows * (this.dataPointDiameter + padding), heightProportion)
+        let tempHeight = Math.max(textHeight + circleRows * (this.circleDiameter + padding) + padding, heightProportion)
 
         if (this.visibleTraits.length === 1) {
           // Check if we need to increase the minimum height to allow space for the display of the trait value below the circles
-          if (tempHeight > heightProportion) {
-            tempHeight += textHeight - padding
+          if (tempHeight >= heightProportion) {
+            tempHeight += textHeight
           }
         }
 
@@ -453,10 +495,6 @@ export default {
 </script>
 
 <style>
-:root {
-  --circle-diameter: 20px;
-}
-
 .data-grid-wrapper {
   overflow: auto;
   scrollbar-width: thin;
@@ -498,22 +536,42 @@ export default {
   align-content: center;
 }
 
-.data-grid .circle-full {
+.data-grid .circle {
   display: inline-block;
-  width: var(--circle-diameter);
-  height: var(--circle-diameter);
-  border-radius: calc(var(--circle-diameter) / 2);
 }
-
+.data-grid .cell.rounded-dp .circle {
+  border-radius: 100px;
+}
 .data-grid .circle-empty {
-  display: inline-block;
-  width: calc(var(--circle-diameter) - 2px);
-  height: calc(var(--circle-diameter) - 2px);
-  border-radius: calc(calc(var(--circle-diameter) - 1px) / 2);
   background: transparent;
   border-width: 1px;
   border-style: solid;
   box-sizing: content-box;
+}
+
+.data-grid .cell.small .circle-full {
+  width: 16px;
+  height: 16px;
+}
+.data-grid .cell.medium .circle-full {
+  width: 20px;
+  height: 20px;
+}
+.data-grid .cell.large .circle-full {
+  width: 24px;
+  height: 24px;
+}
+.data-grid .cell.small .circle-empty {
+  width: 14px;
+  height: 14px;
+}
+.data-grid .cell.medium .circle-empty {
+  width: 18px;
+  height: 18px;
+}
+.data-grid .cell.large .circle-empty {
+  width: 22px;
+  height: 22px;
 }
 
 .gps-position {
@@ -529,6 +587,9 @@ export default {
   -ms-user-select: none;
   user-select: none;
   position: relative;
+}
+.data-grid .cell {
+  line-height: 0px;
 }
 .grid-icon {
   color: #8e8c84;
@@ -556,6 +617,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.5em;
 }
 
 .cell-row, .cell-column {

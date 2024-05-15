@@ -78,37 +78,19 @@
       <b-tabs v-model="tabIndex">
         <b-tab>
           <template #title>
-            <BIconBoundingBoxCircles />
-            <span> {{ $t('pageTrialLayoutMarkersTitle') }} </span>
-            <BIconCheck class="text-success" v-if="tabCorrect.markers === true" />
-            <BIconX class="text-danger" v-else-if="tabCorrect.markers === false" />
-          </template>
-          <b-container class="mt-3">
-            <p>{{ $t('pageTrialLayoutMarkersText') }}</p>
-            <MarkerSetup ref="markerSetup" :layout="layout" @change="(markers) => { layout.markers = markers }" />
-          </b-container>
-        </b-tab>
-        <b-tab>
-          <template #title>
-            <BIconArrowsFullscreen />
-            <span> {{ $t('pageTrialLayoutCornersTitle') }} </span>
-            <BIconCheck class="text-success" v-if="tabCorrect.corners === true" />
-            <BIconX class="text-danger" v-else-if="tabCorrect.corners === false" />
-          </template>
-          <b-container class="mt-3">
-            <p>{{ $t('pageTrialLayoutCornersText') }}</p>
-            <TrialLayoutCorners ref="trialLayoutCorners" :layout="layout" @change="(corners) => { layout.corners = corners }" />
-          </b-container>
-        </b-tab>
-        <b-tab>
-          <template #title>
             <BIconTags />
             <span> {{ $t('pageTrialSetupCardTraitsTitle') }} </span>
             <BIconCheck class="text-success" v-if="tabCorrect.traits === true" />
             <BIconX class="text-danger" v-else-if="tabCorrect.traits === false" />
           </template>
           <b-container class="mt-3">
-            <p>{{ $t('pageTrialEditTraitText') }}</p>
+            <div class="d-flex flex-row justify-content-between align-items-center mb-3">
+              <p class="mb-0">{{ $t('pageTrialEditTraitText') }}</p>
+              <b-dropdown :text="$t('dropdownExportTraits')" class="float-right">
+                <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportJson(true)">{{ $t('dropdownOptionExportTraitsJson') }}</b-dropdown-item-button>
+                <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportGerminate(true)">{{ $t('dropdownOptionExportTraitsGerminate') }}</b-dropdown-item-button>
+              </b-dropdown>
+            </div>
             <b-row>
               <b-col class="mb-3" cols=12 md=6 v-for="trait in traits" :key="`trait-section-${trait.id}`">
                 <h4 class="d-flex justify-content-between align-items-center">
@@ -137,15 +119,43 @@
             </b-row>
           </b-container>
         </b-tab>
+        <b-tab>
+          <template #title>
+            <BIconBoundingBoxCircles />
+            <span> {{ $t('pageTrialLayoutMarkersTitle') }} </span>
+            <BIconCheck class="text-success" v-if="tabCorrect.markers === true" />
+            <BIconX class="text-danger" v-else-if="tabCorrect.markers === false" />
+          </template>
+          <b-container class="mt-3">
+            <p>{{ $t('pageTrialLayoutMarkersText') }}</p>
+            <MarkerSetup ref="markerSetup" :layout="layout" @change="(markers) => { layout.markers = markers }" />
+          </b-container>
+        </b-tab>
+        <b-tab>
+          <template #title>
+            <BIconArrowsFullscreen />
+            <span> {{ $t('pageTrialLayoutCornersTitle') }} </span>
+            <BIconCheck class="text-success" v-if="tabCorrect.corners === true" />
+            <BIconX class="text-danger" v-else-if="tabCorrect.corners === false" />
+          </template>
+          <b-container class="mt-3">
+            <p>{{ $t('pageTrialLayoutCornersText') }}</p>
+            <TrialLayoutCorners ref="trialLayoutCorners" :layout="layout" @change="(corners) => { layout.corners = corners }" />
+          </b-container>
+        </b-tab>
       </b-tabs>
 
       <b-button variant="danger" v-if="layoutFeedback && layoutFeedback.length > 0" class="align-self-center my-2" @click="$refs.layoutFeedbackModal.show()"><BIconExclamationTriangleFill /> {{ $tc('formFeedbackLayout', layoutFeedback.length) }}</b-button>
     </div>
     <LayoutFeedbackModal :feedback="layoutFeedback" ref="layoutFeedbackModal" />
+    <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" />
+    <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" />
   </b-modal>
 </template>
 
 <script>
+import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal'
+import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal'
 import TrialLayoutCorners from '@/components/TrialLayoutCorners'
 import MarkerSetup from '@/components/MarkerSetup'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
@@ -158,6 +168,8 @@ const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
+    TraitImportExportGerminateModal,
+    TraitImportExportGridScoreModal,
     BIconTextareaT,
     // BIconCardHeading,
     BIconCardText,
@@ -205,7 +217,8 @@ export default {
         traits: null
       },
       layoutFeedback: null,
-      trialGroups: []
+      trialGroups: [],
+      traitsToExport: null
     }
   },
   props: {
@@ -241,18 +254,51 @@ export default {
       }
     },
     tabIndex: function (newValue) {
-      if (newValue === 1 && this.$refs.trialLayoutCorners) {
+      if (newValue === 2 && this.$refs.trialLayoutCorners) {
         this.$nextTick(() => this.$refs.trialLayoutCorners.invalidateSize())
-      } else if (newValue === 0 && this.$refs.markerSetup) {
+      } else if (newValue === 1 && this.$refs.markerSetup) {
         this.$nextTick(() => this.$refs.markerSetup.update())
       }
     }
   },
   methods: {
+    importExportGerminate: function (xport) {
+      if (xport && this.traits && this.traits.length > 0) {
+        const temp = JSON.parse(JSON.stringify(this.traits))
+        temp.forEach(t => {
+          delete t.id
+          delete t.progress
+          delete t.editable
+          delete t.color
+        })
+        this.traitsToExport = temp
+      } else {
+        this.traitsToExport = null
+      }
+
+      this.$nextTick(() => this.$refs.traitImportExportGerminateModal.show())
+    },
+    importExportJson: function (xport) {
+      if (xport && this.traits && this.traits.length > 0) {
+        const temp = JSON.parse(JSON.stringify(this.traits))
+        temp.forEach(t => {
+          delete t.id
+          delete t.progress
+          delete t.editable
+          delete t.color
+        })
+        this.traitsToExport = temp
+      } else {
+        this.traitsToExport = null
+      }
+
+      this.$nextTick(() => this.$refs.traitImportExportGridScoreModal.show())
+    },
     reset: function (useTrial = false) {
       this.socialConfigVisible = false
       this.layoutFeedback = null
       this.tabIndex = 0
+      this.traitsToExport = null
       if (useTrial && this.trial) {
         this.trialName = this.trial.name
         this.trialDescription = this.trial.description

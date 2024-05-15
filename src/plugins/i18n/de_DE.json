@@ -91,6 +91,7 @@
   "dropdownImportRepGrid": "Rep Gitter/Tabelle importieren",
   "dropdownImportFieldHub": "Fieldbook in Zeilenformat importieren",
   "dropdownImportExportTraits": "Importieren/exportieren",
+  "dropdownExportTraits": "Exportieren",
   "dropdownSectionImportTraits": "Importieren",
   "dropdownSectionExportTraits": "Exportieren",
   "dropdownOptionImportTraitsJson": "Vom GridScore-Format",

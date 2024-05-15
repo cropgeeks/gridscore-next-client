@@ -94,6 +94,7 @@
   "dropdownImportRepGrid": "Import rep grid/table",
   "dropdownImportFieldHub": "Import fieldbook in row form",
   "dropdownImportExportTraits": "Import/export",
+  "dropdownExportTraits": "Export",
   "dropdownSectionImportTraits": "Import",
   "dropdownSectionExportTraits": "Export",
   "dropdownOptionImportTraitsJson": "From GridScore format",

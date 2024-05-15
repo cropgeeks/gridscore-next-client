@@ -120,9 +120,7 @@ export default {
               angle = angle * -1
             }
             rotate = angle * (180 / Math.PI)
-            console.log(rotate)
             rotate = (rotate + this.geolocation.heading) % 360
-            console.log(rotate)
           } else {
             rotate = null
           }

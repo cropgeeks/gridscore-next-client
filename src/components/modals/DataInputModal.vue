@@ -452,6 +452,7 @@ export default {
           .then(value => {
             if (value) {
               this.guidedWalk = null
+              this.$router.push({ name: 'data-entry' })
             }
           })
       } else {

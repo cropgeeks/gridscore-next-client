@@ -472,8 +472,6 @@ export default {
             displaylogo: false
           }
 
-          console.log(data)
-
           Plotly.newPlot(ref[0], data, layout, config)
 
           if (supportsClicking) {

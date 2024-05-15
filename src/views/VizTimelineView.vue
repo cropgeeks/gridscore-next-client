@@ -179,7 +179,6 @@ export default {
         if (this.trial.events && this.trial.events.length > 0) {
           this.trial.events.forEach((e, i) => {
             const ay = 20 + (i / Math.max(1, this.trial.events.length - 1)) * 60
-            console.log(i, ay)
             layout.annotations.push({
               yref: 'paper',
               x: new Date(e.timestamp),
