@@ -394,8 +394,6 @@ export default {
         this.cellWidth = Math.ceil(Math.max(this.$refs.wrapper.clientWidth / this.trial.layout.columns, this.storeDisplayMinCellWidth * (this.circleDiameter + this.circlePadding)))
         const coreWidth = this.cellWidth
 
-        console.log(this.circleDiameter, this.circlePadding, this.cellWidth)
-
         let circlesPerRow = 1
         for (let t = this.visibleTraits.length; t > 0; t--) {
           const x = (this.circleDiameter + this.circlePadding) * t
