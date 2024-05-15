@@ -53,7 +53,15 @@
                 <div class="cell-text my-1">{{ cell.displayName }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
-                    <span class="circle circle-full" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="[{ background: trait.color }, circleStyle]" />
+                    <template v-if="trait.allowRepeats">
+                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE">
+                        <path d="M 1,15 15,1 v 14 z m 15,1 V 0 H 0 v 16 z"/>
+                      </svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-else>
+                        <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"/>
+                      </svg>
+                    </template>
+                    <span class="circle circle-full" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="[{ background: trait.color }, circleStyle]" v-else />
                   </template>
                   <template v-else>
                     <span class="circle circle-empty" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="[{ borderColor: trait.color }, circleStyle]" />
@@ -98,6 +106,7 @@ export default {
   },
   data: function () {
     return {
+      CANVAS_SHAPE_SQUARE,
       CELL_CATEGORY_CONTROL,
       trial: null,
       trialData: null,
@@ -381,8 +390,11 @@ export default {
     updateDimensions: function () {
       if (this.$refs.wrapper) {
         const padding = this.circlePadding
-        this.cellWidth = Math.floor(Math.max(this.$refs.wrapper.clientWidth / this.trial.layout.columns, this.storeDisplayMinCellWidth * this.circleDiameter + (this.storeDisplayMinCellWidth - 1) * padding))
+
+        this.cellWidth = Math.ceil(Math.max(this.$refs.wrapper.clientWidth / this.trial.layout.columns, this.storeDisplayMinCellWidth * (this.circleDiameter + this.circlePadding)))
         const coreWidth = this.cellWidth
+
+        console.log(this.circleDiameter, this.circlePadding, this.cellWidth)
 
         let circlesPerRow = 1
         for (let t = this.visibleTraits.length; t > 0; t--) {
@@ -547,6 +559,9 @@ export default {
   border-width: 1px;
   border-style: solid;
   box-sizing: content-box;
+}
+.data-grid .cell svg.circle {
+  vertical-align: unset;
 }
 
 .data-grid .cell.small .circle-full {
