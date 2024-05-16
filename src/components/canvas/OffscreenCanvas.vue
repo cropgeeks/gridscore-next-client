@@ -65,7 +65,7 @@ export default {
     reset: function () {
       const scale = window.devicePixelRatio
       const width = this.circleCount * this.circleRadius * 2 + this.circleCount + 1
-      const height = this.circleRadius * 35 + this.circleCount + 1
+      const height = this.circleRadius * 40 + this.circleCount + 1
       canvas.width = width * scale
       canvas.height = height * scale
 
