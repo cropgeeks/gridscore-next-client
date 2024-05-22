@@ -1,0 +1,98 @@
+<template>
+  <div ref="wrapper">
+    <div ref="chart" v-if="chartData" />
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+
+const Plotly = require('plotly.js/lib/core')
+
+// Only register the chart types we're actually using to reduce the final bundle size
+Plotly.register([
+  require('plotly.js/lib/scatter')
+])
+
+export default {
+  props: {
+    chartData: {
+      type: Object,
+      default: () => null
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'storeLocale',
+      'storeDarkMode'
+    ])
+  },
+  watch: {
+    storeDarkMode: function () {
+      this.update()
+    },
+    chartData: function () {
+      this.$nextTick(() => this.update())
+    }
+  },
+  methods: {
+    update: function () {
+      try {
+        Plotly.purge(this.$refs.chart)
+      } catch {
+      }
+
+      if (!this.chartData) {
+        return
+      }
+
+      const data = Object.values(this.chartData)
+
+      const layout = {
+        height: 400,
+        margin: {
+          t: 0
+        },
+        hovermode: 'x',
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        xaxis: {
+          showgrid: false,
+          title: { text: this.$t('widgetChartPersonLineTime'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
+          tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+        },
+        yaxis: {
+          showgrid: false,
+          title: { text: this.$t('widgetChartPersonLineCumulative'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
+          tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+        },
+        legend: {
+          bgcolor: 'rgba(0,0,0,0)',
+          orientation: 'h',
+          font: { color: this.storeDarkMode ? 'white' : 'black' }
+        }
+      }
+
+      const config = {
+        responsive: true,
+        displaylogo: false
+      }
+
+      Plotly.newPlot(this.$refs.chart, data, layout, config)
+    }
+  },
+  beforeDestroy: function () {
+    try {
+      Plotly.purge(this.$refs.chart)
+    } catch {
+    }
+  },
+  mounted: function () {
+    this.update()
+  }
+}
+</script>
+
+<style>
+
+</style>

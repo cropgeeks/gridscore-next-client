@@ -425,20 +425,24 @@ export default {
       })
     },
     onXClicked: function () {
-      if (this.guidedWalk) {
-        this.$bvModal.msgBoxConfirm(this.$t('modalTextStopGuidedWalk'), {
-          title: this.$t('modalTitleStopGuidedWalk'),
-          okTitle: this.$t('buttonYes'),
-          okVariant: 'danger',
-          cancelTitle: this.$t('buttonNo')
-        })
-          .then(value => {
-            if (value) {
-              this.hide()
-            }
-          })
+      if (!this.trial.editable) {
+        this.hide()
       } else {
-        this.$refs.closeModal.show()
+        if (this.guidedWalk) {
+          this.$bvModal.msgBoxConfirm(this.$t('modalTextStopGuidedWalk'), {
+            title: this.$t('modalTitleStopGuidedWalk'),
+            okTitle: this.$t('buttonYes'),
+            okVariant: 'danger',
+            cancelTitle: this.$t('buttonNo')
+          })
+            .then(value => {
+              if (value) {
+                this.hide()
+              }
+            })
+        } else {
+          this.$refs.closeModal.show()
+        }
       }
     },
     onGuidedWalkClicked: function () {

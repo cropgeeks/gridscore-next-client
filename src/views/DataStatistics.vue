@@ -77,6 +77,12 @@
             </b-col>
           </b-row>
           <b-row v-if="stats[trial.localId] && stats[trial.localId].measurements">
+            <b-col cols=12 md=6 v-if="personBarData && personBarData[trial.localId] && Object.keys(personBarData[trial.localId]).length > 0">
+              <DataPersonBarChart :chartData="personBarData[trial.localId]" />
+            </b-col>
+            <b-col cols=12 md=6 v-if="personLineData && personLineData[trial.localId] && Object.keys(personLineData[trial.localId]).length > 0">
+              <DataPersonLineChart :chartData="personLineData[trial.localId]" />
+            </b-col>
             <b-col cols=12 md=6 v-if="chartData && chartData[trial.localId] && Object.keys(chartData[trial.localId]).length > 0">
               <div v-for="year in Object.keys(chartData[trial.localId])" :key="`trial-${trial.localId}-year-${year}`">
                 <h3>{{ year }}</h3>
@@ -94,6 +100,8 @@
 </template>
 
 <script>
+import DataPersonBarChart from '@/components/charts/DataPersonBarChart'
+import DataPersonLineChart from '@/components/charts/DataPersonLineChart'
 import DataCalendarHeatmapChart from '@/components/charts/DataCalendarHeatmapChart'
 import { BIconUiChecksGrid, BIconTags, BIconBoundingBoxCircles, BIconChatLeftText, BIconFlag, BIconCalendarRangeFill, BIconCalendarDateFill } from 'bootstrap-vue'
 
@@ -117,6 +125,8 @@ let plotInfo = {}
 
 export default {
   components: {
+    DataPersonLineChart,
+    DataPersonBarChart,
     DataCalendarHeatmapChart,
     BIconUiChecksGrid,
     BIconTags,
@@ -130,6 +140,8 @@ export default {
     return {
       trials: [],
       selectedTrials: [],
+      personBarData: null,
+      personLineData: null,
       chartData: null,
       stats: {},
       areaUnit: 'meter'
@@ -214,6 +226,8 @@ export default {
     selectedTrials: async function (newValue) {
       const calendarData = {}
       const tempStats = {}
+      const personBarData = {}
+      const personLineData = {}
       plotInfo = {}
 
       for (const trial of newValue) {
@@ -231,6 +245,33 @@ export default {
         }
         calendarData[trial.localId] = {}
         plotInfo[trial.localId] = []
+        personBarData[trial.localId] = {}
+        personLineData[trial.localId] = {}
+
+        if (trial.people && trial.people.length > 0) {
+          trial.people.forEach(p => {
+            personBarData[trial.localId][p.id] = {
+              name: p.name,
+              y: trial.traits.map(t => t.name),
+              x: trial.traits.map(t => 0),
+              type: 'bar',
+              orientation: 'h'
+            }
+            personLineData[trial.localId][p.id] = {
+              name: p.name,
+              type: 'scatter',
+              x: [],
+              y: [],
+              dateMap: {}
+            }
+          })
+        }
+
+        const traitMapping = {}
+
+        trial.traits.forEach((t, i) => {
+          traitMapping[t.id] = i
+        })
 
         Object.values(d).forEach(plot => {
           Object.keys(plot.measurements).forEach(t => {
@@ -242,6 +283,18 @@ export default {
             }
 
             m.forEach(mm => {
+              if (trial.people && trial.people.length > 0 && mm.personId) {
+                personBarData[trial.localId][mm.personId].x[traitMapping[t]]++
+
+                const date = toLocalDateString(mm.timestamp)
+
+                if (!personLineData[trial.localId][mm.personId].dateMap[date]) {
+                  personLineData[trial.localId][mm.personId].dateMap[date] = 0
+                }
+
+                personLineData[trial.localId][mm.personId].dateMap[date]++
+              }
+
               const date = toLocalDateString(mm.timestamp)
               tempStats[trial.localId].activeDays.add(date)
               const d = new Date(date)
@@ -322,9 +375,26 @@ export default {
           area: 0,
           areaUnit: null
         }
+
+        Object.values(personLineData[trial.localId]).forEach(pd => {
+          const dates = Object.keys(pd.dateMap)
+          dates.sort((a, b) => a.localeCompare(b))
+
+          const values = dates.map(d => pd.dateMap[d])
+
+          for (let i = 1; i < values.length; i++) {
+            values[i] += values[i - 1]
+          }
+
+          pd.x = dates
+          pd.y = values
+          delete pd.dateMap
+        })
       }
 
       this.chartData = calendarData
+      this.personBarData = personBarData
+      this.personLineData = personLineData
       this.stats = tempStats
 
       this.$nextTick(() => this.updateMaps())

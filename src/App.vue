@@ -537,7 +537,6 @@ $danger: #EA2027;
   .modal-body {
     overflow-y: auto;
   }
-
 }
 
 @each $breakpoint in map-keys($grid-breakpoints) {

@@ -45,7 +45,7 @@
             </template>
             <h5 v-for="(person, personIndex) in people" :key="`person-${person.id}`" class="d-inline-block">
               <b-badge variant="light"><PersonTypeIcon class="mr-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" /> {{ person.name }}</b-badge>
-              <b-badge variant="danger" href="#" @click="deletePerson(personIndex)" class="mr-2">
+              <b-badge variant="danger" href="#" @click.prevent="deletePerson(personIndex)" class="mr-2">
                 <BIconTrash />
               </b-badge>
             </h5>
