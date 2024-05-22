@@ -1,7 +1,7 @@
 <template>
   <div class="page-grid" ref="overallWrapper" v-if="trial && trialData">
     <div />
-    <div class="column-headers" ref="columnHeader" id="data-canvas-header" :style="{ gridTemplateColumns: `repeat(${columns.length}, ${cellWidth}px)` }">
+    <div class="column-headers force-ltr" ref="columnHeader" id="data-canvas-header" :style="{ gridTemplateColumns: `repeat(${columns.length}, ${cellWidth}px)` }">
       <div v-for="column in columns" :class="{
         cell: true,
         'p-2': true,
@@ -10,7 +10,7 @@
         'header-marked': column.marked
       }" :key="`column-${column.index}`" @click="column.marked = !column.marked">{{ column.text }}</div>
     </div>
-    <div class="row-headers" ref="rowHeader" :style="{ gridTemplateRows: `repeat(${rows.length}, ${cellHeight}px)` }">
+    <div class="row-headers force-ltr" ref="rowHeader" :style="{ gridTemplateRows: `repeat(${rows.length}, ${cellHeight}px)` }">
       <div v-for="row in rows" :class="{
         cell: true,
         'p-2': true,
@@ -19,7 +19,7 @@
         'header-marked': row.marked
       }" :key="`row-${row.index}`" @click="row.marked = !row.marked">{{ row.text }}</div>
     </div>
-    <div :class="`data-grid-wrapper ${disableScroll ? 'no-scroll' : ''}`" ref="wrapper">
+    <div :class="`data-grid-wrapper force-ltr ${disableScroll ? 'no-scroll' : ''}`" ref="wrapper">
       <teleport to="body">
         <div class="top-0 end-0 toast-container position-fixed p-3">
           <b-toast id="marking-restriction-toast" :title="$t('toastDataInputRestrictedTitle')" :model-value="5000" :interval="100" v-model="showRestrictionToast" v-if="storeRestrictInputToMarked">
@@ -668,5 +668,8 @@ export default {
 }
 .cell-highlight {
   background: #A3CB38 !important;
+}
+.force-ltr {
+  direction: ltr;
 }
 </style>

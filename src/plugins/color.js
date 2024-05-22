@@ -50,7 +50,8 @@ const categoricalColors = {
   CBQuantSet19: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'],
   CBQuantDark28: ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02', '#a6761d', '#666666'],
   OkabeIto: ['#E69F00', '#56B4E9', '#009E73', '#F5C710', '#0072B2', '#D55E00', '#CC79A7', '#999999', '#000000'],
-  D3schemeCategory10: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+  D3schemeCategory10: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
+  Hutton: ['#FF9E15', '#D6C200', '#799900', '#6AA2B8', '#00748C', '#CF009E', '#853175', '#C2002F', '#555559']
 }
 
 export {

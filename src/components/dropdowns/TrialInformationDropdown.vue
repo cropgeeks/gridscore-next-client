@@ -36,6 +36,6 @@ export default {
 <style scoped>
 .trial-info {
   max-width: 100vw;
-  min-width: 20vw;
+  min-width: min(90vw, max(20vw, 300px));
 }
 </style>
