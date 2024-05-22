@@ -1,8 +1,8 @@
 <template>
   <b-input-group>
     <!-- Latitude and longitude inputs. Min, max and stepsize set -->
-    <b-form-input :placeholder="$t('formPlaceholderLatitude')" :min="-90" :max="90" :step="0.001" type="number" v-model.number.lazy="latitude" />
-    <b-form-input :placeholder="$t('formPlaceholderLongitude')" :min="-180" :max="180" :step="0.001" type="number" v-model.number.lazy="longitude" />
+    <b-form-input :placeholder="$t('formPlaceholderLatitude')" :min="-90" :max="90" :step="0.001" type="number" lazy v-model.number.lazy="latitude" />
+    <b-form-input :placeholder="$t('formPlaceholderLongitude')" :min="-180" :max="180" :step="0.001" type="number" lazy v-model.number.lazy="longitude" />
 
     <b-input-group-append v-if="supportsGps">
       <!-- Button that sets user's current position -->

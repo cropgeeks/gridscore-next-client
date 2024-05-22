@@ -472,6 +472,11 @@
         "type": "new",
         "title": "Data collector stats",
         "text": "We have added two charts to the trial statistics overview where the number of data points collected by each individual is plotted. This is only available if individuals are defined as part of the trial."
+      },
+      {
+        "type": "new",
+        "title": "High rep count warning",
+        "text": "We noticed that some trials are created with an extremely high number of distinct rep values (sometimes each plot has a unique value). While this is perfectly valid, it significantly slows down the germplasm rep heatmap and makes it pretty much pointless. We have added a warning during setup to highlight this in case it's unintentional."
       }
     ]
   }

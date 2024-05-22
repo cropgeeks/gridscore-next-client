@@ -10,7 +10,7 @@
         <b-input-group-prepend>
           <b-button @click="$refs.scanQrCodeModal.show()"><IBiQrCodeScan /></b-button>
         </b-input-group-prepend>
-        <b-form-input v-model.lazy="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" id="germplasm-search" />
+        <b-form-input lazy v-model.lazy="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" id="germplasm-search" />
         <b-input-group-append>
           <b-button @click="initSearch"><IBiSearch /></b-button>
         </b-input-group-append>

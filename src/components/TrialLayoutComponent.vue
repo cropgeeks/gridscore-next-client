@@ -18,7 +18,7 @@
                 <template v-slot:label>
                   <IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /> <span>{{ $t('formLabelSetupRows') }}</span>
                 </template>
-                <b-form-input id="rows" type="number" :min="1" required autofocus v-model.number.lazy="layout.rows" />
+                <b-form-input id="rows" type="number" :min="1" required autofocus lazy v-model.number.lazy="layout.rows" />
               </b-form-group>
             </b-col>
             <b-col cols=12 md=6>
@@ -27,7 +27,7 @@
                 <template v-slot:label>
                   <IBiLayoutThreeColumns /> <span>{{ $t('formLabelSetupColumns') }}</span>
                 </template>
-                <b-form-input id="columns" type="number" :min="1" required v-model.number.lazy="layout.columns" />
+                <b-form-input id="columns" type="number" :min="1" required lazy v-model.number.lazy="layout.columns" />
               </b-form-group>
             </b-col>
             <b-col cols=12 md=6>

@@ -565,6 +565,9 @@ $danger: #EA2027;
 .modal-dialog {
   z-index: 1051;
 }
+form div[role=group] {
+  margin-bottom: 1rem;
+}
 .form-input-file {
   input[type='file'] {
     margin-left: -2px !important;
