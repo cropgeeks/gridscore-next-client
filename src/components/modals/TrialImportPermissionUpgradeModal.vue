@@ -12,12 +12,12 @@
     <b-row class="mt-3">
       <b-col :cols=12 :md=6>
         <b-button class="w-100 d-flex flex-column align-items-center" @click="upgrade">
-          <h2><BIconChevronDoubleUp /></h2> <span>{{ $t('modalTextTrialImportPermissionUpgradeUpgrade') }}</span>
+          <h2><IBiChevronDoubleUp /></h2> <span>{{ $t('modalTextTrialImportPermissionUpgradeUpgrade') }}</span>
         </b-button>
       </b-col>
       <b-col :cols=12 :md=6>
         <b-button class="w-100 d-flex flex-column align-items-center" @click="asNew">
-          <h2><BIconPlusCircle /></h2> <span>{{ $t('modalTextTrialImportPermissionUpgradeNew') }}</span>
+          <h2><IBiPlusCircle /></h2> <span>{{ $t('modalTextTrialImportPermissionUpgradeNew') }}</span>
         </b-button>
       </b-col>
     </b-row>
@@ -25,14 +25,11 @@
 </template>
 
 <script>
-import { BIconChevronDoubleUp, BIconPlusCircle } from 'bootstrap-vue'
 import { TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER } from '@/plugins/constants'
-import TrialCard from '@/components/TrialCard'
+import TrialCard from '@/components/TrialCard.vue'
 
 export default {
   components: {
-    BIconChevronDoubleUp,
-    BIconPlusCircle,
     TrialCard
   },
   props: {

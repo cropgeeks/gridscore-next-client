@@ -26,57 +26,61 @@
           <b-row class="my-3 text-center" v-if="stats[trial.localId]">
             <b-col cols=6 md=4 lg=3 xl=2 offset-xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[0 % storeTraitColors.length] }"><BIconUiChecksGrid /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[0 % storeTraitColors.length] }"><IBiUiChecksGrid /></h3>
                 <span>{{ $t('widgetTrialDataStatsPlots', { count: (stats[trial.localId].plots || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[1 % storeTraitColors.length] }"><BIconTags /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[1 % storeTraitColors.length] }"><IBiTags /></h3>
                 <span>{{ $t('widgetTrialDataStatsTraits', { count: (stats[trial.localId].traits || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[2 % storeTraitColors.length] }"><BIconChatLeftText /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[2 % storeTraitColors.length] }"><IBiChatLeftText /></h3>
                 <span>{{ $t('widgetTrialDataStatsComments', { count: (stats[trial.localId].comments || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[3 % storeTraitColors.length] }"><BIconFlag /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[3 % storeTraitColors.length] }"><IBiFlag /></h3>
                 <span>{{ $t('widgetTrialDataStatsEvents', { count: (stats[trial.localId].events || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 offset-xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[4 % storeTraitColors.length] }"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-123" viewBox="0 0 16 16">
-                  <path d="M2.873 11.297V4.142H1.699L0 5.379v1.137l1.64-1.18h.06v5.961zm3.213-5.09v-.063c0-.618.44-1.169 1.196-1.169.676 0 1.174.44 1.174 1.106 0 .624-.42 1.101-.807 1.526L4.99 10.553v.744h4.78v-.99H6.643v-.069L8.41 8.252c.65-.724 1.237-1.332 1.237-2.27C9.646 4.849 8.723 4 7.308 4c-1.573 0-2.36 1.064-2.36 2.15v.057zm6.559 1.883h.786c.823 0 1.374.481 1.379 1.179.01.707-.55 1.216-1.421 1.21-.77-.005-1.326-.419-1.379-.953h-1.095c.042 1.053.938 1.918 2.464 1.918 1.478 0 2.642-.839 2.62-2.144-.02-1.143-.922-1.651-1.551-1.714v-.063c.535-.09 1.347-.66 1.326-1.678-.026-1.053-.933-1.855-2.359-1.845-1.5.005-2.317.88-2.348 1.898h1.116c.032-.498.498-.944 1.206-.944.703 0 1.206.435 1.206 1.07.005.64-.504 1.106-1.2 1.106h-.75z"/>
-                </svg></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[4 % storeTraitColors.length] }"><IBi123 /></h3>
                 <span>{{ $t('widgetTrialDataStatsMeasurements', { count: (stats[trial.localId].measurements || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[5 % storeTraitColors.length] }"><BIconBoundingBoxCircles /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[5 % storeTraitColors.length] }"><IBiBoundingBoxCircles /></h3>
                 <span v-if="stats[trial.localId].area">{{ $t('widgetTrialDataStatsArea', { area: (areaUnits[areaUnit].convert(stats[trial.localId].area) || 0).toLocaleString(), unit: areaUnits[areaUnit].unit }) }}</span>
                 <span v-else>{{ $t('widgetTrialDataStatsAreaUnknown') }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[7 % storeTraitColors.length] }"><BIconCalendarRangeFill /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[7 % storeTraitColors.length] }"><IBiCalendarRangeFill /></h3>
                 <span>{{ $t('widgetTrialDataStatsDayRange', { count: (stats[trial.localId].dayRange || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
             <b-col cols=6 md=4 lg=3 xl=2 class="mb-3">
               <b-card class="h-100 bg-dark text-light">
-                <h3 class="mb-0" :style="{ color: storeTraitColors[8 % storeTraitColors.length] }"><BIconCalendarDateFill /></h3>
+                <h3 class="mb-0" :style="{ color: storeTraitColors[8 % storeTraitColors.length] }"><IBiCalendarDateFill /></h3>
                 <span>{{ $t('widgetTrialDataStatsActiveDays', { count: (stats[trial.localId].activeDays || 0).toLocaleString() }) }}</span>
               </b-card>
             </b-col>
           </b-row>
           <b-row v-if="stats[trial.localId] && stats[trial.localId].measurements">
+            <b-col cols=12 md=6 v-if="personBarData && personBarData[trial.localId] && Object.keys(personBarData[trial.localId]).length > 0">
+              <DataPersonBarChart :chartData="personBarData[trial.localId]" />
+            </b-col>
+            <b-col cols=12 md=6 v-if="personLineData && personLineData[trial.localId] && Object.keys(personLineData[trial.localId]).length > 0">
+              <DataPersonLineChart :chartData="personLineData[trial.localId]" />
+            </b-col>
             <b-col cols=12 md=6 v-if="chartData && chartData[trial.localId] && Object.keys(chartData[trial.localId]).length > 0">
               <div v-for="year in Object.keys(chartData[trial.localId])" :key="`trial-${trial.localId}-year-${year}`">
                 <h3>{{ year }}</h3>
@@ -94,8 +98,7 @@
 </template>
 
 <script>
-import DataCalendarHeatmapChart from '@/components/charts/DataCalendarHeatmapChart'
-import { BIconUiChecksGrid, BIconTags, BIconBoundingBoxCircles, BIconChatLeftText, BIconFlag, BIconCalendarRangeFill, BIconCalendarDateFill } from 'bootstrap-vue'
+import DataCalendarHeatmapChart from '@/components/charts/DataCalendarHeatmapChart.vue'
 
 import { mapGetters } from 'vuex'
 import { getTrialData, getTrials } from '@/plugins/idb'
@@ -105,31 +108,30 @@ import { convexHull, geodesicArea } from '@/plugins/location'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  iconRetinaUrl: iconRetinaUrl,
+  iconUrl: iconUrl,
+  shadowUrl: shadowUrl
 })
 
 let plotInfo = {}
 
 export default {
   components: {
-    DataCalendarHeatmapChart,
-    BIconUiChecksGrid,
-    BIconTags,
-    BIconCalendarDateFill,
-    BIconCalendarRangeFill,
-    BIconBoundingBoxCircles,
-    BIconChatLeftText,
-    BIconFlag
+    DataCalendarHeatmapChart
   },
   data: function () {
     return {
       trials: [],
       selectedTrials: [],
+      personBarData: null,
+      personLineData: null,
       chartData: null,
       stats: {},
       areaUnit: 'meter'
@@ -209,11 +211,13 @@ export default {
   },
   watch: {
     storeDarkMode: function () {
-      this.updateThemeLayer()
+      this.updateThemeLayers()
     },
     selectedTrials: async function (newValue) {
       const calendarData = {}
       const tempStats = {}
+      const personBarData = {}
+      const personLineData = {}
       plotInfo = {}
 
       for (const trial of newValue) {
@@ -231,6 +235,33 @@ export default {
         }
         calendarData[trial.localId] = {}
         plotInfo[trial.localId] = []
+        personBarData[trial.localId] = {}
+        personLineData[trial.localId] = {}
+
+        if (trial.people && trial.people.length > 0) {
+          trial.people.forEach(p => {
+            personBarData[trial.localId][p.id] = {
+              name: p.name,
+              y: trial.traits.map(t => t.name),
+              x: trial.traits.map(t => 0),
+              type: 'bar',
+              orientation: 'h'
+            }
+            personLineData[trial.localId][p.id] = {
+              name: p.name,
+              type: 'scatter',
+              x: [],
+              y: [],
+              dateMap: {}
+            }
+          })
+        }
+
+        const traitMapping = {}
+
+        trial.traits.forEach((t, i) => {
+          traitMapping[t.id] = i
+        })
 
         Object.values(d).forEach(plot => {
           Object.keys(plot.measurements).forEach(t => {
@@ -242,6 +273,18 @@ export default {
             }
 
             m.forEach(mm => {
+              if (trial.people && trial.people.length > 0 && mm.personId) {
+                personBarData[trial.localId][mm.personId].x[traitMapping[t]]++
+
+                const date = toLocalDateString(mm.timestamp)
+
+                if (!personLineData[trial.localId][mm.personId].dateMap[date]) {
+                  personLineData[trial.localId][mm.personId].dateMap[date] = 0
+                }
+
+                personLineData[trial.localId][mm.personId].dateMap[date]++
+              }
+
               const date = toLocalDateString(mm.timestamp)
               tempStats[trial.localId].activeDays.add(date)
               const d = new Date(date)
@@ -322,21 +365,40 @@ export default {
           area: 0,
           areaUnit: null
         }
+
+        Object.values(personLineData[trial.localId]).forEach(pd => {
+          const dates = Object.keys(pd.dateMap)
+          dates.sort((a, b) => a.localeCompare(b))
+
+          const values = dates.map(d => pd.dateMap[d])
+
+          for (let i = 1; i < values.length; i++) {
+            values[i] += values[i - 1]
+          }
+
+          pd.x = dates
+          pd.y = values
+          delete pd.dateMap
+        })
       }
 
       this.chartData = calendarData
+      this.personBarData = personBarData
+      this.personLineData = personLineData
       this.stats = tempStats
 
       this.$nextTick(() => this.updateMaps())
     }
   },
   methods: {
-    updateThemeLayer: function () {
-      if (this.themeLayer) {
-        this.themeLayer.setUrl(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`)
+    updateThemeLayers: function () {
+      if (this.themeLayers) {
+        this.themeLayers.forEach(tl => tl.setUrl(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`))
       }
     },
     updateMaps: function () {
+      this.themeLayers = []
+
       Object.keys(plotInfo).forEach(trialId => {
         const pi = plotInfo[trialId]
 
@@ -357,7 +419,7 @@ export default {
           maxZoom: 21,
           maxNativeZoom: 19
         })
-        this.themeLayer = L.tileLayer(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`, {
+        const themeLayer = L.tileLayer(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`, {
           id: this.storeDarkMode ? 'Esri Dark Gray Base' : 'Esri Light Gray Base',
           attribution: 'Esri, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, and the GIS User Community',
           maxZoom: 21,
@@ -373,7 +435,7 @@ export default {
 
         switch (this.storeMapLayer) {
           case 'theme':
-            map.addLayer(this.themeLayer)
+            map.addLayer(themeLayer)
             break
           case 'satellite':
             map.addLayer(satellite)
@@ -385,10 +447,12 @@ export default {
         }
 
         const baseMaps = {
-          'Theme-based': this.themeLayer,
+          'Theme-based': themeLayer,
           OpenStreetMap: openstreetmap,
           'Esri WorldImagery': satellite
         }
+
+        this.themeLayers.push(themeLayer)
 
         L.control.layers(baseMaps).addTo(map)
 

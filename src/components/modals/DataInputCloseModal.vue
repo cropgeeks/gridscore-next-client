@@ -4,8 +4,8 @@
            ref="dataInputCloseModal">
     <p v-html="$t('modalTextConfirmCloseDataInput')" />
 
-    <template #modal-footer>
-      <b-button class="mr-auto" @click="localEmit('cancel')">{{ $t('buttonCancel') }}</b-button>
+    <template #footer>
+      <b-button class="me-auto" @click="localEmit('cancel')">{{ $t('buttonCancel') }}</b-button>
       <b-button variant="danger" @click="localEmit('close')">{{ $t('buttonClose') }}</b-button>
       <b-button variant="success" @click="localEmit('save')">{{ $t('buttonSave') }}</b-button>
     </template>

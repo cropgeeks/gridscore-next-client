@@ -13,7 +13,7 @@
           </b-col>
           <b-col cols=12 md=6 xl=4>
             <b-form-group :label="$t('formLabelHeatmapTimeline')" label-for="timepoint" v-if="timepoints && timepoints.length > 0" :description="$t('formDescriptionCurrentTimepoint', { date: new Date(timepoints[currentTimepoint]).toLocaleDateString() })">
-              <b-form-input id="timepoint" type="range" v-model.number="currentTimepoint" :min="0" :max="timepoints.length - 1" />
+              <b-form-input id="timepoint" type="range" class="form-control" v-model.number="currentTimepoint" :min="0" :max="timepoints.length - 1" />
             </b-form-group>
           </b-col>
           <b-col cols=12 md=6 xl=4>
@@ -40,15 +40,16 @@ import { getTrialDataCached } from '@/plugins/datastore'
 import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import { invertHex, toLocalDateString } from '@/plugins/misc'
 import { categoricalColors } from '@/plugins/color'
-import PlotDataSection from '@/components/PlotDataSection'
+import PlotDataSection from '@/components/PlotDataSection.vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import heatmap from 'plotly.js/lib/heatmap'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/heatmap')
+  heatmap
 ])
 
 export default {
@@ -415,7 +416,7 @@ export default {
 
     this.updateTrialDataCache()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.updateTrialDataCache)
   }
 }

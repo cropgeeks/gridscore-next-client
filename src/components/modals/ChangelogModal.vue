@@ -11,13 +11,13 @@
     <b-pagination :per-page="perPage" :total-rows="totalCount" v-model="page" v-if="totalCount > perPage" />
 
     <b-card :title="version.version" v-for="version in visibleChangelog" :key="`changelog-${version.version}`" class="mb-3">
-      <b-card-sub-title v-if="version.date" class="mb-3">
-        <BIconCalendarDate /> {{ new Date(version.date).toLocaleDateString() }}
-      </b-card-sub-title>
+      <b-card-subtitle v-if="version.date" class="mb-3">
+        <IBiCalendarDate /> {{ new Date(version.date).toLocaleDateString() }}
+      </b-card-subtitle>
       <dl class="row mb-0">
-        <template v-for="(item, index) in version.items">
-          <dt :key="`changelog-${version.version}-dt-${index}`" class="col-md-4"><b-badge :variant="badge[item.type].variant">{{ badge[item.type].text }}</b-badge> {{ item.title }}</dt>
-          <dd :key="`changelog-${version.version}-dd-${index}`" class="col-md-8">{{ item.text }}</dd>
+        <template v-for="(item, index) in version.items" :key="`changelog-${version.version}-${index}`">
+          <dt class="col-md-4"><b-badge :variant="badge[item.type].variant">{{ badge[item.type].text }}</b-badge> {{ item.title }}</dt>
+          <dd class="col-md-8">{{ item.text }}</dd>
         </template>
       </dl>
     </b-card>
@@ -28,13 +28,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCalendarDate } from 'bootstrap-vue'
 
 import deDE from '@/plugins/changelog/de_DE.json'
 import enGB from '@/plugins/changelog/en_GB.json'
 import viVN from '@/plugins/changelog/vi_VN.json'
 
-const semver = require('semver')
+import semver from 'semver'
 
 const sorting = (a, b) => {
   if (semver.eq(a.version, b.version)) {
@@ -53,9 +52,6 @@ const changelogMap = {
 }
 
 export default {
-  components: {
-    BIconCalendarDate
-  },
   props: {
     prevVersion: {
       type: String,

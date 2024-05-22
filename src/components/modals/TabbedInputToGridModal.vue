@@ -29,7 +29,7 @@
 <script>
 import { getId } from '@/plugins/id'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   props: {
@@ -94,7 +94,7 @@ export default {
         }
       }
 
-      this.$emit('change', gridData)
+      this.$emit('data-changed', gridData)
       this.reset()
 
       emitter.emit('plausible-event', { key: 'load-layout', props: { type: 'tab' } })

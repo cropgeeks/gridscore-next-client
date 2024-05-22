@@ -453,5 +453,26 @@
         "text": "Starting from this release, the main display of GridScore will be rendered differently for smaller trials. If you encounter any performance issues, please change the main display mode in the settings to 'Canvas only'."
       }
     ]
+  },
+  {
+    "version": "3.0.1",
+    "date": "2024-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Technology stack upgrade",
+        "text": "To keep GridScore up to date with latest developments and to ensure security updates, we have updated GridScore to Vue 3 as well as made other updates behind the scenes. For you as a user, nothing should change."
+      },
+      {
+        "type": "new",
+        "title": "Multi-trial operations",
+        "text": "The trial selector on the home page now lets you execute certain operations across trials. For now, those include adding the same trait to multiple trials and deleting multiple trials in one go. We're looking into adding more cross-trial operations soon."
+      },
+      {
+        "type": "new",
+        "title": "Data collector stats",
+        "text": "We have added two charts to the trial statistics overview where the number of data points collected by each individual is plotted. This is only available if individuals are defined as part of the trial."
+      }
+    ]
   }
 ]

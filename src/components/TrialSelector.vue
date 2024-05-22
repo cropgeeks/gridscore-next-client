@@ -3,13 +3,27 @@
     <h2 class="d-flex justify-content-between">
       <span>{{ $t('widgetTrialSelectorTitle') }}</span>
       <div>
-        <b-button-group class="mr-2">
-          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementGrid')" :pressed="trialListArrangement === TRIAL_LIST_GRID" @click="trialListArrangement = TRIAL_LIST_GRID"><BIconGrid /></b-button>
-          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementList')" :pressed="trialListArrangement === TRIAL_LIST_LIST" @click="trialListArrangement = TRIAL_LIST_LIST"><BIconViewStacked /></b-button>
+        <b-button-group class="me-2">
+          <b-dropdown size="sm" variant="secondary" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" v-if="multiSelectEnabled && selectedTrialsToEdit && selectedTrialsToEdit.length > 0">
+            <template #button-content>
+              <IBiCheck2Square /> {{ selectedTrialsToEdit.length }}
+            </template>
+            <b-dropdown-item @click="multiSelectEnabled = false"><IBiBan /> {{ $t('buttonCancelSelection') }}</b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item @click="addTraits"><IBiTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item variant="danger" @click="deleteTrials"><IBiTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
+          </b-dropdown>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" :pressed="multiSelectEnabled" @click="multiSelectEnabled = !multiSelectEnabled" v-else><IBiCheck2Square /></b-button>
+          
+        </b-button-group>
+        <b-button-group class="me-2">
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementGrid')" :pressed="trialListArrangement === TRIAL_LIST_GRID" @click="trialListArrangement = TRIAL_LIST_GRID"><IBiGrid /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementList')" :pressed="trialListArrangement === TRIAL_LIST_LIST" @click="trialListArrangement = TRIAL_LIST_LIST"><IBiViewStacked /></b-button>
         </b-button-group>
         <b-button-group>
-          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorTabsNone')" :pressed="trialListMode === TRIAL_LIST_ALL" @click="trialListMode = TRIAL_LIST_ALL"><BIconListTask /></b-button>
-          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorTabsGroups')" :pressed="trialListMode === TRIAL_LIST_TABBED" @click="trialListMode = TRIAL_LIST_TABBED"><BIconSegmentedNav /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorTabsNone')" :pressed="trialListMode === TRIAL_LIST_ALL" @click="trialListMode = TRIAL_LIST_ALL"><IBiListTask /></b-button>
+          <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorTabsGroups')" :pressed="trialListMode === TRIAL_LIST_TABBED" @click="trialListMode = TRIAL_LIST_TABBED"><IBiSegmentedNav /></b-button>
         </b-button-group>
       </div>
     </h2>
@@ -18,7 +32,7 @@
     <b-row>
       <b-col cols=12 md=6 lg=4>
         <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
-          <b-input v-model="searchTerm" trim id="search-term" type="search" />
+          <b-form-input v-model.trim="searchTerm" id="search-term" type="search" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6 lg=4>
@@ -28,10 +42,12 @@
       </b-col>
       <b-col cols=12 md=6 lg=4>
         <b-form-group :label="$t('formLabelTrialSelectorSortDescending')" :description="$t('formDescriptionTrialSelectorSortDescending')" label-for="order-asc">
-          <b-button-group>
-            <b-button variant="outline-secondary" @click="sortDescending = false" :pressed="sortDescending === false"><BIconSortDownAlt /> {{ $t('formCheckboxSortOrderAscending') }}</b-button>
-            <b-button variant="outline-secondary" @click="sortDescending = true" :pressed="sortDescending === true"><BIconSortDown /> {{ $t('formCheckboxSortOrderDescending') }}</b-button>
-          </b-button-group>
+          <div>
+            <b-button-group>
+              <b-button variant="outline-secondary" @click="sortDescending = false" :pressed="sortDescending === false"><IBiSortDownAlt /> {{ $t('formCheckboxSortOrderAscending') }}</b-button>
+              <b-button variant="outline-secondary" @click="sortDescending = true" :pressed="sortDescending === true"><IBiSortDown /> {{ $t('formCheckboxSortOrderDescending') }}</b-button>
+            </b-button-group>
+          </div>
         </b-form-group>
       </b-col>
     </b-row>
@@ -41,11 +57,8 @@
         <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
           <template #title>
             <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
-            <BIconCloudDownloadFill class="ml-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
-            <BIconstack class="ml-2 text-danger" v-if="trialGroup.hasExpiryWarning">
-              <BIconCalendar stacked />
-              <BIconExclamationTriangleFill stacked :scale="0.6" shift-v="-1" />
-            </BIconstack>
+            <IBiCloudDownloadFill class="ms-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
+            <IBiCalendarXFill class="ms-2 text-danger" v-if="trialGroup.hasExpiryWarning" />
           </template>
           <b-progress variant="primary" striped animated :value="100" v-if="isLoading" height="4px" />
           <b-card-body :class="isLoading ? '' : 'mt-1'">
@@ -53,6 +66,8 @@
               <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
                 <TrialListGroupItem :trial="trial"
                                     v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`"
+                                    :selectable="multiSelectEnabled"
+                                    @selected="(v) => onSelectTrialToEdit(trial, v)"
                                     @loadTrial="loadTrial(trial)"
                                     @handleTrialExpiration="handleTrialExpiration(trial)"
                                     @showShareCodes="showShareCodes(trial)"
@@ -68,6 +83,8 @@
               <b-row v-else>
                 <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
                   <TrialCard :trial="trial"
+                            :selectable="multiSelectEnabled"
+                            @selected="(v) => onSelectTrialToEdit(trial, v)"
                             @loadTrial="loadTrial(trial)"
                             @handleTrialExpiration="handleTrialExpiration(trial)"
                             @showShareCodes="showShareCodes(trial)"
@@ -87,44 +104,43 @@
         </b-tab>
         <!-- Refresh button (Using tabs-end slot) -->
         <template #tabs-end>
-          <b-nav-item role="presentation" class="ml-auto" :disabled="isLoading" @click.prevent="update" v-b-tooltip="$t('tooltipTrialSelectorRefresh')" href="#"><BIconArrowClockwise /></b-nav-item>
+          <b-nav-item role="presentation" class="ms-auto" :disabled="isLoading" @click.prevent="update" v-b-tooltip="$t('tooltipTrialSelectorRefresh')" href="#"><IBiArrowClockwise /></b-nav-item>
         </template>
       </b-tabs>
     </b-card>
 
-    <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial" />
-    <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial" />
-    <AddTraitsModal :trial="selectedTrial" ref="addTraitsModal" v-if="selectedTrial && selectedTrial.editable" />
-    <EditPeopleModal :trialId="selectedTrial.localId" ref="addPersonModal" @person-added="update" v-if="selectedTrial && selectedTrial.editable" />
-    <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1" />
-    <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate)" />
-    <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial" />
-    <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial" />
-    <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial" />
+    <TrialCommentModal :trialId="selectedTrial.localId" @hidden="showTrialComments(null)" ref="trialCommentModal" v-if="selectedTrial && modalToShow === 'comments'" />
+    <TrialShareCodeModal :trial="selectedTrial" ref="trialShareCodeModal" v-if="selectedTrial && modalToShow === 'share'" />
+    <AddTraitsModal :trials="multiSelectEnabled ? selectedTrialsToEditEditable : [selectedTrial]" ref="addTraitsModal" v-if="((selectedTrial && selectedTrial.editable) || (selectedTrialsToEditEditable && selectedTrialsToEditEditable.length > 0)) && modalToShow === 'add-traits'" />
+    <EditPeopleModal :trialId="selectedTrial.localId" ref="addPersonModal" @person-added="update" v-if="selectedTrial && selectedTrial.editable && modalToShow === 'add-person'" />
+    <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1 && modalToShow === 'add-germplasm'" />
+    <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate) && modalToShow === 'sync'" />
+    <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial && modalToShow === 'import-data'" />
+    <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial && modalToShow === 'edit-trial'" />
+    <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial && modalToShow === 'trial-expiration'" />
   </div>
 </template>
 
 <script>
-import TrialCard from '@/components/TrialCard'
-import TrialListGroupItem from '@/components/TrialListGroupItem'
-import TrialCommentModal from '@/components/modals/TrialCommentModal'
-import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal'
-import AddTraitsModal from '@/components/modals/AddTraitsModal'
-import EditPeopleModal from '@/components/modals/EditPeopleModal'
-import TrialModificationModal from '@/components/modals/TrialModificationModal'
-import TrialExpirationModal from '@/components/modals/TrialExpirationModal'
-import TrialDataImportModal from '@/components/modals/TrialDataImportModal'
-import AddGermplasmModal from '@/components/modals/AddGermplasmModal'
-import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
+import TrialCard from '@/components/TrialCard.vue'
+import TrialListGroupItem from '@/components/TrialListGroupItem.vue'
+import TrialCommentModal from '@/components/modals/TrialCommentModal.vue'
+import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal.vue'
+import AddTraitsModal from '@/components/modals/AddTraitsModal.vue'
+import EditPeopleModal from '@/components/modals/EditPeopleModal.vue'
+import TrialModificationModal from '@/components/modals/TrialModificationModal.vue'
+import TrialExpirationModal from '@/components/modals/TrialExpirationModal.vue'
+import TrialDataImportModal from '@/components/modals/TrialDataImportModal.vue'
+import AddGermplasmModal from '@/components/modals/AddGermplasmModal.vue'
+import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal.vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
 import { deleteTrial, getTrialById, getTrialGroups, getTrials } from '@/plugins/idb'
-import { BIconListTask, BIconSegmentedNav, BIconGrid, BIconViewStacked, BIconCloudDownloadFill, BIconArrowClockwise, BProgress, BIconstack, BIconSortDown, BIconSortDownAlt, BIconCalendar, BIconExclamationTriangleFill } from 'bootstrap-vue'
 import { postCheckUpdate } from '@/plugins/api'
 
 const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -139,18 +155,6 @@ export default {
     TrialModificationModal,
     TrialExpirationModal,
     EditPeopleModal,
-    BIconSortDown,
-    BIconSortDownAlt,
-    BIconListTask,
-    BIconSegmentedNav,
-    BIconArrowClockwise,
-    BIconGrid,
-    BIconCloudDownloadFill,
-    BIconViewStacked,
-    BIconstack,
-    BIconCalendar,
-    BIconExclamationTriangleFill,
-    BProgress
   },
   data: function () {
     return {
@@ -161,9 +165,11 @@ export default {
       TRIAL_LIST_LIST,
       TRIAL_STATE_NOT_SHARED,
       TRIAL_STATE_OWNER,
+      multiSelectEnabled: false,
       trials: [],
       tabIndex: 0,
       selectedTrial: null,
+      selectedTrialsToEdit: [],
       trialUpdates: null,
       searchTerm: null,
       trialListMode: TRIAL_LIST_ALL,
@@ -172,6 +178,7 @@ export default {
       sortOrder: 'latestUpdate',
       sortDescending: true,
       isLoading: false,
+      modalToShow: null,
       sorting: {
         latestUpdate: (a, b) => this.sortDescending ? (new Date(b.updatedOn) - new Date(a.updatedOn)) : (new Date(a.updatedOn) - new Date(b.updatedOn)),
         name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
@@ -184,6 +191,13 @@ export default {
       'storeTrialListMode',
       'storeTrialListArrangement'
     ]),
+    selectedTrialsToEditEditable: function () {
+      if (this.selectedTrialsToEdit) {
+        return this.selectedTrialsToEdit.filter(t => t.editable)
+      } else {
+        return []
+      }
+    },
     sortOptions: function () {
       return [{
         text: this.$t('formSelectOptionTrialSortLastUpdate'),
@@ -272,6 +286,12 @@ export default {
           result[group].hasExpiryWarning ||= t.showExpiryWarning
         })
 
+        Object.keys(result).forEach(k => {
+          if (result[k].trials.length < 1) {
+            delete result[k]
+          }
+        })
+
         return result
       } else {
         const result = {}
@@ -285,10 +305,15 @@ export default {
     }
   },
   watch: {
+    multiSelectEnabled: function (newValue) {
+      this.selectedTrialsToEdit = []
+    },
     trialListMode: function (newValue) {
+      this.selectedTrialsToEdit = []
       this.$store.dispatch('setTrialListMode', newValue)
     },
     trialListArrangement: function (newValue) {
+      this.selectedTrialsToEdit = []
       this.$store.dispatch('setTrialListArrangement', newValue)
     },
     sortedTrials: function () {
@@ -298,6 +323,17 @@ export default {
     }
   },
   methods: {
+    onSelectTrialToEdit: function (trial, selected) {
+      if (selected) {
+        const alreadyIn = this.selectedTrialsToEdit.some(t => t.localId === trial.localId)
+
+        if (!alreadyIn) {
+          this.selectedTrialsToEdit.push(trial)
+        }
+      } else {
+        this.selectedTrialsToEdit = this.selectedTrialsToEdit.filter(t => t.localId !== trial.localId)
+      }
+    },
     updateTabIndex: function () {
       let index = 0
       Object.keys(this.sortedTrials).forEach((g, i) => {
@@ -310,16 +346,19 @@ export default {
     },
     handleTrialExpiration: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'trial-expiration'
 
       this.$nextTick(() => this.$refs.trialExpirationModal.show())
     },
     importData: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'import-data'
 
       this.$nextTick(() => this.$refs.trialDataImportModal.show())
     },
     showTrialEdit: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'edit-trial'
 
       this.$nextTick(() => this.$refs.trialModificationModal.show())
     },
@@ -328,11 +367,13 @@ export default {
     },
     synchronize: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'sync'
 
       this.$nextTick(() => this.$refs.traitSyncModal.show())
     },
     showShareCodes: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'share'
 
       this.$nextTick(() => this.$refs.trialShareCodeModal.show())
     },
@@ -342,40 +383,82 @@ export default {
     },
     addPerson: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'add-person'
 
       this.$nextTick(() => this.$refs.addPersonModal.show())
     },
+    addTraits: function () {
+      this.selectedTrial = null
+      this.modalToShow = 'add-traits'
+
+      this.$nextTick(() => this.$refs.addTraitsModal.show())
+    },
     addTrait: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'add-traits'
 
       this.$nextTick(() => this.$refs.addTraitsModal.show())
     },
     addGermplasm: function (trial) {
       this.selectedTrial = trial
+      this.modalToShow = 'add-germplasm'
 
       this.$nextTick(() => this.$refs.addGermplasmModal.show())
     },
-    deleteTrial: function (trial) {
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextDeleteTrial'), {
-        title: this.$t('modalTitleDeleteTrial'),
-        okTitle: this.$t('buttonYes'),
-        okVariant: 'danger',
-        cancelTitle: this.$t('buttonNo')
+    deleteTrialConfirmed: function () {
+      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', null)
+      deleteTrial(this.selectedTrial.localId).then(() => {
+        this.update()
       })
-        .then(value => {
-          if (value) {
-            this.$store.commit('ON_SELECTED_TRIAL_CHANGED', null)
-            deleteTrial(trial.localId).then(() => {
-              this.update()
-            })
 
-            emitter.emit('plausible-event', { key: 'trial-deleted' })
+      emitter.emit('plausible-event', { key: 'trial-deleted' })
+    },
+    deleteTrialsConfirmed: function () {
+      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', null)
+
+      Promise.all(this.selectedTrialsToEdit.map(t => deleteTrial(t.localId)))
+        .then(() => this.update())
+    },
+    deleteTrials: function () {
+      if (this.selectedTrialsToEdit && this.selectedTrialsToEdit.length > 0) {
+        this.modalToShow = 'delete-trials'
+
+        emitter.emit('show-confirm', {
+          title: 'modalTitleDeleteTrials',
+          message: 'modalTextDeleteTrials',
+          okTitle: 'buttonYes',
+          cancelTitle: 'buttonNo',
+          okVariant: 'danger',
+          callback: (result) => {
+            if (result) {
+              this.deleteTrialsConfirmed()
+            }
           }
         })
+      }
+    },
+    deleteTrial: function (trial) {
+      this.selectedTrial = trial
+      this.modalToShow = 'delete-trial'
+
+      emitter.emit('show-confirm', {
+        title: 'modalTitleDeleteTrial',
+        message: 'modalTextDeleteTrial',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
+        okVariant: 'danger',
+        callback: (result) => {
+          if (result) {
+            this.deleteTrialConfirmed()
+          }
+        }
+      })
     },
     update: function () {
       this.isLoading = true
       this.tabIndex = 0
+      this.selectedTrialsToEdit = []
+      this.multiSelectEnabled = false
 
       getTrialGroups().then(groups => {
         const result = [UNCATEGORIZED_TRIALS]
@@ -433,7 +516,7 @@ export default {
     emitter.on('trial-properties-changed', this.update)
     emitter.on('trials-updated', this.update)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-properties-changed', this.update)
     emitter.off('trials-updated', this.update)
   }

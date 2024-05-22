@@ -10,13 +10,13 @@
       </div>
       <div v-else-if="archiveExists === true">
         <b-card>
-          <b-card-title><BIconFileEarmarkZip /> {{ $t('pageArchiveTitle') }}</b-card-title>
-          <b-card-sub-title class="mb-3">{{ $t('pageArchiveSubtitle') }}</b-card-sub-title>
-          <b-card-text class="mb-2"><BIconFileEarmarkArrowDown /> {{ $t('pageArchiveTextSize', { size: fileSize }) }}</b-card-text>
-          <b-card-text class="mb-2"><BIconDownload /> {{ $t('pageArchiveTextExportedOn', { date: new Date(archiveInformation.trialExportedOn).toLocaleDateString() }) }}</b-card-text>
-          <b-card-text class="mb-2"><BIconArrowRepeat /> {{ $t('pageArchiveTextUpdatedOn', { date: new Date(archiveInformation.trialUpdatedOn).toLocaleDateString() }) }}</b-card-text>
+          <b-card-title><IBiFileEarmarkZip /> {{ $t('pageArchiveTitle') }}</b-card-title>
+          <b-card-subtitle class="mb-3">{{ $t('pageArchiveSubtitle') }}</b-card-subtitle>
+          <b-card-text class="mb-2"><IBiFileEarmarkArrowDown /> {{ $t('pageArchiveTextSize', { size: fileSize }) }}</b-card-text>
+          <b-card-text class="mb-2"><IBiDownload /> {{ $t('pageArchiveTextExportedOn', { date: new Date(archiveInformation.trialExportedOn).toLocaleDateString() }) }}</b-card-text>
+          <b-card-text class="mb-2"><IBiArrowRepeat /> {{ $t('pageArchiveTextUpdatedOn', { date: new Date(archiveInformation.trialUpdatedOn).toLocaleDateString() }) }}</b-card-text>
 
-          <b-button variant="primary" :href="archiveUrl" v-if="archiveUrl"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
+          <b-button variant="primary" :href="archiveUrl" v-if="archiveUrl"><IBiDownload /> {{ $t('buttonDownload') }}</b-button>
         </b-card>
       </div>
       <p v-else-if="archiveExists === false">{{ $t('pageArchiveNoArchiveFound') }}</p>
@@ -27,19 +27,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { checkTrialArchiveExists } from '@/plugins/api'
-import { BIconFileEarmarkZip, BIconFileEarmarkArrowDown, BIconDownload, BIconArrowRepeat, BProgress } from 'bootstrap-vue'
 import { getNumberWithSuffix } from '@/plugins/misc'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BProgress,
-    BIconFileEarmarkZip,
-    BIconFileEarmarkArrowDown,
-    BIconDownload,
-    BIconArrowRepeat
-  },
   data: function () {
     return {
       trial: null,
@@ -105,7 +97,7 @@ export default {
   mounted: function () {
     emitter.on('show-missing-trial', this.show)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('show-missing-trial', this.show)
   }
 }

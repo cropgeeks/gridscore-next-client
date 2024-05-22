@@ -1,6 +1,6 @@
 <template>
   <b-modal :title="$t('modalTitleAddTrait')"
-           :ok-title="$tc('buttonAddTraits', traits ? traits.length : 0)"
+           :ok-title="$t('buttonAddTraits', traits ? traits.length : 0)"
            @ok.prevent="addTraits"
            :ok-disabled="!traits || traits.length < 1"
            no-fade
@@ -8,29 +8,29 @@
            no-close-on-esc
            size="xl"
            ref="addTraitsModal">
-    <div v-if="trial">
+    <div v-if="trials && trials.length > 0">
       <p>{{ $t('modalTextAddTrait') }}</p>
 
-      <TraitDefinitionComponent :trial="trial" @change="updateTraits" />
+      <TraitDefinitionComponent :trials="trials" @data-changed="updateTraits" />
     </div>
   </b-modal>
 </template>
 
 <script>
-import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
+import TraitDefinitionComponent from '@/components/TraitDefinitionComponent.vue'
 
 import { addTrialTraits } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
     TraitDefinitionComponent
   },
   props: {
-    trial: {
-      type: Object,
-      default: () => null
+    trials: {
+      type: Array,
+      default: () => []
     }
   },
   data: function () {
@@ -55,7 +55,7 @@ export default {
         }
       })
 
-      addTrialTraits(this.trial.localId, this.traits)
+      Promise.all(this.trials.map(t => addTrialTraits(t.localId, this.traits)))
         .then(() => {
           emitter.emit('trials-updated')
           emitter.emit('plausible-event', { key: 'traits-added', props: { count: this.traits.length } })

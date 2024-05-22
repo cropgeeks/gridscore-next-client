@@ -12,7 +12,7 @@
 
     <div v-if="cell.measurements">
       <section v-for="trait in traits" :key="`trait-section-${trait.id}`" class="mt-3">
-        <h5 class="mb-1 mr-3">
+        <h5 class="mb-1 me-3">
           <span :style="{ color: trait.color }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
         </h5>
         <b-list-group class="map-measurement-list" v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
@@ -24,7 +24,7 @@
               <template v-else>
                 {{ measure.values.join(', ') }}
               </template>
-              <small v-b-tooltip="new Date(measure.timestamp).toLocaleString()"><BIconCalendar3 /> {{ getDaysAgoIn(measure.timestamp) }}</small>
+              <small v-b-tooltip="new Date(measure.timestamp).toLocaleString()"><IBiCalendar3 /> {{ getDaysAgoIn(measure.timestamp) }}</small>
             </div>
           </b-list-group-item>
         </b-list-group>
@@ -36,13 +36,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import TraitIcon from '@/components/icons/TraitIcon'
-import { BIconCalendar3 } from 'bootstrap-vue'
+import TraitIcon from '@/components/icons/TraitIcon.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
 export default {
   components: {
-    BIconCalendar3,
     TraitIcon
   },
   props: {
@@ -94,9 +92,9 @@ export default {
     getDaysAgoIn: function (timestamp) {
       const diffDays = Math.floor((new Date() - new Date(timestamp)) / (1000 * 60 * 60 * 24))
       if (diffDays > -14 && diffDays < 0) {
-        return this.$tc('ttsDaysIn', Math.abs(diffDays))
+        return this.$t('ttsDaysIn', Math.abs(diffDays))
       } else if (diffDays < 14) {
-        return this.$tc('ttsDaysAgo', Math.abs(diffDays))
+        return this.$t('ttsDaysAgo', Math.abs(diffDays))
       } else {
         return new Date(timestamp).toLocaleDateString()
       }

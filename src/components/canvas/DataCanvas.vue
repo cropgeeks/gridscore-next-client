@@ -6,6 +6,7 @@
                   :x="origin.x"
                   :markedColumns="markedColumns"
                   @column-marked="onColumnMarked"
+                  id="data-canvas-header"
                   ref="colHead" />
     <div class="corner" />
     <RowHeader :dimensions="dimensions"
@@ -26,14 +27,14 @@
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 
-import ColumnHeader from '@/components/canvas/ColumnHeader'
-import HScroll from '@/components/canvas/HScroll'
-import RowHeader from '@/components/canvas/RowHeader'
-import VScroll from '@/components/canvas/VScroll'
-import PlotCanvas from '@/components/canvas/PlotCanvas'
+import ColumnHeader from '@/components/canvas/ColumnHeader.vue'
+import HScroll from '@/components/canvas/HScroll.vue'
+import RowHeader from '@/components/canvas/RowHeader.vue'
+import VScroll from '@/components/canvas/VScroll.vue'
+import PlotCanvas from '@/components/canvas/PlotCanvas.vue'
 import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -253,7 +254,7 @@ export default {
 
     window.addEventListener('resize', this.reset)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     window.removeEventListener('resize', this.reset)
   }
 }

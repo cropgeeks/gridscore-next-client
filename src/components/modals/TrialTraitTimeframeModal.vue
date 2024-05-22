@@ -18,11 +18,12 @@
 <script>
 import { toLocalDateString, toLocalDateTimeString } from '@/plugins/misc'
 import { mapGetters } from 'vuex'
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import bar from 'plotly.js/lib/bar'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/bar')
+  bar
 ])
 
 export default {

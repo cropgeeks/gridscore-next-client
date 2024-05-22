@@ -371,7 +371,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderUpLeft',
   valid: (x, y, layout) => !guideOrderNextUpLeft({ x: x, y: y, direction: 'u' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextUpLeft, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-u-l.svg')
+  image: 'img/guided-walk/scoring-order-u-l.svg'
 }, {
   name: 'up-right',
   type: 'snake',
@@ -379,7 +379,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderUpRight',
   valid: (x, y, layout) => !guideOrderNextUpRight({ x: x, y: y, direction: 'u' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextUpRight, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-u-r.svg')
+  image: 'img/guided-walk/scoring-order-u-r.svg'
 }, {
   name: 'down-left',
   type: 'snake',
@@ -387,7 +387,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderDownLeft',
   valid: (x, y, layout) => !guideOrderNextDownLeft({ x: x, y: y, direction: 'd' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextDownLeft, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-d-l.svg')
+  image: 'img/guided-walk/scoring-order-d-l.svg'
 }, {
   name: 'down-right',
   type: 'snake',
@@ -395,7 +395,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderDownRight',
   valid: (x, y, layout) => !guideOrderNextDownRight({ x: x, y: y, direction: 'd' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextDownRight, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-d-r.svg')
+  image: 'img/guided-walk/scoring-order-d-r.svg'
 }, {
   name: 'left-up',
   type: 'snake',
@@ -403,7 +403,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderLeftUp',
   valid: (x, y, layout) => !guideOrderNextLeftUp({ x: x, y: y, direction: 'l' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextLeftUp, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-l-u.svg')
+  image: 'img/guided-walk/scoring-order-l-u.svg'
 }, {
   name: 'left-down',
   type: 'snake',
@@ -411,7 +411,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderLeftDown',
   valid: (x, y, layout) => !guideOrderNextLeftDown({ x: x, y: y, direction: 'l' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextLeftDown, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-l-d.svg')
+  image: 'img/guided-walk/scoring-order-l-d.svg'
 }, {
   name: 'right-down',
   type: 'snake',
@@ -419,7 +419,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderRightDown',
   valid: (x, y, layout) => !guideOrderNextRightDown({ x: x, y: y, direction: 'r' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextRightDown, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-r-d.svg')
+  image: 'img/guided-walk/scoring-order-r-d.svg'
 }, {
   name: 'right-up',
   type: 'snake',
@@ -427,7 +427,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderRightUp',
   valid: (x, y, layout) => !guideOrderNextRightUp({ x: x, y: y, direction: 'r' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextRightUp, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-r-u.svg')
+  image: 'img/guided-walk/scoring-order-r-u.svg'
 }, {
   name: 'up-left-back',
   type: 'zigzag',
@@ -435,7 +435,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderUpLeftBack',
   valid: (x, y, layout) => !guideOrderNextUpLeftBack({ x: x, y: y, direction: 'r' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextUpLeftBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-u-l-b.svg')
+  image: 'img/guided-walk/scoring-order-u-l-b.svg'
 }, {
   name: 'up-right-back',
   type: 'zigzag',
@@ -443,7 +443,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderUpRightBack',
   valid: (x, y, layout) => !guideOrderNextUpRightBack({ x: x, y: y, direction: 'r' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextUpRightBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-u-r-b.svg')
+  image: 'img/guided-walk/scoring-order-u-r-b.svg'
 }, {
   name: 'down-right-back',
   type: 'zigzag',
@@ -451,7 +451,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderDownRightBack',
   valid: (x, y, layout) => !guideOrderNextDownRightBack({ x: x, y: y, direction: 'r' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextDownRightBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-d-r-b.svg')
+  image: 'img/guided-walk/scoring-order-d-r-b.svg'
 }, {
   name: 'down-left-back',
   type: 'zigzag',
@@ -459,7 +459,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderDownLeftBack',
   valid: (x, y, layout) => !guideOrderNextDownLeftBack({ x: x, y: y, direction: 'r' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextDownLeftBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-d-l-b.svg')
+  image: 'img/guided-walk/scoring-order-d-l-b.svg'
 }, {
   name: 'left-up-back',
   type: 'zigzag',
@@ -467,7 +467,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderLeftUpBack',
   valid: (x, y, layout) => !guideOrderNextLeftUpBack({ x: x, y: y, direction: 'l' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextLeftUpBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-l-u-b.svg')
+  image: 'img/guided-walk/scoring-order-l-u-b.svg'
 }, {
   name: 'left-down-back',
   type: 'zigzag',
@@ -475,7 +475,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderLeftDownBack',
   valid: (x, y, layout) => !guideOrderNextLeftDownBack({ x: x, y: y, direction: 'l' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextLeftDownBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-l-d-b.svg')
+  image: 'img/guided-walk/scoring-order-l-d-b.svg'
 }, {
   name: 'right-down-back',
   type: 'zigzag',
@@ -483,7 +483,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderRightDownBack',
   valid: (x, y, layout) => !guideOrderNextRightDownBack({ x: x, y: y, direction: 'l' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextRightDownBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-r-d-b.svg')
+  image: 'img/guided-walk/scoring-order-r-d-b.svg'
 }, {
   name: 'right-up-back',
   type: 'zigzag',
@@ -491,7 +491,7 @@ const guideOrderTypes = [{
   text: 'widgetGuideOrderRightUpBack',
   valid: (x, y, layout) => !guideOrderNextRightUpBack({ x: x, y: y, direction: 'l' }, layout).finished,
   cellSequence: (start, layout) => guideCellSequence(start.x, start.y, start.direction, guideOrderNextRightUpBack, layout),
-  image: require('@/assets/img/guided-walk/scoring-order-r-u-b.svg')
+  image: 'img/guided-walk/scoring-order-r-u-b.svg'
 }]
 
 export {

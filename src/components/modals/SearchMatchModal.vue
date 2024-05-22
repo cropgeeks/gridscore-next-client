@@ -9,14 +9,14 @@
       <b-list-group-item href="#" @click.prevent="handleClick(match)" v-for="match in searchMatches" :key="`search-match-${match.row}-${match.column}`">
         <h5>{{ match.displayName }}</h5>
         <b-badge>{{ $t('modalTextSearchMatchRow', { row: match.displayRow }) }}</b-badge>
-        <b-badge class="ml-2">{{ $t('modalTextSearchMatchColumn', { column: match.displayColumn }) }}</b-badge>
+        <b-badge class="ms-2">{{ $t('modalTextSearchMatchColumn', { column: match.displayColumn }) }}</b-badge>
       </b-list-group-item>
     </b-list-group>
   </b-modal>
 </template>
 
 <script>
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   props: {

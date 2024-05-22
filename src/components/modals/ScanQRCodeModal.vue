@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import BarcodeScanner from '@/components/BarcodeScanner'
+import BarcodeScanner from '@/components/BarcodeScanner.vue'
 
 export default {
   components: {

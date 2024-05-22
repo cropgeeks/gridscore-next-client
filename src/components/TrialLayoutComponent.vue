@@ -3,10 +3,11 @@
     <b-tabs content-class="mt-3" v-model="tabIndex">
       <b-tab active>
         <template #title>
-          <BIconGrid3x2Gap />
-          <span> {{ $t('pageTrialLayoutDimensionsTitle') }} </span>
-          <BIconCheck class="text-success" v-if="tabCorrect.rowColumn === true" />
-          <BIconX class="text-danger" v-else-if="tabCorrect.rowColumn === false" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-grid-3x2-gap" viewBox="0 0 16 16">
+            <path d="M4 4v2H2V4zm1 7V9a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m5 5V9a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1M9 4v2H7V4zm5 0h-2v2h2zM4 9v2H2V9zm5 0v2H7V9zm5 0v2h-2V9zm-3-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm1 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z"/>
+          </svg> <span> {{ $t('pageTrialLayoutDimensionsTitle') }} </span>
+          <IBiCheck class="text-success" v-if="tabCorrect.rowColumn === true" />
+          <IBiX class="text-danger" v-else-if="tabCorrect.rowColumn === false" />
         </template>
         <b-container>
           <p>{{ $t('pageTrialLayoutDimensionsText') }}</p>
@@ -15,73 +16,70 @@
               <!-- Field layout rows -->
               <b-form-group label-for="rows" :description="$t('formLabelDescriptionRows')" >
                 <template v-slot:label>
-                  <BIconLayoutThreeColumns rotate="90" /><span> {{ $t('formLabelSetupRows') }}</span>
+                  <IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /> <span>{{ $t('formLabelSetupRows') }}</span>
                 </template>
-                <b-form-input id="rows" number type="number" :min="1" required lazy autofocus v-model.number="layout.rows" />
+                <b-form-input id="rows" type="number" :min="1" required autofocus v-model.number.lazy="layout.rows" />
               </b-form-group>
             </b-col>
             <b-col cols=12 md=6>
               <!-- Field layout cols -->
               <b-form-group label-for="columns" :description="$t('formLabelDescriptionColumns')">
                 <template v-slot:label>
-                  <BIconLayoutThreeColumns /><span> {{ $t('formLabelSetupColumns') }}</span>
+                  <IBiLayoutThreeColumns /> <span>{{ $t('formLabelSetupColumns') }}</span>
                 </template>
-                <b-form-input id="columns" number type="number" :min="1" required lazy v-model.number="layout.columns" />
+                <b-form-input id="columns" type="number" :min="1" required v-model.number.lazy="layout.columns" />
               </b-form-group>
             </b-col>
             <b-col cols=12 md=6>
               <b-form-group :label="$t('formLabelSettingsRowOrder')" :description="$t('formDescriptionSettingsRowOrder')" label-for="rowOrder">
                 <b-button-group class="w-100">
-                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM" @click="layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM"><BIconSortNumericDown /> {{ $t('buttonTopToBottom') }}</b-button>
-                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP" @click="layout.rowOrder = DISPLAY_ORDER_BOTTOM_TO_TOP"><BIconSortNumericUpAlt /> {{ $t('buttonBottomToTop') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM" @click="layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM"><IBiSortNumericDown /> {{ $t('buttonTopToBottom') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP" @click="layout.rowOrder = DISPLAY_ORDER_BOTTOM_TO_TOP"><IBiSortNumericUpAlt /> {{ $t('buttonBottomToTop') }}</b-button>
                 </b-button-group>
               </b-form-group>
             </b-col>
             <b-col cols=12 md=6>
               <b-form-group :label="$t('formLabelSettingsColumnOrder')" :description="$t('formDescriptionSettingsColumnOrder')" label-for="columnOrder">
                 <b-button-group class="w-100">
-                  <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT" @click="layout.columnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT"><BIconSortNumericDown rotate=270 /> {{ $t('buttonLeftToRight') }}</b-button>
-                  <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT" @click="layout.columnOrder = DISPLAY_ORDER_RIGHT_TO_LEFT"><BIconSortNumericUpAlt rotate=270 /> {{ $t('buttonRightToLeft') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT" @click="layout.columnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT"><IBiSortNumericDown :style="{ transform: 'rotate(270deg)' }" /> {{ $t('buttonLeftToRight') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT" @click="layout.columnOrder = DISPLAY_ORDER_RIGHT_TO_LEFT"><IBiSortNumericUpAlt :style="{ transform: 'rotate(270deg)' }" /> {{ $t('buttonRightToLeft') }}</b-button>
                 </b-button-group>
               </b-form-group>
             </b-col>
           </b-row>
 
-          <div class="border border-warning text-center mb-3 p-2"><BIconExclamationTriangleFill class="text-warning" /> {{ $t('pageTrialLayoutDimensionsFielDHubNotice') }}</div>
+          <div class="border border-warning text-center mb-3 p-2"><IBiExclamationTriangleFill class="text-warning" /> {{ $t('pageTrialLayoutDimensionsFielDHubNotice') }}</div>
         </b-container>
       </b-tab>
       <b-tab :disabled="!hasDimensions">
         <template #title>
-          <BIconFlower1 />
-          <span> {{ $t('pageTrialLayoutGermplasmTitle') }} </span>
-          <BIconCheck class="text-success" v-if="tabCorrect.germplasm === true" />
-          <BIconX class="text-danger" v-else-if="tabCorrect.germplasm === false" />
+          <IBiFlower1 /> <span> {{ $t('pageTrialLayoutGermplasmTitle') }} </span>
+          <IBiCheck class="text-success" v-if="tabCorrect.germplasm === true" />
+          <IBiX class="text-danger" v-else-if="tabCorrect.germplasm === false" />
         </template>
         <p>{{ $t('pageTrialLayoutGermplasmText') }}</p>
-        <TrialLayoutGermplasmGrid :initialGermplasm="initialGermplasm" ref="germplasmTable" :layout="layout" @change="setGermplasmMap" />
+        <TrialLayoutGermplasmGrid :initialGermplasm="initialGermplasm" ref="germplasmTable" :layout="layout" @data-changed="setGermplasmMap" />
       </b-tab>
       <b-tab :disabled="!hasDimensions">
         <template #title>
-          <BIconArrowsFullscreen />
-          <span> {{ $t('pageTrialLayoutCornersTitle') }} </span>
-          <BIconCheck class="text-success" v-if="tabCorrect.corners === true" />
-          <BIconX class="text-danger" v-else-if="tabCorrect.corners === false" />
+          <IBiArrowsFullscreen /> <span> {{ $t('pageTrialLayoutCornersTitle') }} </span>
+          <IBiCheck class="text-success" v-if="tabCorrect.corners === true" />
+          <IBiX class="text-danger" v-else-if="tabCorrect.corners === false" />
         </template>
         <b-container>
           <p>{{ $t('pageTrialLayoutCornersText') }}</p>
-          <TrialLayoutCorners ref="trialLayoutCorners" :layout="layout" @change="(corners) => { layout.corners = corners }" />
+          <TrialLayoutCorners ref="trialLayoutCorners" :layout="layout" @data-changed="(corners) => { layout.corners = corners }" />
         </b-container>
       </b-tab>
       <b-tab :disabled="!hasDimensions">
         <template #title>
-          <BIconBoundingBoxCircles />
-          <span> {{ $t('pageTrialLayoutMarkersTitle') }} </span>
-          <BIconCheck class="text-success" v-if="tabCorrect.markers === true" />
-          <BIconX class="text-danger" v-else-if="tabCorrect.markers === false" />
+          <IBiBoundingBoxCircles /> <span> {{ $t('pageTrialLayoutMarkersTitle') }} </span>
+          <IBiCheck class="text-success" v-if="tabCorrect.markers === true" />
+          <IBiX class="text-danger" v-else-if="tabCorrect.markers === false" />
         </template>
         <b-container>
           <p>{{ $t('pageTrialLayoutMarkersText') }}</p>
-          <MarkerSetup ref="markerSetup" :layout="layout" @change="(markers) => { layout.markers = markers }" />
+          <MarkerSetup ref="markerSetup" :layout="layout" @data-changed="(markers) => { layout.markers = markers }" />
         </b-container>
       </b-tab>
     </b-tabs>
@@ -89,10 +87,9 @@
 </template>
 
 <script>
-import TrialLayoutGermplasmGrid from '@/components/TrialLayoutGermplasmGrid'
-import MarkerSetup from '@/components/MarkerSetup'
-import TrialLayoutCorners from '@/components/TrialLayoutCorners'
-import { BIconLayoutThreeColumns, BIconCheck, BIconX, BIconExclamationTriangleFill, BIconGrid3x2Gap, BIconFlower1, BIconArrowsFullscreen, BIconBoundingBoxCircles, BIconSortNumericDown, BIconSortNumericUpAlt } from 'bootstrap-vue'
+import TrialLayoutGermplasmGrid from '@/components/TrialLayoutGermplasmGrid.vue'
+import MarkerSetup from '@/components/MarkerSetup.vue'
+import TrialLayoutCorners from '@/components/TrialLayoutCorners.vue'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_BOTTOM_TO_TOP } from '@/plugins/constants'
 
@@ -100,17 +97,7 @@ export default {
   components: {
     TrialLayoutGermplasmGrid,
     TrialLayoutCorners,
-    MarkerSetup,
-    BIconLayoutThreeColumns,
-    BIconCheck,
-    BIconX,
-    BIconGrid3x2Gap,
-    BIconFlower1,
-    BIconExclamationTriangleFill,
-    BIconArrowsFullscreen,
-    BIconBoundingBoxCircles,
-    BIconSortNumericDown,
-    BIconSortNumericUpAlt
+    MarkerSetup
   },
   data: function () {
     return {
@@ -304,7 +291,7 @@ export default {
         this.tabCorrect.markers = true
       }
 
-      this.$emit('change', {
+      this.$emit('data-changed', {
         layoutValid: Object.values(this.tabCorrect).every(t => t === true || t === null),
         layout: this.layout,
         germplasmMap: this.germplasmMap,

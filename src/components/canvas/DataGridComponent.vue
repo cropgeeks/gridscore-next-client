@@ -1,7 +1,7 @@
 <template>
   <div class="page-grid" ref="overallWrapper" v-if="trial && trialData">
     <div />
-    <div class="column-headers" ref="columnHeader" :style="{ gridTemplateColumns: `repeat(${columns.length}, ${cellWidth}px)` }">
+    <div class="column-headers" ref="columnHeader" id="data-canvas-header" :style="{ gridTemplateColumns: `repeat(${columns.length}, ${cellWidth}px)` }">
       <div v-for="column in columns" :class="{
         cell: true,
         'p-2': true,
@@ -20,25 +20,36 @@
       }" :key="`row-${row.index}`" @click="row.marked = !row.marked">{{ row.text }}</div>
     </div>
     <div :class="`data-grid-wrapper ${disableScroll ? 'no-scroll' : ''}`" ref="wrapper">
+      <teleport to="body">
+        <div class="top-0 end-0 toast-container position-fixed p-3">
+          <b-toast id="marking-restriction-toast" :title="$t('toastDataInputRestrictedTitle')" :model-value="5000" :interval="100" v-model="showRestrictionToast" v-if="storeRestrictInputToMarked">
+            <p>{{ $t('toastDataInputRestrictedText') }}</p>
+            <div class="d-flex justify-content-between">
+              <b-button @click="disableMarkingRestriction" variant="warning">{{ $t('buttonDisable') }}</b-button>
+              <b-button @click="showRestrictionToast = false" variant="secondary">{{ $t('buttonClose') }}</b-button>
+            </div>
+          </b-toast>
+        </div>
+      </teleport>
       <template v-if="userPosition">
-        <BIconCursorFill class="grid-icon gps-position" :style="{
+        <IBiCursorFill class="grid-icon gps-position" :style="{
           left: `${userPosition.x}px`,
           top: `${userPosition.y}px`,
           transform: `rotate(${userPosition.rotate}deg)`
         }" v-if="userPosition.heading !== undefined && userPosition.heading !== null" />
-        <BIconRecordCircle class="grid-icon gps-position" :style="{
+        <IBiRecordCircle class="grid-icon gps-position" :style="{
           left: `${userPosition.x}px`,
           top: `${userPosition.y}px`
         }" v-else />
       </template>
-      <BIconCircleFill class="grid-icon position-absolute marker" v-for="(marker, mIndex) in markers" :key="`marker-${mIndex}`" :style="{ left: marker[0], top: marker[1] }" />
+      <IBiCircleFill class="grid-icon position-absolute marker" v-for="(marker, mIndex) in markers" :key="`marker-${mIndex}`" :style="{ left: marker[0], top: marker[1] }" />
       <div class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, ${cellHeight}px)` }">
         <template v-for="row in rows">
-          <template v-for="column in columns">
+          <template v-for="column in columns" :key="`cell-${row.index}-${column.index}`">
             <!-- Temporary variable -->
             {{ (cell = trialData[`${row.index}|${column.index}`], null) }}
             <div
-              :key="`cell-${row.index}-${column.index}`" @click="plotClicked(row.index, column.index)"
+               @click="plotClicked(row.index, column.index)"
               :class="[{
                 'cell-marked': column.marked || row.marked,
                 'cell-column': column.index % 2 === 0,
@@ -47,9 +58,9 @@
                 'cell-control': storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)
               }, cellClass]">
             <template v-if="cell">
-                <BIconBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
-                <BIconChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
-                <BIconCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
+                <IBiBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
+                <IBiChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
+                <IBiCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
                 <div class="cell-text my-1">{{ cell.displayName }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
@@ -80,24 +91,16 @@
 </template>
 
 <script>
+import { toRef } from 'vue'
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_LOW, CANVAS_SHAPE_SQUARE, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE, CANVAS_SIZE_MEDIUM } from '@/plugins/constants'
-import { BIconBookmarkCheckFill, BIconChatRightTextFill, BIconCheckSquareFill, BIconCircleFill, BIconRecordCircle, BIconCursorFill } from 'bootstrap-vue'
 import { projectToEuclidean } from '@/plugins/location'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconCursorFill,
-    BIconBookmarkCheckFill,
-    BIconChatRightTextFill,
-    BIconCheckSquareFill,
-    BIconRecordCircle,
-    BIconCircleFill
-  },
   props: {
     geolocation: {
       type: Object,
@@ -106,7 +109,6 @@ export default {
   },
   data: function () {
     return {
-      CANVAS_SHAPE_SQUARE,
       CELL_CATEGORY_CONTROL,
       trial: null,
       trialData: null,
@@ -116,7 +118,8 @@ export default {
       columns: [],
       rows: [],
       gridProjection: null,
-      markers: {}
+      markers: {},
+      showRestrictionToast: false
     }
   },
   computed: {
@@ -126,6 +129,7 @@ export default {
       'storeDisplayMinCellWidth',
       'storeHighlightControls',
       'storeDisplayMarkerIndicators',
+      'storeRestrictInputToMarked',
       'storeNavigationMode',
       'storeCanvasSize',
       'storeCanvasShape',
@@ -341,7 +345,21 @@ export default {
 
       return ((row % 2 === 0) ? 1 : 0) + ((column % 2 === 0) ? 1 : 0)
     },
+    disableMarkingRestriction: function () {
+      this.$store.dispatch('setRestrictInputToMarked', false)
+    },
     plotClicked: function (row, column) {
+      if (this.storeRestrictInputToMarked) {
+        const anyMarked = this.rows.some(r => r.marked) || this.columns.some(c => c.marked)
+
+        if (anyMarked) {
+          if (!this.columns[column].marked && !this.rows[row].marked) {
+            this.showRestrictionToast = true
+            return
+          }
+        }
+      }
+
       emitter.emit('plot-clicked', row, column)
     },
     loadTrial: function () {
@@ -475,7 +493,7 @@ export default {
     },
     updateCellCache: function (row, column, trialId, cell) {
       if (this.trial.localId === trialId) {
-        this.trialData[`${row}|${column}`] = cell
+        this.trialData[`${row}|${column}`] = toRef(cell)
       }
     }
   },
@@ -490,7 +508,7 @@ export default {
     emitter.on('plot-cache-changed', this.updateCellCache)
     window.addEventListener('resize', this.updateDimensions)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.reset)
     emitter.off('jump-to-corner', this.jumpToCorner)
     emitter.off('move-to-corner', this.moveInDirection)

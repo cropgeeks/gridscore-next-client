@@ -25,7 +25,7 @@ import { tsvParse, csvParse } from 'd3-dsv'
 import { changeTrialsData, getTrialData } from '@/plugins/idb'
 import { checkDataMatchesTraitType, isValidDateString } from '@/plugins/misc'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   props: {

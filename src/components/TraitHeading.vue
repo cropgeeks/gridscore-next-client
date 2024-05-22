@@ -3,18 +3,16 @@
     <TraitIcon :trait="trait" />
     <span class="mx-1">{{ trait.name }}</span>
     <b-badge variant="light">{{ traitTypeText }}</b-badge>
-    <BIconCardText class="text-muted ml-1" v-b-tooltip="trait.description" v-if="trait.description" />
+    <IBiCardText class="text-muted ms-1" v-b-tooltip="trait.description" v-if="trait.description" />
   </span>
 </template>
 
 <script>
-import TraitIcon from '@/components/icons/TraitIcon'
-import { BIconCardText } from 'bootstrap-vue'
+import TraitIcon from '@/components/icons/TraitIcon.vue'
 import { getTraitTypeText } from '@/plugins/misc'
 
 export default {
   components: {
-    BIconCardText,
     TraitIcon
   },
   props: {

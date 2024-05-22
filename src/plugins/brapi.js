@@ -1,10 +1,12 @@
-import { i18n } from '@/plugins/i18n.js'
+import { i18n } from '@/plugins/i18n'
 import { updateTrialBrapiConfig } from '@/plugins/idb'
 import store from '@/store'
-const axios = require('axios').default
-const emitter = require('tiny-emitter/instance')
+import axios from 'axios'
+import emitter from 'tiny-emitter/instance'
 
 const serverInfos = {}
+
+const { t } = i18n.global
 
 const brapiDefaultCatchHandler = (err) => {
   if (err.response) {
@@ -13,49 +15,49 @@ const brapiDefaultCatchHandler = (err) => {
     // Otherwise, we assume that the calling method takes care of the error
     emitter.emit('show-loading', false)
     const variant = 'danger'
-    const title = i18n.t('genericError')
+    const title = t('genericError')
     let message = err.response.statusText
 
     switch (err.response.status) {
       case 400:
-        message = i18n.t('httpErrorFourOO')
+        message = t('httpErrorFourOO')
         break
       case 401:
-        message = i18n.t('httpErrorFourOOne')
+        message = t('httpErrorFourOOne')
         // We're using the emitter to show the brapi settings modal
         updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.storeBrapiConfig.url, token: null })
           .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionUnauthorized'))
         return
       case 403: {
-        message = i18n.t('httpErrorFourOThree')
+        message = t('httpErrorFourOThree')
         // We're using the emitter to show the brapi settings modal
         updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.storeBrapiConfig.url, token: null })
           .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionForbidden'))
         break
       }
       case 404:
-        message = i18n.t('httpErrorFourOFour')
+        message = t('httpErrorFourOFour')
         break
       case 405:
-        message = i18n.t('httpErrorFourOFive')
+        message = t('httpErrorFourOFive')
         break
       case 408:
-        message = i18n.t('httpErrorFourOEight')
+        message = t('httpErrorFourOEight')
         break
       case 409:
-        message = i18n.t('httpErrorFourONine')
+        message = t('httpErrorFourONine')
         break
       case 410:
-        message = i18n.t('httpErrorFourTen')
+        message = t('httpErrorFourTen')
         break
       case 500:
-        message = i18n.t('httpErrorFiveOO')
+        message = t('httpErrorFiveOO')
         break
       case 501:
-        message = i18n.t('httpErrorFiveOOne')
+        message = t('httpErrorFiveOOne')
         break
       case 503:
-        message = i18n.t('httpErrorFiveOThree')
+        message = t('httpErrorFiveOThree')
         break
     }
 
@@ -70,8 +72,8 @@ const brapiDefaultCatchHandler = (err) => {
     // The request was made but no response was received `err.request` is an instance of XMLHttpRequest in the browser
     if (err.request.textStatus === 'timeout') {
       emitter.emit('toast', {
-        message: i18n.t('toastTextBrapiTimeout'),
-        title: i18n.t('toastTitleBrapiError'),
+        message: t('toastTextBrapiTimeout'),
+        title: t('toastTitleBrapiError'),
         variant: 'danger',
         autoHideDelay: 5000,
         appendToast: true
@@ -108,8 +110,8 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
 
     if (!serverInfos[baseUrl] || !serverInfos[baseUrl].some(c => c.service === callName && c.versions.indexOf('2.1') !== -1)) {
       emitter.emit('toast', {
-        message: i18n.t('toastTextBrapiCallNotAvailable'),
-        title: i18n.t('toastTitleBrapiError'),
+        message: t('toastTextBrapiCallNotAvailable'),
+        title: t('toastTitleBrapiError'),
         variant: 'danger',
         autoHideDelay: 5000,
         appendToast: true
@@ -137,7 +139,7 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
     axiosParams.headers.Authorization = `Bearer ${token}`
   }
 
-  return axios(axiosParams)
+  return axios.default(axiosParams)
 }
 
 /**

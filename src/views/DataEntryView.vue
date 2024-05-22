@@ -3,57 +3,50 @@
     <b-button-toolbar>
       <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
       <JumpToDropdown :trial="trial" />
-      <b-button :title="$t('toolbarPersonSelector')" @click="forcePersonSelector = true" v-if="trial.people && trial.people.length > 1"><BIconPersonLinesFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPersonSelector') }}</span></b-button>
-      <b-button :title="$t('toolbarHelp')" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
-      <b-button v-if="trial.transactionCount > 0" @click="synchronize" variant="info"><BIconCloudUploadFill /> {{ $tc('toolbarSyncInfo', trial.transactionCount) }}</b-button>
-      <!-- <b-button :title="$t('toolbarFullscreen')" @click="toggleFullscreen">
-        <BIconFullscreen v-if="!isFullscreen" /><BIconFullscreenExit v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarFullscreen') }}</span>
-      </b-button> -->
-      <b-input-group class="ml-auto flex-grow-1 flex-sm-grow-0">
+      <b-button :title="$t('toolbarPersonSelector')" @click="setForcePersonSelector(true)" v-if="trial.people && trial.people.length > 1"><IBiPersonLinesFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPersonSelector') }}</span></b-button>
+      <b-button :title="$t('toolbarHelp')" @click="startTour"><IBiQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
+      <b-button v-if="trial.transactionCount > 0" @click="synchronize" variant="info"><IBiCloudUploadFill /> {{ $t('toolbarSyncInfo', trial.transactionCount) }}</b-button>
+      <b-input-group class="ms-auto flex-grow-1 flex-sm-grow-0">
         <b-input-group-prepend>
-          <b-button @click="$refs.scanQrCodeModal.show()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5ZM4 4h1v1H4V4Z"/><path d="M7 2H2v5h5V2ZM3 3h3v3H3V3Zm2 8H4v1h1v-1Z"/><path d="M7 9H2v5h5V9Zm-4 1h3v3H3v-3Zm8-6h1v1h-1V4Z"/><path d="M9 2h5v5H9V2Zm1 1v3h3V3h-3ZM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8H8Zm2 2H9V9h1v1Zm4 2h-1v1h-2v1h3v-2Zm-4 2v-1H8v1h2Z"/><path d="M12 9h2V8h-2v1Z"/></svg>
-          </b-button>
+          <b-button @click="$refs.scanQrCodeModal.show()"><IBiQrCodeScan /></b-button>
         </b-input-group-prepend>
-        <b-input v-model="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" lazy id="germplasm-search" />
+        <b-form-input v-model.lazy="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" id="germplasm-search" />
         <b-input-group-append>
-          <b-button @click="initSearch"><BIconSearch /></b-button>
+          <b-button @click="initSearch"><IBiSearch /></b-button>
         </b-input-group-append>
       </b-input-group>
     </b-button-toolbar>
 
-    <DataCanvas :geolocation="geolocation" id="data-canvas" v-if="showCanvas" />
-    <DataGridComponent :geolocation="geolocation" id="data-canvas" v-else />
+    <DataCanvas :geolocation="geolocation" v-if="showCanvas" />
+    <DataGridComponent :geolocation="geolocation" v-else />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
-    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @change="loadTrial" />
-    <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" />
-    <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned"/>
-    <TrialPersonSelectModal :trial="trial" :shown="showTrialPersonSelector || forcePersonSelector" @personSelected="forcePersonSelector = false" @addPersonClicked="addPerson" v-if="trial && (showTrialPersonSelector || forcePersonSelector)" />
+    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @data-changed="loadTrial" />
+    <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" v-if="searchMatches" />
+    <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned" />
+    <TrialPersonSelectModal :trial="trial" :shouldShow="showTrialPersonSelector || forcePersonSelector" @personSelected="setForcePersonSelector(false)" @addPersonClicked="addPerson" v-if="trial && (showTrialPersonSelector || forcePersonSelector)" />
     <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataTour" />
   </b-container>
 </template>
 
 <script>
-import DataCanvas from '@/components/canvas/DataCanvas'
-import DataGridComponent from '@/components/canvas/DataGridComponent'
-import TraitDropdown from '@/components/dropdowns/TraitDropdown'
-import DataInputModal from '@/components/modals/DataInputModal'
-import SearchMatchModal from '@/components/modals/SearchMatchModal'
-import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal'
-import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal'
-import DataViewJumpControl from '@/components/DataViewJumpControl'
-import JumpToDropdown from '@/components/dropdowns/JumpToDropdown'
-import Tour from '@/components/Tour'
+import DataCanvas from '@/components/canvas/DataCanvas.vue'
+import DataGridComponent from '@/components/canvas/DataGridComponent.vue'
+import TraitDropdown from '@/components/dropdowns/TraitDropdown.vue'
+import DataInputModal from '@/components/modals/DataInputModal.vue'
+import SearchMatchModal from '@/components/modals/SearchMatchModal.vue'
+import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal.vue'
+import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
+import DataViewJumpControl from '@/components/DataViewJumpControl.vue'
+import JumpToDropdown from '@/components/dropdowns/JumpToDropdown.vue'
+import Tour from '@/components/Tour.vue'
 import { getTrialById } from '@/plugins/idb'
 import { MAIN_DISPLAY_MODE_CANVAS_ONLY, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
 import { mapGetters } from 'vuex'
-// import { BIconFullscreen, BIconFullscreenExit } from 'bootstrap-vue'
-import { BIconSearch, BIconQuestionCircle, BIconCloudUploadFill, BIconPersonLinesFill } from 'bootstrap-vue'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -66,13 +59,7 @@ export default {
     TrialPersonSelectModal,
     DataViewJumpControl,
     ScanQRCodeModal,
-    Tour,
-    BIconCloudUploadFill,
-    BIconPersonLinesFill,
-    BIconSearch,
-    BIconQuestionCircle
-    // BIconFullscreen,
-    // BIconFullscreenExit
+    Tour
   },
   computed: {
     ...mapGetters([
@@ -111,12 +98,13 @@ export default {
       }, {
         title: () => this.$t('tourTitleDataEntryCanvas'),
         text: () => this.$t('tourTextDataEntryCanvas'),
-        target: () => '#data-canvas',
+        target: () => '#data-canvas-header',
         position: 'bottom'
       }, {
         title: () => this.$t('tourTitleDataEntryTraits'),
         text: () => this.$t('tourTextDataEntryTraits'),
-        target: () => '#trait-dropdown .dropdown-menu',
+        target: () => '.trait-dropdown-list',
+        position: 'right',
         beforeShow: () => {
           return new Promise(resolve => {
             this.$refs.traitDropdown.show()
@@ -191,6 +179,9 @@ export default {
     }
   },
   methods: {
+    setForcePersonSelector: function (value) {
+      this.forcePersonSelector = value
+    },
     startTour: function () {
       this.$refs.dataTour.start()
     },
@@ -207,8 +198,12 @@ export default {
       if (matches.length === 1) {
         emitter.emit('plot-clicked', matches[0].row, matches[0].column)
       } else if (matches.length < 1) {
-        this.$bvModal.msgBoxOk(this.$t('modalTextGermplasmSearchNoMatchFound'), {
-          title: this.$t('modalTitleGermplasmSearchNoMatchFound')
+        emitter.emit('show-confirm', {
+          title: 'modalTitleGermplasmSearchNoMatchFound',
+          message: 'modalTextGermplasmSearchNoMatchFound',
+          okTitle: 'buttonOk',
+          okOnly: true,
+          okVariant: 'primary'
         })
       } else {
         this.searchMatches = matches
@@ -355,7 +350,7 @@ export default {
 
     // this.fakeGpsMovement()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)
     emitter.off('plot-cache-changed', this.updateTraitProgress)
     emitter.off('trial-data-loaded', this.updateTraitProgress)

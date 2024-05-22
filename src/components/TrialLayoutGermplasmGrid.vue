@@ -2,37 +2,32 @@
   <div>
     <b-dropdown variant="primary">
       <template #button-content>
-        <BIconFileEarmarkPlus /> {{ $t('buttonImportLayoutData') }}
+        <IBiFileEarmarkPlus /> {{ $t('buttonImportLayoutData') }}
       </template>
-      <b-dropdown-item @click="$refs.germplasmInput.show()"><BIconTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
-      <b-dropdown-item @click="$refs.repInput.show()"><BIconTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
-      <b-dropdown-item @click="$refs.fieldbookInput.show()"><BIconFileEarmarkSpreadsheet /> {{ $t('dropdownImportFieldHub') }}</b-dropdown-item>
+      <b-dropdown-item @click="$refs.germplasmInput.show()"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
+      <b-dropdown-item @click="$refs.repInput.show()"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
+      <b-dropdown-item @click="$refs.fieldbookInput.show()"><IBiFileEarmarkSpreadsheet /> {{ $t('dropdownImportFieldHub') }}</b-dropdown-item>
     </b-dropdown>
 
     <div class="table-responsive responsive-wrapper mt-3">
       <table ref="germplasmTable" class="table table-striped table-bordered grid-table" ></table>
     </div>
 
-    <TabbedInputToGridModal ref="germplasmInput" label="formLabelSetupGermplasmNames" placeholder="formPlaceholderSetupGermplasmNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @change="updateTableGermplasm" />
-    <TabbedInputToGridModal ref="repInput" label="formLabelSetupRepNames" placeholder="formPlaceholderSetupRepNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @change="updateTableRep" />
-    <FielDBookInputModal ref="fieldbookInput" :layout="layout" @change="updateTableFieldbook" />
+    <TabbedInputToGridModal ref="germplasmInput" label="formLabelSetupGermplasmNames" placeholder="formPlaceholderSetupGermplasmNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @data-changed="updateTableGermplasm" />
+    <TabbedInputToGridModal ref="repInput" label="formLabelSetupRepNames" placeholder="formPlaceholderSetupRepNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @data-changed="updateTableRep" />
+    <FielDBookInputModal ref="fieldbookInput" :layout="layout" @data-changed="updateTableFieldbook" />
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal'
-import FielDBookInputModal from '@/components/modals/FielDBookInputModal'
-import { BIconFileEarmarkPlus, BIconTable, BIconFileEarmarkSpreadsheet } from 'bootstrap-vue'
+import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal.vue'
+import FielDBookInputModal from '@/components/modals/FielDBookInputModal.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 export default {
   components: {
     TabbedInputToGridModal,
-    FielDBookInputModal,
-    BIconFileEarmarkPlus,
-    BIconTable,
-    BIconFileEarmarkSpreadsheet
+    FielDBookInputModal
   },
   props: {
     layout: {
@@ -89,10 +84,10 @@ export default {
           const tableRep = document.querySelector(`#rep-${row}-${column}`).value
 
           if (!this.germplasmMap[`${row}|${column}`]) {
-            Vue.set(this.germplasmMap, `${row}|${column}`, {
+            this.germplasmMap[`${row}|${column}`] = {
               germplasm: null,
               rep: null
-            })
+            }
           }
 
           this.germplasmMap[`${row}|${column}`].germplasm = parsedGrid[row][column]
@@ -102,7 +97,7 @@ export default {
         }
       }
 
-      this.$emit('change', this.germplasmMap)
+      this.$emit('data-changed', this.germplasmMap)
     },
     updateTableRep: function (parsedGrid) {
       for (let row = 0; row < this.layout.rows; row++) {
@@ -110,10 +105,10 @@ export default {
           const tableGermplasm = document.querySelector(`#germplasm-${row}-${column}`).value
 
           if (!this.germplasmMap[`${row}|${column}`]) {
-            Vue.set(this.germplasmMap, `${row}|${column}`, {
+            this.germplasmMap[`${row}|${column}`] = {
               germplasm: null,
               rep: null
-            })
+            }
           }
 
           // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
@@ -123,7 +118,7 @@ export default {
         }
       }
 
-      this.$emit('change', this.germplasmMap)
+      this.$emit('data-changed', this.germplasmMap)
     },
     resetFormAndGermplasm: function () {
       if (this.initialGermplasm) {
@@ -211,7 +206,7 @@ export default {
           const container = this.createElement(cell, 'div')
           const control = this.createElement(container, 'input')
           control.setAttribute('type', 'checkbox')
-          control.className = 'mr-1'
+          control.className = 'me-1'
           control.id = `control-${row}-${column}`
           const label = this.createElement(container, 'label')
           label.htmlFor = `control-${row}-${column}`
@@ -255,7 +250,7 @@ export default {
       } else {
         this.getGermplasmMap()
 
-        this.$emit('change', this.germplasmMap)
+        this.$emit('data-changed', this.germplasmMap)
         this.$refs.germplasmTable.innerHTML = ''
       }
     }

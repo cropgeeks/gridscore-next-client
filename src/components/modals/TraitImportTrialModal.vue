@@ -21,10 +21,10 @@
 
         <b-form-checkbox :checked="trait.selected"
                          v-for="trait in group.traits"
-                         class="ml-3"
+                         class="ms-3"
                          :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
                          @change="toggleTraitSelection(trait)">
-          <span :style="{ color: trait.selected ? trait.color : 'lightgray' }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
+          <span :style="{ color: trait.selected ? trait.color : 'lightgray' }"><TraitIcon class="ms-2" :trait="trait" /> {{ trait.name }}</span>
         </b-form-checkbox>
       </b-list-group-item>
     </b-list-group>
@@ -33,7 +33,7 @@
 
 <script>
 import { getTrials } from '@/plugins/idb'
-import TraitIcon from '@/components/icons/TraitIcon'
+import TraitIcon from '@/components/icons/TraitIcon.vue'
 
 export default {
   components: {
@@ -115,7 +115,7 @@ export default {
           }
         })
 
-      this.$emit('change', result)
+      this.$emit('data-changed', result)
       this.hide()
     },
     toggleTraitSelection: function (trait) {

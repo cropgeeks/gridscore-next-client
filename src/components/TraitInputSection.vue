@@ -11,27 +11,24 @@
         <span>
           <b-badge class="mx-1 trait-data-type" variant="light">{{ getTraitTypeText(trait, true) }}</b-badge>
           <b-badge class="mx-1 trait-allow-repeats" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
-            <BIconArrowRepeat v-if="trait.allowRepeats" />
-            <BIconstack v-else>
-              <BIconArrowRepeat stacked />
-              <BIconX stacked :scale="0.7" />
-            </BIconstack>
+            <IBiRepeat v-if="trait.allowRepeats" />
+            <IBiRepeat1 v-else />
           </b-badge>
           <b-badge class="mx-1 trait-set-size" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
-            <BIconSegmentedNav :rotate="90" /> {{ $n(trait.setSize || 1) }}
+            <IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $n(trait.setSize || 1) }}
           </b-badge>
         </span>
       </span>
       <b-button-group>
-        <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData" class="trait-history"><BIconClockHistory /></b-button>
-        <b-button @click="$emit('photo-clicked')" :disabled="!trial.editable" class="trait-camera"><BIconCameraFill /></b-button>
+        <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData" class="trait-history"><IBiClockHistory /></b-button>
+        <b-button @click="$emit('photo-clicked')" :disabled="!trial.editable" class="trait-camera"><IBiCameraFill /></b-button>
       </b-button-group>
     </h4>
     <div v-if="trait.restrictions || trait.timeframe">
-      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)">&ge; {{ trait.restrictions.min }}</b-badge>
-      <b-badge class="mr-2" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)">&le; {{ trait.restrictions.max }}</b-badge>
-      <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&ge; {{ trait.timeframe.start }}</b-badge>
-      <b-badge class="mr-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? null : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&le; {{ trait.timeframe.end }}</b-badge>
+      <b-badge class="me-2" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)">&ge; {{ trait.restrictions.min }}</b-badge>
+      <b-badge class="me-2" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)">&le; {{ trait.restrictions.max }}</b-badge>
+      <b-badge class="me-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? 'secondary' : 'danger'" v-if="trait.timeframe && trait.timeframe.start">&ge; {{ trait.timeframe.start }}</b-badge>
+      <b-badge class="me-2" v-b-tooltip.bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :variant="trait.editable ? 'secondary' : 'danger'" v-if="trait.timeframe && trait.timeframe.end">&le; {{ trait.timeframe.end }}</b-badge>
     </div>
     <p @click="toggleExpanded" :class="{ 'text-muted': true, 'trait-description': !trialDescriptionExpanded }" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
@@ -52,22 +49,15 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import TraitIcon from '@/components/icons/TraitIcon'
-import TraitInput from '@/components/TraitInput'
-import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal'
+import TraitIcon from '@/components/icons/TraitIcon.vue'
+import TraitInput from '@/components/TraitInput.vue'
+import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
 
 import { getTraitTypeText } from '@/plugins/misc'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
-import { BIconCameraFill, BIconArrowRepeat, BIconClockHistory, BIconSegmentedNav, BIconX, BIconstack } from 'bootstrap-vue'
 
 export default {
   components: {
-    BIconstack,
-    BIconClockHistory,
-    BIconCameraFill,
-    BIconArrowRepeat,
-    BIconX,
-    BIconSegmentedNav,
     TraitIcon,
     TraitInput,
     TraitDataHistoryModal

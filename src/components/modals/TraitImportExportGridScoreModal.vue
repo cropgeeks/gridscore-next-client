@@ -44,7 +44,7 @@ export default {
             this.jsonValid = false
             return
           }
-          this.$emit('change', parsed)
+          this.$emit('data-changed', parsed)
           this.hide()
         } catch {
           this.jsonValid = false

@@ -2,7 +2,7 @@
   <b-container class="my-4">
     <div class="d-flex align-items-center justify-content-between">
       <h1 class="display-4">{{ $t(trialToCopy ? 'modalTitleTrialDuplicate' : 'pageTrialSetupTitle') }}</h1>
-      <h4><a href="#" class="text-dark" @click.prevent="$refs.setupTour.start()"><BIconQuestionCircle /></a></h4>
+      <h4><a href="#" class="text-dark" @click.prevent="$refs.setupTour.start()"><IBiQuestionCircle /></a></h4>
     </div>
     <p>{{ $t(trialToCopy ? 'modalTextTrialDuplicate' : 'pageTrialSetupText') }}</p>
 
@@ -12,17 +12,17 @@
           <!-- Trial name -->
           <b-form-group label-for="trial-name" :description="$t('formDescriptionTrialSetupTrialName')">
             <template v-slot:label>
-              <BIconTextareaT /><span> {{ $t('formLabelTrialSetupTrialName') }}</span>
+              <IBiTextareaT /> <span>{{ $t('formLabelTrialSetupTrialName') }}</span>
             </template>
-            <b-form-input id="trial-name" :state="formState.trialName" trim required autofocus v-model="trialName" />
+            <b-form-input id="trial-name" :state="formState.trialName" required autofocus v-model.trim="trialName" />
           </b-form-group>
 
           <!-- Trial group -->
           <b-form-group label-for="trial-group" :description="$t('formDescriptionTrialSetupTrialGroup')">
             <template v-slot:label>
-              <BIconCollection /><span> {{ $t('formLabelTrialSetupTrialGroup') }}</span>
+              <IBiCollection /> <span>{{ $t('formLabelTrialSetupTrialGroup') }}</span>
             </template>
-            <b-form-input list="trial-groups" :state="formState.trialGroup" trim v-model="trialGroup" id="trial-group" />
+            <b-form-input list="trial-groups" :state="formState.trialGroup" v-model.trim="trialGroup" id="trial-group" />
 
             <datalist id="trial-groups">
               <option v-for="group in trialGroups" :key="`trial-group-${group}`">{{ group }}</option>
@@ -33,7 +33,7 @@
           <!-- Trial description -->
           <b-form-group label-for="trial-description" :description="$t('formDescriptionTrialSetupTrialDescription')">
             <template v-slot:label>
-              <BIconCardText /><span> {{ $t('formLabelTrialSetupTrialDescription') }}</span>
+              <IBiCardText /> <span>{{ $t('formLabelTrialSetupTrialDescription') }}</span>
             </template>
             <b-form-textarea id="trial-description" :state="formState.trialDescription" v-model="trialDescription" />
           </b-form-group>
@@ -41,43 +41,45 @@
           <!-- Trial people -->
           <b-form-group label-for="trial-people" :description="$t('formDescriptionTrialSetupTrialPeople')">
             <template v-slot:label>
-              <BIconPeopleFill /><span> {{ $t('formLabelTrialSetupTrialPeople') }}</span>
+              <IBiPeopleFill /> <span>{{ $t('formLabelTrialSetupTrialPeople') }}</span>
             </template>
-            <h5 v-for="(person, personIndex) in people" :key="`person-${person.id}`" class="d-inline-block">
-              <b-badge variant="light"><PersonTypeIcon class="mr-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" /> {{ person.name }}</b-badge>
-              <b-badge variant="danger" href="#" @click="deletePerson(personIndex)" class="mr-2">
-                <BIconTrash />
-              </b-badge>
-            </h5>
+            <div>
+              <h5 v-for="(person, personIndex) in people" :key="`person-${person.id}`" class="d-inline-block">
+                <b-badge :variant="storeDarkMode ? 'dark' : 'light'"><PersonTypeIcon class="me-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" /> {{ person.name }}</b-badge>
+                <b-badge variant="danger" href="#" @click.prevent="deletePerson(personIndex)" class="me-2">
+                  <IBiTrash />
+                </b-badge>
+              </h5>
+            </div>
           </b-form-group>
 
-          <b-button @click="$refs.editPeopleModal.show()"><BIconPersonPlusFill /> {{ $t('buttonAdd') }}</b-button>
+          <b-button @click="$refs.editPeopleModal.show()"><IBiPersonPlusFill /> {{ $t('buttonAdd') }}</b-button>
 
           <!-- Trial social media sharing content; Commented out until feature becomes more consistent -->
           <!-- <b-form-group label-for="trial-social-config" :description="$t('formDescriptionTrialSetupTrialSocialContent')">
             <template v-slot:label>
-              <span class="cursor-pointer" @click="socialConfigVisible = !socialConfigVisible"><BIconCaretRightFill :rotate="socialConfigVisible ? 90 : 0" /><span> {{ $t('formLabelTrialSetupTrialSocialContent') }}</span></span>
+              <span class="cursor-pointer" @click="socialConfigVisible = !socialConfigVisible"><IBiCaretRightFill :style="{ transform: `rotate(${socialConfigVisible ? 90 : 0}deg)` }" /> <span>{{ $t('formLabelTrialSetupTrialSocialContent') }}</span></span>
             </template>
             <b-collapse v-model="socialConfigVisible">
               <b-card>
                 <b-card-text class="text-info"><span v-html="$t('formDescriptionTrialSetupTrialSocialContentExtended')" /></b-card-text>
                 <b-form-group label-for="trial-social-title" :description="$t('formDescriptionTrialSetupTrialSocialTitle')">
                   <template v-slot:label>
-                    <BIconCardHeading /> <span> {{ $t('formLabelTrialSetupTrialSocialTitle') }}</span>
+                    <IBiCardHeading /> <span> {{ $t('formLabelTrialSetupTrialSocialTitle') }}</span>
                   </template>
-                  <b-form-input id="trial-social-title" trim v-model="trialSocialConfig.title" />
+                  <b-form-input id="trial-social-title" v-model.trim="trialSocialConfig.title" />
                 </b-form-group>
                 <b-form-group label-for="trial-social-text" :description="$t('formDescriptionTrialSetupTrialSocialText')">
                   <template v-slot:label>
-                    <BIconTextareaResize /> <span> {{ $t('formLabelTrialSetupTrialSocialText') }}</span>
+                    <IBiTextareaResize /> <span> {{ $t('formLabelTrialSetupTrialSocialText') }}</span>
                   </template>
-                  <b-form-textarea id="trial-social-text" trim v-model="trialSocialConfig.text" />
+                  <b-form-textarea id="trial-social-text" v-model.trim="trialSocialConfig.text" />
                 </b-form-group>
                 <b-form-group label-for="trial-social-url" :description="$t('formDescriptionTrialSetupTrialSocialUrl')">
                   <template v-slot:label>
-                    <BIconLink /> <span> {{ $t('formLabelTrialSetupTrialSocialUrl') }}</span>
+                    <IBiLink /> <span> {{ $t('formLabelTrialSetupTrialSocialUrl') }}</span>
                   </template>
-                  <b-form-input id="trial-social-url" trim v-model="trialSocialConfig.url" />
+                  <b-form-input id="trial-social-url" v-model.trim="trialSocialConfig.url" />
                 </b-form-group>
               </b-card>
             </b-collapse>
@@ -92,11 +94,11 @@
           <b-card no-body class="h-100" id="layout-card">
             <b-card-body>
               <b-card-title>{{ $t('pageTrialSetupCardLayoutTitle') }}</b-card-title>
-              <b-card-sub-title>{{ $t('pageTrialSetupCardLayoutSubTitle') }}</b-card-sub-title>
+              <b-card-subtitle>{{ $t('pageTrialSetupCardLayoutSubTitle') }}</b-card-subtitle>
 
               <b-button class="mt-3 stretched-link" :variant="germplasmCount > 0 ? 'success' : 'primary'" @click="layoutSidebarVisible = true">
-                <BIconCheck v-if="germplasmCount > 0" />
-                <BIconPencilSquare v-else />
+                <IBiCheck v-if="germplasmCount > 0" />
+                <IBiPencilSquare v-else />
                 {{ germplasmCount > 0 ? $t('buttonChange') : $t('buttonDefine') }}
               </b-button>
             </b-card-body>
@@ -126,11 +128,11 @@
           <b-card no-body class="h-100" id="trait-card">
             <b-card-body>
               <b-card-title>{{ $t('pageTrialSetupCardTraitsTitle') }}</b-card-title>
-              <b-card-sub-title>{{ $t('pageTrialSetupCardTraitsSubTitle') }}</b-card-sub-title>
+              <b-card-subtitle>{{ $t('pageTrialSetupCardTraitsSubTitle') }}</b-card-subtitle>
 
               <b-button class="mt-3 stretched-link" :variant="traits.length > 0 ? 'success' : 'primary'" @click="traitSidebarVisible = true">
-                <BIconCheck v-if="traits.length > 0" />
-                <BIconPencilSquare v-else />
+                <IBiCheck v-if="traits.length > 0" />
+                <IBiPencilSquare v-else />
                 {{ traits.length > 0 ? $t('buttonChange') : $t('buttonDefine') }}
               </b-button>
             </b-card-body>
@@ -138,19 +140,19 @@
               <b-row>
                 <b-col cols=6 md=3>
                   <h1>{{ numericTraitCount }}</h1>
-                  <span>{{ $tc('pageTrialSetupNumericTraitCount', numericTraitCount) }}</span>
+                  <span>{{ $t('pageTrialSetupNumericTraitCount', numericTraitCount) }}</span>
                 </b-col>
                 <b-col cols=6 md=3>
                   <h1>{{ categoricalTraitCount }}</h1>
-                  <span>{{ $tc('pageTrialSetupCategoricalTraitCount', categoricalTraitCount) }}</span>
+                  <span>{{ $t('pageTrialSetupCategoricalTraitCount', categoricalTraitCount) }}</span>
                 </b-col>
                 <b-col cols=6 md=3>
                   <h1>{{ dateTraitCount }}</h1>
-                  <span>{{ $tc('pageTrialSetupDateTraitCount', dateTraitCount) }}</span>
+                  <span>{{ $t('pageTrialSetupDateTraitCount', dateTraitCount) }}</span>
                 </b-col>
                 <b-col cols=6 md=3>
                   <h1>{{ textTraitCount }}</h1>
-                  <span>{{ $tc('pageTrialSetupTextTraitCount', textTraitCount) }}</span>
+                  <span>{{ $t('pageTrialSetupTextTraitCount', textTraitCount) }}</span>
                 </b-col>
               </b-row>
             </b-card-body>
@@ -158,58 +160,60 @@
         </b-col>
       </b-row>
 
-      <b-button variant="primary" type="submit" :disabled="!trialValid"><BIconJournalPlus /> {{ $t('buttonCreateTrial') }}</b-button>
+      <b-button variant="primary" type="submit" :disabled="!trialValid"><IBiJournalPlus /> {{ $t('buttonCreateTrial') }}</b-button>
     </b-form>
 
-    <b-sidebar
+    <b-offcanvas
       id="trial-layout-sidebar"
       backdrop
       shadow
       no-close-on-esc
-      no-close-on-backdrop
-      width="100%"
+      no-close-on-backdropf
       v-model="layoutSidebarVisible">
       <template #header="{ hide }">
-        <div class="d-flex flex-wrap w-100">
+        <div class="d-flex flex-wrap w-100 justify-content-between">
           <strong>{{ $t('pageSetupGermplasmGridSidebarTitle') }}</strong>
-          <b-button class="ml-auto mr-2" @click="hide">
-            <BIconX /> {{ $t('buttonCancel') }}
-          </b-button>
-          <b-button variant="primary" class="mx-2" @click="$refs.trialSetupLayout.checkData()">
-            <BIconCardChecklist /> {{ $t('buttonCheck') }}
-          </b-button>
+          <b-button :variant="layoutFeedbackIsOnlyWarning ? 'warning' : 'danger'" v-if="layoutFeedback && layoutFeedback.length > 0" class="align-self-center my-2" @click="$refs.layoutFeedbackModal.show()"><IBiExclamationTriangleFill /> {{ $t('formFeedbackLayout', layoutFeedback.length) }}</b-button>
+          <div>
+            <b-button class="ms-auto me-2" @click="hide">
+              <IBiX /> {{ $t('buttonCancel') }}
+            </b-button>
+            <b-button variant="primary" class="mx-2" @click="$refs.trialSetupLayout.checkData()">
+              <IBiCardChecklist /> {{ $t('buttonCheck') }}
+            </b-button>
+          </div>
         </div>
-        <b-button :variant="layoutFeedbackIsOnlyWarning ? 'warning' : 'danger'" v-if="layoutFeedback && layoutFeedback.length > 0" class="align-self-center my-2" @click="$refs.layoutFeedbackModal.show()"><BIconExclamationTriangleFill /> {{ $tc('formFeedbackLayout', layoutFeedback.length) }}</b-button>
       </template>
       <div class="px-3 py-2">
-        <TrialLayoutComponent :initialLayout="layout" :initialGermplasm="germplasmMap" ref="trialSetupLayout" @change="updateTrialLayout" />
+        <TrialLayoutComponent :initialLayout="layout" :initialGermplasm="germplasmMap" ref="trialSetupLayout" @data-changed="updateTrialLayout" />
       </div>
-    </b-sidebar>
+    </b-offcanvas>
 
-    <b-sidebar
+    <b-offcanvas
       id="trait-sidebar"
       backdrop
       shadow
       right
       no-close-on-esc
       no-close-on-backdrop
-      width="100%"
       v-model="traitSidebarVisible">
       <template #header="{ hide }">
-        <div class="d-flex flex-wrap w-100">
+        <div class="d-flex flex-wrap w-100 justify-content-between">
           <strong>{{ $t('pageSetupTraitSidebarTitle') }}</strong>
-          <b-button class="ml-auto mr-2" @click="hide">
-            <BIconX /> {{ $t('buttonCancel') }}
-          </b-button>
-          <b-button variant="primary" class="mx-2" @click="$refs.traitDefinition.emitData()">
-            <BIconSave /> {{ $t('buttonSave') }}
-          </b-button>
+          <div>
+            <b-button class="ms-auto me-2" @click="hide">
+              <IBiX /> {{ $t('buttonCancel') }}
+            </b-button>
+            <b-button variant="primary" class="mx-2" @click="$refs.traitDefinition.emitData()">
+              <IBiSave /> {{ $t('buttonSave') }}
+            </b-button>
+          </div>
         </div>
       </template>
       <div class="px-3 py-2">
         <TraitDefinitionComponent :initialTraits="traits" ref="traitDefinition" @finished="updateTraitDefinitions" />
       </div>
-    </b-sidebar>
+    </b-offcanvas>
 
     <LayoutFeedbackModal :feedback="layoutFeedback" @warnings-accepted="acceptWarnings" ref="layoutFeedbackModal" />
     <EditPeopleModal ref="editPeopleModal" @person-added="addPerson" />
@@ -220,41 +224,22 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconTextareaT, BIconCardText, BIconCheck, BIconPencilSquare, BIconCollection, BIconPeopleFill, BIconPersonPlusFill, BIconTrash, BIconJournalPlus, BIconX, BIconQuestionCircle, BIconSave, BIconCardChecklist, BIconExclamationTriangleFill } from 'bootstrap-vue'
-import TrialLayoutComponent from '@/components/TrialLayoutComponent'
-import TraitDefinitionComponent from '@/components/TraitDefinitionComponent'
-import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal'
-import EditPeopleModal from '@/components/modals/EditPeopleModal'
-import PersonTypeIcon from '@/components/icons/PersonTypeIcon'
-import Tour from '@/components/Tour'
+import TrialLayoutComponent from '@/components/TrialLayoutComponent.vue'
+import TraitDefinitionComponent from '@/components/TraitDefinitionComponent.vue'
+import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal.vue'
+import EditPeopleModal from '@/components/modals/EditPeopleModal.vue'
+import PersonTypeIcon from '@/components/icons/PersonTypeIcon.vue'
+import Tour from '@/components/Tour.vue'
 import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_DATA_SUBMITTER, PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_QUALITY_CHECKER } from '@/plugins/constants'
 import { brapiGetObservationUnits, brapiGetStudies } from '@/plugins/brapi'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconTextareaT,
     PersonTypeIcon,
-    BIconCardText,
-    // BIconCardHeading,
-    BIconCheck,
-    BIconTrash,
-    BIconPencilSquare,
-    BIconX,
-    BIconQuestionCircle,
-    BIconPersonPlusFill,
-    BIconJournalPlus,
-    BIconCardChecklist,
-    BIconPeopleFill,
-    BIconExclamationTriangleFill,
-    // BIconCaretRightFill,
-    // BIconTextareaResize,
-    // BIconLink,
-    BIconSave,
-    BIconCollection,
     Tour,
     TrialLayoutComponent,
     EditPeopleModal,
@@ -311,14 +296,16 @@ export default {
   beforeRouteLeave: function (to, from, next) {
     if (!this.newTrialCreatedSuccessfully) {
       // Ask for confirmation. check this isn't a navigation initiated by finalising the trial setup
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextLeaveSetup'), {
-        title: this.$t('modalTitleLeaveSetup'),
-        okTitle: this.$t('buttonYes'),
+      emitter.emit('show-confirm', {
+        title: 'modalTitleLeaveSetup',
+        message: 'modalTextLeaveSetup',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
         okVariant: 'danger',
-        cancelTitle: this.$t('buttonNo')
-      }).then(value => {
-        if (value) {
-          next()
+        callback: (result) => {
+          if (result) {
+            next()
+          }
         }
       })
     } else {
@@ -327,7 +314,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'storeTraitColors'
+      'storeTraitColors',
+      'storeDarkMode'
     ]),
     personStyle: function () {
       const result = {}
@@ -475,7 +463,7 @@ export default {
       this.layoutDataIsValid = payload.layoutValid
       this.layoutFeedback = payload.feedback
 
-      this.layoutFeedbackIsOnlyWarning = payload.feedback.length < 1 || !payload.feedback.some(f => f.type === 'danger')
+      this.layoutFeedbackIsOnlyWarning = payload.feedback && (payload.feedback.length < 1 || !payload.feedback.some(f => f.type === 'danger'))
 
       if (payload.feedback.length < 1 || (this.layoutFeedbackIsOnlyWarning && this.warningsAccepted)) {
         this.layout = payload.layout
@@ -485,100 +473,102 @@ export default {
     },
     onSubmit: function () {
       // Ask for confirmation. check this isn't a navigation initiated by finalising the trial setup
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextCreateTrial'), {
-        title: this.$t('modalTitleCreateTrial'),
-        okTitle: this.$t('buttonYes'),
+      emitter.emit('show-confirm', {
+        title: 'modalTitleCreateTrial',
+        message: 'modalTextCreateTrial',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
         okVariant: 'danger',
-        cancelTitle: this.$t('buttonNo')
-      }).then(value => {
-        if (value) {
-          const sameDimensions = this.trialToCopy ? (this.trialToCopy.layout.rows === this.layout.rows && this.trialToCopy.layout.columns === this.layout.columns) : true
+        callback: (result) => {
+          if (result) {
+            const sameDimensions = this.trialToCopy ? (this.trialToCopy.layout.rows === this.layout.rows && this.trialToCopy.layout.columns === this.layout.columns) : true
 
-          const data = JSON.parse(JSON.stringify(this.germplasmMap))
+            const data = JSON.parse(JSON.stringify(this.germplasmMap))
 
-          let plotCorners = null
+            let plotCorners = null
 
-          if (this.layout.corners) {
-            plotCorners = trialLayoutToPlots(this.layout.corners, this.layout.rows, this.layout.columns)
-          }
+            if (this.layout.corners) {
+              plotCorners = trialLayoutToPlots(this.layout.corners, this.layout.rows, this.layout.columns)
+            }
 
-          for (let row = 0; row < this.layout.rows; row++) {
-            for (let column = 0; column < this.layout.columns; column++) {
-              if (data[`${row}|${column}`]) {
-                data[`${row}|${column}`].geography = {}
+            for (let row = 0; row < this.layout.rows; row++) {
+              for (let column = 0; column < this.layout.columns; column++) {
+                if (data[`${row}|${column}`]) {
+                  data[`${row}|${column}`].geography = {}
 
-                if (plotCorners) {
-                  data[`${row}|${column}`].geography.corners = plotCorners[row][column]
+                  if (plotCorners) {
+                    data[`${row}|${column}`].geography.corners = plotCorners[row][column]
+                  }
                 }
               }
             }
-          }
 
-          Object.keys(data).forEach(k => {
-            const c = data[k]
-            c.measurements = {}
-            this.traits.forEach(t => {
-              if (this.trialToCopy && this.copyData && sameDimensions) {
-                const toCopy = this.trialToCopy.data[k]
-                c.measurements[t.id] = JSON.parse(JSON.stringify(toCopy.measurements[t.id] || []))
+            Object.keys(data).forEach(k => {
+              const c = data[k]
+              c.measurements = {}
+              this.traits.forEach(t => {
+                if (this.trialToCopy && this.copyData && sameDimensions) {
+                  const toCopy = this.trialToCopy.data[k]
+                  c.measurements[t.id] = JSON.parse(JSON.stringify(toCopy.measurements[t.id] || []))
+                } else {
+                  c.measurements[t.id] = []
+                }
+              })
+              c.comments = []
+
+              if (c.control) {
+                c.categories = [CELL_CATEGORY_CONTROL]
               } else {
-                c.measurements[t.id] = []
+                c.categories = []
               }
             })
-            c.comments = []
 
-            if (c.control) {
-              c.categories = [CELL_CATEGORY_CONTROL]
-            } else {
-              c.categories = []
-            }
-          })
+            const now = new Date().toISOString()
 
-          const now = new Date().toISOString()
-
-          this.traits.forEach(t => {
-            if (t.group && t.group !== '') {
-              t.group = {
-                name: t.group
+            this.traits.forEach(t => {
+              if (t.group && t.group !== '') {
+                t.group = {
+                  name: t.group
+                }
+              } else {
+                delete t.group
               }
-            } else {
-              delete t.group
-            }
-          })
+            })
 
-          const finalTrial = {
-            name: this.trialName,
-            description: this.trialDescription,
-            brapiId: this.trialBrapiId,
-            brapiConfig: this.brapiConfig,
-            socialShareConfig: this.trialSocialConfig,
-            group: (this.trialGroup && this.trialGroup.length > 0) ? { name: this.trialGroup } : null,
-            layout: this.layout,
-            traits: this.traits,
-            people: this.people,
-            data: data,
-            comments: [],
-            updatedOn: now,
-            createdOn: now,
-            lastSyncedOn: null
+            const finalTrial = {
+              name: this.trialName,
+              description: this.trialDescription,
+              brapiId: this.trialBrapiId,
+              brapiConfig: this.brapiConfig,
+              socialShareConfig: this.trialSocialConfig,
+              group: (this.trialGroup && this.trialGroup.length > 0) ? { name: this.trialGroup } : null,
+              layout: this.layout,
+              traits: this.traits,
+              people: this.people,
+              data: data,
+              comments: [],
+              updatedOn: now,
+              createdOn: now,
+              lastSyncedOn: null
+            }
+
+            emitter.emit('plausible-event', {
+              key: 'trial-created',
+              props: {
+                rows: finalTrial.layout.rows,
+                columns: finalTrial.layout.columns,
+                traits: finalTrial.traits.length,
+                markers: finalTrial.layout.markers !== null,
+                corners: finalTrial.layout.corners !== null
+              }
+            })
+
+            addTrial(finalTrial).then(trialId => {
+              this.newTrialCreatedSuccessfully = true
+              this.$store.dispatch('setSelectedTrial', trialId)
+              this.$router.push({ name: 'home' })
+            })
           }
-
-          emitter.emit('plausible-event', {
-            key: 'trial-created',
-            props: {
-              rows: finalTrial.layout.rows,
-              columns: finalTrial.layout.columns,
-              traits: finalTrial.traits.length,
-              markers: finalTrial.layout.markers !== null,
-              corners: finalTrial.layout.corners !== null
-            }
-          })
-
-          addTrial(finalTrial).then(trialId => {
-            this.newTrialCreatedSuccessfully = true
-            this.$store.dispatch('setSelectedTrial', trialId)
-            this.$router.push({ name: 'home' })
-          })
         }
       })
     }
@@ -646,65 +636,67 @@ export default {
 
         brapiGetStudies({ studyDbId: cf.datasetId }).then(result => {
           if (result && result.length > 0) {
-            this.$bvModal.msgBoxConfirm(this.$t('modalTextCreateTrialGerminateImport', { trialName: result[0].studyName }), {
-              title: this.$t('modalTitleCreateTrialGerminateImport'),
-              okTitle: this.$t('buttonYes'),
-              okVariant: 'success',
-              cancelTitle: this.$t('buttonNo')
-            }).then(value => {
-              if (value) {
-                this.trialName = result[0].studyName
-                this.trialDescription = result[0].studyDescription
-                this.trialBrapiId = `${cf.datasetId}`
+            emitter.emit('show-confirm', {
+              title: 'modalTitleCreateTrialGerminateImport',
+              message: 'modalTextCreateTrialGerminateImport',
+              okTitle: 'buttonYes',
+              cancelTitle: 'buttonNo',
+              okVariant: 'danger',
+              callback: (result) => {
+                if (result) {
+                  this.trialName = result[0].studyName
+                  this.trialDescription = result[0].studyDescription
+                  this.trialBrapiId = `${cf.datasetId}`
 
-                brapiGetObservationUnits(cf.datasetId).then(result => {
-                  if (result && result.length > 0) {
-                    let rows = 1
-                    let columns = 1
+                  brapiGetObservationUnits(cf.datasetId).then(result => {
+                    if (result && result.length > 0) {
+                      let rows = 1
+                      let columns = 1
 
-                    const map = {}
+                      const map = {}
 
-                    result.forEach(c => {
-                      const cell = {
-                        germplasm: c.germplasmName,
-                        rep: null,
-                        brapiId: c.germplasmDbId
+                      result.forEach(c => {
+                        const cell = {
+                          germplasm: c.germplasmName,
+                          rep: null,
+                          brapiId: c.germplasmDbId
+                        }
+                        if (c.observationUnitPosition) {
+                          const pos = c.observationUnitPosition
+                          if (pos.observationLevel && pos.observationLevel.levelName === 'rep') {
+                            cell.rep = pos.observationLevel.levelCode
+                          }
+
+                          let row = null
+                          let column = null
+                          if (pos.positionCoordinateXType === 'GRID_COL') {
+                            column = +pos.positionCoordinateY
+                            columns = Math.max(columns, column)
+                          }
+                          if (pos.positionCoordinateYType === 'GRID_ROW') {
+                            row = +pos.positionCoordinateX
+                            rows = Math.max(rows, row)
+                          }
+
+                          map[`${row}|${column}`] = cell
+                        }
+                      })
+
+                      this.layout = {
+                        rows: rows + 1,
+                        columns: columns + 1,
+                        corners: null,
+                        markers: null,
+                        rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
+                        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
                       }
-                      if (c.observationUnitPosition) {
-                        const pos = c.observationUnitPosition
-                        if (pos.observationLevel && pos.observationLevel.levelName === 'rep') {
-                          cell.rep = pos.observationLevel.levelCode
-                        }
 
-                        let row = null
-                        let column = null
-                        if (pos.positionCoordinateXType === 'GRID_COL') {
-                          column = +pos.positionCoordinateY
-                          columns = Math.max(columns, column)
-                        }
-                        if (pos.positionCoordinateYType === 'GRID_ROW') {
-                          row = +pos.positionCoordinateX
-                          rows = Math.max(rows, row)
-                        }
+                      // TODO: Preset order to be FielDHub default?
 
-                        map[`${row}|${column}`] = cell
-                      }
-                    })
-
-                    this.layout = {
-                      rows: rows + 1,
-                      columns: columns + 1,
-                      corners: null,
-                      markers: null,
-                      rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-                      columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+                      this.germplasmMap = map
                     }
-
-                    // TODO: Preset order to be FielDHub default?
-
-                    this.germplasmMap = map
-                  }
-                })
+                  })
+                }
               }
             })
           }
@@ -716,8 +708,12 @@ export default {
 </script>
 
 <style>
-#trial-layout-sidebar .b-sidebar-header {
+#trial-layout-sidebar .b-offcanvas-header {
   flex-direction: column;
   align-items: stretch;
+}
+#trial-layout-sidebar,
+#trait-sidebar {
+  width: 100vw;
 }
 </style>

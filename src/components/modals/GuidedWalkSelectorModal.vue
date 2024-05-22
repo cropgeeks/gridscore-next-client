@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import GuideOrderSelector from '@/components/GuideOrderSelector'
+import GuideOrderSelector from '@/components/GuideOrderSelector.vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {

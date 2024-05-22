@@ -103,7 +103,7 @@ export default {
             return trait
           })
 
-          this.$emit('change', mapped)
+          this.$emit('data-changed', mapped)
           this.hide()
         } catch {
           this.dataValid = false

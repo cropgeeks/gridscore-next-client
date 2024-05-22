@@ -64,7 +64,7 @@ export default {
       this.start()
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     if (this.scanner) {
       try {
         this.scanner.clear()

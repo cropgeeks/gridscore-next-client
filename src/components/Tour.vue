@@ -3,12 +3,12 @@
     <!-- The backdrop prevents input on the background -->
     <div class="backdrop" />
     <!-- The popover appears next to the element -->
-    <b-popover :target="popoverTarget" :placement="steps[currentIndex].position" ref="popover" :show="popoverShow" boundary="window" container="body" >
+    <b-popover :target="popoverTarget" :placement="steps[currentIndex].position" ref="popover" v-model="popoverShow" no-flip teleport-to="body" >
       <template v-slot:title>
-        <button @click="popoverShow = false" size="sm" class="ml-1 close" aria-label="Close">
-          ×
-        </button>
-        <span>{{ steps[currentIndex].title() }}</span>
+        <div class="d-flex justify-content-between align-items-center">
+          <span>{{ steps[currentIndex].title() }}</span>
+          <b-button @click="popoverShow = false" size="sm" class="ms-auto btn-close" aria-label="Close"></b-button>
+        </div>
       </template>
       <div>
         <!-- Step content text -->
@@ -17,11 +17,11 @@
         <!-- Buttons -->
         <b-button-group class="d-flex">
           <!-- Back button -->
-          <b-button variant="secondary" @click="prev" :disabled="currentIndex < 1" v-if="!hideBackButton && (steps.length > 1)"><BIconChevronLeft /> {{ $t('buttonBack') }}</b-button>
+          <b-button variant="secondary" @click="prev" :disabled="currentIndex < 1" v-if="!hideBackButton && (steps.length > 1)"><IBiChevronLeft /> {{ $t('buttonBack') }}</b-button>
           <!-- Next button -->
-          <b-button variant="success" @click="next" v-if="currentIndex < steps.length - 1">{{ $t('buttonNext') }} <BIconChevronRight /></b-button>
+          <b-button variant="success" @click="next" v-if="currentIndex < steps.length - 1">{{ $t('buttonNext') }} <IBiChevronRight /></b-button>
           <!-- Finish button -->
-          <b-button variant="success" @click="resetPopover" v-else>{{ $t('buttonClose') }} <BIconCheck /></b-button>
+          <b-button variant="success" @click="resetPopover" v-else>{{ $t('buttonClose') }} <IBiCheck /></b-button>
         </b-button-group>
       </div>
     </b-popover>
@@ -29,16 +29,9 @@
 </template>
 
 <script>
-import { BIconCheck, BIconChevronLeft, BIconChevronRight } from 'bootstrap-vue'
-
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconCheck,
-    BIconChevronLeft,
-    BIconChevronRight
-  },
   props: {
     steps: {
       type: Array,

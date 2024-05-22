@@ -1,23 +1,23 @@
 <template>
-  <b-dropdown :title="$t('toolbarTraitVisibility')" ref="dropdown" id="trait-dropdown">
+  <b-dropdown :title="$t('toolbarTraitVisibility')" ref="dropdown" id="trait-dropdown" auto-close="outside">
     <template #button-content>
-      <IconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
+      <IBiDiamondHalf :style="{ transform: 'rotate(45deg)' }" width="1.3em" height="1.3em" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
     <b-dropdown-form>
       <b-button-group>
-        <b-button @click="toggleVisibilityAll(true)"><BIconSquareFill v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircleFill v-else /> {{ $t('buttonSelectAll') }}</b-button>
-        <b-button @click="toggleVisibilityAll(false)"><BIconSquare v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><BIconCircle v-else /> {{ $t('buttonSelectNone') }}</b-button>
+        <b-button @click="toggleVisibilityAll(true)"><IBiSquareFill v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleFill v-else /> {{ $t('buttonSelectAll') }}</b-button>
+        <b-button @click="toggleVisibilityAll(false)"><IBiSquare v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircle v-else /> {{ $t('buttonSelectNone') }}</b-button>
       </b-button-group>
     </b-dropdown-form>
     <div class="trait-dropdown-list">
-      <b-dropdown-group v-for="(group, index) in traitsByGroup" :key="`trait-group-${group.name}-${index}`">
+      <b-dropdown-group header-class="pb-0 pt-3" v-for="(group, index) in traitsByGroup" :key="`trait-group-${group.name}-${index}`">
         <template #header>
           <b-form-checkbox :checked="group.allMarked" @change="updateHiddenTraits(group)">{{ group.name || $t('toolbarTraitGroupGeneric') }}</b-form-checkbox>
         </template>
         <b-dropdown-item-button v-for="trait in group.traits"
                                 class="position-relative"
                                 :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
-                                @click.native.capture.stop="toggleTraitVisibility(trait)">
+                                @click="toggleTraitVisibility(trait)">
           <span :style="{ color: trait.visible ? trait.color : 'lightgray' }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
 
           <b-progress class="trait-progress position-absolute" height="3px">
@@ -31,23 +31,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconCircleHalf, BIconCircleFill, BIconSquare, BIconSquareFill, BIconCircle, BProgress, BProgressBar } from 'bootstrap-vue'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
-import TraitIcon from '@/components/icons/TraitIcon'
-import IconSquareHalf from '@/components/icons/IconSquareHalf'
+import TraitIcon from '@/components/icons/TraitIcon.vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconCircleHalf,
-    BIconCircleFill,
-    BIconCircle,
-    BIconSquareFill,
-    BIconSquare,
-    IconSquareHalf,
-    BProgress,
-    BProgressBar,
     TraitIcon
   },
   props: {

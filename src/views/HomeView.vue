@@ -1,28 +1,31 @@
 <template>
   <b-container>
-    <div class="about-header bg-light p-5 my-4 border">
+    <div :class="`about-header ${storeDarkMode ? 'bg-dark' : 'bg-light'} p-5 my-4 border`">
       <b-row>
-        <b-col cols=12 md=4 class="text-center text-md-right" order="1" order-md="2">
+        <b-col cols=12 md=4 class="text-center text-md-end" order="1" order-md="2">
           <b-img fluid src="img/gridscore-next-text.svg" alt="GridScore logo" />
         </b-col>
         <b-col cols=12 md=8 order="2" order-md="1">
-          <h1 class="display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
-          <p class="lead text-center text-md-left">{{ $t('pageHomeWelcome') }}</p>
-          <p class="text-center text-md-left mb-0">{{ $t('pageHomeInstructions') }}</p>
+          <h1 class="display-4 text-center text-md-start">{{ $t('appTitle') }}</h1>
+          <p class="lead text-center text-md-start">{{ $t('pageHomeWelcome') }}</p>
+          <p class="text-center text-md-start mb-0">{{ $t('pageHomeInstructions') }}</p>
         </b-col>
       </b-row>
     </div>
 
     <component v-for="c in sortedWidgets" :key="c.id" :is="c.component" class="mb-3" />
 
-    <b-card bg-variant="light" class="mb-4" v-if="!storeHideCitationMessage" no-body>
+    <b-card class="mb-4" v-if="!storeHideCitationMessage" no-body :bg-variant="storeDarkMode ? 'dark' : 'light'">
       <b-card-body>
         <b-row>
           <b-col cols=12 sm=3 md=2 class="d-flex align-items-center justify-content-center">
-            <BIconNewspaper class="display-1 p-2" />
+            <IBiNewspaper class="display-1 p-2" />
           </b-col>
           <b-col cols=12 sm=9 md=10>
-            <b-card-title><span>{{ $t('pageHomeTitleCitation') }}</span><button type="button" @click.prevent="hideCitation" v-b-tooltip="$t('tooltipDontShowAgain')" aria-label="Close" class="close">×</button></b-card-title>
+            <b-card-title>
+              <span>{{ $t('pageHomeTitleCitation') }}</span>
+              <b-button size="sm" @click.prevent="showCitationHideConfirm" v-b-tooltip="$t('tooltipDontShowAgain')" aria-label="Close" class="btn-close float-end"></b-button>
+            </b-card-title>
             <div v-html="$t('pageHomeTextCitation')" />
           </b-col>
         </b-row>
@@ -33,12 +36,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconNewspaper } from 'bootstrap-vue'
 
-import HomeBanners from '@/components/HomeBanners'
-import TrialSelector from '@/components/TrialSelector'
+import HomeBanners from '@/components/HomeBanners.vue'
+import TrialSelector from '@/components/TrialSelector.vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   name: 'HomeView',
@@ -54,14 +56,14 @@ export default {
     }
   },
   components: {
-    BIconNewspaper,
     HomeBanners,
     TrialSelector
   },
   computed: {
     ...mapGetters([
       'storeHideCitationMessage',
-      'storeHomeWidgetOrder'
+      'storeHomeWidgetOrder',
+      'storeDarkMode'
     ]),
     sortedWidgets: function () {
       if (this.storeHomeWidgetOrder && this.storeHomeWidgetOrder.length > 0) {
@@ -72,20 +74,24 @@ export default {
     }
   },
   methods: {
-    hideCitation: function () {
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextHideCitation'), {
-        title: this.$t('modalTitleHideCitation'),
-        okTitle: this.$t('buttonYes'),
-        okVariant: 'danger',
-        cancelTitle: this.$t('buttonNo')
-      })
-        .then(value => {
-          if (value) {
-            this.$store.dispatch('setHideCitationMessage', true)
+    hideCitationConfirm: function () {
+      this.$store.dispatch('setHideCitationMessage', true)
 
-            emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: true } })
+      emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: true } })
+    },
+    showCitationHideConfirm: function () {
+      emitter.emit('show-confirm', {
+        title: 'modalTitleHideCitation',
+        message: 'modalTextHideCitation',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
+        okVariant: 'danger',
+        callback: (result) => {
+          if (result) {
+            this.hideCitationConfirm()
           }
-        })
+        }
+      })
     }
   }
 }

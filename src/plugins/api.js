@@ -1,8 +1,9 @@
 import store from '@/store'
-import { getTrialById, getTrialData, getTrials, updateTrial } from './idb'
+import { getTrialById, getTrialData, getTrials, updateTrial } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
-const axios = require('axios').default
+import emitter from 'tiny-emitter/instance'
+
+import axios from 'axios'
 const acceptableStatusCodes = [400, 401, 403, 404, 409]
 
 /**
@@ -26,7 +27,7 @@ const axiosCall = ({ baseUrl = null, url = null, params = null, method = 'get', 
   }
 
   return new Promise((resolve, reject) => {
-    axios({
+    axios.default({
       baseURL: baseUrl || store.getters.storeServerUrl,
       url: url,
       params: requestParams,

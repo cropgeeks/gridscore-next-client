@@ -16,19 +16,14 @@
       </b-list-group>
 
       <div class="text-center mt-3">
-        <b-button variant="primary" @click="acceptWarnings" v-if="onlyWarnings"><BIconListCheck /> {{ $t('buttonAcceptWarningsContinue') }}</b-button>
+        <b-button variant="primary" @click="acceptWarnings" v-if="onlyWarnings"><IBiListCheck /> {{ $t('buttonAcceptWarningsContinue') }}</b-button>
       </div>
     </div>
   </b-modal>
 </template>
 
 <script>
-import { BIconListCheck } from 'bootstrap-vue'
-
 export default {
-  components: {
-    BIconListCheck
-  },
   props: {
     feedback: {
       type: Array,

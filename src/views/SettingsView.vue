@@ -1,12 +1,12 @@
 <template>
   <b-container class="mt-4">
-    <div class="d-flex justify-content-between align-items-center"><h1 class="display-4">{{ $t('pageSettingsTitle') }}</h1><b-button @click="$refs.settingsShareModal.show()"><BIconShare /></b-button></div>
+    <div class="d-flex justify-content-between align-items-center"><h1 class="display-4">{{ $t('pageSettingsTitle') }}</h1><b-button @click="$refs.settingsShareModal.show()"><IBiShare /></b-button></div>
     <p>{{ $t('pageSettingsText') }}</p>
 
     <b-form @submit.prevent class="settings-form">
       <b-row>
         <b-col cols=12 md=6>
-          <b-card class="mb-4" :title="$t('pageSettingsCardGeneralTitle')" :sub-title="$t('pageSettingsCardGeneralSubtitle')">
+          <b-card class="mb-4" :title="$t('pageSettingsCardGeneralTitle')" :subtitle="$t('pageSettingsCardGeneralSubtitle')">
             <b-form-group :label="$t('formLabelSettingsLocale')" :description="$t('formDescriptionSettingsLocale')" label-for="locale">
               <b-form-select id="locale" :options="localeOptions" v-model="locale" />
             </b-form-group>
@@ -24,19 +24,21 @@
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsWidgetOrder')" :description="$t('formDescriptionSettingsWidgetOrder')" label-for="home-widget-list">
-              <draggable v-model="homeWidgetOrder" tag="b-list-group" handle=".drag-handle" id="home-widget-list">
-                <b-list-group-item class="flex-column align-items-start" v-for="homeWidget in homeWidgetOrder" :key="`home-widget-list-${homeWidget}`">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ homeWidgetOptions[homeWidget].name }}</h5>
-                    <BIconGripVertical class="drag-handle ml-2" />
-                  </div>
+              <draggable :list="homeWidgetOrder" class="list-group" item-key="id" tag="b-list-group" handle=".drag-handle" id="home-widget-list">
+                <template #item="{ element }">
+                  <b-list-group-item class="flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ homeWidgetOptions[element.value].name }}</h5>
+                      <IBiGripVertical class="drag-handle ms-2" />
+                    </div>
 
-                  <p class="mb-1 trait-description">{{ homeWidgetOptions[homeWidget].description }}</p>
-                </b-list-group-item>
+                    <p class="mb-1 trait-description">{{ homeWidgetOptions[element.value].description }}</p>
+                  </b-list-group-item>
+                </template>
               </draggable>
             </b-form-group>
           </b-card>
-          <b-card class="mb-4" :title="$t('pageSettingsCardDataCollectionTitle')" :sub-title="$t('pageSettingsCardDataCollectionSubtitle')">
+          <b-card class="mb-4" :title="$t('pageSettingsCardDataCollectionTitle')" :subtitle="$t('pageSettingsCardDataCollectionSubtitle')">
             <b-form-group :label="$t('formLabelSettingsUseGps')" :description="$t('formDescriptionSettingsUseGps')" label-for="gpsEnabled">
               <b-form-checkbox id="gpsEnabled" v-model="gpsEnabled" switch>
                 {{ gpsEnabled ? $t('genericEnabled') : $t('genericDisabled') }}
@@ -45,14 +47,14 @@
 
             <b-form-group :label="$t('formLabelSettingsNavigationMode')" :description="$t('formDescriptionSettingsNavigationMode')" label-for="navigationMode">
               <b-button-group class="w-100">
-                <b-button variant="outline-secondary" :pressed="navigationMode === NAVIGATION_MODE_DRAG" @click="navigationMode = NAVIGATION_MODE_DRAG"><BIconHandIndex /> {{ $t('buttonNavModeDrag') }}</b-button>
-                <b-button variant="outline-secondary" :pressed="navigationMode === NAVIGATION_MODE_JUMP" @click="navigationMode = NAVIGATION_MODE_JUMP"><BIconArrowsMove /> {{ $t('buttonNavModeJump') }}</b-button>
+                <b-button variant="outline-secondary" :pressed="navigationMode === NAVIGATION_MODE_DRAG" @click="navigationMode = NAVIGATION_MODE_DRAG"><IBiHandIndex /> {{ $t('buttonNavModeDrag') }}</b-button>
+                <b-button variant="outline-secondary" :pressed="navigationMode === NAVIGATION_MODE_JUMP" @click="navigationMode = NAVIGATION_MODE_JUMP"><IBiArrowsMove /> {{ $t('buttonNavModeJump') }}</b-button>
               </b-button-group>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsCategoryCountInline')" :description="$t('formDescriptionSettingsCategoryCountInline')" label-for="categoryCountInline">
-              <b-form-input id="categoryCountInline" type="range" :min=2 :max=10 v-model.number="categoryCountInline" />
-              <small>{{ $t('formPreviewSettingsCategoryCountInline', { value: $n(categoryCountInline) }) }}</small>
+              <b-form-input id="categoryCountInline" type="range" class="form-control" :min=2 :max=10 v-model.number="categoryCountInline" />
+              <small class="d-block">{{ $t('formPreviewSettingsCategoryCountInline', { value: $n(categoryCountInline) }) }}</small>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsVoiceFeedback')" :description="$t('formDescriptionSettingsVoiceFeedback')" label-for="voiceFeedback">
@@ -69,40 +71,46 @@
           </b-card>
         </b-col>
         <b-col cols=12 md=6>
-          <b-card class="mb-4" :title="$t('pageSettingsCardVisualTitle')" :sub-title="$t('pageSettingsCardVisualSubtitle')">
+          <b-card class="mb-4" :title="$t('pageSettingsCardVisualTitle')" :subtitle="$t('pageSettingsCardVisualSubtitle')">
             <b-form-group :description="$t('formDescriptionSettingsTraitColors')" label-for="traitColors" class="settings-colors">
               <template #label>
-                <span>{{ $t('formLabelSettingsTraitColors') }}</span> <b-button size="sm" variant="light" v-b-tooltip="$t('tooltipSettingsResetColors')" @click="resetColors"><BIconArrowClockwise /></b-button>
+                <span>{{ $t('formLabelSettingsTraitColors') }}</span> <b-button size="sm" variant="light" v-b-tooltip="$t('tooltipSettingsResetColors')" @click="resetColors"><IBiArrowClockwise /></b-button>
               </template>
-              <b-input-group v-for="(color, index) in traitColors" :key="`color-${index}`" class="mr-2 mb-2">
-                <b-form-input type="color"  v-model="traitColors[index]"  />
-                <b-input-group-append>
-                  <b-button variant="danger" @click="deleteColor(index)" :disabled="traitColors.length < 2"><BIconX /></b-button>
-                </b-input-group-append>
-              </b-input-group>
+              <div>
+                <b-input-group v-for="(color, index) in traitColors" :key="`color-${index}`" class="me-2 mb-2">
+                  <b-form-input type="color"  v-model="traitColors[index]"  />
+                  <b-input-group-append>
+                    <b-button variant="danger" @click="deleteColor(index)" :disabled="traitColors.length < 2"><IBiX /></b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </div>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsTraitColorAdd')" label-for="add-color" :description="$t('formDescriptionSettingsTraitColorAdd')" class="settings-colors">
-              <b-input-group>
-                <b-form-input type="color" id="add-color" v-model="newColor" />
-                <b-input-group-append>
-                  <b-button variant="success" @click="addColor"><BIconPlus /></b-button>
-                </b-input-group-append>
-              </b-input-group>
+              <div>
+                <b-input-group>
+                  <b-form-input type="color" id="add-color" v-model="newColor" />
+                  <b-input-group-append>
+                    <b-button variant="success" @click="addColor"><IBiPlus /></b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </div>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsTraitColorPreset')" label-for="preset-color" :description="$t('formDescriptionSettingsTraitColorPreset')" class="settings-colors">
-              <b-input-group>
-                <b-dropdown id="preset-color" :text="$t('dropdownSettingsTraitColorPreset')">
-                  <b-dropdown-group :header="colorKey" v-for="colorKey in Object.keys(categoricalColors)" :key="`color-preset-${colorKey}`">
-                    <b-dropdown-item @click="selectColorPreset(categoricalColors[colorKey])">
-                      <div class="d-flex flex-row gradient">
-                        <div v-for="color in categoricalColors[colorKey]" :key="`color-preset-${colorKey}-${color}`" :style="{ background: color }" />
-                      </div>
-                    </b-dropdown-item>
-                  </b-dropdown-group>
-                </b-dropdown>
-              </b-input-group>
+              <div>
+                <b-input-group>
+                  <b-dropdown id="preset-color" :text="$t('dropdownSettingsTraitColorPreset')">
+                    <b-dropdown-group :header="colorKey" v-for="colorKey in Object.keys(categoricalColors)" :key="`color-preset-${colorKey}`">
+                      <b-dropdown-item @click="selectColorPreset(categoricalColors[colorKey])">
+                        <div class="d-flex flex-row gradient">
+                          <div v-for="color in categoricalColors[colorKey]" :key="`color-preset-${colorKey}-${color}`" :style="{ background: color }" />
+                        </div>
+                      </b-dropdown-item>
+                    </b-dropdown-group>
+                  </b-dropdown>
+                </b-input-group>
+              </div>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsHighlightControls')" :description="$t('formDescriptionSettingsHighlightControls')" label-for="highlightControls">
@@ -124,62 +132,54 @@
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsMinCellWidth')" :description="$t('formDescriptionSettingsMinCellWidth')" label-for="displayMinCellWidth">
-              <b-form-input id="displayMinCellWidth" type="range" :min=2 :max=10 v-model.number="displayMinCellWidth" />
-              <small>{{ $t('formPreviewSettingsMinCellWidth', { value: $n(displayMinCellWidth) }) }}</small>
+              <b-form-input id="displayMinCellWidth" type="range" class="form-control" :min=2 :max=10 v-model.number="displayMinCellWidth" />
+              <div>
+                <small>{{ $t('formPreviewSettingsMinCellWidth', { value: $n(displayMinCellWidth) }) }}</small>
+              </div>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsCanvasShape')" :description="$t('formDescriptionSettingsCanvasShape')" label-for="canvasShape">
               <b-button-group class="w-100 canvas-shape">
                 <b-button variant="outline-secondary" :pressed="canvasShape === CANVAS_SHAPE_CIRCLE" @click="canvasShape = CANVAS_SHAPE_CIRCLE">
-                  <BIconCircleFill /> {{ $t('buttonCanvasShapeCircle') }}</b-button>
+                  <IBiCircleFill /> {{ $t('buttonCanvasShapeCircle') }}</b-button>
                 <b-button variant="outline-secondary" :pressed="canvasShape === CANVAS_SHAPE_SQUARE" @click="canvasShape = CANVAS_SHAPE_SQUARE">
-                  <BIconSquareFill /> {{ $t('buttonCanvasShapeSquare') }}</b-button>
+                  <IBiSquareFill /> {{ $t('buttonCanvasShapeSquare') }}</b-button>
               </b-button-group>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsCanvasSize')" :description="$t('formDescriptionSettingsCanvasSize')" label-for="canvasSize">
               <b-button-group class="w-100 canvas-size">
                 <b-button class="d-flex justify-content-center align-items-center" variant="outline-secondary" :pressed="canvasSize === CANVAS_SIZE_SMALL" @click="canvasSize = CANVAS_SIZE_SMALL">
-                  <BIconSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" :font-scale="0.6" />
-                  <BIconCircleFill v-else :font-scale="0.6" /> <span class="ml-1">{{ $t('buttonCanvasSizeSmall') }}</span></b-button>
+                  <IBiSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" height="0.6em" width="0.6em" />
+                  <IBiCircleFill v-else height="0.6em" width="0.6em" /> <span class="ms-1">{{ $t('buttonCanvasSizeSmall') }}</span></b-button>
                 <b-button class="d-flex justify-content-center align-items-center" variant="outline-secondary" :pressed="canvasSize === CANVAS_SIZE_MEDIUM" @click="canvasSize = CANVAS_SIZE_MEDIUM">
-                  <BIconSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" :font-scale="0.8" />
-                  <BIconCircleFill v-else :font-scale="0.8" /> <span class="ml-1">{{ $t('buttonCanvasSizeMedium') }}</span></b-button>
+                  <IBiSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" height="0.8em" width="0.8em" />
+                  <IBiCircleFill v-else height="0.8em" width="0.8em" /> <span class="ms-1">{{ $t('buttonCanvasSizeMedium') }}</span></b-button>
                 <b-button class="d-flex justify-content-center align-items-center" variant="outline-secondary" :pressed="canvasSize === CANVAS_SIZE_LARGE" @click="canvasSize = CANVAS_SIZE_LARGE">
-                  <BIconSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" :font-scale="1.0" />
-                  <BIconCircleFill v-else :font-scale="1.0" /> <span class="ml-1">{{ $t('buttonCanvasSizeLarge') }}</span></b-button>
+                  <IBiSquareFill v-if="canvasShape === CANVAS_SHAPE_SQUARE" height="1.0em" width="1.0em" />
+                  <IBiCircleFill v-else height="1.0em" width="1.0em" /> <span class="ms-1">{{ $t('buttonCanvasSizeLarge') }}</span></b-button>
               </b-button-group>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsCanvasDensity')" :description="$t('formDescriptionSettingsCanvasDensity')" label-for="canvasDensity">
               <b-button-group class="w-100 canvas-density">
                 <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_LOW" @click="canvasDensity = CANVAS_DENSITY_LOW">
-                  <BIconstack>
-                    <BIconDashLg :rotate="90" stacked :shift-h="-5" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="0" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="5" />
-                  </BIconstack> {{ $t('buttonCanvasDensityLow') }}</b-button>
+                  <IBiSquare /> {{ $t('buttonCanvasDensityLow') }}</b-button>
                 <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_MEDIUM" @click="canvasDensity = CANVAS_DENSITY_MEDIUM">
-                  <BIconstack>
-                    <BIconDashLg :rotate="90" stacked :shift-h="-4" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="0" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="4" />
-                  </BIconstack> {{ $t('buttonCanvasDensityMedium') }}</b-button>
+                  <IBiGrid /> {{ $t('buttonCanvasDensityMedium') }}</b-button>
                 <b-button variant="outline-secondary" :pressed="canvasDensity === CANVAS_DENSITY_HIGH" @click="canvasDensity = CANVAS_DENSITY_HIGH">
-                  <BIconstack>
-                    <BIconDashLg :rotate="90" stacked :shift-h="-3" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="0" />
-                    <BIconDashLg :rotate="90" stacked :shift-h="3" />
-                  </BIconstack> {{ $t('buttonCanvasDensityHigh') }}</b-button>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-grid-3x3-gap" viewBox="0 0 16 16">
+                    <path d="M4 2v2H2V2zm1 12v-2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V7a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m5 10v-2a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V2a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1M9 2v2H7V2zm5 0v2h-2V2zM4 7v2H2V7zm5 0v2H7V7zm5 0h-2v2h2zM4 12v2H2v-2zm5 0v2H7v-2zm5 0v2h-2v-2zM12 1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm-1 6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm1 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1z"/>
+                  </svg> {{ $t('buttonCanvasDensityHigh') }}</b-button>
               </b-button-group>
             </b-form-group>
 
             <b-form-group :label="$t('formLabelSettingsMainDisplayMode')" :description="$t('formDescriptionSettingsMainDisplayMode')" label-for="mainDisplayMode">
               <b-button-group class="w-100 canvas-density">
                 <b-button variant="outline-secondary" :pressed="mainDisplayMode === MAIN_DISPLAY_MODE_AUTO" @click="mainDisplayMode = MAIN_DISPLAY_MODE_AUTO">
-                  <BIconTable /> {{ $t('buttonMainDisplayModeAuto') }}</b-button>
+                  <IBiTable /> {{ $t('buttonMainDisplayModeAuto') }}</b-button>
                 <b-button variant="outline-secondary" :pressed="mainDisplayMode === MAIN_DISPLAY_MODE_CANVAS_ONLY" @click="mainDisplayMode = MAIN_DISPLAY_MODE_CANVAS_ONLY">
-                  <BIconEasel /> {{ $t('buttonMainDisplayModeCanvasOnly') }}</b-button>
+                  <IBiEasel /> {{ $t('buttonMainDisplayModeCanvasOnly') }}</b-button>
               </b-button-group>
             </b-form-group>
           </b-card>
@@ -187,36 +187,22 @@
       </b-row>
     </b-form>
 
-    <SettingsShareModal ref="settingsShareModal" @change="reset" />
+    <SettingsShareModal ref="settingsShareModal" @data-changed="reset" />
   </b-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { BIconHandIndex, BIconX, BIconShare, BIconTable, BIconEasel, BIconArrowsMove, BIconPlus, BIconArrowClockwise, BIconstack, BIconDashLg, BIconCircleFill, BIconSquareFill, BIconGripVertical } from 'bootstrap-vue'
 import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, MAIN_DISPLAY_MODE_AUTO, MAIN_DISPLAY_MODE_CANVAS_ONLY, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
-import SettingsShareModal from '@/components/modals/SettingsShareModal'
+import SettingsShareModal from '@/components/modals/SettingsShareModal.vue'
 import draggable from 'vuedraggable'
 import { categoricalColors } from '@/plugins/color'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconShare,
-    BIconHandIndex,
-    BIconArrowsMove,
-    BIconX,
-    BIconPlus,
-    BIconGripVertical,
-    BIconstack,
-    BIconDashLg,
-    BIconTable,
-    BIconEasel,
-    BIconArrowClockwise,
-    BIconCircleFill,
-    BIconSquareFill,
     SettingsShareModal,
     draggable
   },
@@ -233,7 +219,7 @@ export default {
       CANVAS_SIZE_MEDIUM,
       CANVAS_SIZE_LARGE,
       MAIN_DISPLAY_MODE_AUTO,
-      MAIN_DISPLAY_MODE_CANVAS_ONLY,
+      MAIN_DISPLAY_MODE_CANVAS_ONLY, 
       locale: null,
       darkMode: false,
       hideCitationMessage: false,
@@ -241,7 +227,7 @@ export default {
       displayMarkerIndicators: true,
       displayMinCellWidth: 4,
       categoryCountInline: 4,
-      homeWidgetOrder: ['banners', 'trials'],
+      homeWidgetOrder: [{ id: 0, value: 'banners'}, { id: 1, value: 'trials' }],
       canvasDensity: CANVAS_DENSITY_LOW,
       canvasShape: CANVAS_SHAPE_CIRCLE,
       canvasSize: CANVAS_SIZE_SMALL,
@@ -373,8 +359,8 @@ export default {
     homeWidgetOrder: {
       deep: true,
       handler: function (newValue) {
-        this.$store.dispatch('setHomeWidgetOrder', newValue)
-        emitter.emit('plausible-event', { key: 'settings-changed', props: { homeWidgetOrder: newValue } })
+        this.$store.dispatch('setHomeWidgetOrder', newValue.map(o => o.value))
+        emitter.emit('plausible-event', { key: 'settings-changed', props: { homeWidgetOrder: newValue.map(o => o.value) } })
       }
     }
   },
@@ -405,7 +391,12 @@ export default {
       this.gpsEnabled = this.storeGpsEnabled
       this.voiceFeedbackEnabled = this.storeVoiceFeedbackEnabled
       this.restrictInputToMarked = this.storeRestrictInputToMarked
-      this.homeWidgetOrder = this.storeHomeWidgetOrder
+      this.homeWidgetOrder = this.storeHomeWidgetOrder.map((o, i) => {
+        return {
+          id: i,
+          value: o
+        }
+      })
       this.navigationMode = this.storeNavigationMode
       this.traitColors = this.storeTraitColors
       this.canvasDensity = this.storeCanvasDensity

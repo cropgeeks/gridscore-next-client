@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import DataInputModal from '@/components/modals/DataInputModal'
+import DataInputModal from '@/components/modals/DataInputModal.vue'
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -119,7 +119,7 @@ export default {
       emitter.on('tts', this.tts)
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('tts', this.tts)
 
     if (this.geolocationWatchId && navigator.geolocation) {

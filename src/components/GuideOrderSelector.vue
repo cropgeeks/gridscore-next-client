@@ -14,7 +14,7 @@
         <b-row class="guide-order mt-3">
           <b-col v-for="option in precomputedOrders['snake']" :key="`guide-option-${option.type.name}`" cols=6 lg=3 class="mb-3">
             <div class="rounded p-3 bg-light h-100 border">
-              <b-form-radio :value="option.type.name" :disabled="!option.valid" class="h-100">
+              <b-form-radio :value="option.type.name" :disabled="!option.valid">
                 <div class="guide-text-label">{{ $t(option.type.text) }}</div>
                 <b-img class="guide-image" fluid :src="option.type.image" />
               </b-form-radio>
@@ -31,7 +31,7 @@
         <b-row class="guide-order mt-3">
           <b-col v-for="option in precomputedOrders['zigzag']" :key="`guide-option-${option.type.name}`" cols=6 lg=3 class="mb-3">
             <div class="rounded p-3 bg-light h-100 border">
-              <b-form-radio :value="option.type.name" :disabled="!option.valid" class="h-100">
+              <b-form-radio :value="option.type.name" :disabled="!option.valid">
                 <div class="guide-text-label">{{ $t(option.type.text) }}</div>
                 <b-img class="guide-image" fluid :src="option.type.image" />
               </b-form-radio>
@@ -87,8 +87,8 @@ export default {
       selectedOrder: null,
       tabIndex: 0,
       tabs: ['snake', 'zigzag'],
-      zigzagIcon: require('@/assets/img/guided-walk/scoring-order-u-l-b.svg'),
-      snakeIcon: require('@/assets/img/guided-walk/scoring-order-u-l.svg')
+      zigzagIcon: 'img/guided-walk/scoring-order-u-l-b.svg',
+      snakeIcon: 'img/guided-walk/scoring-order-u-l.svg'
     }
   },
   watch: {

@@ -14,8 +14,8 @@
         <b-list-group>
           <b-list-group-item class="flex-column align-items-start" v-for="comment in visibleComments" :key="`cell-comment-${comment.timestamp}`">
             <div class="d-flex w-100 justify-content-between align-items-center">
-              <h5 class="mb-1"><BIconCalendarDate /> {{ new Date(comment.timestamp).toLocaleDateString() }}</h5>
-              <b-button size="sm" variant="danger" v-if="editable" @click="deleteComment(comment)"><BIconTrash /> {{ $t('buttonDelete') }}</b-button>
+              <h5 class="mb-1"><IBiCalendarDate /> {{ new Date(comment.timestamp).toLocaleDateString() }}</h5>
+              <b-button size="sm" variant="danger" v-if="editable" @click="deleteComment(comment)"><IBiTrash /> {{ $t('buttonDelete') }}</b-button>
             </div>
 
             <p class="mb-1">
@@ -27,32 +27,27 @@
       </div>
       <p v-else class="text-warning">{{ $t('modalTextPlotCommentNoData') }}</p>
 
-      <b-button class="mt-2" @click="commentFormVisible = !commentFormVisible" v-if="editable"><BIconChatRightQuoteFill /> {{ $t('buttonCreateComment') }}</b-button>
+      <b-button class="mt-2" @click="commentFormVisible = !commentFormVisible" v-if="editable"><IBiChatRightQuoteFill /> {{ $t('buttonCreateComment') }}</b-button>
 
       <b-collapse v-model="commentFormVisible" class="mt-2" @shown="$refs.input.focus()">
         <b-form-group :label="$t('formLabelCommentContent')" :description="$t('formDescriptionCommentContent')" label-for="comment-content">
-          <SpeechRecognitionTextarea id="comment-content" :rows="5" :tooltip="$t('tooltipDataEntryCommentMicrophone')" ref="input" @change="updateComment" />
+          <SpeechRecognitionTextarea id="comment-content" :rows="5" :tooltip="$t('tooltipDataEntryCommentMicrophone')" ref="input" @content-changed="updateComment" />
         </b-form-group>
 
-        <b-button :disabled="!newCommentContent || (newCommentContent === '')" variant="primary" @click="createComment"><BIconPlusSquare /> {{ $t('buttonAdd') }}</b-button>
+        <b-button :disabled="!newCommentContent || (newCommentContent === '')" variant="primary" @click="createComment"><IBiPlusSquare /> {{ $t('buttonAdd') }}</b-button>
       </b-collapse>
     </div>
   </b-modal>
 </template>
 
 <script>
-import SpeechRecognitionTextarea from '@/components/SpeechRecognitionTextarea'
-import { BIconCalendarDate, BIconTrash, BIconChatRightQuoteFill, BIconPlusSquare } from 'bootstrap-vue'
+import SpeechRecognitionTextarea from '@/components/SpeechRecognitionTextarea.vue'
 import { deletePlotComment, addPlotComment } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconCalendarDate,
-    BIconTrash,
-    BIconChatRightQuoteFill,
-    BIconPlusSquare,
     SpeechRecognitionTextarea
   },
   props: {

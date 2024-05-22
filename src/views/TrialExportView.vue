@@ -1,120 +1,118 @@
 <template>
   <b-container class="mt-4">
-    <h1 class="display-4">{{ $t('pageExportTitle') }}</h1>
-    <p>{{ $t('pageExportText') }}</p>
+    <UseOnline v-slot="{ isOnline }">
+      <h1 class="display-4">{{ $t('pageExportTitle') }}</h1>
+      <p>{{ $t('pageExportText') }}</p>
 
-    <b-tabs lazy v-if="trial">
-      <b-tab>
-        <template #title>
-          <BIconFileEarmarkSpreadsheet /> {{ $t('pageExportTabTitleTab') }}
-        </template>
+      <b-tabs lazy v-if="trial">
+        <b-tab>
+          <template #title>
+            <IBiFileEarmarkSpreadsheet /> {{ $t('pageExportTabTitleTab') }}
+          </template>
 
-        <p class="mt-3" v-html="$t('pageExportTrialFormatTab')" />
+          <p class="mt-3" v-html="$t('pageExportTrialFormatTab')" />
 
-        <b-row>
-          <b-col cols=12 md=6>
-            <b-card class="mb-3" :title="$t('pageExportTrialFormatTabDataCardTitle')" :sub-title="$t('pageExportTrialFormatTabDataCardSubtitle')">
-              <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
-                <b-form-checkbox id="aggregate" v-model="tabAggregate" switch>
-                  {{ tabAggregate ? $t('genericYes') : $t('genericNo') }}
-                </b-form-checkbox>
-              </b-form-group>
+          <b-row>
+            <b-col cols=12 md=6>
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatTabDataCardTitle')" :sub-title="$t('pageExportTrialFormatTabDataCardSubtitle')">
+                <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
+                  <b-form-checkbox id="aggregate" v-model="tabAggregate" switch>
+                    {{ tabAggregate ? $t('genericYes') : $t('genericNo') }}
+                  </b-form-checkbox>
+                </b-form-group>
 
-              <b-button @click="exportDataTab" variant="primary"><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
-            </b-card>
-          </b-col>
-        </b-row>
-      </b-tab>
-      <b-tab>
-        <template #title>
-          <BIconChatRightQuoteFill /> {{ $t('pageExportTabTitleComments') }}
-        </template>
+                <b-button @click="exportDataTab" variant="primary"><IBiFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-tab>
+        <b-tab>
+          <template #title>
+            <IBiChatRightQuoteFill /> {{ $t('pageExportTabTitleComments') }}
+          </template>
 
-        <p class="mt-3" v-html="$t('pageExportTrialFormatComment')" />
+          <p class="mt-3" v-html="$t('pageExportTrialFormatComment')" />
 
-        <b-row>
-          <b-col cols=12 md=6>
-            <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentTrialCardTitle')" :sub-title="$t('pageExportTrialFormatCommentTrialCardSubtitle')">
-              <b-card-text :class="trialCommentCount < 1 ? 'text-danger' : null">{{ $tc('pageExportTrialFormatCommentTrialCount', trialCommentCount) }}</b-card-text>
+          <b-row>
+            <b-col cols=12 md=6>
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentTrialCardTitle')" :sub-title="$t('pageExportTrialFormatCommentTrialCardSubtitle')">
+                <b-card-text :class="trialCommentCount < 1 ? 'text-danger' : null">{{ $t('pageExportTrialFormatCommentTrialCount', trialCommentCount) }}</b-card-text>
 
-              <b-button @click="exportTrialComments" variant="primary" :disabled="trialCommentCount < 1">
-                <BIconstack>
-                  <BIconChatRight stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="2" />
-                </BIconstack> {{ $t('buttonExport') }}
-              </b-button>
-            </b-card>
-          </b-col>
-          <b-col cols=12 md=6>
-            <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentPlotCardTitle')" :sub-title="$t('pageExportTrialFormatCommentPlotCardSubtitle')">
-              <b-card-text :class="plotCommentCount < 1 ? 'text-danger' : null">{{ $tc('pageExportTrialFormatCommentPlotCount', plotCommentCount) }}</b-card-text>
+                <b-button @click="exportTrialComments" variant="primary" :disabled="trialCommentCount < 1">
+                  <IBiChatRightText /> {{ $t('buttonExport') }}
+                </b-button>
+              </b-card>
+            </b-col>
+            <b-col cols=12 md=6>
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatCommentPlotCardTitle')" :sub-title="$t('pageExportTrialFormatCommentPlotCardSubtitle')">
+                <b-card-text :class="plotCommentCount < 1 ? 'text-danger' : null">{{ $t('pageExportTrialFormatCommentPlotCount', plotCommentCount) }}</b-card-text>
 
-              <b-button @click="exportPlotComments" variant="primary" :disabled="plotCommentCount < 1">
-                <BIconstack>
-                  <BIconChatRight stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="2" />
-                </BIconstack> {{ $t('buttonExport') }}
-              </b-button>
-            </b-card>
-          </b-col>
-        </b-row>
-      </b-tab>
-      <b-tab>
-        <template #title>
-          <BIconFlag /> {{ $t('pageExportTabTitleEvents') }}
-        </template>
+                <b-button @click="exportPlotComments" variant="primary" :disabled="plotCommentCount < 1">
+                  <IBiChatRightText /> {{ $t('buttonExport') }}
+                </b-button>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-tab>
+        <b-tab>
+          <template #title>
+            <IBiFlag /> {{ $t('pageExportTabTitleEvents') }}
+          </template>
 
-        <p class="mt-3" v-html="$t('pageExportTrialFormatEvent')" />
+          <p class="mt-3" v-html="$t('pageExportTrialFormatEvent')" />
 
-        <b-card class="mb-3" :title="$t('pageExportTrialFormatEventTrialCardTitle')" :sub-title="$t('pageExportTrialFormatEventTrialCardSubtitle')">
-          <b-card-text :class="trialEventCount < 1 ? 'text-danger' : null">{{ $tc('pageExportTrialFormatEventTrialCount', trialEventCount) }}</b-card-text>
+          <b-card class="mb-3" :title="$t('pageExportTrialFormatEventTrialCardTitle')" :sub-title="$t('pageExportTrialFormatEventTrialCardSubtitle')">
+            <b-card-text :class="trialEventCount < 1 ? 'text-danger' : null">{{ $t('pageExportTrialFormatEventTrialCount', trialEventCount) }}</b-card-text>
 
-          <b-button @click="exportTrialEvents" variant="primary" :disabled="trialEventCount < 1">
-            <BIconstack>
-              <BIconFlag stacked /><BIconArrowDown stacked :scale="0.5" :shift-v="-5" />
-            </BIconstack> {{ $t('buttonExport') }}
-          </b-button>
-        </b-card>
-      </b-tab>
-      <b-tab>
-        <template #title>
-          <IconGerminate /> Germinate
-        </template>
-        <div v-if="storeIsOffline" class="modal-banner bg-danger text-white text-center mb-3 mt-0 p-2">
-          {{ $t('modalTextNetworkUnavailableWarning') }}
-        </div>
+            <b-button @click="exportTrialEvents" variant="primary" :disabled="trialEventCount < 1">
+              <IBiFlag /> {{ $t('buttonExport') }}
+            </b-button>
+          </b-card>
+        </b-tab>
+        <b-tab>
+          <template #title>
+            <IconGerminate /> Germinate
+          </template>
+          <div v-if="isOnline === false" class="modal-banner bg-danger text-white text-center mb-3 mt-0 p-2">
+            {{ $t('modalTextNetworkUnavailableWarning') }}
+          </div>
 
-        <p class="mt-3" v-html="$t('pageExportTrialFormatGerminate')" />
+          <p class="mt-3" v-html="$t('pageExportTrialFormatGerminate')" />
 
-        <b-row>
-          <b-col cols=12 md=6>
-            <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateDataCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateDataCardSubtitle')">
-              <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
-                <b-form-checkbox id="aggregate" v-model="germinateAggregate" switch>
-                  {{ germinateAggregate ? $t('genericYes') : $t('genericNo') }}
-                </b-form-checkbox>
-              </b-form-group>
+          <b-row>
+            <b-col cols=12 md=6>
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateDataCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateDataCardSubtitle')">
+                <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
+                  <b-form-checkbox id="aggregate" v-model="germinateAggregate" switch>
+                    {{ germinateAggregate ? $t('genericYes') : $t('genericNo') }}
+                  </b-form-checkbox>
+                </b-form-group>
 
-              <b-button :disabled="storeIsOffline" :href="exportedFiles.germinate" @click="exportedFiles.germinate = null" variant="success" v-if="exportedFiles.germinate"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
-              <b-button :disabled="storeIsOffline" @click="exportDataGerminate" variant="primary" v-else><BIconFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
-            </b-card>
-          </b-col>
-          <b-col cols=12 md=6 v-if="trial.layout && trial.layout.corners">
-            <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateShapeCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateShapeCardSubtitle')">
-              <b-button :disabled="storeIsOffline" :href="exportedFiles.shapefile" @click="exportedFiles.shapefile = null" variant="success" v-if="exportedFiles.shapefile"><BIconDownload /> {{ $t('buttonDownload') }}</b-button>
-              <b-button :disabled="storeIsOffline" @click="exportShapefileGerminate" variant="primary" v-else><BIconGrid3x2Gap /> {{ $t('buttonExport') }}</b-button>
-            </b-card>
-          </b-col>
-        </b-row>
-      </b-tab>
-      <b-tab>
-        <template #title>
-          <IconBrapi /> Breeding API
-        </template>
+                <b-button :disabled="isOnline === false" :href="exportedFiles.germinate" @click="exportedFiles.germinate = null" variant="success" v-if="exportedFiles.germinate"><IBiDownload /> {{ $t('buttonDownload') }}</b-button>
+                <b-button :disabled="isOnline === false" @click="exportDataGerminate" variant="primary" v-else><IBiFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
+              </b-card>
+            </b-col>
+            <b-col cols=12 md=6 v-if="trial.layout && trial.layout.corners">
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatGerminateShapeCardTitle')" :sub-title="$t('pageExportTrialFormatGerminateShapeCardSubtitle')">
+                <b-button :disabled="isOnline === false" :href="exportedFiles.shapefile" @click="exportedFiles.shapefile = null" variant="success" v-if="exportedFiles.shapefile"><IBiDownload /> {{ $t('buttonDownload') }}</b-button>
+                <b-button :disabled="isOnline === false" @click="exportShapefileGerminate" variant="primary" v-else><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grid-3x2-gap" viewBox="0 0 16 16">
+                  <path d="M4 4v2H2V4zm1 7V9a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m5 5V9a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1m0-5V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1M9 4v2H7V4zm5 0h-2v2h2zM4 9v2H2V9zm5 0v2H7V9zm5 0v2h-2V9zm-3-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm1 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z"/>
+                </svg> {{ $t('buttonExport') }}</b-button>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-tab>
+        <b-tab>
+          <template #title>
+            <IconBrapi /> Breeding API
+          </template>
 
-        <BrapiExportSection :trial="trial" />
-      </b-tab>
-    </b-tabs>
+          <BrapiExportSection :trial="trial" />
+        </b-tab>
+      </b-tabs>
 
-    <TrialSynchronizationModal :trial="trial" ref="traitSyncModal" v-if="trial && trial.transactionCount > 0" />
+      <TrialSynchronizationModal :trial="trial" ref="traitSyncModal" v-if="trial && trial.transactionCount > 0" />
+    </UseOnline>
   </b-container>
 </template>
 
@@ -123,30 +121,23 @@ import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { exportToGerminate, exportToShapefile, shareTrial } from '@/plugins/api'
-import IconGerminate from '@/components/icons/IconGerminate'
-import IconBrapi from '@/components/icons/IconBrapi'
-import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal'
-import { BIconGrid3x2Gap, BIconFileEarmarkSpreadsheet, BIconDownload, BIconFlag, BIconChatRightQuoteFill, BIconstack, BIconChatRight, BIconArrowDown } from 'bootstrap-vue'
+import IconGerminate from '@/components/icons/IconGerminate.vue'
+import IconBrapi from '@/components/icons/IconBrapi.vue'
+import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal.vue'
 import { downloadText, toLocalDateString, trialsDataToMatrix } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, TRIAL_EVENT_TYPE_MANAGEMENT, TRIAL_EVENT_TYPE_OTHER, TRIAL_EVENT_TYPE_WEATHER } from '@/plugins/constants'
-import BrapiExportSection from '@/components/BrapiExportSection'
+import BrapiExportSection from '@/components/BrapiExportSection.vue'
+import { UseOnline } from '@vueuse/components'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconGrid3x2Gap,
-    BIconFileEarmarkSpreadsheet,
-    BIconDownload,
-    BIconChatRightQuoteFill,
-    BIconstack,
-    BIconFlag,
-    BIconChatRight,
-    BIconArrowDown,
     BrapiExportSection,
     IconGerminate,
     IconBrapi,
-    TrialSynchronizationModal
+    TrialSynchronizationModal,
+    UseOnline
   },
   data: function () {
     return {
@@ -163,8 +154,7 @@ export default {
   computed: {
     ...mapGetters([
       'storeSelectedTrial',
-      'storeServerUrl',
-      'storeIsOffline'
+      'storeServerUrl'
     ]),
     safeTrialName: function () {
       if (this.trial) {
@@ -244,14 +234,14 @@ export default {
 
       if (shareCode) {
         if (this.trial.transactionCount > 0) {
-          this.$bvModal.msgBoxConfirm(this.$t('modalTextExportSynchronization'), {
-            title: this.$t('modalTitleExportSynchronization'),
-            okTitle: this.$t('buttonYes'),
-            okVariant: 'primary',
+          emitter.emit('show-confirm', {
+            title: 'modalTitleExportSynchronization',
+            message: 'modalTextExportSynchronization',
+            okTitle: 'buttonYes',
+            cancelTitle: 'buttonNo',
             cancelVariant: 'primary',
-            cancelTitle: this.$t('buttonNo')
-          })
-            .then(value => {
+            okVariant: 'primary',
+            callback: (value) => {
               if (value) {
                 this.$refs.traitSyncModal.show()
               } else {
@@ -263,7 +253,8 @@ export default {
                   })
                   .catch(this.errorHandler)
               }
-            })
+            }
+          })
         } else {
           emitter.emit('show-loading', true)
           exportToShapefile(shareCode)
@@ -315,14 +306,14 @@ export default {
 
       if (shareCode) {
         if (this.trial.transactionCount > 0) {
-          this.$bvModal.msgBoxConfirm(this.$t('modalTextExportSynchronization'), {
-            title: this.$t('modalTitleExportSynchronization'),
-            okTitle: this.$t('buttonYes'),
-            okVariant: 'primary',
+          emitter.emit('show-confirm', {
+            title: 'modalTitleExportSynchronization',
+            message: 'modalTextExportSynchronization',
+            okTitle: 'buttonYes',
+            cancelTitle: 'buttonNo',
             cancelVariant: 'primary',
-            cancelTitle: this.$t('buttonNo')
-          })
-            .then(value => {
+            okVariant: 'primary',
+            callback: (value) => {
               if (value) {
                 this.$refs.traitSyncModal.show()
               } else {
@@ -334,7 +325,8 @@ export default {
                   })
                   .catch(this.errorHandler)
               }
-            })
+            }
+          })
         } else {
           emitter.emit('show-loading', true)
           exportToGerminate(shareCode, this.germinateAggregate)
@@ -387,7 +379,7 @@ export default {
 
     this.updateTrialDataCache()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.updateTrialDataCache)
   }
 }
