@@ -57,20 +57,24 @@
       <router-view id="router-view" />
 
       <footer :class="`mt-auto py-3 border-top ${storeDarkMode ? 'bg-dark border-dark' : 'bg-light border-light'}`" v-if="$route.name !== 'data-entry'">
-        <b-container class="d-flex no-gutters container-force flex-wrap justify-content-between align-items-center">
-          <div class="col-md-4 d-flex align-items-center justify-content-center justify-content-md-start">
-            <span class="text-muted">&copy; {{ new Date().getFullYear() }} GridScore: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
-          </div>
+        <b-container>
+          <b-row>
+            <b-col cols=12 md=4 class="d-flex align-items-center justify-content-center justify-content-md-start">
+              <span class="text-muted">&copy; {{ new Date().getFullYear() }} GridScore: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
+            </b-col>
 
-          <div class="col-md-4 d-flex align-items-center justify-content-center">
-            <router-link :to="{ name: 'about', query: { showChangelog: true } }" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</router-link>
-          </div>
+            <b-col cols=12 md=4 class="d-flex align-items-center justify-content-center">
+              <router-link :to="{ name: 'about', query: { showChangelog: true } }" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</router-link>
+            </b-col>
 
-          <ul class="nav col-md-4 justify-content-center justify-content-md-end list-unstyled d-flex">
-            <li class="ms-3"><a class="text-muted" href="https://ics.hutton.ac.uk/get-gridscore"><IBiGlobe2 /></a></li>
-            <li class="ms-3"><a class="text-muted" href="https://twitter.com/GerminateHub"><IBiTwitter /></a></li>
-            <li class="ms-3"><a class="text-muted" href="https://github.com/cropgeeks/gridscore-next-client"><IBiGithub /></a></li>
-          </ul>
+            <b-col cols=12 md=4>
+              <ul class="nav justify-content-center justify-content-md-end list-unstyled d-flex">
+                <li class="mx-2"><a class="text-muted" href="https://ics.hutton.ac.uk/get-gridscore"><IBiGlobe2 /></a></li>
+                <li class="mx-2"><a class="text-muted" href="https://twitter.com/GerminateHub"><IBiTwitter /></a></li>
+                <li class="mx-2"><a class="text-muted" href="https://github.com/cropgeeks/gridscore-next-client"><IBiGithub /></a></li>
+              </ul>
+            </b-col>
+          </b-row>
         </b-container>
       </footer>
     </div>
@@ -610,12 +614,5 @@ body {
 
 .modal-banner {
   margin: -1rem -1rem 0 -1rem
-}
-</style>
-
-<style scoped>
-.container-force {
-  margin-right: auto;
-  margin-left: auto;
 }
 </style>

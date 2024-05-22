@@ -134,6 +134,7 @@ export default {
       personLineData: null,
       chartData: null,
       stats: {},
+      polygons: {},
       areaUnit: 'meter'
     }
   },
@@ -386,8 +387,14 @@ export default {
       this.personBarData = personBarData
       this.personLineData = personLineData
       this.stats = tempStats
+      this.polygons = {}
 
       this.$nextTick(() => this.updateMaps())
+    },
+    areaUnit: function () {
+      Object.keys(this.polygons).forEach(trialId => {
+        this.updatePolygon(trialId, this.stats[trialId])
+      })
     }
   },
   methods: {
@@ -517,13 +524,32 @@ export default {
             pts.push([e.y, e.x])
           })
 
-          L.polygon(pts).addTo(map)
+          const polygon = L.polygon(pts)
+
+          this.polygons[trialId] = polygon
+
+          this.updatePolygon(trialId, this.stats[trialId])
+
+          polygon.addTo(map)
         }
 
         if (bounds && bounds.isValid()) {
           const size = map.getSize()
           map.fitBounds(bounds, { padding: [size.x / 4, size.y / 4] })
         }
+      })
+    },
+    updatePolygon: function (trialId, stats) {
+      if (!this.polygons[trialId]) {
+        return
+      }
+
+      const displayValue = (this.areaUnits[this.areaUnit].convert(stats.area) || 0).toLocaleString()
+
+      this.polygons[trialId].unbindTooltip()
+      this.polygons[trialId].bindTooltip(`${displayValue} ${this.areaUnits[this.areaUnit].unit}`, {
+        permanent: true,
+        direction: 'center'
       })
     }
   },

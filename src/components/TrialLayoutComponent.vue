@@ -209,6 +209,7 @@ export default {
 
       let germplasmCorrect = true
       const germplasmSet = new Set()
+      const repSet = new Set()
       Object.keys(this.germplasmMap).forEach(k => {
         const cell = this.germplasmMap[k]
 
@@ -241,6 +242,9 @@ export default {
         }
 
         const displayName = `${cell.germplasm}|${cell.rep}`
+        if (cell.rep) {
+          repSet.add(cell.rep)
+        }
 
         if (germplasmSet.has(displayName)) {
           feedback.push({
@@ -254,6 +258,14 @@ export default {
           germplasmSet.add(displayName)
         }
       })
+
+      if (repSet.size > germplasmSet.size / 2) {
+        feedback.push({
+          type: 'warning',
+          message: this.$t('formFeedbackSetupHighNumberOfReps', { germplasmCount: germplasmSet.size, repCount: repSet.size })
+        })
+        germplasmCorrect = false
+      }
 
       if (germplasmSet.size < 1) {
         feedback.push({
