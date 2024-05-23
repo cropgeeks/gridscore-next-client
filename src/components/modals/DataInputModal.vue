@@ -26,7 +26,9 @@
             <span><IBiCalendarEvent /> <span class="d-none d-xl-inline-block"> {{ $t('buttonPickRecordingDate') }}</span></span>
           </template>
         </VueDatePicker>
-        <b-button id="toolbar-button-comments" size="sm" @click="onShowCommentModal"><IBiChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $t('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
+        <b-button id="toolbar-button-comments" size="sm" @click="onShowCommentModal">
+          <IBiChatRightTextFill v-if="(cell.comments || []).length > 0" /><IBiChatRightText v-else /> <span class="d-none d-xl-inline-block">{{ $t('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span>
+        </b-button>
         <b-button id="toolbar-button-marking" size="sm" :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
           <template v-if="cell.isMarked">
             <IBiBookmarkCheckFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonUnbookmarkCell') }}</span>
@@ -89,7 +91,9 @@
           </template>
 
           <div class="mt-3 trait-group-tab-content">
-            <TraitInputSection :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            <b-form @submit.prevent>
+              <TraitInputSection :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            </b-form>
           </div>
         </b-tab>
       </b-tabs>

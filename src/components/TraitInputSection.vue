@@ -32,7 +32,7 @@
     </div>
     <p @click="toggleExpanded" :class="{ 'text-muted': true, 'trait-description': !trialDescriptionExpanded }" :title="trait.description" v-if="trait.description">{{ trait.description }}</p>
 
-    <b-form-group :label="$t('formLabelMeasurementSet', { position: $n(index) })"
+    <b-form-group :label="trait.setSize > 1 ? $t('formLabelMeasurementSet', { position: $n(index) }) : $t('formLabelMeasurementEntry')"
                   v-for="index in (trait.setSize || 1)"
                   :key="`${trait.id}-${index}`"
                   :label-for="`trait-input-${trait.id}-${index}`">

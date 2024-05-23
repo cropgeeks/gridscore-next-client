@@ -3,6 +3,7 @@
     <b-button-toolbar>
       <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
       <JumpToDropdown :trial="trial" />
+      <b-button :title="$t('toolbarPlotComments')" @click="$refs.plotCommentModal.show()"><IBiChatRightTextFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPlotComments') }}</span></b-button>
       <b-button :title="$t('toolbarPersonSelector')" @click="setForcePersonSelector(true)" v-if="trial.people && trial.people.length > 1"><IBiPersonLinesFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPersonSelector') }}</span></b-button>
       <b-button :title="$t('toolbarHelp')" @click="startTour"><IBiQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
       <b-button v-if="trial.transactionCount > 0" @click="synchronize" variant="info"><IBiCloudUploadFill /> {{ $t('toolbarSyncInfo', trial.transactionCount) }}</b-button>
@@ -22,6 +23,7 @@
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
+    <PlotCommentListModal :trial="trial" ref="plotCommentModal" />
     <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @data-changed="loadTrial" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" v-if="searchMatches" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned" />
@@ -230,12 +232,12 @@ export default {
       getTrialById(this.storeSelectedTrial).then(trial => {
         this.trial = trial
 
-        this.updateTraitProgress()
+        this.updateLocalCaches()
 
         this.startGeoTracking()
       })
     },
-    updateTraitProgress: function () {
+    updateLocalCaches: function () {
       const data = getTrialDataCached()
 
       if (data && this.trial) {
@@ -344,16 +346,16 @@ export default {
     }
 
     emitter.on('trial-properties-changed', this.trialPropertiesChanged)
-    emitter.on('plot-cache-changed', this.updateTraitProgress)
-    emitter.on('trial-data-loaded', this.updateTraitProgress)
+    emitter.on('plot-cache-changed', this.updateLocalCaches)
+    emitter.on('trial-data-loaded', this.updateLocalCaches)
     emitter.on('tts', this.tts)
 
     // this.fakeGpsMovement()
   },
   beforeUnmount: function () {
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)
-    emitter.off('plot-cache-changed', this.updateTraitProgress)
-    emitter.off('trial-data-loaded', this.updateTraitProgress)
+    emitter.off('plot-cache-changed', this.updateLocalCaches)
+    emitter.off('trial-data-loaded', this.updateLocalCaches)
     emitter.off('tts', this.tts)
 
     if (this.geolocationWatchId && navigator.geolocation) {
