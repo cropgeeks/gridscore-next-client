@@ -127,7 +127,6 @@ export default {
     },
     visibleComments: function () {
       if (this.allComments) {
-        console.log('visibleComments')
         let copy = this.allComments.concat()
         copy.sort((a, b) => {
           let result = 0
@@ -154,7 +153,6 @@ export default {
         })
         copy = copy.filter(c => {
           if (this.searchTerm && (this.searchTerm !== '')) {
-            console.log(this.searchTerm,)
             const lower = this.searchTerm.toLowerCase()
             // Check if the display name matches
             if (c.displayName.toLowerCase().includes(lower)) {
