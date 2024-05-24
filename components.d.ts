@@ -182,6 +182,7 @@ declare module 'vue' {
     IBiHandIndex: typeof import('~icons/bi/hand-index')['default']
     IBiHouse: typeof import('~icons/bi/house')['default']
     IBiHr: typeof import('~icons/bi/hr')['default']
+    IBiIncognito: typeof import('~icons/bi/incognito')['default']
     IBiInfoCircle: typeof import('~icons/bi/info-circle')['default']
     IBiInfoCircleFill: typeof import('~icons/bi/info-circle-fill')['default']
     IBiJournalArrowUp: typeof import('~icons/bi/journal-arrow-up')['default']

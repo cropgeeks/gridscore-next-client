@@ -29,28 +29,30 @@
     </h2>
     <p>{{ $t('widgetTrialSelectorText') }}</p>
 
-    <b-row>
-      <b-col cols=12 md=6 lg=4>
-        <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
-          <b-form-input v-model.trim="searchTerm" id="search-term" type="search" />
-        </b-form-group>
-      </b-col>
-      <b-col cols=12 md=6 lg=4>
-        <b-form-group :label="$t('formLabelTrialSelectorOrderBy')" :description="$t('formDescriptionTrialSelectorOrderBy')" label-for="orderBy">
-          <b-form-select :options="sortOptions" v-model="sortOrder" id="orderBy" />
-        </b-form-group>
-      </b-col>
-      <b-col cols=12 md=6 lg=4>
-        <b-form-group :label="$t('formLabelTrialSelectorSortDescending')" :description="$t('formDescriptionTrialSelectorSortDescending')" label-for="order-asc">
-          <div>
-            <b-button-group>
-              <b-button variant="outline-secondary" @click="sortDescending = false" :pressed="sortDescending === false"><IBiSortDownAlt /> {{ $t('formCheckboxSortOrderAscending') }}</b-button>
-              <b-button variant="outline-secondary" @click="sortDescending = true" :pressed="sortDescending === true"><IBiSortDown /> {{ $t('formCheckboxSortOrderDescending') }}</b-button>
-            </b-button-group>
-          </div>
-        </b-form-group>
-      </b-col>
-    </b-row>
+    <b-form @submit.prevent>
+      <b-row>
+        <b-col cols=12 md=6 lg=4>
+          <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
+            <b-form-input v-model.trim="searchTerm" id="search-term" type="search" />
+          </b-form-group>
+        </b-col>
+        <b-col cols=12 md=6 lg=4>
+          <b-form-group :label="$t('formLabelTrialSelectorOrderBy')" :description="$t('formDescriptionTrialSelectorOrderBy')" label-for="orderBy">
+            <b-form-select :options="sortOptions" v-model="sortOrder" id="orderBy" />
+          </b-form-group>
+        </b-col>
+        <b-col cols=12 md=6 lg=4>
+          <b-form-group :label="$t('formLabelTrialSelectorSortDescending')" :description="$t('formDescriptionTrialSelectorSortDescending')" label-for="order-asc">
+            <div>
+              <b-button-group>
+                <b-button variant="outline-secondary" @click="sortDescending = false" :pressed="sortDescending === false"><IBiSortDownAlt /> {{ $t('formCheckboxSortOrderAscending') }}</b-button>
+                <b-button variant="outline-secondary" @click="sortDescending = true" :pressed="sortDescending === true"><IBiSortDown /> {{ $t('formCheckboxSortOrderDescending') }}</b-button>
+              </b-button-group>
+            </div>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </b-form>
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">

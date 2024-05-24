@@ -565,7 +565,7 @@ $danger: #EA2027;
 .modal-dialog {
   z-index: 1051;
 }
-form div[role=group]:not(.input-group) {
+form div[role=group]:not(.input-group):not(.btn-group) {
   margin-bottom: 1rem;
 }
 .form-input-file {

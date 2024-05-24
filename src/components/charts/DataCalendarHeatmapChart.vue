@@ -47,6 +47,9 @@ export default {
     }
   },
   watch: {
+    storeLocale: function () {
+      this.update()
+    },
     isHorizontal: function () {
       this.update()
     },

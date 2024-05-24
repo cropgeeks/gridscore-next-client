@@ -477,6 +477,11 @@
         "type": "new",
         "title": "High rep count warning",
         "text": "We noticed that some trials are created with an extremely high number of distinct rep values (sometimes each plot has a unique value). While this is perfectly valid, it significantly slows down the germplasm rep heatmap and makes it pretty much pointless. We have added a warning during setup to highlight this in case it's unintentional."
+      },
+      {
+        "type": "new",
+        "title": "Plot comment list",
+        "text": "A list of all plot trials recorded across the trial is now available using the comment icon above the data input table. The list can be filtered and sorted to find the comments you're looking for."
       }
     ]
   }

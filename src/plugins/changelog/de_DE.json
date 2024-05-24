@@ -477,6 +477,11 @@
         "type": "new",
         "title": "High rep count warning",
         "text": "Wir haben festgestellt, dass einige Tests mit einer extrem hohen Anzahl an verschiedenen Replikationswerten erstellt werden (manchmal hat jeder Plot einen einzigartigen Wert). Obwohl dies durchaus zulässig ist, verlangsamt es die Keimplasma-Replikations-Heatmap erheblich und macht sie weitgehend nutzlos. Wir haben während der Erstellung eines Versuches eine Warnung hinzugefügt, um dies hervorzuheben, falls es unbeabsichtigt ist."
+      },
+      {
+        "type": "new",
+        "title": "Beetkommentarliste",
+        "text": "Eine Liste aller Beetkommentare die über den gesamten Versuch aufgezeichnet wurden ist nun über das Kommentarsymbol über der Hauptdateneingabe verfügbar. Die Liste kann durchsucht und sortiert werden um die Kommentare zu finden nach denen gesucht wird."
       }
     ]
   }

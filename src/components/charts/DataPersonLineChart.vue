@@ -29,6 +29,9 @@ export default {
     ])
   },
   watch: {
+    storeLocale: function () {
+      this.update()
+    },
     storeDarkMode: function () {
       this.update()
     },

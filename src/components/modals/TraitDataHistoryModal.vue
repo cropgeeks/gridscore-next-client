@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TraitInput from '@/components/TraitInput.vue'
 import { changeTrialsData } from '@/plugins/idb'
 import { isProxy, toRaw } from 'vue'
@@ -103,6 +104,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeSelectedTrialPerson'
+    ]),
     currentDateIndex: function () {
       if (this.allDates && this.allDates.length > 0) {
         return this.allDates.indexOf(this.currentDate)
@@ -234,6 +238,7 @@ export default {
           if (changed) {
             changes.push({
               traitId: this.trait.id,
+              personId: this.storeSelectedTrialPerson,
               values: ms,
               timestamp: ts
             })

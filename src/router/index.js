@@ -75,4 +75,11 @@ const router = createRouter({
   ]
 })
 
+router.afterEach((to, from) => {
+  if (from.name !== to.name) {
+    // Make sure to remove any overflow restrictions that may have been added and not automatically removed on page navigation
+    document.body.style.removeProperty('overflow')
+  }
+})
+
 export default router
