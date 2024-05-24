@@ -457,6 +457,11 @@ export default {
           return localSet.size > 1
         }).length > 0
 
+        if (reps.length > 10 && reps.length > allGermplasm.length / 2) {
+          // If there are this many reps, they're probably fairly unique identifiers and this heatmap makes no sense.
+          hasActualReps = false
+        }
+
         if (hasActualReps) {
           this.$emit('rep-count-changed', this.reps.filter(r => r !== undefined && r !== null).length)
         } else {
