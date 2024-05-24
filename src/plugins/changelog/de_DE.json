@@ -482,6 +482,11 @@
         "type": "new",
         "title": "Beetkommentarliste",
         "text": "Eine Liste aller Beetkommentare die über den gesamten Versuch aufgezeichnet wurden ist nun über das Kommentarsymbol über der Hauptdateneingabe verfügbar. Die Liste kann durchsucht und sortiert werden um die Kommentare zu finden nach denen gesucht wird."
+      },
+      {
+        "type": "new",
+        "title": "Merkmalsdefinitionen-Export",
+        "text": "Neue Optionen zum Export von Merkmalsdefinitionen in verschiedenen Formaten wurden hinzugefügt."
       }
     ]
   }

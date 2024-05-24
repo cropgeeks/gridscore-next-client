@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container fluid class="my-4">
+    <b-container class="my-4">
       <h1 class="display-4">{{ $t('pageDataStatisticsTitle') }}</h1>
       <p>{{ $t('pageDataStatisticsText') }}</p>
 
