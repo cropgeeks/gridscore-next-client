@@ -1,5 +1,6 @@
 <template>
-  <div ref="wrapper">
+  <div>
+    <h3>{{ $t('widgetDataPersonChartBarTitle') }}</h3>
     <div ref="chart" v-if="chartData" />
   </div>
 </template>
@@ -73,7 +74,8 @@ export default {
         legend: {
           bgcolor: 'rgba(0,0,0,0)',
           orientation: 'h',
-          font: { color: this.storeDarkMode ? 'white' : 'black' }
+          font: { color: this.storeDarkMode ? 'white' : 'black' },
+          traceorder: 'normal'
         }
       }
 

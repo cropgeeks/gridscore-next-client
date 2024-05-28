@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="my-4">
+    <b-container fluid class="my-4">
       <h1 class="display-4">{{ $t('pageDataStatisticsTitle') }}</h1>
       <p>{{ $t('pageDataStatisticsText') }}</p>
 
@@ -82,12 +82,14 @@
               <DataPersonLineChart :chartData="personLineData[trial.localId]" />
             </b-col>
             <b-col cols=12 md=6 v-if="chartData && chartData[trial.localId] && Object.keys(chartData[trial.localId]).length > 0">
+              <h3>{{ $t('widgetTrialDataCalendarTitle') }}</h3>
               <div v-for="year in Object.keys(chartData[trial.localId])" :key="`trial-${trial.localId}-year-${year}`">
-                <h3>{{ year }}</h3>
+                <h4>{{ year }}</h4>
                 <DataCalendarHeatmapChart :chartData="chartData[trial.localId][year]" />
               </div>
             </b-col>
             <b-col cols=12 md=6>
+              <h3>{{ $t('widgetTrialDataMapTitle') }}</h3>
               <div :ref="`map-${trial.localId}`" class="data-map" />
             </b-col>
           </b-row>
@@ -111,6 +113,7 @@ import 'leaflet/dist/leaflet.css'
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+import { categoricalColors } from '@/plugins/color'
 
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
@@ -235,12 +238,16 @@ export default {
           areaUnit: 'meter'
         }
         calendarData[trial.localId] = {}
-        plotInfo[trial.localId] = []
+        plotInfo[trial.localId] = {
+          overall: []
+        }
         personBarData[trial.localId] = {}
         personLineData[trial.localId] = {}
 
         if (trial.people && trial.people.length > 0) {
           trial.people.forEach(p => {
+            plotInfo[trial.localId][p.id] = []
+
             personBarData[trial.localId][p.id] = {
               name: p.name,
               y: trial.traits.map(t => t.name),
@@ -265,6 +272,8 @@ export default {
         })
 
         Object.values(d).forEach(plot => {
+          const people = new Set()
+
           Object.keys(plot.measurements).forEach(t => {
             const m = plot.measurements[t]
 
@@ -284,6 +293,8 @@ export default {
                 }
 
                 personLineData[trial.localId][mm.personId].dateMap[date]++
+
+                people.add(mm.personId)
               }
 
               const date = toLocalDateString(mm.timestamp)
@@ -306,10 +317,17 @@ export default {
           })
 
           if (plot.geography && (plot.geography.corners || plot.geography.center)) {
-            plotInfo[trial.localId].push({
+            plotInfo[trial.localId].overall.push({
               corners: plot.geography.corners,
               center: plot.geography.center
             })
+
+            const peopleArray = [...people]
+
+            peopleArray.forEach(person => plotInfo[trial.localId][person].push({
+              corners: plot.geography.corners,
+              center: plot.geography.center
+            }))
           }
 
           if (plot.comments) {
@@ -319,32 +337,34 @@ export default {
 
         // Create the geojson and the layer, then add to the map
         if (plotInfo[trial.localId]) {
-          const points = []
+          Object.keys(plotInfo[trial.localId]).forEach(person => {
+            const points = []
 
-          plotInfo[trial.localId].forEach(p => {
-            if (p.center) {
-              points.push(p.center)
-            } else if (p.corners) {
-              if (p.corners.topLeft) {
-                points.push(p.corners.topLeft)
+            plotInfo[trial.localId][person].forEach(p => {
+              if (p.center) {
+                points.push(p.center)
+              } else if (p.corners) {
+                if (p.corners.topLeft) {
+                  points.push(p.corners.topLeft)
+                }
+                if (p.corners.topRight) {
+                  points.push(p.corners.topRight)
+                }
+                if (p.corners.bottomRight) {
+                  points.push(p.corners.bottomRight)
+                }
+                if (p.corners.bottomLeft) {
+                  points.push(p.corners.bottomLeft)
+                }
               }
-              if (p.corners.topRight) {
-                points.push(p.corners.topRight)
-              }
-              if (p.corners.bottomRight) {
-                points.push(p.corners.bottomRight)
-              }
-              if (p.corners.bottomLeft) {
-                points.push(p.corners.bottomLeft)
-              }
+            })
+
+            plotInfo[trial.localId][person] = {
+              // plots: plotInfoToGeoJson(plotInfo[trial.localId], false),
+              plots: null,
+              points: points
             }
           })
-
-          plotInfo[trial.localId] = {
-            // plots: plotInfoToGeoJson(plotInfo[trial.localId], false),
-            plots: null,
-            points: points
-          }
         }
 
         const days = [...tempStats[trial.localId].activeDays].sort((a, b) => a.localeCompare(b))
@@ -390,11 +410,6 @@ export default {
       this.polygons = {}
 
       this.$nextTick(() => this.updateMaps())
-    },
-    areaUnit: function () {
-      Object.keys(this.polygons).forEach(trialId => {
-        this.updatePolygon(trialId, this.stats[trialId])
-      })
     }
   },
   methods: {
@@ -485,7 +500,7 @@ export default {
 
         const bounds = L.latLngBounds()
 
-        if (pi.plots) {
+        if (pi.overall.plots) {
           const geoJsonLayer = L.geoJSON(pi.plots, {
             style: (feature) => {
               return {
@@ -506,50 +521,49 @@ export default {
           }
         }
 
-        if (pi.points && pi.points.length > 0) {
-          const convexHullPoints = convexHull(pi.points.map(p => {
-            return {
-              x: p.lng,
-              y: p.lat
-            }
-          }))
+        const people = this.trials.find(t => t.localId === trialId).people
 
-          this.stats[trialId].areaUnit = 'meter'
-          this.stats[trialId].area = geodesicArea(convexHullPoints.map(p => { return { lng: p.x, lat: p.y } }))
+        let personIndex = 0
+        Object.keys(pi).forEach(person => {
+          const personData = pi[person]
 
-          const pts = []
+          if (personData.points && personData.points.length > 0) {
+            const convexHullPoints = convexHull(personData.points.map(p => {
+              return {
+                x: p.lng,
+                y: p.lat
+              }
+            }))
 
-          convexHullPoints.forEach(e => {
-            bounds.extend([e.y, e.x])
-            pts.push([e.y, e.x])
-          })
+            this.stats[trialId].areaUnit = 'meter'
+            this.stats[trialId].area = geodesicArea(convexHullPoints.map(p => { return { lng: p.x, lat: p.y } }))
 
-          const polygon = L.polygon(pts)
+            const pts = []
 
-          this.polygons[trialId] = polygon
+            convexHullPoints.forEach(e => {
+              bounds.extend([e.y, e.x])
+              pts.push([e.y, e.x])
+            })
 
-          this.updatePolygon(trialId, this.stats[trialId])
+            const personObject = people.find(p => p.id === person)
 
-          polygon.addTo(map)
-        }
+            const polygon = L.polygon(pts, personObject ? { color: categoricalColors.D3schemeCategory10[(personIndex++) % categoricalColors.D3schemeCategory10.length] } : null)
+
+            const displayValue = `${personObject ? personObject.name : 'Overall'}: ${(this.areaUnits[this.areaUnit].convert(this.stats[trialId].area) || 0).toLocaleString()}`
+            polygon.bindTooltip(`${displayValue} ${this.areaUnits[this.areaUnit].unit}`, {
+              permanent: !personObject,
+              direction: !personObject ? 'center' : 'top',
+              sticky: !!personObject
+            })
+
+            polygon.addTo(map)
+          }
+        })
 
         if (bounds && bounds.isValid()) {
           const size = map.getSize()
           map.fitBounds(bounds, { padding: [size.x / 4, size.y / 4] })
         }
-      })
-    },
-    updatePolygon: function (trialId, stats) {
-      if (!this.polygons[trialId]) {
-        return
-      }
-
-      const displayValue = (this.areaUnits[this.areaUnit].convert(stats.area) || 0).toLocaleString()
-
-      this.polygons[trialId].unbindTooltip()
-      this.polygons[trialId].bindTooltip(`${displayValue} ${this.areaUnits[this.areaUnit].unit}`, {
-        permanent: true,
-        direction: 'center'
       })
     }
   },

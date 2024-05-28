@@ -92,7 +92,7 @@ export default {
       })
 
       const x = Array.from(Array(31).keys()).map(i => i + 1)
-      const y = this.months
+      const y = this.months.concat()
 
       if (this.isHorizontal) {
         z = z[0].map((col, i) => z.reverse().map(row => row[i]))

@@ -1,5 +1,6 @@
 <template>
-  <div ref="wrapper">
+  <div>
+    <h3>{{ $t('widgetDataPersonChartLineTitle') }}</h3>
     <div ref="chart" v-if="chartData" />
   </div>
 </template>
