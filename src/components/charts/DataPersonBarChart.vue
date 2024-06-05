@@ -54,7 +54,7 @@ export default {
       const data = Object.values(this.chartData)
 
       const layout = {
-        height: data[0].y.length * 50,
+        height: Math.max(300, data[0].y.length * 50),
         margin: {
           t: 0
         },

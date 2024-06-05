@@ -6,7 +6,7 @@
            no-fade
            size="lg"
            ref="changelogModal">
-    <p>{{ $t('modalTextChangelog') }}</p>
+    <p v-html="$t('modalTextChangelog')" />
 
     <b-pagination :per-page="perPage" :total-rows="totalCount" v-model="page" v-if="totalCount > perPage" />
 

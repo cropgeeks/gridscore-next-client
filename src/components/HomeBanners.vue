@@ -1,21 +1,34 @@
 <template>
   <b-row>
-    <b-col cols=6 md=3 class="mb-4" v-for="banner in homeBanners" :key="`home-banner-${banner.id}`">
+    <b-col cols=12 md=6 class="mb-4" v-for="banner in homeBanners" :key="`home-banner-${banner.id}`">
       <b-card class="home-card h-100" no-body>
-        <b-card-img class="p-2 p-md-4 p-lg-5" :top="true" :src="`img/${banner.image}`" />
-        <b-card-body>
-          <b-card-title>{{ banner.title }}</b-card-title>
-          <b-card-subtitle>{{ banner.subtitle }}</b-card-subtitle>
-        </b-card-body>
-        <b-button variant="primary" class="stretched-link" :to="banner.to"><IBiCaretRight /> {{ $t('buttonSelect') }}</b-button>
+        <b-row class="g-0 h-100">
+          <b-col cols=5 xl=4 :class="storeDarkMode ? 'bg-dark' : 'bg-light'">
+            <b-card-img class="p-2 p-md-4 h-100" :src="`img/${banner.image}`" />
+          </b-col>
+          <b-col cols=7 xl=8>
+            <b-card-body class="d-flex flex-column justify-content-between h-100">
+              <div>
+                <b-card-title>{{ banner.title }}</b-card-title>
+                <b-card-subtitle>{{ banner.subtitle }}</b-card-subtitle>
+              </div>
+              <b-button variant="primary" class="align-self-start stretched-link" :to="banner.to"><IBiCaretRight /> {{ $t('buttonSelect') }}</b-button>
+            </b-card-body>
+          </b-col>
+        </b-row>
       </b-card>
     </b-col>
   </b-row>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   computed: {
+    ...mapGetters([
+      'storeDarkMode'
+    ]),
     homeBanners: function () {
       return [{
         id: 'setup',

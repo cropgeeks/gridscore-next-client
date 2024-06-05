@@ -126,12 +126,14 @@
             <b-dropdown-group id="import-group" :header="$t('dropdownSectionImportTraits')">
               <b-dropdown-item-button @click="importExportJson(false)">{{ $t('dropdownOptionImportTraitsJson') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="importExportGerminate(false)">{{ $t('dropdownOptionImportTraitsGerminate') }}</b-dropdown-item-button>
+              <b-dropdown-item-button @click="importExportTabular(false)">{{ $t('dropdownOptionImportTraitsTabular') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="importOtherTrial">{{ $t('dropdownOptionImportTraitsOtherTrial') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="$refs.brapiTraitImportModal.show()">{{ $t('dropdownOptionImportTraitsBrapi') }}</b-dropdown-item-button>
             </b-dropdown-group>
             <b-dropdown-group id="export-group" :header="$t('dropdownSectionExportTraits')">
               <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportJson(true)">{{ $t('dropdownOptionExportTraitsJson') }}</b-dropdown-item-button>
               <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportGerminate(true)">{{ $t('dropdownOptionExportTraitsGerminate') }}</b-dropdown-item-button>
+              <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportTabular(true)">{{ $t('dropdownOptionExportTraitsTabular') }}</b-dropdown-item-button>
             </b-dropdown-group>
           </b-dropdown>
         </div>
@@ -179,6 +181,7 @@
 
     <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" @data-changed="importTraits" />
     <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" @data-changed="importTraits" />
+    <TraitImportExportTabularModal :traits="traitsToExport" ref="traitImportExportTabularModal" @data-changed="importTraits" />
     <TraitImportTrialModal ref="traitImportTrialModal" @data-changed="importTraits" />
     <BrapiTraitImportModal ref="brapiTraitImportModal" @traits-selected="importBrapiTraits" />
   </div>
@@ -188,6 +191,7 @@
 import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal.vue'
 import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal.vue'
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
+import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
 import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal.vue'
 import { getTraitTypeText } from '@/plugins/misc'
 import draggable from 'vuedraggable'
@@ -201,6 +205,7 @@ export default {
     draggable,
     TraitImportExportGridScoreModal,
     TraitImportExportGerminateModal,
+    TraitImportExportTabularModal,
     TraitImportTrialModal,
     BrapiTraitImportModal
   },
@@ -259,7 +264,9 @@ export default {
             delete t.editable
             delete t.color
             delete t.progress
-            t.timeframe = null
+            if (!t.timeframe) {
+              t.timeframe = null
+            }
             return t
           })
         } else {
@@ -406,6 +413,22 @@ export default {
     },
     importOtherTrial: function () {
       this.$refs.traitImportTrialModal.show()
+    },
+    importExportTabular: function (xport) {
+      if (xport && this.traits && this.traits.length > 0) {
+        const temp = JSON.parse(JSON.stringify(this.traits))
+        temp.forEach(t => {
+          delete t.id
+          delete t.progress
+          delete t.editable
+          delete t.color
+        })
+        this.traitsToExport = temp
+      } else {
+        this.traitsToExport = null
+      }
+
+      this.$nextTick(() => this.$refs.traitImportExportTabularModal.show())
     },
     importExportGerminate: function (xport) {
       if (xport && this.traits && this.traits.length > 0) {

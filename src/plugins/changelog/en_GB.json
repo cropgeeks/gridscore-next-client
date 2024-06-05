@@ -456,7 +456,7 @@
   },
   {
     "version": "3.0.1",
-    "date": "2024-XX-XX",
+    "date": "2024-06-05",
     "items": [
       {
         "type": "new",
@@ -487,6 +487,11 @@
         "type": "new",
         "title": "Trait definition export",
         "text": "Added more ways in which trait definitions can be exported in a variety of formats."
+      },
+      {
+        "type": "new",
+        "title": "Germplasm control/check marking",
+        "text": "Added a way to mark all occurrences of a germplasm identifier across the trial as control/check during setup."
       }
     ]
   }

@@ -88,6 +88,7 @@
               <b-dropdown :text="$t('dropdownExportTraits')" class="align-self-end">
                 <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportJson(true)">{{ $t('dropdownOptionExportTraitsJson') }}</b-dropdown-item-button>
                 <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportGerminate(true)">{{ $t('dropdownOptionExportTraitsGerminate') }}</b-dropdown-item-button>
+                <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportTabular(true)">{{ $t('dropdownOptionExportTraitsTabular') }}</b-dropdown-item-button>
               </b-dropdown>
             </div>
             <b-row>
@@ -147,12 +148,14 @@
     <LayoutFeedbackModal :feedback="layoutFeedback" ref="layoutFeedbackModal" />
     <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" />
     <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" />
+    <TraitImportExportTabularModal :traits="traitsToExport" ref="traitImportExportTabularModal" />
   </b-modal>
 </template>
 
 <script>
 import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal.vue'
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
+import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
 import TrialLayoutCorners from '@/components/TrialLayoutCorners.vue'
 import MarkerSetup from '@/components/MarkerSetup.vue'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal.vue'
@@ -166,6 +169,7 @@ export default {
   components: {
     TraitImportExportGerminateModal,
     TraitImportExportGridScoreModal,
+    TraitImportExportTabularModal,
     LayoutFeedbackModal,
     MarkerSetup,
     TrialLayoutCorners,
@@ -245,6 +249,22 @@ export default {
     }
   },
   methods: {
+    importExportTabular: function (xport) {
+      if (xport && this.traits && this.traits.length > 0) {
+        const temp = JSON.parse(JSON.stringify(this.traits))
+        temp.forEach(t => {
+          delete t.id
+          delete t.progress
+          delete t.editable
+          delete t.color
+        })
+        this.traitsToExport = temp
+      } else {
+        this.traitsToExport = null
+      }
+
+      this.$nextTick(() => this.$refs.traitImportExportTabularModal.show())
+    },
     importExportGerminate: function (xport) {
       if (xport && this.traits && this.traits.length > 0) {
         const temp = JSON.parse(JSON.stringify(this.traits))

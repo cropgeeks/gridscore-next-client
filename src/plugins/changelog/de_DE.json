@@ -456,7 +456,7 @@
   },
   {
     "version": "3.0.1",
-    "date": "2024-XX-XX",
+    "date": "2024-06-05",
     "items": [
       {
         "type": "new",
@@ -487,6 +487,11 @@
         "type": "new",
         "title": "Merkmalsdefinitionen-Export",
         "text": "Neue Optionen zum Export von Merkmalsdefinitionen in verschiedenen Formaten wurden hinzugefügt."
+      },
+      {
+        "type": "new",
+        "title": "Keimplasma Kontrollmarkierung",
+        "text": "Neue Methode zum Markieren aller Vorkommen eines Keimplasmaidentifikators als Kontrollen im gesamten Versuch beim Erstellen des Versuches."
       }
     ]
   }

@@ -1,13 +1,34 @@
 <template>
   <div>
-    <b-dropdown variant="primary">
-      <template #button-content>
-        <IBiFileEarmarkPlus /> {{ $t('buttonImportLayoutData') }}
-      </template>
-      <b-dropdown-item @click="$refs.germplasmInput.show()"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
-      <b-dropdown-item @click="$refs.repInput.show()"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
-      <b-dropdown-item @click="$refs.fieldbookInput.show()"><IBiFileEarmarkSpreadsheet /> {{ $t('dropdownImportFieldHub') }}</b-dropdown-item>
-    </b-dropdown>
+    <b-form @submit.prevent>
+      <b-row>
+        <b-col cols=12 md=6>
+          <b-dropdown variant="primary">
+            <template #button-content>
+              <IBiFileEarmarkPlus /> {{ $t('buttonImportLayoutData') }}
+            </template>
+            <b-dropdown-item @click="$refs.germplasmInput.show()"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="$refs.repInput.show()"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="$refs.fieldbookInput.show()"><IBiFileEarmarkSpreadsheet /> {{ $t('dropdownImportFieldHub') }}</b-dropdown-item>
+          </b-dropdown>
+        </b-col>
+        <b-col cols=12 md=6>
+          <b-form-group :label="$t('formLabelSetupGermplasmGridMarkCheck')" label-for="check">
+            <b-input-group>
+              <b-form-input id="check" v-model="checkName" @keyup.exact.enter="markChecks" />
+              <template #append>
+                <b-button @click="markChecks" :disabled="!checkName || checkName.length < 1"><IBiCheck2Square /></b-button>
+              </template>
+            </b-input-group>
+            <template #description>
+              <p class="mb-0">{{ $t('formDescriptionSetupGermplasmGridMarkCheck') }}</p>
+              <span class="me-3"><IBiListCheck /> <a href="#" @click.prevent="markAll(true)">{{ $t('buttonMarkAll') }}</a></span>
+              <span><IBiList /> <a href="#" @click.prevent="markAll(false)">{{ $t('buttonUnmarkAll') }}</a></span>
+            </template>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </b-form>
 
     <div class="table-responsive responsive-wrapper mt-3">
       <table ref="germplasmTable" class="table table-striped table-bordered grid-table" ></table>
@@ -48,7 +69,8 @@ export default {
   },
   data: function () {
     return {
-      germplasmMap: {}
+      germplasmMap: {},
+      checkName: null
     }
   },
   watch: {
@@ -73,6 +95,31 @@ export default {
     }
   },
   methods: {
+    markChecks: function () {
+      if (!this.checkName || this.checkName.length < 1) {
+        return
+      }
+
+      const match = this.checkName.trim().toLowerCase()
+      for (let row = 0; row < this.layout.rows; row++) {
+        for (let column = 0; column < this.layout.columns; column++) {
+          const germplasm = document.querySelector(`#germplasm-${row}-${column}`).value
+
+          if (germplasm && germplasm.trim().toLowerCase() === match) {
+            document.querySelector(`#control-${row}-${column}`).checked = true
+          }
+        }
+      }
+
+      this.checkName = null
+    },
+    markAll: function (mark) {
+      for (let row = 0; row < this.layout.rows; row++) {
+        for (let column = 0; column < this.layout.columns; column++) {
+          document.querySelector(`#control-${row}-${column}`).checked = mark
+        }
+      }
+    },
     updateTableFieldbook: function (dataMap) {
       this.germplasmMap = dataMap
 
