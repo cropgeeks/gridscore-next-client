@@ -24,8 +24,8 @@
           </b-form-group>
 
           <b-button-group>
-            <b-button @click="onSelectTraits(true)"><BIconListCheck /> {{ $t('buttonSelectAll') }}</b-button>
-            <b-button @click="onSelectTraits(false)"><BIconListUl /> {{ $t('buttonSelectNone') }}</b-button>
+            <b-button @click="onSelectTraits(true)"><IBiListCheck /> {{ $t('buttonSelectAll') }}</b-button>
+            <b-button @click="onSelectTraits(false)"><IBiListUl /> {{ $t('buttonSelectNone') }}</b-button>
           </b-button-group>
 
           <!-- Checkbox group representing the list of traits -->
@@ -41,9 +41,7 @@
 </template>
 
 <script>
-import BrapiModal from '@/components/modals/BrapiModal'
-
-import { BIconListCheck, BIconListUl } from 'bootstrap-vue'
+import BrapiModal from '@/components/modals/BrapiModal.vue'
 
 import { brapiGetVariables, brapiDefaultCatchHandler } from '@/plugins/brapi'
 
@@ -53,8 +51,6 @@ import { brapiGetVariables, brapiDefaultCatchHandler } from '@/plugins/brapi'
  */
 export default {
   components: {
-    BIconListCheck,
-    BIconListUl,
     BrapiModal
   },
   data: function () {
@@ -111,18 +107,18 @@ export default {
               }
 
               if (type && type.length > 0) {
-                type = `<span class="badge badge-primary ml-2">${type}</span>`
+                type = `<span class="badge badge-primary ms-2">${type}</span>`
               }
 
               if (t.scale.validValues) {
                 if (t.scale.validValues.minimumValue !== undefined && t.scale.validValues.minimumValue !== null) {
-                  restrictions += `<span class="badge badge-secondary ml-2">&ge;${t.scale.validValues.minimumValue}</span>`
+                  restrictions += `<span class="badge badge-secondary ms-2">&ge;${t.scale.validValues.minimumValue}</span>`
                 }
                 if (t.scale.validValues.maximumValue !== undefined && t.scale.validValues.maximumValue !== null) {
-                  restrictions += `<span class="badge badge-secondary ml-2">&le;${t.scale.validValues.maximumValue}</span>`
+                  restrictions += `<span class="badge badge-secondary ms-2">&le;${t.scale.validValues.maximumValue}</span>`
                 }
                 if (t.scale.validValues.categories) {
-                  restrictions += `<span class="badge badge-secondary ml-2">${t.scale.validValues.categories.map(tr => tr.value).join(', ')}</span>`
+                  restrictions += `<span class="badge badge-secondary ms-2">${t.scale.validValues.categories.map(tr => tr.value).join(', ')}</span>`
                 }
               }
             }

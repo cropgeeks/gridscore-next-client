@@ -103,7 +103,7 @@ export default {
             return trait
           })
 
-          this.$emit('change', mapped)
+          this.$emit('data-changed', mapped)
           this.hide()
         } catch {
           this.dataValid = false
@@ -144,7 +144,7 @@ export default {
     },
     reset: function () {
       if (this.traits) {
-        let text = 'Name\tShort Name\tDescription\tData Type\tUnit Name\tUnit Abbreviation\tUnit Descriptions\tTrait categories (comma separated)\tMin (only for numeric traits)\tMax (only for numeric traits)'
+        let text = this.expectedColumns.join('\t')
 
         this.traits.forEach(t => {
           text += `\n${t.name}\t\t${t.description || ''}\t${this.toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`

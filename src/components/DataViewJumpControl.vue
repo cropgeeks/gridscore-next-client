@@ -1,18 +1,18 @@
 <template>
   <div>
-    <b-button class="btn-circle" id="jump-navigation" variant="primary"><BIconArrowsMove /></b-button>
+    <b-button class="btn-circle" id="jump-navigation" variant="primary" @click="visible = !visible"><IBiArrowsMove /></b-button>
 
-    <b-popover ref="navigationPopover" target="jump-navigation" boundary="viewport" container="jump-navigation" triggers="click blur" placement="left" :variant="storeDarkMode ? 'dark' : null">
-      <div class="direction-grid p-2">
-        <div><b-button @click.capture.stop="moveTowards('topLeft')"><BIconArrowUp :rotate="-45" /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('top')"><BIconArrowUp :rotate="0" /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('topRight')"><BIconArrowUp :rotate="45" /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('left')"><BIconArrowUp :rotate="-90" /></b-button></div>
-        <div><b-button @click.capture.stop="$refs.navigationPopover.$emit('close')"><BIconSlashCircle /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('right')"><BIconArrowUp :rotate="90" /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('bottomLeft')"><BIconArrowUp :rotate="-135" /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('bottom')"><BIconArrowUp :rotate="180" /></b-button></div>
-        <div><b-button @click.capture.stop="moveTowards('bottomRight')"><BIconArrowUp :rotate="135" /></b-button></div>
+    <b-popover :model-value="visible" manual no-fade ref="navigationPopover" target="jump-navigation" boundary="viewport" container="jump-navigation" triggers="click blur" placement="left" :variant="storeDarkMode ? 'dark' : 'light'">
+      <div class="direction-grid">
+        <div><b-button @click.capture.stop="moveTowards('topLeft')"><IBiArrowUp :style="{ transform: 'rotate(-45deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('top')"><IBiArrowUp :style="{ transform: 'rotate(0deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('topRight')"><IBiArrowUp :style="{ transform: 'rotate(45deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('left')"><IBiArrowUp :style="{ transform: 'rotate(-90deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="visible = false"><IBiSlashCircle /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('right')"><IBiArrowUp :style="{ transform: 'rotate(90deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('bottomLeft')"><IBiArrowUp :style="{ transform: 'rotate(-135deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('bottom')"><IBiArrowUp :style="{ transform: 'rotate(180deg)' }" /></b-button></div>
+        <div><b-button @click.capture.stop="moveTowards('bottomRight')"><IBiArrowUp :style="{ transform: 'rotate(135deg)' }" /></b-button></div>
       </div>
     </b-popover>
   </div>
@@ -20,15 +20,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconArrowsMove, BIconArrowUp, BIconSlashCircle } from 'bootstrap-vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconArrowsMove,
-    BIconArrowUp,
-    BIconSlashCircle
+  data: function () {
+    return {
+      visible: false
+    }
   },
   computed: {
     ...mapGetters([

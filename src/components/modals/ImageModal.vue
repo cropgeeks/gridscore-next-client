@@ -8,12 +8,12 @@
            content-class="image-modal">
     <div v-if="trial">
       <template v-if="imageData">
-        <b-button v-if="canShare" class="mb-3" @click="share"><BIconShareFill /> {{ $t('buttonShareSocial') }}</b-button>
+        <b-button v-if="canShare" class="mb-3" @click="share"><IBiShareFill /> {{ $t('buttonShareSocial') }}</b-button>
         <!-- Preview the image -->
         <b-img fluid rounded :src="imageData" class="image" />
       </template>
       <!-- Input for selecting (or taking) the image -->
-      <b-form-file v-model="imageFile" accept="image/*" capture class="file-selector" ref="imageInput" />
+      <b-form-file v-model="imageFile" id="image-tag-input" accept="image/*" capture class="file-selector" ref="imageInput" autofocus />
 
       <b-form-group class="mt-2" label-for="trait-selector" :label="$t('formLabelImageTagTraitSelector')">
         <b-form-select :options="traitOptions" multiple v-model="selectedTraits" id="trait-selector" />
@@ -28,7 +28,7 @@
       </b-form-group>
 
       <!-- Show image date if available -->
-      <b-badge v-if="imageDate"><BIconCalendar3 /> {{ imageDate.toLocaleString() }}</b-badge><br/>
+      <b-badge v-if="imageDate"><IBiCalendar3 /> {{ imageDate.toLocaleString() }}</b-badge><br/>
       <!-- Show a link to GeoHack website if geolocation is available. This is the resource Wikipedia uses and it link out to many other resources. -->
       <b-badge target="_blank" rel="noopener noreferrer" :href="`https://geohack.toolforge.org/geohack.php?params=${imageGps.latitude};${imageGps.longitude}`" v-if="imageGps && imageGps.latitude && imageGps.longitude">📍 {{ imageGps.latitude.toFixed(4) }}; {{ imageGps.longitude.toFixed(4) }}</b-badge>
 
@@ -43,18 +43,13 @@
 import { mapGetters } from 'vuex'
 
 import exifr from 'exifr/dist/lite.umd.js'
-import { BIconCalendar3, BIconShareFill } from 'bootstrap-vue'
 import { toLocalDateTimeString, truncateAfterWords } from '@/plugins/misc'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 import { saveAs } from 'file-saver'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconCalendar3,
-    BIconShareFill
-  },
   props: {
     trial: {
       type: Object,
@@ -302,8 +297,7 @@ export default {
 
         this.$nextTick(() => {
           // Open up the capture/file selector initially
-          this.$refs.imageInput.$el.childNodes[0].focus()
-          this.$refs.imageInput.$el.childNodes[0].click()
+          document.querySelector('#image-tag-input').click()
         })
       })
     },

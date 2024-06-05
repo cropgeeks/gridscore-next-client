@@ -22,8 +22,7 @@
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="number"
-                  v-model="value"
-                  trim
+                  v-model.trim="value"
                   :readonly="!editable"
                   @change="tts"
                   @keyup.enter="$emit('traverse')"
@@ -37,8 +36,7 @@
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="number"
-                  v-model="value"
-                  trim
+                  v-model.trim="value"
                   :readonly="!editable"
                   @change="tts"
                   @keyup.enter="$emit('traverse')"
@@ -49,10 +47,11 @@
     <b-form-input :id="id"
                   v-else-if="trait.dataType === 'range'"
                   ref="input"
+                  class="form-control"
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="range"
-                  :value="value"
+                  v-model="value"
                   :readonly="!editable"
                   @change="ttsAndSet"
                   :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : 0"
@@ -67,45 +66,43 @@
                     :options="traitOptionsSelect"
                     @change="tts" />
     <!-- Else show a button group for easier selection -->
-    <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= storeCategoryCountInline" ref="input" :state="formState"
+    <b-button-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= storeCategoryCountInline" ref="input" :state="formState">
+      <b-button variant="outline-secondary" v-for="option in traitOptionsButtons" :key="`trait-option-trait-${trait.id}-option-${option.value}`" :pressed="option.value === value" @click="ttsAndSetCategory(option.value)">
+        {{ option.text }}
+      </b-button>
+    </b-button-group>
+    <!-- <b-form-radio-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= storeCategoryCountInline" ref="input" :state="formState"
                         buttons
                         button-variant="outline-secondary"
-                        @change="event => { value = event; tts() }"
+                        @change="ttsAndSetCategory"
                         :checked="value"
                         :disabled="!editable"
-                        :options="traitOptionsButtons" />
-    <b-form-input :id="id" v-else v-model="value" :state="formState" ref="input" trim @change="tts" :readonly="!editable"/>
+                        :options="traitOptionsButtons" /> -->
+    <b-form-input :id="id" v-else v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
 
     <b-input-group-append v-if="trait.dataType === 'date' || trait.dataType === 'int'">
       <template v-if="trait.dataType === 'date'">
-        <b-button v-b-tooltip="$t('tooltipDataEntryDateMinusOne')" @click="setDateMinusOne" :disabled="!editable"><BIconCaretLeftFill /></b-button>
-        <b-button v-b-tooltip="$t('tooltipDataEntryDateToday')" @click="setDateToday" :disabled="!editable"><BIconCalendar3 /></b-button>
-        <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><BIconCaretRightFill /></b-button>
-        <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetValue" :disabled="!editable"><BIconSlashCircle /></b-button>
+        <b-button v-b-tooltip="$t('tooltipDataEntryDateMinusOne')" @click="setDateMinusOne" :disabled="!editable"><IBiCaretLeftFill /></b-button>
+        <b-button v-b-tooltip="$t('tooltipDataEntryDateToday')" @click="setDateToday" :disabled="!editable"><IBiCalendar3 /></b-button>
+        <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><IBiCaretRightFill /></b-button>
+        <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
       </template>
       <b-button v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
     </b-input-group-append>
     <b-input-group-append v-else-if="trait.dataType === 'range'">
       <b-input-group-text :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></b-input-group-text>
-      <b-button v-b-tooltip="$t('tooltipDataEntryRangeReset')" variant="danger" @click="resetValue" :disabled="!editable"><BIconSlashCircle /></b-button>
+      <b-button v-b-tooltip="$t('tooltipDataEntryRangeReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
     </b-input-group-append>
   </b-input-group>
 </template>
 
 <script>
-import { BIconCaretLeftFill, BIconCalendar3, BIconCaretRightFill, BIconSlashCircle } from 'bootstrap-vue'
 import { checkDataMatchesTraitType, toLocalDateString } from '@/plugins/misc'
 import { mapGetters } from 'vuex'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconCaretLeftFill,
-    BIconCalendar3,
-    BIconCaretRightFill,
-    BIconSlashCircle
-  },
   props: {
     editable: {
       type: Boolean,
@@ -279,9 +276,9 @@ export default {
 
       const diffDays = Math.floor((new Date() - current) / (1000 * 60 * 60 * 24))
       if (diffDays > -14 && diffDays < 0) {
-        emitter.emit('tts', this.$tc('ttsDaysIn', Math.abs(diffDays)))
+        emitter.emit('tts', this.$t('ttsDaysIn', Math.abs(diffDays)))
       } else if (diffDays < 14) {
-        emitter.emit('tts', this.$tc('ttsDaysAgo', Math.abs(diffDays)))
+        emitter.emit('tts', this.$t('ttsDaysAgo', Math.abs(diffDays)))
       } else {
         emitter.emit('tts', toLocalDateString(current))
       }
@@ -293,7 +290,9 @@ export default {
 
       this.value = toLocalDateString(null)
 
-      emitter.emit('tts', this.$tc('ttsDaysAgo', 0))
+      emitter.emit('tts', this.$t('ttsDaysAgo', 0))
+
+      this.$emit('traverse')
     },
     setDatePlusOne: function () {
       if (!this.editable) {
@@ -313,15 +312,19 @@ export default {
 
       const diffDays = Math.floor((new Date() - current) / (1000 * 60 * 60 * 24))
       if (diffDays > -14 && diffDays < 0) {
-        emitter.emit('tts', this.$tc('ttsDaysIn', Math.abs(diffDays)))
+        emitter.emit('tts', this.$t('ttsDaysIn', Math.abs(diffDays)))
       } else if (diffDays < 14) {
-        emitter.emit('tts', this.$tc('ttsDaysAgo', Math.abs(diffDays)))
+        emitter.emit('tts', this.$t('ttsDaysAgo', Math.abs(diffDays)))
       } else {
         emitter.emit('tts', toLocalDateString(current))
       }
     },
-    ttsAndSet: function (value) {
+    ttsAndSetCategory: function (value) {
       this.value = value
+      // this.value = +event.target.value
+      this.tts()
+    },
+    ttsAndSet: function () {
       this.rangeChanged = true
       this.tts()
     },

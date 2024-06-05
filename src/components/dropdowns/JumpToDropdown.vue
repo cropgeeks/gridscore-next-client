@@ -1,21 +1,21 @@
 <template>
   <b-dropdown :title="$t('toolbarJumpTo')" ref="cornerDropdown" v-if="trial">
     <template v-slot:button-content>
-      <BIconArrowsFullscreen /> <span class="d-none d-lg-inline-block">{{ $t('toolbarJumpTo') }}</span>
+      <IBiArrowsFullscreen /> <span class="d-none d-lg-inline-block">{{ $t('toolbarJumpTo') }}</span>
     </template>
 
     <div class="direction-grid px-2">
-      <div><b-button @click="scrollTo('topLeft')"><BIconArrowUp :rotate="-45" /></b-button></div>
-      <div><b-button @click="scrollTo('top')"><BIconArrowUp :rotate="0" /></b-button></div>
-      <div><b-button @click="scrollTo('topRight')"><BIconArrowUp :rotate="45" /></b-button></div>
-      <div><b-button @click="scrollTo('left')"><BIconArrowUp :rotate="-90" /></b-button></div>
-      <div><b-button @click="scrollTo('center')"><BIconCircleFill /></b-button></div>
-      <div><b-button @click="scrollTo('right')"><BIconArrowUp :rotate="90" /></b-button></div>
-      <div><b-button @click="scrollTo('bottomLeft')"><BIconArrowUp :rotate="-135" /></b-button></div>
-      <div><b-button @click="scrollTo('bottom')"><BIconArrowUp :rotate="180" /></b-button></div>
-      <div><b-button @click="scrollTo('bottomRight')"><BIconArrowUp :rotate="135" /></b-button></div>
-      <b-button @click="scrollTo('gps')" class="gps-button" v-if="storeGpsEnabled"><BIconGeoAltFill /> {{ $t('buttonGPS') }}</b-button>
-      <b-button @click="setSearchMatches(true)" class="gps-button" v-if="hasMarkedPlots"><BIconListCheck /> {{ $t('buttonMarkedPlots') }}</b-button>
+      <div><b-button @click="scrollTo('topLeft')"><IBiArrowUp :style="{ transform: 'rotate(-45deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('top')"><IBiArrowUp :style="{ transform: 'rotate(0deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('topRight')"><IBiArrowUp :style="{ transform: 'rotate(45deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('left')"><IBiArrowUp :style="{ transform: 'rotate(-90deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('center')"><IBiCircleFill /></b-button></div>
+      <div><b-button @click="scrollTo('right')"><IBiArrowUp :style="{ transform: 'rotate(90deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('bottomLeft')"><IBiArrowUp :style="{ transform: 'rotate(-135deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('bottom')"><IBiArrowUp :style="{ transform: 'rotate(180deg)' }" /></b-button></div>
+      <div><b-button @click="scrollTo('bottomRight')"><IBiArrowUp :style="{ transform: 'rotate(135deg)' }" /></b-button></div>
+      <b-button @click="scrollTo('gps')" class="gps-button" v-if="storeGpsEnabled"><IBiGeoAltFill /> {{ $t('buttonGPS') }}</b-button>
+      <b-button @click="setSearchMatches(true)" class="gps-button" v-if="hasMarkedPlots"><IBiListCheck /> {{ $t('buttonMarkedPlots') }}</b-button>
     </div>
 
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" v-if="searchMatches.length > 0" @hidden="setSearchMatches(false)" />
@@ -23,22 +23,15 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
-import { BIconArrowsFullscreen, BIconArrowUp, BIconGeoAltFill, BIconCircleFill, BIconListCheck } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
-import SearchMatchModal from '@/components/modals/SearchMatchModal'
+import SearchMatchModal from '@/components/modals/SearchMatchModal.vue'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconArrowsFullscreen,
-    BIconArrowUp,
-    BIconCircleFill,
-    BIconGeoAltFill,
-    BIconListCheck,
     SearchMatchModal
   },
   props: {
@@ -112,7 +105,7 @@ export default {
       }
     },
     updateCellCache: function (row, column, trialId, cell) {
-      Vue.set(this.markedPlots, `${row}|${column}`, cell.isMarked === true)
+      this.markedPlots[`${row}|${column}`] = cell.isMarked === true
     }
   },
   mounted: function () {
@@ -121,7 +114,7 @@ export default {
 
     this.resetCellCache()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('plot-cache-changed', this.updateCellCache)
     emitter.off('trial-data-loaded', this.resetCellCache)
   }

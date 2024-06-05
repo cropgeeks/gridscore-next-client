@@ -2,7 +2,7 @@
   <b-modal :cancel-title="$t(isGuidedWalk ? 'buttonPrevious' : 'buttonCancel')"
            :ok-title="okTitle"
            ok-variant="primary"
-           :cancel-variant="isGuidedWalk ? 'primary' : null"
+           :cancel-variant="isGuidedWalk ? 'primary' : 'secondary'"
            :cancel-disabled="cancelDisabled"
            scrollable
            no-close-on-backdrop
@@ -13,45 +13,36 @@
            @shown="shown"
            id="data-input-modal"
            no-fade
-           :modal-class="fullscreen ? 'modal-fullscreen-xl' : null"
+           :modal-class="fullscreen ? 'modal-fullscreen' : null"
            size="xl"
            header-class="align-items-center"
            ref="dataInputModal">
-    <template v-slot:modal-header>
+    <template v-slot:header>
       <h5 class="modal-title text-truncate">{{ displayName }}</h5>
 
       <b-button-group id="data-entry-header" v-if="cell">
-        <b-form-datepicker
-          id="toolbar-button-pick-date"
-          :start-weekday="1"
-          v-b-tooltip="$t('')"
-          v-model="recordingDate"
-          size="sm"
-          :disabled="!trial.editable"
-          :button-variant="isRecordingDateToday ? 'secondary' : 'warning'"
-          button-only
-          today-button
-          value-as-date
-          :locale="storeCalendarLocale">
-          <template #button-content>
-            <BIconCalendarEvent /> <span class="d-none d-xl-inline-block"> {{ $t('buttonPickRecordingDate') }}</span>
+        <VueDatePicker v-model="recordingDate" :locale="storeLocale" :dark="storeDarkMode" :week-start="1" :disabled="!trial.editable" :enable-time-picker="false" clearable :action-row="{ showPreview: false, showNow: true }" class="btn btn-sm btn-secondary w-auto">
+          <template #trigger>
+            <span><IBiCalendarEvent /> <span class="d-none d-xl-inline-block"> {{ $t('buttonPickRecordingDate') }}</span></span>
           </template>
-        </b-form-datepicker>
-        <b-button id="toolbar-button-comments" size="sm" @click="$refs.commentModal.show()"><BIconChatRightTextFill /> <span class="d-none d-xl-inline-block">{{ $tc('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span></b-button>
+        </VueDatePicker>
+        <b-button id="toolbar-button-comments" size="sm" @click="onShowCommentModal">
+          <IBiChatRightTextFill v-if="(cell.comments || []).length > 0" /><IBiChatRightText v-else /> <span class="d-none d-xl-inline-block">{{ $t('buttonCommentCount', cell.comments ? cell.comments.length : 0) }}</span>
+        </b-button>
         <b-button id="toolbar-button-marking" size="sm" :pressed="cell.isMarked" @click="toggleMarked" :disabled="!trial.editable">
           <template v-if="cell.isMarked">
-            <BIconBookmarkCheckFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonUnbookmarkCell') }}</span>
+            <IBiBookmarkCheckFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonUnbookmarkCell') }}</span>
           </template>
           <template v-else>
-            <BIconBookmark /> <span class="d-none d-xl-inline-block"> {{ $t('buttonBookmarkCell') }}</span>
+            <IBiBookmark /> <span class="d-none d-xl-inline-block"> {{ $t('buttonBookmarkCell') }}</span>
           </template>
         </b-button>
-        <b-button id="toolbar-button-camera" size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><BIconCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
-        <b-button id="toolbar-button-guided-walk" size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : null" :pressed="guidedWalk !== null"><BIconSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
-        <b-button size="sm" @click="startTour"><BIconQuestionCircle /> <span class="d-none d-xl-inline-block"> {{ $t('toolbarHelp') }}</span></b-button>
+        <b-button id="toolbar-button-camera" size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><IBiCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
+        <b-button id="toolbar-button-guided-walk" size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : 'secondary'" :pressed="guidedWalk !== null"><IBiSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
+        <b-button size="sm" @click="startTour"><IBiQuestionCircle /> <span class="d-none d-xl-inline-block"> {{ $t('toolbarHelp') }}</span></b-button>
       </b-button-group>
 
-      <button class="close ml-0" @click="onXClicked">×</button>
+      <b-button class="btn-close" aria-label="Close" @click.prevent="onXClicked"></b-button>
     </template>
     <div v-if="!isRecordingDateToday" class="modal-banner bg-warning text-dark text-center mb-3 p-2">
       {{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}
@@ -62,25 +53,25 @@
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.prev.column) : $n(guidedWalk.prev.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.prev.row) : $n(guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
+          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.prev.column) : $n(guidedWalk.prev.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.prev.row) : $n(guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
         </b-col>
         <b-col cols=4>
           <b-card class="text-center h-100">
             <b-card-title>
-              <BIconChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <a href="#" @click.prevent><BIconGeoAltFill id="guided-walk-current" class="mx-2" /></a> <BIconChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
+              <IBiChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <a href="#" @click.prevent><IBiGeoAltFill id="guided-walk-current" class="mx-2" /></a> <IBiChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
             </b-card-title>
 
             <b-popover target="guided-walk-current" container="body" triggers="focus" placement="bottom" custom-class="popover-unset-width">
               <TrialPreviewCanvas :trial="trial" :column="cell.column" :row="cell.row" />
             </b-popover>
 
-            <b-card-sub-title>
+            <b-card-subtitle>
               {{ $t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - cell.column) : (cell.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - cell.row) : (cell.row + 1) }) }}
-            </b-card-sub-title>
+            </b-card-subtitle>
           </b-card>
         </b-col>
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :sub-title="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.next.column) : $n(guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.next.row) : $n(guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
+          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.next.column) : $n(guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.next.row) : $n(guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
       <p v-if="cell && cell.categories">
@@ -95,21 +86,23 @@
           <template #title>
             {{ group.name }} ({{ group.traits.length }})
 
-            <BIconCheck class="text-success" v-if="tabStates && tabStates[groupIndex] === true" />
-            <BIconX class="text-white" v-else-if="tabStates && tabStates[groupIndex] === false" />
+            <IBiCheck class="text-success" v-if="tabStates && tabStates[groupIndex] === true" />
+            <IBiX class="text-white" v-else-if="tabStates && tabStates[groupIndex] === false" />
           </template>
 
           <div class="mt-3 trait-group-tab-content">
-            <TraitInputSection :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            <b-form @submit.prevent>
+              <TraitInputSection :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+            </b-form>
           </div>
         </b-tab>
       </b-tabs>
 
-      <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" />
-      <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" />
-      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" @change="onSelectGuidedWalk" />
+      <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" v-if="showModal === 'comment'" />
+      <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" v-if="showModal === 'image'" />
+      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" @change="onSelectGuidedWalk" v-if="showModal === 'guided-walk'" />
 
-      <DataInputCloseModal ref="closeModal" @close="hide" @save="validate" />
+      <DataInputCloseModal ref="closeModal" @close="hide" @save="validate" v-if="showModal === 'close'" />
 
       <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="dataInputTour" />
     </div>
@@ -117,21 +110,21 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import TraitInputSection from '@/components/TraitInputSection'
-import ImageModal from '@/components/modals/ImageModal'
-import PlotCommentModal from '@/components/modals/PlotCommentModal'
-import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal'
-import DataInputCloseModal from '@/components/modals/DataInputCloseModal'
-import TrialPreviewCanvas from '@/components/canvas/TrialPreviewCanvas'
-import Tour from '@/components/Tour'
+import TraitInputSection from '@/components/TraitInputSection.vue'
+import ImageModal from '@/components/modals/ImageModal.vue'
+import PlotCommentModal from '@/components/modals/PlotCommentModal.vue'
+import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal.vue'
+import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
+import TrialPreviewCanvas from '@/components/canvas/TrialPreviewCanvas.vue'
+import Tour from '@/components/Tour.vue'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
-import { BIconBookmarkCheckFill, BIconBookmark, BIconChatRightTextFill, BIconCameraFill, BIconCalendarEvent, BIconSignpostSplitFill, BIconQuestionCircle, BIconCheck, BIconX, BIconGeoAltFill, BIconChevronDoubleRight } from 'bootstrap-vue'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM, CELL_CATEGORIES } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -142,17 +135,7 @@ export default {
     DataInputCloseModal,
     Tour,
     TrialPreviewCanvas,
-    BIconChatRightTextFill,
-    BIconBookmarkCheckFill,
-    BIconBookmark,
-    BIconQuestionCircle,
-    BIconCalendarEvent,
-    BIconCameraFill,
-    BIconCheck,
-    BIconX,
-    BIconSignpostSplitFill,
-    BIconGeoAltFill,
-    BIconChevronDoubleRight
+    VueDatePicker
   },
   props: {
     trial: {
@@ -180,7 +163,8 @@ export default {
       selectedTrait: null,
       tabStates: null,
       guidedWalk: null,
-      recordingDate: new Date()
+      recordingDate: new Date(),
+      showModal: null
     }
   },
   computed: {
@@ -188,7 +172,9 @@ export default {
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeCalendarLocale',
-      'storeSelectedTrialPerson'
+      'storeDarkMode',
+      'storeSelectedTrialPerson',
+      'storeLocale'
     ]),
     tourSteps: function () {
       return [{
@@ -413,60 +399,70 @@ export default {
     onSelectGuidedWalk: function (typeName) {
       const match = guideOrderTypes.find(g => g.name === typeName)
 
-      getTrialValidPlots(this.trial.localId).then(validCells => {
-        const order = match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout).filter(c => validCells.includes(`${c.y}|${c.x}`))
+      if (match) {
+        getTrialValidPlots(this.trial.localId).then(validCells => {
+          const order = match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout).filter(c => validCells.includes(`${c.y}|${c.x}`))
 
-        this.guidedWalk = {
-          order: order,
-          index: 0,
-          prev: null,
-          next: null
-        }
-      })
+          this.guidedWalk = {
+            order: order,
+            index: 0,
+            prev: null,
+            next: null
+          }
+        })
+      }
+    },
+    closeConfirmed: function () {
+      if (this.showModal === 'confirm-guided-walk-stop') {
+        this.guidedWalk = null
+        this.$router.push({ name: 'data-entry' })
+      } else if (this.showModal === 'confirm-close') {
+        this.hide()
+      }
     },
     onXClicked: function () {
       if (!this.trial.editable) {
         this.hide()
       } else {
         if (this.guidedWalk) {
-          this.$bvModal.msgBoxConfirm(this.$t('modalTextStopGuidedWalk'), {
-            title: this.$t('modalTitleStopGuidedWalk'),
-            okTitle: this.$t('buttonYes'),
+          this.showModal = 'confirm-guided-walk-stop'
+          emitter.emit('show-confirm', {
+            title: 'modalTitleStopGuidedWalk',
+            message: 'modalTextStopGuidedWalk',
+            okTitle: 'buttonYes',
+            cancelTitle: 'buttonNo',
             okVariant: 'danger',
-            cancelTitle: this.$t('buttonNo')
-          })
-            .then(value => {
-              if (value) {
-                this.hide()
+            callback: (result) => {
+              if (result) {
+                this.closeConfirmed()
               }
-            })
+            }
+          })
         } else {
-          this.$refs.closeModal.show()
+          this.showModal = 'close'
+          this.$nextTick(() => this.$refs.closeModal.show())
         }
       }
     },
     onGuidedWalkClicked: function () {
       if (this.guidedWalk) {
-        this.$bvModal.msgBoxConfirm(this.$t('modalTextStopGuidedWalk'), {
-          title: this.$t('modalTitleStopGuidedWalk'),
-          okTitle: this.$t('buttonYes'),
-          okVariant: 'danger',
-          cancelTitle: this.$t('buttonNo')
-        })
-          .then(value => {
-            if (value) {
-              this.guidedWalk = null
-              this.$router.push({ name: 'data-entry' })
-            }
-          })
+        this.showModal = 'confirm-guided-walk-stop'
+        this.$nextTick(() => this.$refs.guidedWalkModal.show())
       } else {
-        this.$refs.guidedWalkModal.show()
+        this.showModal = 'guided-walk'
+        this.$nextTick(() => this.$refs.guidedWalkModal.show())
       }
     },
     onShowPhotoModal: function (selectedTrait) {
       this.selectedTrait = selectedTrait
+      this.showModal = 'image'
 
       this.$nextTick(() => this.$refs.imageModal.show())
+    },
+    onShowCommentModal: function () {
+      this.showModal = 'comment'
+
+      this.$nextTick(() => this.$refs.commentModal.show())
     },
     shown: function () {
       this.$emit('shown')
@@ -504,13 +500,13 @@ export default {
     toggleMarked: function () {
       if (this.cell.isMarked) {
         // Remove it reactively from the cell
-        Vue.delete(this.cell, 'isMarked')
+        delete this.cell.isMarked
         setPlotMarked(this.storeSelectedTrial, this.cell.row, this.cell.column, false)
           .then(() => emitter.emit('plot-marked-changed', this.cell.row, this.cell.column, this.storeSelectedTrial))
         emitter.emit('plausible-event', { key: 'plot-marked', props: { marked: false } })
       } else {
         // Add it this way, because the cell may not have it
-        Vue.set(this.cell, 'isMarked', true)
+        this.cell.isMarked = true
         setPlotMarked(this.storeSelectedTrial, this.cell.row, this.cell.column, true)
           .then(() => emitter.emit('plot-marked-changed', this.cell.row, this.cell.column, this.storeSelectedTrial))
         emitter.emit('plausible-event', { key: 'plot-marked', props: { marked: true } })
@@ -544,7 +540,7 @@ export default {
     },
     updateCellComments: function (row, column, trialId, cell) {
       if (this.trial && this.cell && this.storeSelectedTrial === trialId && this.cell.row === row && this.cell.column === column) {
-        Vue.set(this.cell, 'comments', cell.comments)
+        this.cell.comments = cell.comments
       }
     },
     onCancel: function () {
@@ -645,7 +641,7 @@ export default {
 
               this.$nextTick(() => {
                 emitter.emit('plot-data-changed', row, column, trialId)
-                this.$emit('change')
+                this.$emit('data-changed')
               })
             })
         } else {
@@ -691,7 +687,7 @@ export default {
     emitter.on('plot-cache-changed', this.updateCellComments)
     emitter.on('force-guided-walk', this.forceGuidedWalk)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('plot-clicked', this.updateCell)
     emitter.off('plot-cache-changed', this.updateCellComments)
     emitter.off('force-guided-walk', this.forceGuidedWalk)
@@ -700,6 +696,12 @@ export default {
 </script>
 
 <style>
+#data-input-modal .modal-header {
+  justify-content: space-between;
+}
+#data-input-modal .modal-header .btn-close {
+  margin-left: inherit;
+}
 .trait-group-tab-content section:first-child hr {
   display: none;
 }

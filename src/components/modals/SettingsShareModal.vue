@@ -11,7 +11,7 @@
       <b-tabs justified>
         <b-tab>
           <template #title>
-            <BIconBoxArrowInUpRight /> {{ $t('tabTitleSettingsShareExport') }}
+            <IBiBoxArrowInUpRight /> {{ $t('tabTitleSettingsShareExport') }}
           </template>
 
           <p>{{ $t('tabTextSettingsShareExport') }}</p>
@@ -19,7 +19,7 @@
         </b-tab>
         <b-tab lazy>
           <template #title>
-            <BIconBoxArrowDownRight /> {{ $t('tabTitleSettingsShareImport') }}
+            <IBiBoxArrowDownRight /> {{ $t('tabTitleSettingsShareImport') }}
           </template>
 
           <p>{{ $t('tabTextSettingsShareImport') }}</p>
@@ -36,20 +36,17 @@
 import { mapGetters } from 'vuex'
 
 import { loadLanguageAsync } from '@/plugins/i18n'
-import { BIconBoxArrowInUpRight, BIconBoxArrowDownRight } from 'bootstrap-vue'
-import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, MAIN_DISPLAY_MODE_CANVAS_ONLY, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE, MAIN_DISPLAY_MODE_CANVAS_ONLY } from '@/plugins/constants'
 
-import StyledQRCode from '@/components/StyledQRCode'
-import BarcodeScanner from '@/components/BarcodeScanner'
+import StyledQRCode from '@/components/StyledQRCode.vue'
+import BarcodeScanner from '@/components/BarcodeScanner.vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
     BarcodeScanner,
-    StyledQRCode,
-    BIconBoxArrowDownRight,
-    BIconBoxArrowInUpRight
+    StyledQRCode
   },
   data: function () {
     return {
@@ -177,7 +174,7 @@ export default {
           this.$store.commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', false)
         }
 
-        this.$emit('change')
+        this.$emit('data-changed')
 
         this.hide()
 

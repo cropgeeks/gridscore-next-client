@@ -1,12 +1,12 @@
 <template>
   <span v-if="trait">
     <template v-if="trait.allowRepeats">
-      <IconSquareHalf v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" />
-      <BIconCircleHalf v-else />
+      <IBiDiamondHalf :style="{ transform: 'rotate(45deg)' }" width="1.3em" height="1.3em" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" />
+      <IBiCircleHalf v-else />
     </template>
     <template v-else>
-      <BIconSquareFill v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" />
-      <BIconCircleFill v-else />
+      <IBiSquareFill v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" />
+      <IBiCircleFill v-else />
     </template>
   </span>
 </template>
@@ -14,16 +14,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
-import { BIconSquareFill, BIconCircleFill, BIconCircleHalf } from 'bootstrap-vue'
-import IconSquareHalf from '@/components/icons/IconSquareHalf'
 
 export default {
-  components: {
-    BIconSquareFill,
-    BIconCircleFill,
-    BIconCircleHalf,
-    IconSquareHalf
-  },
   data: function () {
     return {
       CANVAS_SHAPE_SQUARE

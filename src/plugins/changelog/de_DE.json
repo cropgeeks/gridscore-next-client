@@ -453,5 +453,46 @@
         "text": "Angefangen mit dieser Version werden kleinere Versuche in GridScore anders dargestellt. Falls dies zu Leistungseinfälle führen sollte, bitte den Hauptansicht-Darstellungsmodus auf 'Nur Leinwand' einstellen."
       }
     ]
+  },
+  {
+    "version": "3.0.1",
+    "date": "2024-06-05",
+    "items": [
+      {
+        "type": "new",
+        "title": "Technologie-Stack Update",
+        "text": "Um GridScore auf dem neuesten Stand der Entwicklungen zu halten und Sicherheitsupdates zu gewährleisten, haben wir GridScore auf Vue 3 aktualisiert und weitere Aktualisierungen im Hintergrund vorgenommen. Für Sie als Benutzer sollte sich nichts ändern."
+      },
+      {
+        "type": "new",
+        "title": "Multi-trial operations",
+        "text": "Der Testauswahl auf der Startseite ermöglicht es Ihnen jetzt, bestimmte Operationen über mehrere Tests hinweg auszuführen. Derzeit umfasst dies das Hinzufügen desselben Merkmals zu mehreren Tests und das Löschen mehrerer Tests auf einmal. Wir arbeiten daran, bald weitere Operationen über mehrere Tests hinweg hinzuzufügen."
+      },
+      {
+        "type": "new",
+        "title": "Data collector stats",
+        "text": "Wir haben zwei Diagramme zur Statistikübersicht der Tests hinzugefügt, in denen die Anzahl der von jeder einzelnen Person gesammelten Datenpunkte dargestellt wird. Dies ist nur verfügbar, wenn Individuen als Teil des Tests definiert sind."
+      },
+      {
+        "type": "new",
+        "title": "High rep count warning",
+        "text": "Wir haben festgestellt, dass einige Tests mit einer extrem hohen Anzahl an verschiedenen Replikationswerten erstellt werden (manchmal hat jeder Plot einen einzigartigen Wert). Obwohl dies durchaus zulässig ist, verlangsamt es die Keimplasma-Replikations-Heatmap erheblich und macht sie weitgehend nutzlos. Wir haben während der Erstellung eines Versuches eine Warnung hinzugefügt, um dies hervorzuheben, falls es unbeabsichtigt ist."
+      },
+      {
+        "type": "new",
+        "title": "Beetkommentarliste",
+        "text": "Eine Liste aller Beetkommentare die über den gesamten Versuch aufgezeichnet wurden ist nun über das Kommentarsymbol über der Hauptdateneingabe verfügbar. Die Liste kann durchsucht und sortiert werden um die Kommentare zu finden nach denen gesucht wird."
+      },
+      {
+        "type": "new",
+        "title": "Merkmalsdefinitionen-Export",
+        "text": "Neue Optionen zum Export von Merkmalsdefinitionen in verschiedenen Formaten wurden hinzugefügt."
+      },
+      {
+        "type": "new",
+        "title": "Keimplasma Kontrollmarkierung",
+        "text": "Neue Methode zum Markieren aller Vorkommen eines Keimplasmaidentifikators als Kontrollen im gesamten Versuch beim Erstellen des Versuches."
+      }
+    ]
   }
 ]

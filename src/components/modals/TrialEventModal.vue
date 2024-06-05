@@ -14,21 +14,24 @@
         <b-list-group>
           <b-list-group-item class="flex-column align-items-start" v-for="event in visibleEvents" :key="`trial-event-${event.timestamp}`">
             <div class="d-flex w-100 mb-3 justify-content-between align-items-center">
-              <h5><BIconCalendarDate /> {{ new Date(event.timestamp).toLocaleDateString() }}</h5>
-              <b-button size="sm" variant="danger" @click="deleteEvent(event)" v-if="trial.editable"><BIconTrash /> {{ $t('buttonDelete') }}</b-button>
+              <h5><IBiCalendarDate /> {{ new Date(event.timestamp).toLocaleDateString() }}</h5>
+              <b-button size="sm" variant="danger" @click="deleteEvent(event)" v-if="trial.editable"><IBiTrash /> {{ $t('buttonDelete') }}</b-button>
             </div>
 
             <b-row>
               <b-col cols=12 md=6 class="mb-3">
                 <h6>{{ $t('formLabelEventImpact') }}</h6>
-                <BFormRating readonly no-border class="p-0 rating-reset-height" inline :value="event.impact" icon-empty="dot" icon-full="circle-fill" />
+                <div>
+                  <IBiCircleFill class="me-1" v-for="filled of event.impact" :key="`filled-${filled}`" />
+                  <IBiDot class="me-1" v-for="empty of (5 - event.impact)" :key="`empty-${empty}`" />
+                </div>
               </b-col>
               <b-col cols=12 md=6 class="mb-3">
                 <h6>{{ $t('formLabelEventType') }}</h6>
-                <div v-if="event.type === TRIAL_EVENT_TYPE_WEATHER"><BIconCloudSun /> {{ $t('formSelectOptionEventTypeWeather') }}</div>
+                <div v-if="event.type === TRIAL_EVENT_TYPE_WEATHER"><IBiCloudSun /> {{ $t('formSelectOptionEventTypeWeather') }}</div>
                 <div v-else-if="event.type === TRIAL_EVENT_TYPE_MANAGEMENT"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1em" height="1em"><path
       d="M 3,2 V 9.26 C 1.2,9.9 0,11.6 0,13.5 0,16 2,18 4.5,18 6.79,18 8.71,16.28 8.97,14 h 4.2 C 13.06,14.32 13,14.66 13,15 a 3,3 0 0 0 3,3 3,3 0 0 0 3,-3 c 0,-0.34 -0.06,-0.68 -0.18,-1 H 20 V 11 C 20,9.89 19.11,9 18,9 H 13.04 L 11.65,2 H 3 m 2,2 h 5 l 1,5 v 3 H 8.74 C 8.16,10.38 6.71,9.23 5,9.03 V 4 M 4.5,11.25 A 2.25,2.25 0 0 1 6.75,13.5 2.25,2.25 0 0 1 4.5,15.75 2.25,2.25 0 0 1 2.25,13.5 2.25,2.25 0 0 1 4.5,11.25 M 16,13.5 A 1.5,1.5 0 0 1 17.5,15 1.5,1.5 0 0 1 16,16.5 1.5,1.5 0 0 1 14.5,15 1.5,1.5 0 0 1 16,13.5 Z" /></svg> {{ $t('formSelectOptionEventTypeManagement') }}</div>
-                <div v-else-if="event.type === TRIAL_EVENT_TYPE_OTHER"><BIconThreeDots /> {{ $t('formSelectOptionEventTypeOther') }}</div>
+                <div v-else-if="event.type === TRIAL_EVENT_TYPE_OTHER"><IBiThreeDots /> {{ $t('formSelectOptionEventTypeOther') }}</div>
               </b-col>
             </b-row>
 
@@ -42,15 +45,15 @@
       </div>
       <p v-else class="text-warning">{{ $t('modalTextTrialEventNoData') }}</p>
 
-      <b-button class="mt-2" @click="eventFormVisible = !eventFormVisible" v-if="trial.editable"><BIconChatRightQuoteFill /> {{ $t('buttonCreateEvent') }}</b-button>
+      <b-button class="mt-2" @click="eventFormVisible = !eventFormVisible" v-if="trial.editable"><IBiChatRightQuoteFill /> {{ $t('buttonCreateEvent') }}</b-button>
 
       <b-collapse v-model="eventFormVisible" class="mt-2" @shown="$refs.input.focus()">
         <b-form-group :label="$t('formLabelEventType')" :description="$t('formDescriptionEventType')">
           <b-button-group class="d-flex flex-row flex-wrap">
-            <b-button :pressed="newEventType === TRIAL_EVENT_TYPE_WEATHER" @click="newEventType = TRIAL_EVENT_TYPE_WEATHER"><BIconCloudSun /> {{ $t('formSelectOptionEventTypeWeather') }}</b-button>
+            <b-button :pressed="newEventType === TRIAL_EVENT_TYPE_WEATHER" @click="newEventType = TRIAL_EVENT_TYPE_WEATHER"><IBiCloudSun /> {{ $t('formSelectOptionEventTypeWeather') }}</b-button>
             <b-button :pressed="newEventType === TRIAL_EVENT_TYPE_MANAGEMENT" @click="newEventType = TRIAL_EVENT_TYPE_MANAGEMENT"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1em" height="1em"><path
       d="M 3,2 V 9.26 C 1.2,9.9 0,11.6 0,13.5 0,16 2,18 4.5,18 6.79,18 8.71,16.28 8.97,14 h 4.2 C 13.06,14.32 13,14.66 13,15 a 3,3 0 0 0 3,3 3,3 0 0 0 3,-3 c 0,-0.34 -0.06,-0.68 -0.18,-1 H 20 V 11 C 20,9.89 19.11,9 18,9 H 13.04 L 11.65,2 H 3 m 2,2 h 5 l 1,5 v 3 H 8.74 C 8.16,10.38 6.71,9.23 5,9.03 V 4 M 4.5,11.25 A 2.25,2.25 0 0 1 6.75,13.5 2.25,2.25 0 0 1 4.5,15.75 2.25,2.25 0 0 1 2.25,13.5 2.25,2.25 0 0 1 4.5,11.25 M 16,13.5 A 1.5,1.5 0 0 1 17.5,15 1.5,1.5 0 0 1 16,16.5 1.5,1.5 0 0 1 14.5,15 1.5,1.5 0 0 1 16,13.5 Z" /></svg> {{ $t('formSelectOptionEventTypeManagement') }}</b-button>
-            <b-button :pressed="newEventType === TRIAL_EVENT_TYPE_OTHER" @click="newEventType = TRIAL_EVENT_TYPE_OTHER"><BIconThreeDots /> {{ $t('formSelectOptionEventTypeOther') }}</b-button>
+            <b-button :pressed="newEventType === TRIAL_EVENT_TYPE_OTHER" @click="newEventType = TRIAL_EVENT_TYPE_OTHER"><IBiThreeDots /> {{ $t('formSelectOptionEventTypeOther') }}</b-button>
           </b-button-group>
         </b-form-group>
 
@@ -58,7 +61,7 @@
           <b-col cols=6>
             <b-form-group :label="$t('formLabelEventImpact')" :description="$t('formDescriptionEventImpact')" label-for="event-impact">
               <b-input-group>
-                <b-form-input type="range" :min="1" :max="5" v-model.number="newEventImpact" id="event-impact" />
+                <b-form-input type="range" class="form-control" :min="1" :max="5" v-model.number="newEventImpact" id="event-impact" />
                 <b-input-group-append is-text>
                   {{ newEventImpact }}
                 </b-input-group-append>
@@ -67,45 +70,32 @@
           </b-col>
           <b-col cols=6>
             <b-form-group :label="$t('formLabelEventDate')" :description="$t('formDescriptionEventDate')" label-for="event-date">
-              <b-form-datepicker value-as-date v-model="newEventDate" id="event-date" />
+              <b-form-input type="date" id="event-date" v-model="newEventDate" />
             </b-form-group>
           </b-col>
         </b-row>
 
         <b-form-group :label="$t('formLabelEventContent')" :description="$t('formDescriptionEventContent')" label-for="event-content">
-          <SpeechRecognitionTextarea id="event-content" :rows="5" :tooltip="$t('tooltipDataEntryCommentMicrophone')" ref="input" @change="updateEvent" />
+          <SpeechRecognitionTextarea id="event-content" :rows="5" :tooltip="$t('tooltipDataEntryCommentMicrophone')" ref="input" @content-changed="updateEvent" />
         </b-form-group>
 
-        <b-button :disabled="!newEventContent || (newEventContent === '')" variant="primary" @click="createEvent"><BIconPlusSquare /> {{ $t('buttonAdd') }}</b-button>
+        <b-button :disabled="!newEventContent || (newEventContent === '')" variant="primary" @click="createEvent"><IBiPlusSquare /> {{ $t('buttonAdd') }}</b-button>
       </b-collapse>
-
-      <!-- Add these hidden so that the rating item can use custom icons. This saves importing the rating component globally. -->
-      <BIconDot class="d-none" />
-      <BIconCircleFill class="d-none" />
     </div>
   </b-modal>
 </template>
 
 <script>
-import SpeechRecognitionTextarea from '@/components/SpeechRecognitionTextarea'
-import { BIconCalendarDate, BIconTrash, BIconCloudSun, BIconDot, BIconCircleFill, BIconThreeDots, BIconChatRightQuoteFill, BIconPlusSquare, BFormRating } from 'bootstrap-vue'
+import SpeechRecognitionTextarea from '@/components/SpeechRecognitionTextarea.vue'
 import { getTrialById, deleteTrialEvent, addTrialEvent } from '@/plugins/idb'
 import { TRIAL_EVENT_TYPE_MANAGEMENT, TRIAL_EVENT_TYPE_WEATHER, TRIAL_EVENT_TYPE_OTHER } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
+import { toLocalDateString } from '@/plugins/misc'
 
 export default {
   components: {
-    SpeechRecognitionTextarea,
-    BFormRating,
-    BIconCalendarDate,
-    BIconCloudSun,
-    BIconThreeDots,
-    BIconTrash,
-    BIconChatRightQuoteFill,
-    BIconPlusSquare,
-    BIconDot,
-    BIconCircleFill
+    SpeechRecognitionTextarea
   },
   props: {
     trialId: {
@@ -121,7 +111,7 @@ export default {
       newEventContent: null,
       newEventType: TRIAL_EVENT_TYPE_OTHER,
       newEventImpact: 3,
-      newEventDate: new Date(),
+      newEventDate: toLocalDateString(new Date()),
       eventFormVisible: false,
       TRIAL_EVENT_TYPE_MANAGEMENT,
       TRIAL_EVENT_TYPE_WEATHER,
@@ -177,13 +167,13 @@ export default {
         })
     },
     createEvent: function () {
-      addTrialEvent(this.trial.localId, this.newEventContent, this.newEventType, this.newEventImpact, this.newEventDate)
+      addTrialEvent(this.trial.localId, this.newEventContent, this.newEventType, this.newEventImpact, new Date(this.newEventDate))
         .then(() => {
           this.$refs.input.reset()
           this.newEventContent = null
           this.newEventType = TRIAL_EVENT_TYPE_OTHER
           this.newEventImpact = 3
-          this.newEventDate = new Date()
+          this.newEventDate = toLocalDateString(new Date())
           this.eventFormVisible = false
           emitter.emit('trial-properties-changed', this.trial.localId)
           emitter.emit('plausible-event', { key: 'trial-event', props: { type: 'added' } })

@@ -25,19 +25,20 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import TraitHeading from '@/components/TraitHeading'
-import MultiTraitTimeline from '@/components/MultiTraitTimeline'
+import TraitHeading from '@/components/TraitHeading.vue'
+import MultiTraitTimeline from '@/components/MultiTraitTimeline.vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
 import { toLocalDateString } from '@/plugins/misc'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import scatter from 'plotly.js/lib/scatter'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/scatter')
+  scatter
 ])
 
 export default {
@@ -234,7 +235,7 @@ export default {
 
     this.update()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.update)
   }
 }

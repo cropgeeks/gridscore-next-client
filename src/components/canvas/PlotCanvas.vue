@@ -5,21 +5,28 @@
 
     <OffscreenCanvas :circleRadius="dimensions.circleRadius" :traits="trial.traits" ref="offscreenCanvas" />
 
-    <b-toast id="marking-restriction-toast" variant="warning" :title="$t('toastDataInputRestrictedTitle')" :auto-hide-delay="5000" v-if="storeRestrictInputToMarked">
-      <p>{{ $t('toastDataInputRestrictedText') }}</p>
-      <b-button @click="disableMarkingRestriction" variant="outline-warning">{{ $t('buttonDisable') }}</b-button>
-    </b-toast>
+    <teleport to="body">
+        <div class="top-0 end-0 toast-container position-fixed p-3">
+          <b-toast id="marking-restriction-toast" :title="$t('toastDataInputRestrictedTitle')" :model-value="5000" :interval="100" v-model="showRestrictionToast" v-if="storeRestrictInputToMarked">
+            <p>{{ $t('toastDataInputRestrictedText') }}</p>
+            <div class="d-flex justify-content-between">
+              <b-button @click="disableMarkingRestriction" variant="warning">{{ $t('buttonDisable') }}</b-button>
+              <b-button @click="showRestrictionToast = false" variant="secondary">{{ $t('buttonClose') }}</b-button>
+            </div>
+          </b-toast>
+        </div>
+      </teleport>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import OffscreenCanvas from '@/components/canvas/OffscreenCanvas'
+import OffscreenCanvas from '@/components/canvas/OffscreenCanvas.vue'
 import { CELL_CATEGORY_CONTROL, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import { projectToEuclidean } from '@/plugins/location'
 import { getTrialDataCached } from '@/plugins/datastore'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 const commentImg = new Image()
 commentImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="chat right text fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84"%3E%3Cg %3E%3Cpath d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353V2zM3.5 3h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zm0 2.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zm0 2.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
@@ -75,7 +82,8 @@ export default {
       origin: {
         x: 0,
         y: 0
-      }
+      },
+      showRestrictionToast: false
     }
   },
   computed: {
@@ -465,7 +473,7 @@ export default {
 
             if (anyMarked) {
               if (!this.markedColumns[column] && !this.markedRows[row]) {
-                this.$bvToast.show('marking-restriction-toast')
+                this.showRestrictionToast = true
                 return
               }
             }
@@ -931,7 +939,7 @@ export default {
     emitter.on('trial-data-loaded', this.reset)
     emitter.on('plot-cache-changed', this.updateCellCache)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('jump-to-corner', this.jumpToCorner)
     emitter.off('move-to-corner', this.moveInDirection)
     emitter.off('trial-data-loaded', this.reset)

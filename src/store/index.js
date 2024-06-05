@@ -1,22 +1,18 @@
-import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
 import { getTrialById } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
-let name = process.env.VUE_APP_INSTANCE_NAME
+let name = import.meta.env.VUE_APP_INSTANCE_NAME
 
 if (!name) {
   name = 'gridscore-next-' + window.location.pathname
 }
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export default createStore({
   state: {
-    isOffline: false,
     uniqueClientId: null,
     runCount: 0,
     serverUrl: null,
@@ -57,7 +53,6 @@ export default new Vuex.Store({
     deviceConfig: null
   },
   getters: {
-    storeIsOffline: (state) => state.isOffline,
     storeUniqueClientId: (state) => state.uniqueClientId,
     storeRunCount: (state) => state.runCount,
     storeLocale: (state) => (state.locale || 'en-GB').replace('_', '-'),
@@ -92,9 +87,6 @@ export default new Vuex.Store({
     storeCategoryCountInline: (state) => state.categoryCountInline
   },
   mutations: {
-    ON_IS_OFFLINE_CHANGED: function (state, newIsOffline) {
-      state.isOffline = newIsOffline
-    },
     ON_UNIQUE_CLIENT_ID_CHANGED: function (state, newUniqueClientId) {
       state.uniqueClientId = newUniqueClientId
     },
@@ -105,11 +97,7 @@ export default new Vuex.Store({
       state.hiddenTraits = newHiddenTraits
     },
     ON_SELECTED_TRIAL_PERSON_CHANGED: function (state, newSelectedTrialPerson) {
-      if (Object.prototype.hasOwnProperty.call(state, 'selectedTrialPerson')) {
-        state.selectedTrialPerson = newSelectedTrialPerson
-      } else {
-        Vue.set(state, 'selectedTrialPerson', newSelectedTrialPerson)
-      }
+      state.selectedTrialPerson = newSelectedTrialPerson
     },
     ON_SELECTED_TRIAL_CHANGED: function (state, newSelectedTrial) {
       /* Remember to reset everything here */
@@ -117,11 +105,7 @@ export default new Vuex.Store({
       state.selectedTrial = newSelectedTrial
       state.hiddenTraits = []
       if (currentId !== newSelectedTrial) {
-        if (Object.prototype.hasOwnProperty.call(state, 'selectedTrialPerson')) {
-          state.selectedTrialPerson = null
-        } else {
-          Vue.set(state, 'selectedTrialPerson', null)
-        }
+        state.selectedTrialPerson = null
       }
 
       if (newSelectedTrial) {
@@ -146,11 +130,7 @@ export default new Vuex.Store({
       emitter.emit('trial-selected')
     },
     ON_MAIN_DISPLAY_MODE_CHANGED: function (state, newMainDisplayMode) {
-      if (Object.prototype.hasOwnProperty.call(state, 'mainDisplayMode')) {
-        state.mainDisplayMode = newMainDisplayMode
-      } else {
-        Vue.set(state, 'mainDisplayMode', newMainDisplayMode)
-      }
+      state.mainDisplayMode = newMainDisplayMode
     },
     ON_DARK_MODE_CHANGED: function (state, newDarkMode) {
       state.darkMode = newDarkMode
@@ -165,11 +145,7 @@ export default new Vuex.Store({
       state.hideCitationMessage = newHideCitationMessage
     },
     ON_HIGHLIGHT_CONTROLS_CHANGED: function (state, newHighlightControls) {
-      if (Object.prototype.hasOwnProperty.call(state, 'highlightControls')) {
-        state.highlightControls = newHighlightControls
-      } else {
-        Vue.set(state, 'highlightControls', newHighlightControls)
-      }
+      state.highlightControls = newHighlightControls
     },
     ON_DISPLAY_MARKER_INDICATORS_CHANGED: function (state, newDisplayMarkerIndicators) {
       state.displayMarkerIndicators = newDisplayMarkerIndicators
@@ -181,46 +157,22 @@ export default new Vuex.Store({
       state.gpsEnabled = newGpsEnabled
     },
     ON_VOICE_FEEDBACK_ENABLED_CHANGED: function (state, newVoiceFeedbackEnabled) {
-      if (Object.prototype.hasOwnProperty.call(state, 'voiceFeedbackEnabled')) {
-        state.voiceFeedbackEnabled = newVoiceFeedbackEnabled
-      } else {
-        Vue.set(state, 'voiceFeedbackEnabled', newVoiceFeedbackEnabled)
-      }
+      state.voiceFeedbackEnabled = newVoiceFeedbackEnabled
     },
     ON_CANVAS_DENSITY_CHANGED: function (state, newCanvasDensity) {
-      if (Object.prototype.hasOwnProperty.call(state, 'canvasDensity')) {
-        state.canvasDensity = newCanvasDensity
-      } else {
-        Vue.set(state, 'canvasDensity', newCanvasDensity)
-      }
+      state.canvasDensity = newCanvasDensity
     },
     ON_CANVAS_SHAPE_CHANGED: function (state, newCanvasShape) {
-      if (Object.prototype.hasOwnProperty.call(state, 'canvasShape')) {
-        state.canvasShape = newCanvasShape
-      } else {
-        Vue.set(state, 'canvasShape', newCanvasShape)
-      }
+      state.canvasShape = newCanvasShape
     },
     ON_CANVAS_SIZE_CHANGED: function (state, newCanvasSize) {
-      if (Object.prototype.hasOwnProperty.call(state, 'canvasSize')) {
-        state.canvasSize = newCanvasSize
-      } else {
-        Vue.set(state, 'canvasSize', newCanvasSize)
-      }
+      state.canvasSize = newCanvasSize
     },
     ON_TRIAL_LIST_MODE_CHANGED: function (state, newTrialListMode) {
-      if (Object.prototype.hasOwnProperty.call(state, 'trialListMode')) {
-        state.trialListMode = newTrialListMode
-      } else {
-        Vue.set(state, 'trialListMode', newTrialListMode)
-      }
+      state.trialListMode = newTrialListMode
     },
     ON_TRIAL_LIST_ARRANGEMENT_CHANGED: function (state, newTrialListArrangement) {
-      if (Object.prototype.hasOwnProperty.call(state, 'trialListArrangement')) {
-        state.trialListArrangement = newTrialListArrangement
-      } else {
-        Vue.set(state, 'trialListArrangement', newTrialListArrangement)
-      }
+      state.trialListArrangement = newTrialListArrangement
     },
     ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
       state.restrictInputToMarked = newRestrictInputToMarked
@@ -232,11 +184,7 @@ export default new Vuex.Store({
       state.traitColors = newTraitColors
     },
     ON_HOME_WIDGET_ORDER_CHANGED: function (state, newHomeWidgetOrder) {
-      if (Object.prototype.hasOwnProperty.call(state, 'homeWidgetOrder')) {
-        state.homeWidgetOrder = newHomeWidgetOrder
-      } else {
-        Vue.set(state, 'homeWidgetOrder', newHomeWidgetOrder)
-      }
+      state.homeWidgetOrder = newHomeWidgetOrder
     },
     ON_PLAUSIBLE_CHANGED: function (state, newPlausible) {
       state.plausible = newPlausible
@@ -255,38 +203,19 @@ export default new Vuex.Store({
       }
     },
     ON_CHANGELOG_VERSION_NUMBER_CHANGED: function (state, newChangelogVersionNumber) {
-      if (state.changelogVersionNumber === undefined) {
-        Vue.set(state, 'changelogVersionNumber', newChangelogVersionNumber)
-      } else {
-        state.changelogVersionNumber = newChangelogVersionNumber
-      }
+      state.changelogVersionNumber = newChangelogVersionNumber
     },
     ON_DEVICE_CONFIG_CHANGED: function (state, newDeviceConfig) {
-      if (state.deviceConfig === undefined) {
-        Vue.set(state, 'deviceConfig', newDeviceConfig)
-      } else {
-        state.deviceConfig = newDeviceConfig
-      }
+      state.deviceConfig = newDeviceConfig
     },
     ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED: function (state, newShowFullTraitDescription) {
-      if (state.showFullTraitDescription === undefined) {
-        Vue.set(state, 'showFullTraitDescription', newShowFullTraitDescription)
-      } else {
-        state.showFullTraitDescription = newShowFullTraitDescription
-      }
+      state.showFullTraitDescription = newShowFullTraitDescription
     },
     ON_CATEGORY_COUNT_INLINE_CHANGED: function (state, newCategoryCountInline) {
-      if (state.categoryCountInline === undefined) {
-        Vue.set(state, 'categoryCountInline', newCategoryCountInline)
-      } else {
-        state.categoryCountInline = newCategoryCountInline
-      }
+      state.categoryCountInline = newCategoryCountInline
     }
   },
-  actions: {
-    setIsOffline: function ({ commit }, isOffline) {
-      commit('ON_IS_OFFLINE_CHANGED', isOffline)
-    },
+    actions: {
     setUniqueClientId: function ({ commit }, uniqueClientId) {
       commit('ON_UNIQUE_CLIENT_ID_CHANGED', uniqueClientId)
     },
@@ -383,7 +312,9 @@ export default new Vuex.Store({
   },
   modules: {
   },
-  plugins: [createPersistedState({
-    key: name
-  })]
+  plugins: [
+    createPersistedState({
+      key: name
+    })
+  ]
 })

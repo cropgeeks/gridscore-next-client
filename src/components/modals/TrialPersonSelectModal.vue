@@ -11,40 +11,35 @@
     <p>{{ $t('modalTextSelectTrialPerson') }}</p>
 
     <b-list-group>
-      <b-list-group-item :active="storeSelectedTrialPerson === person.id" v-for="person in trial.people" :key="`person-${person.id}`" href="#" @click="selectPerson(person)">
-        <b-row class="align-items-center">
-          <b-col cols=2>
-            <b-avatar />
-          </b-col>
-          <b-col cols=10 class="flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
+      <b-list-group-item :active="storeSelectedTrialPerson === person.id" v-for="person in trial.people" :key="`person-${person.id}`" href="#" @click.prevent="selectPerson(person)">
+        <div class="d-flex justify-content-between flex-wrap align-items-center">
+          <div class="d-flex flex-row align-items-center">
+            <b-avatar rounded="circle" class="me-2"><IBiPersonFill /></b-avatar>
+            <div>
               <h5 class="mb-0">{{ person.name }}</h5>
-              <small>
-                <PersonTypeIcon class="mr-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" />
-              </small>
+              <p class="my-0" v-if="person.email">
+                <a :href="`mailto:${person.email}`">{{ person.email }}</a>
+              </p>
             </div>
-
-            <p class="my-1" v-if="person.email">
-              <a :href="`mailto:${person.email}`" />
-            </p>
-          </b-col>
-        </b-row>
+          </div>
+          <small>
+            <PersonTypeIcon class="me-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" />
+          </small>
+        </div>
       </b-list-group-item>
     </b-list-group>
 
-    <b-button @click="$emit('addPersonClicked')"><BIconPersonPlusFill /> {{ $t('buttonAddPerson') }}</b-button>
+    <b-button @click="$emit('addPersonClicked')"><IBiPersonPlusFill /> {{ $t('buttonAddPerson') }}</b-button>
   </b-modal>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import PersonTypeIcon from '@/components/icons/PersonTypeIcon'
-import { BIconPersonPlusFill } from 'bootstrap-vue'
+import PersonTypeIcon from '@/components/icons/PersonTypeIcon.vue'
 import { PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_QUALITY_CHECKER, PERSON_TYPE_DATA_SUBMITTER } from '@/plugins/constants'
 
 export default {
   components: {
-    BIconPersonPlusFill,
     PersonTypeIcon
   },
   props: {
@@ -52,7 +47,7 @@ export default {
       type: Object,
       default: () => null
     },
-    shown: {
+    shouldShow: {
       type: Boolean,
       default: () => false
     }
@@ -77,7 +72,7 @@ export default {
     }
   },
   watch: {
-    shown: {
+    shouldShow: {
       immediate: true,
       handler: function (newValue) {
         if (newValue) {
@@ -109,7 +104,7 @@ export default {
     }
   },
   mounted: function () {
-    if (this.shown) {
+    if (this.shouldShow) {
       this.show()
     }
   }

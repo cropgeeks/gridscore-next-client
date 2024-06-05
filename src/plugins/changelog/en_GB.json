@@ -453,5 +453,46 @@
         "text": "Starting from this release, the main display of GridScore will be rendered differently for smaller trials. If you encounter any performance issues, please change the main display mode in the settings to 'Canvas only'."
       }
     ]
+  },
+  {
+    "version": "3.0.1",
+    "date": "2024-06-05",
+    "items": [
+      {
+        "type": "new",
+        "title": "Technology stack upgrade",
+        "text": "To keep GridScore up to date with latest developments and to ensure security updates, we have updated GridScore to Vue 3 as well as made other updates behind the scenes. For you as a user, nothing should change."
+      },
+      {
+        "type": "new",
+        "title": "Multi-trial operations",
+        "text": "The trial selector on the home page now lets you execute certain operations across trials. For now, those include adding the same trait to multiple trials and deleting multiple trials in one go. We're looking into adding more cross-trial operations soon."
+      },
+      {
+        "type": "new",
+        "title": "Data collector stats",
+        "text": "We have added two charts to the trial statistics overview where the number of data points collected by each individual is plotted. This is only available if individuals are defined as part of the trial."
+      },
+      {
+        "type": "new",
+        "title": "High rep count warning",
+        "text": "We noticed that some trials are created with an extremely high number of distinct rep values (sometimes each plot has a unique value). While this is perfectly valid, it significantly slows down the germplasm rep heatmap and makes it pretty much pointless. We have added a warning during setup to highlight this in case it's unintentional."
+      },
+      {
+        "type": "new",
+        "title": "Plot comment list",
+        "text": "A list of all plot trials recorded across the trial is now available using the comment icon above the data input table. The list can be filtered and sorted to find the comments you're looking for."
+      },
+      {
+        "type": "new",
+        "title": "Trait definition export",
+        "text": "Added more ways in which trait definitions can be exported in a variety of formats."
+      },
+      {
+        "type": "new",
+        "title": "Germplasm control/check marking",
+        "text": "Added a way to mark all occurrences of a germplasm identifier across the trial as control/check during setup."
+      }
+    ]
   }
 ]

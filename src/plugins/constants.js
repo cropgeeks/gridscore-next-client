@@ -1,6 +1,4 @@
-import { BIconCheckSquareFill } from 'bootstrap-vue'
-
-const gridScoreVersion = '2.6.0'
+const gridScoreVersion = '3.0.1'
 
 const NAVIGATION_MODE_DRAG = 'DRAG'
 const NAVIGATION_MODE_JUMP = 'JUMP'
@@ -50,7 +48,7 @@ const CELL_CATEGORY_CONTROL = 'control'
 
 const CELL_CATEGORIES = {}
 
-CELL_CATEGORIES[CELL_CATEGORY_CONTROL] = { title: 'cellCategoryControl', icon: BIconCheckSquareFill, variant: 'info' }
+CELL_CATEGORIES[CELL_CATEGORY_CONTROL] = { title: 'cellCategoryControl', variant: 'info' }
 
 export {
   gridScoreVersion,

@@ -1,24 +1,20 @@
 <template>
   <b-input-group>
-    <b-form-textarea ref="textarea" :rows="rows" v-model="value" :id="id" />
+    <b-form-textarea ref="textarea" :rows="rows" v-model="textContent" :id="id" />
     <b-input-group-addon append v-if="supportsSpeechRecognition">
-      <b-button @click="toggleRecording" :variant="speechRecognition ? 'danger' : null" v-b-tooltip="tooltip"><BIconMic /></b-button>
+      <b-button @click="toggleRecording" :variant="speechRecognition ? 'danger' : 'secondary'" v-b-tooltip="tooltip"><IBiMic /></b-button>
     </b-input-group-addon>
   </b-input-group>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconMic } from 'bootstrap-vue'
+
+import emitter from 'tiny-emitter/instance'
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 
-const emitter = require('tiny-emitter/instance')
-
 export default {
-  components: {
-    BIconMic
-  },
   props: {
     id: {
       type: String,
@@ -35,13 +31,13 @@ export default {
   },
   data: function () {
     return {
-      value: null,
+      textContent: null,
       speechRecognition: null
     }
   },
   watch: {
-    value: function (newValue) {
-      this.$emit('change', newValue)
+    textContent: function (newValue) {
+      this.$emit('content-changed', newValue)
     }
   },
   computed: {
@@ -54,7 +50,7 @@ export default {
   },
   methods: {
     reset: function () {
-      this.value = null
+      this.textContent = null
     },
     focus: function () {
       this.$refs.textarea.focus()
@@ -76,7 +72,7 @@ export default {
             for (let i = event.resultIndex; i < event.results.length; ++i) {
               result += event.results[i][0].transcript
             }
-            this.value = result
+            this.textContent = result
           }
           this.speechRecognition.onspeechend = () => {
             if (this.speechRecognition) {
@@ -100,7 +96,7 @@ export default {
       }
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     if (this.speechRecognition) {
       this.disableSpeechRecognition()
     }

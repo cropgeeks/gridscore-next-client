@@ -25,7 +25,7 @@
       </b-form-group>
 
       <!-- Button to update the BrAPI URL in the store -->
-      <b-button @click="updateBrapiUrl"><BIconArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
+      <b-button @click="updateBrapiUrl"><IBiArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
 
       <p class="text-danger" v-if="errorMessage">{{ $t(errorMessage) }}</p>
     </b-form>
@@ -39,18 +39,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconArrowClockwise } from 'bootstrap-vue'
 import { updateTrialBrapiConfig } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 /**
  * Base modal used to show a BrAPI URL input field at the top. Wrapping components can use the `content` slot to add their own content.
  */
 export default {
-  components: {
-    BIconArrowClockwise
-  },
   data: function () {
     return {
       brapiUrl: null,

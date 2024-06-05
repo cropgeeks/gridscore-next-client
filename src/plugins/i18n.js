@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
 
 import deDE from '@/plugins/i18n/de_DE.json'
 import enGB from '@/plugins/i18n/en_GB.json'
@@ -28,8 +27,6 @@ const locales = [{
 //   icon: '🇲🇦'
 }]
 
-Vue.use(VueI18n)
-
 const messages = {
   'en-GB': enGB,
   'de-DE': deDE,
@@ -37,10 +34,12 @@ const messages = {
   // 'ar-MA': arMA
 }
 
-export const i18n = new VueI18n({
+const i18n = createI18n({
   locale: 'en-GB',
   fallbackLocale: 'en-GB',
   messages: messages,
+  legacy: false,
+  globalInjection: true,
   numberFormats: {
     'en-GB': {},
     'de-DE': {},
@@ -83,7 +82,7 @@ const loadLanguageAsync = (lang) => {
 
   // If the language hasn't been loaded yet
   return import(/* webpackChunkName: "lang-[request]" */`@/plugins/i18n/${lang.replace('-', '_')}.json`).then(messages => {
-    i18n.setLocaleMessage(lang, messages.default)
+    i18n.global.setLocaleMessage(lang, messages.default)
     loadedLanguages.push(lang)
     return setI18nLanguage(lang)
   })
@@ -91,5 +90,6 @@ const loadLanguageAsync = (lang) => {
 
 export {
   loadLanguageAsync,
-  locales
+  locales,
+  i18n
 }

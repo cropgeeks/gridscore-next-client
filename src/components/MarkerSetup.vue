@@ -16,12 +16,12 @@
         </b-col>
         <b-col cols=12 sm=6 md=3>
           <b-form-group label-for="markers-row" :label="$t('formLabelMarkersEveryRow')">
-            <b-input id="markers-row" v-model.number="markers.everyRow" type="number" :min="1" :max="layout.rows" :disabled="!useMarkers" />
+            <b-form-input id="markers-row" v-model.number="markers.everyRow" type="number" :min="1" :max="layout.rows" :disabled="!useMarkers" />
           </b-form-group>
         </b-col>
         <b-col cols=12 sm=6 md=3>
           <b-form-group label-for="markers-column" :label="$t('formLabelMarkersEveryColumn')">
-            <b-input id="markers-column" v-model.number="markers.everyColumn" type="number" :min="1" :max="layout.columns" :disabled="!useMarkers" />
+            <b-form-input id="markers-column" v-model.number="markers.everyColumn" type="number" :min="1" :max="layout.columns" :disabled="!useMarkers" />
           </b-form-group>
         </b-col>
       </b-row>
@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     emitData: function () {
-      this.$emit('change', this.useMarkers ? JSON.parse(JSON.stringify(this.markers)) : null)
+      this.$emit('data-changed', this.useMarkers ? JSON.parse(JSON.stringify(this.markers)) : null)
     },
     getMarkerConfig: function () {
       if (this.useMarkers) {
@@ -237,7 +237,7 @@ export default {
 
     this.$nextTick(() => this.reset())
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     window.removeEventListener('resize', this.reset)
   }
 }

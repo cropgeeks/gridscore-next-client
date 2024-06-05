@@ -18,8 +18,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import FieldHeatmap from '@/components/charts/FieldHeatmap'
-import GermplasmRepHeatmap from '@/components/charts/GermplasmRepHeatmap'
+import FieldHeatmap from '@/components/charts/FieldHeatmap.vue'
+import GermplasmRepHeatmap from '@/components/charts/GermplasmRepHeatmap.vue'
 import { getTrialById } from '@/plugins/idb'
 
 export default {

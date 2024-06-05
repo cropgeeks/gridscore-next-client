@@ -17,7 +17,7 @@ WORKDIR /opt/gridscore-client
 RUN rm -f .env && \
     echo "VUE_APP_BASE_URL=./api/" > .env && \
     apk add --no-cache python3 build-base gcc wget && \
-    npm i --legacy-peer-deps && \
+    npm i && \
     npm run build && \
     mkdir /opt/gridscore-server/client/ && \
     cp -a /opt/gridscore-client/dist/. /opt/gridscore-server/client/

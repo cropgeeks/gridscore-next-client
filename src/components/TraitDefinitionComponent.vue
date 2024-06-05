@@ -5,16 +5,16 @@
         <b-form @submit.prevent="addTrait">
           <b-form-group :description="$t('formDescriptionTraitName')" label-for="trait-name" :state="formState.name">
             <template #label>
-              <BIconTextarea /> {{ $t('formLabelTraitName') }}
+              <IBiTextarea /> {{ $t('formLabelTraitName') }}
             </template>
-            <b-form-input v-model="newTrait.name" trim id="trait-name" autofocus required :state="formState.name" ref="traitName" v-on:keyup.enter="newTrait.id ? updateTrait() : addTrait()" />
+            <b-form-input v-model.trim="newTrait.name" id="trait-name" autofocus required :state="formState.name" ref="traitName" v-on:keyup.enter="newTrait.id ? updateTrait() : addTrait()" />
             <b-form-invalid-feedback>
               {{ $t('formFeedbackTraitNameInvalidOrDuplicate') }}
             </b-form-invalid-feedback>
           </b-form-group>
           <b-form-group :description="$t('formDescriptionTraitDescription')" label-for="trait-description">
             <template #label>
-              <BIconCardText /> {{ $t('formLabelTraitDescription') }}
+              <IBiCardText /> {{ $t('formLabelTraitDescription') }}
             </template>
             <b-form-textarea rows=3 trim v-model="newTrait.description" id="trait-description" />
           </b-form-group>
@@ -22,7 +22,7 @@
             <b-col cols=6>
               <b-form-group :description="$t('formDescriptionTraitDataType')" label-for="trait-data-type">
                 <template #label>
-                  <BIconRulers /> {{ $t('formLabelTraitDataType') }}
+                  <IBiRulers /> {{ $t('formLabelTraitDataType') }}
                 </template>
                 <b-form-select :options="dataTypeOptions" required v-model="newTrait.dataType" id="trait-data-type" />
               </b-form-group>
@@ -30,9 +30,9 @@
             <b-col cols=6>
               <b-form-group :description="$t('formDescriptionTraitGroup')" label-for="trait-group">
                 <template #label>
-                  <BIconCollection /> {{ $t('formLabelTraitGroup') }}
+                  <IBiCollection /> {{ $t('formLabelTraitGroup') }}
                 </template>
-                <b-form-input list="trait-groups" trim v-model="newTrait.group" id="trait-group" />
+                <b-form-input list="trait-groups" v-model.trim="newTrait.group" id="trait-group" />
 
                 <datalist id="trait-groups">
                   <option v-for="group in traitGroups" :key="`trait-group-${group}`">{{ group }}</option>
@@ -42,7 +42,7 @@
           </b-row>
           <b-form-group :description="$t('formDescriptionTraitRestrictionsCategories')" label-for="trait-categories" v-if="newTrait.dataType === 'categorical'" :state="formState.categories">
             <template #label>
-              <BIconTags /> {{ $t('formLabelTraitRestrictionsCategories') }}
+              <IBiTags /> {{ $t('formLabelTraitRestrictionsCategories') }}
             </template>
             <b-form-textarea v-model="newTrait.restrictions.categories" :rows="4" :placeholder="$t('formPlaceholderTraitRestrictionsCategories')" required id="trait-categories" :state="formState.categories" />
           </b-form-group>
@@ -50,35 +50,35 @@
             <b-col cols=6>
               <b-form-group :description="$t('formDescriptionTraitRestrictionsMin')" label-for="trait-min">
                 <template #label>
-                  <BIconChevronBarDown /> {{ $t('formLabelTraitRestrictionsMin') }}
+                  <IBiChevronBarDown /> {{ $t('formLabelTraitRestrictionsMin') }}
                 </template>
-                <b-input type="number" :step="1" number v-model="newTrait.restrictions.min" id="trait-min" :state="formState.min" />
+                <b-form-input type="number" :step="1" number v-model="newTrait.restrictions.min" id="trait-min" :state="formState.min" />
               </b-form-group>
             </b-col>
             <b-col cols=6>
               <b-form-group :description="$t('formDescriptionTraitRestrictionsMax')" label-for="trait-max">
                 <template #label>
-                  <BIconChevronBarUp /> {{ $t('formLabelTraitRestrictionsMax') }}
+                  <IBiChevronBarUp /> {{ $t('formLabelTraitRestrictionsMax') }}
                 </template>
-                <b-input type="number" :step="1" number v-model="newTrait.restrictions.max" id="trait-max" :state="formState.max" />
+                <b-form-input type="number" :step="1" number v-model="newTrait.restrictions.max" id="trait-max" :state="formState.max" />
               </b-form-group>
             </b-col>
           </b-row>
           <b-form-group :description="$t('formDescriptionTraitSetSize')" label-for="trait-set-size" :state="formState.setSize">
             <template #label>
-              <BIconSegmentedNav :rotate="90" /> {{ $t('formLabelTraitSetSize') }}
+              <IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $t('formLabelTraitSetSize') }}
             </template>
-            <b-input type="number" :step="1" number :min="1" required v-model="newTrait.setSize" id="trait-set-size" :state="formState.setSize" />
+            <b-form-input type="number" :step="1" number :min="1" required v-model="newTrait.setSize" id="trait-set-size" :state="formState.setSize" />
           </b-form-group>
           <b-form-group :description="$t('formDescriptionTraitAllowRepeats')" label-for="trait-allow-repeats">
             <template #label>
-              <BIconArrowRepeat /> {{ $t('formLabelTraitAllowRepeats') }}
+              <IBiArrowRepeat /> {{ $t('formLabelTraitAllowRepeats') }}
             </template>
             <b-form-checkbox switch v-model="newTrait.allowRepeats" required id="trait-allow-repeats" />
           </b-form-group>
           <b-form-group :description="$t('formDescriptionTraitTimeframe')" label-for="trait-timeframe">
             <template #label>
-              <BIconCalendarRange /> {{ $t('formLabelTraitTimeframe') }}
+              <IBiCalendarRange /> {{ $t('formLabelTraitTimeframe') }}
             </template>
             <b-form-checkbox switch :checked="newTrait.timeframe !== null" @change="toggleTimeframe" required id="trait-timeframe" />
           </b-form-group>
@@ -86,11 +86,11 @@
             <b-card class="mb-3" v-if="timeframeCollapseVisible">
               <b-form-group :description="$t('formDescriptionTraitTimeframeType')" label-for="trait-timeframe-type">
                 <template #label>
-                  <BIconCalendarRange /> {{ $t('formLabelTraitTimeframeType') }}
+                  <IBiCalendarRange /> {{ $t('formLabelTraitTimeframeType') }}
                 </template>
-                <b-button-group>
-                  <b-button variant="outline-secondary" :pressed="newTrait.timeframe.type === TRAIT_TIMEFRAME_TYPE_SUGGEST" @click="newTrait.timeframe.type = TRAIT_TIMEFRAME_TYPE_SUGGEST"><BIconTriangle :rotate="180" /> {{ $t('formSelectOptionTraitTimeframeSuggest') }}</b-button>
-                  <b-button variant="outline-secondary" :pressed="newTrait.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE" @click="newTrait.timeframe.type = TRAIT_TIMEFRAME_TYPE_ENFORCE"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-stop" viewBox="0 0 16 16"><path d="M3.16 10.08c-.931 0-1.447-.493-1.494-1.132h.653c.065.346.396.583.891.583.524 0 .83-.246.83-.62 0-.303-.203-.467-.637-.572l-.656-.164c-.61-.147-.978-.51-.978-1.078 0-.706.597-1.184 1.444-1.184.853 0 1.386.475 1.436 1.087h-.645c-.064-.32-.352-.542-.797-.542-.472 0-.77.246-.77.6 0 .261.196.437.553.522l.654.161c.673.164 1.06.487 1.06 1.11 0 .736-.574 1.228-1.544 1.228Zm3.427-3.51V10h-.665V6.57H4.753V6h3.006v.568H6.587Z"/><path fill-rule="evenodd" d="M11.045 7.73v.544c0 1.131-.636 1.805-1.661 1.805-1.026 0-1.664-.674-1.664-1.805V7.73c0-1.136.638-1.807 1.664-1.807 1.025 0 1.66.674 1.66 1.807Zm-.674.547v-.553c0-.827-.422-1.234-.987-1.234-.572 0-.99.407-.99 1.234v.553c0 .83.418 1.237.99 1.237.565 0 .987-.408.987-1.237Zm1.15-2.276h1.535c.82 0 1.316.55 1.316 1.292 0 .747-.501 1.289-1.321 1.289h-.865V10h-.665V6.001Zm1.436 2.036c.463 0 .735-.272.735-.744s-.272-.741-.735-.741h-.774v1.485h.774Z"/><path fill-rule="evenodd" d="M4.893 0a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146A.5.5 0 0 0 11.107 0H4.893ZM1 5.1 5.1 1h5.8L15 5.1v5.8L10.9 15H5.1L1 10.9V5.1Z"/></svg> {{ $t('formSelectOptionTraitTimeframeEnforce') }}</b-button>
+                <b-button-group class="d-block">
+                  <b-button variant="outline-secondary" :pressed="newTrait.timeframe.type === TRAIT_TIMEFRAME_TYPE_SUGGEST" @click="newTrait.timeframe.type = TRAIT_TIMEFRAME_TYPE_SUGGEST"><IBiExclamationTriangle /> {{ $t('formSelectOptionTraitTimeframeSuggest') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="newTrait.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE" @click="newTrait.timeframe.type = TRAIT_TIMEFRAME_TYPE_ENFORCE"><IBiSignStop /> {{ $t('formSelectOptionTraitTimeframeEnforce') }}</b-button>
                 </b-button-group>
               </b-form-group>
 
@@ -98,17 +98,17 @@
                 <b-col cols=6>
                   <b-form-group :description="$t('formDescriptionTraitTimeframeStart')" label-for="trait-timeframe-start">
                     <template #label>
-                      <BIconstack><BIconCalendar stacked /><BIconChevronBarLeft stacked :scale="0.6" :shift-v="-2" /></BIconstack> {{ $t('formLabelTraitTimeframeStart') }}
+                      <IBiCalendarMinus /> {{ $t('formLabelTraitTimeframeStart') }}
                     </template>
-                    <b-form-datepicker :max="newTrait.timeframe.end || null" v-model="newTrait.timeframe.start" id="trait-timeframe-start" />
+                    <b-form-input type="date" :max="newTrait.timeframe.end || null" v-model="newTrait.timeframe.start" id="trait-timeframe-start" />
                   </b-form-group>
                 </b-col>
                 <b-col cols=6>
                   <b-form-group :description="$t('formDescriptionTraitTimeframeEnd')" label-for="trait-timeframe-end">
                     <template #label>
-                      <BIconstack><BIconCalendar stacked /><BIconChevronBarRight stacked :scale="0.6" :shift-v="-2" /></BIconstack> {{ $t('formLabelTraitTimeframeEnd') }}
+                      <IBiCalendarPlus /> {{ $t('formLabelTraitTimeframeEnd') }}
                     </template>
-                    <b-form-datepicker :min="newTrait.timeframe.start || null" v-model="newTrait.timeframe.end" id="trait-timeframe-end" />
+                    <b-form-input type="date" :min="newTrait.timeframe.start || null" v-model="newTrait.timeframe.end" id="trait-timeframe-end" />
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -116,117 +116,103 @@
           </b-collapse>
         </b-form>
 
-        <b-button v-if="newTrait.id" @click="updateTrait" variant="primary" :disabled="!newTrait.name"><BIconPencilSquare /> {{ $t('buttonUpdate') }}</b-button>
-        <b-button v-else @click="addTrait" variant="primary" :disabled="!newTrait.name"><BIconPlusSquareFill /> {{ $t('buttonAdd') }}</b-button>
+        <b-button v-if="newTrait.id" @click="updateTrait" variant="primary" :disabled="!newTrait.name"><IBiPencilSquare /> {{ $t('buttonUpdate') }}</b-button>
+        <b-button v-else @click="addTrait" variant="primary" :disabled="!newTrait.name"><IBiPlusSquareFill /> {{ $t('buttonAdd') }}</b-button>
       </b-col>
       <b-col cols=12 lg=6 class="mb-3">
         <div class="d-flex align-items-center justify-content-between">
-          <h2>{{ $t('pageTrialTraitListTitle') }} <b-button :disabled="!traits || traits.length < 1" @click="clearTraits" v-b-tooltip="$t('buttonClear')"><BIconTrashFill /></b-button></h2>
+          <h2>{{ $t('pageTrialTraitListTitle') }} <b-button :disabled="!traits || traits.length < 1" @click="clearTraits" v-b-tooltip="$t('buttonClear')"><IBiTrashFill /></b-button></h2>
           <b-dropdown :text="$t('dropdownImportExportTraits')">
             <b-dropdown-group id="import-group" :header="$t('dropdownSectionImportTraits')">
               <b-dropdown-item-button @click="importExportJson(false)">{{ $t('dropdownOptionImportTraitsJson') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="importExportGerminate(false)">{{ $t('dropdownOptionImportTraitsGerminate') }}</b-dropdown-item-button>
+              <b-dropdown-item-button @click="importExportTabular(false)">{{ $t('dropdownOptionImportTraitsTabular') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="importOtherTrial">{{ $t('dropdownOptionImportTraitsOtherTrial') }}</b-dropdown-item-button>
               <b-dropdown-item-button @click="$refs.brapiTraitImportModal.show()">{{ $t('dropdownOptionImportTraitsBrapi') }}</b-dropdown-item-button>
             </b-dropdown-group>
             <b-dropdown-group id="export-group" :header="$t('dropdownSectionExportTraits')">
               <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportJson(true)">{{ $t('dropdownOptionExportTraitsJson') }}</b-dropdown-item-button>
               <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportGerminate(true)">{{ $t('dropdownOptionExportTraitsGerminate') }}</b-dropdown-item-button>
+              <b-dropdown-item-button :disabled="!traits || traits.length < 1" @click="importExportTabular(true)">{{ $t('dropdownOptionExportTraitsTabular') }}</b-dropdown-item-button>
             </b-dropdown-group>
           </b-dropdown>
         </div>
         <p>{{ $t('pageTrialTraitListText') }}</p>
-        <draggable v-model="traits" tag="b-list-group" v-if="traits && traits.length > 0" handle=".drag-handle" class="trait-list">
-          <b-list-group-item :active="newTrait.id === trait.id" href="#" @click.prevent="toggleTrait(index)" class="flex-column align-items-start" v-for="(trait, index) in traits" :key="`trait-list-${trait.id}`">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ trait.name }}</h5>
-              <span>
-                <small><b-badge variant="info">{{ getTraitTypeText(trait, true) }}</b-badge></small>
-                <BIconGripVertical class="drag-handle ml-2" />
-              </span>
-            </div>
-            <div>
-              <span class="mr-2"><BIconArrowRepeat /> {{ trait.allowRepeats ? $t('formFeedbackTraitAllowRepeats') : $t('formFeedbackTraitNoAllowRepeats') }}</span>
-              <span class="mr-2"><BIconSegmentedNav :rotate="90" /> {{ $t('formFeedbackTraitSetSize', { count: trait.setSize }) }}</span>
-              <span class="mr-2" v-if="trait.group"><BIconCollection /> {{ trait.group }}</span>
-            </div>
-            <div v-if="trait.timeframe">
-              <span class="mr-2" v-if="trait.timeframe.type === TRAIT_TIMEFRAME_TYPE_SUGGEST"><BIconTriangle :rotate="180" /> {{ $t('formSelectOptionTraitTimeframeSuggest') }}</span>
-              <span class="mr-2" v-else-if="trait.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-stop" viewBox="0 0 16 16"><path d="M3.16 10.08c-.931 0-1.447-.493-1.494-1.132h.653c.065.346.396.583.891.583.524 0 .83-.246.83-.62 0-.303-.203-.467-.637-.572l-.656-.164c-.61-.147-.978-.51-.978-1.078 0-.706.597-1.184 1.444-1.184.853 0 1.386.475 1.436 1.087h-.645c-.064-.32-.352-.542-.797-.542-.472 0-.77.246-.77.6 0 .261.196.437.553.522l.654.161c.673.164 1.06.487 1.06 1.11 0 .736-.574 1.228-1.544 1.228Zm3.427-3.51V10h-.665V6.57H4.753V6h3.006v.568H6.587Z"/><path fill-rule="evenodd" d="M11.045 7.73v.544c0 1.131-.636 1.805-1.661 1.805-1.026 0-1.664-.674-1.664-1.805V7.73c0-1.136.638-1.807 1.664-1.807 1.025 0 1.66.674 1.66 1.807Zm-.674.547v-.553c0-.827-.422-1.234-.987-1.234-.572 0-.99.407-.99 1.234v.553c0 .83.418 1.237.99 1.237.565 0 .987-.408.987-1.237Zm1.15-2.276h1.535c.82 0 1.316.55 1.316 1.292 0 .747-.501 1.289-1.321 1.289h-.865V10h-.665V6.001Zm1.436 2.036c.463 0 .735-.272.735-.744s-.272-.741-.735-.741h-.774v1.485h.774Z"/><path fill-rule="evenodd" d="M4.893 0a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146A.5.5 0 0 0 11.107 0H4.893ZM1 5.1 5.1 1h5.8L15 5.1v5.8L10.9 15H5.1L1 10.9V5.1Z"/></svg> {{ $t('formSelectOptionTraitTimeframeEnforce') }}</span>
-              <span class="mr-2" v-if="trait.timeframe.start"><BIconstack><BIconCalendar stacked /><BIconChevronBarLeft stacked :scale="0.6" :shift-v="-2" /></BIconstack> {{ trait.timeframe.start }}</span>
-              <span class="mr-2" v-if="trait.timeframe.end"><BIconstack><BIconCalendar stacked /><BIconChevronBarRight stacked :scale="0.6" :shift-v="-2" /></BIconstack> {{ trait.timeframe.end }}</span>
-            </div>
+        <draggable :list="traits" item-key="id" tag="b-list-group" v-if="traits && traits.length > 0" handle=".drag-handle" class="trait-list list-group">
+          <template #item="{ element, index }">
+            <b-list-group-item :active="newTrait.id === element.id" href="#" @click.prevent="toggleTrait(index)" class="flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ element.name }}</h5>
+                <span>
+                  <small><b-badge variant="info">{{ getTraitTypeText(element, true) }}</b-badge></small>
+                  <IBiGripVertical class="drag-handle ms-2" />
+                </span>
+              </div>
+              <div>
+                <span class="me-2"><IBiArrowRepeat /> {{ element.allowRepeats ? $t('formFeedbackTraitAllowRepeats') : $t('formFeedbackTraitNoAllowRepeats') }}</span>
+                <span class="me-2"><IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $t('formFeedbackTraitSetSize', { count: element.setSize }) }}</span>
+                <span class="me-2" v-if="element.group"><IBiCollection /> {{ element.group }}</span>
+              </div>
+              <div v-if="element.timeframe">
+                <span class="me-2" v-if="element.timeframe.type === TRAIT_TIMEFRAME_TYPE_SUGGEST"><IBiExclamationTriangle /> {{ $t('formSelectOptionTraitTimeframeSuggest') }}</span>
+                <span class="me-2" v-else-if="element.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE"><IBiSignStop /> {{ $t('formSelectOptionTraitTimeframeEnforce') }}</span>
+                <span class="me-2" v-if="element.timeframe.start"><IBiCalendarMinus /> {{ element.timeframe.start }}</span>
+                <span class="me-2" v-if="element.timeframe.end"><IBiCalendarPlus /> {{ element.timeframe.end }}</span>
+              </div>
 
-            <p class="mb-1 trait-description" v-if="trait.description" :title="trait.description">{{ trait.description }}</p>
+              <p class="mb-1 trait-description" v-if="element.description" :title="element.description">{{ element.description }}</p>
 
-            <small v-if="trait.restrictions">
-              <b-badge class="mr-2" v-if="trait.restrictions.min !== undefined && trait.restrictions.min !== null"><BIconChevronBarDown /> {{ trait.restrictions.min }}</b-badge>
-              <b-badge class="mr-2" v-if="trait.restrictions.max !== undefined && trait.restrictions.max !== null"><BIconChevronBarUp /> {{ trait.restrictions.max }}</b-badge>
-              <b-badge class="mr-2" v-if="trait.restrictions.categories !== undefined && trait.restrictions.categories !== null && trait.restrictions.categories.length > 0"><BIconTags /> {{ trait.restrictions.categories.join(', ') }}</b-badge>
-            </small>
+              <small v-if="element.restrictions">
+                <b-badge class="me-2" v-if="element.restrictions.min !== undefined && element.restrictions.min !== null"><IBiChevronBarDown /> {{ element.restrictions.min }}</b-badge>
+                <b-badge class="me-2" v-if="element.restrictions.max !== undefined && element.restrictions.max !== null"><IBiChevronBarUp /> {{ element.restrictions.max }}</b-badge>
+                <b-badge class="me-2" v-if="element.restrictions.categories !== undefined && element.restrictions.categories !== null && element.restrictions.categories.length > 0"><IBiTags /> {{ element.restrictions.categories.join(', ') }}</b-badge>
+              </small>
 
-            <b-button-group class="d-block mt-2">
-              <b-button variant="outline-secondary" @click.prevent.stop="duplicateTrait(index)"><BIconBack /> {{ $t('buttonDuplicate') }}</b-button>
-              <b-button variant="outline-danger" @click.prevent.stop="deleteTrait(index)"><BIconTrash /> {{ $t('buttonDelete') }}</b-button>
-            </b-button-group>
-          </b-list-group-item>
+              <b-button-group class="d-block mt-2">
+                <b-button variant="outline-secondary" @click.prevent.stop="duplicateTrait(index)"><IBiBack /> {{ $t('buttonDuplicate') }}</b-button>
+                <b-button variant="outline-danger" @click.prevent.stop="deleteTrait(index)"><IBiTrash /> {{ $t('buttonDelete') }}</b-button>
+              </b-button-group>
+            </b-list-group-item>
+          </template>
         </draggable>
         <p v-else>{{ $t('pageTrialTraitListEmpty') }}</p>
       </b-col>
     </b-row>
 
-    <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" @change="importTraits" />
-    <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" @change="importTraits" />
-    <TraitImportTrialModal ref="traitImportTrialModal" @change="importTraits" />
+    <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" @data-changed="importTraits" />
+    <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" @data-changed="importTraits" />
+    <TraitImportExportTabularModal :traits="traitsToExport" ref="traitImportExportTabularModal" @data-changed="importTraits" />
+    <TraitImportTrialModal ref="traitImportTrialModal" @data-changed="importTraits" />
     <BrapiTraitImportModal ref="brapiTraitImportModal" @traits-selected="importBrapiTraits" />
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal'
-import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal'
-import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal'
-import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal'
+import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal.vue'
+import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal.vue'
+import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
+import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
+import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal.vue'
 import { getTraitTypeText } from '@/plugins/misc'
-import { BIconstack, BIconPlusSquareFill, BIconArrowRepeat, BIconChevronBarRight, BIconChevronBarLeft, BIconCalendar, BIconCalendarRange, BIconTriangle, BIconSegmentedNav, BIconCollection, BIconBack, BIconTrashFill, BIconTrash, BIconGripVertical, BIconTags, BIconPencilSquare, BIconTextarea, BIconCardText, BIconRulers, BIconChevronBarDown, BIconChevronBarUp } from 'bootstrap-vue'
 import draggable from 'vuedraggable'
 import { getId } from '@/plugins/id'
 import { TRAIT_TIMEFRAME_TYPE_SUGGEST, TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
 
+import emitter from 'tiny-emitter/instance'
+
 export default {
   components: {
     draggable,
-    BIconstack,
-    BIconCalendar,
-    BIconChevronBarRight,
-    BIconChevronBarLeft,
-    BIconCollection,
-    BIconPlusSquareFill,
-    BIconArrowRepeat,
-    BIconSegmentedNav,
-    BIconTriangle,
-    BIconCalendarRange,
-    BIconBack,
-    BIconTrash,
-    BIconTrashFill,
-    BIconGripVertical,
-    BIconPencilSquare,
-    BIconTextarea,
-    BIconCardText,
-    BIconRulers,
-    BIconChevronBarDown,
-    BIconChevronBarUp,
-    BIconTags,
     TraitImportExportGridScoreModal,
     TraitImportExportGerminateModal,
+    TraitImportExportTabularModal,
     TraitImportTrialModal,
     BrapiTraitImportModal
   },
   props: {
-    trial: {
-      type: Object,
-      default: () => null
+    trials: {
+      type: Array,
+      default: () => []
     },
     initialTraits: {
       type: Array,
@@ -264,8 +250,11 @@ export default {
     }
   },
   watch: {
-    traits: function (newValue) {
-      this.$emit('change', newValue)
+    traits: {
+      deep: true,
+      handler: function (newValue) {
+        this.$emit('data-changed', newValue)
+      }
     },
     initialTraits: {
       immediate: true,
@@ -275,7 +264,9 @@ export default {
             delete t.editable
             delete t.color
             delete t.progress
-            t.timeframe = null
+            if (!t.timeframe) {
+              t.timeframe = null
+            }
             return t
           })
         } else {
@@ -291,10 +282,14 @@ export default {
     traitGroups: function () {
       const set = new Set()
 
-      if (this.trial && this.trial.traits && this.trial.traits.length > 0) {
-        this.trial.traits.forEach(t => {
-          if (t.group && t.group.name && t.group.name !== '') {
-            set.add(t.group.name)
+      if (this.trials && this.trials.length > 0) {
+        this.trials.forEach(trial => {
+          if (trial.traits && trial.traits.length > 0) {
+            trial.traits.forEach(t => {
+              if (t.group && t.group.name && t.group.name !== '') {
+                set.add(t.group.name)
+              }
+            })
           }
         })
       }
@@ -339,17 +334,18 @@ export default {
   methods: {
     getTraitTypeText,
     clearTraits: function () {
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextDeleteTraits'), {
-        title: this.$t('modalTitleDeleteTraits'),
-        okTitle: this.$t('buttonYes'),
+      emitter.emit('show-confirm', {
+        title: 'modalTitleDeleteTraits',
+        message: 'modalTextDeleteTraits',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
         okVariant: 'danger',
-        cancelTitle: this.$t('buttonNo')
-      })
-        .then(value => {
-          if (value) {
+        callback: (result) => {
+          if (result) {
             this.traits = []
           }
-        })
+        }
+      })
     },
     importBrapiTraits: function (newTraits) {
       if (newTraits && newTraits.length > 0) {
@@ -417,6 +413,22 @@ export default {
     },
     importOtherTrial: function () {
       this.$refs.traitImportTrialModal.show()
+    },
+    importExportTabular: function (xport) {
+      if (xport && this.traits && this.traits.length > 0) {
+        const temp = JSON.parse(JSON.stringify(this.traits))
+        temp.forEach(t => {
+          delete t.id
+          delete t.progress
+          delete t.editable
+          delete t.color
+        })
+        this.traitsToExport = temp
+      } else {
+        this.traitsToExport = null
+      }
+
+      this.$nextTick(() => this.$refs.traitImportExportTabularModal.show())
     },
     importExportGerminate: function (xport) {
       if (xport && this.traits && this.traits.length > 0) {
@@ -543,7 +555,7 @@ export default {
 
       const copy = this.copyTraitFixRestrictions()
 
-      Vue.set(this.traits, this.traits.findIndex(t => t.id === copy.id), copy)
+      this.traits[this.traits.findIndex(t => t.id === copy.id)] = copy
 
       this.reset()
     },
@@ -626,17 +638,18 @@ export default {
       this.newTrait = copy
     },
     deleteTrait: function (index) {
-      this.$bvModal.msgBoxConfirm(this.$t('modalTextDeleteTrait'), {
-        title: this.$t('modalTitleDeleteTrait'),
-        okTitle: this.$t('buttonYes'),
+      emitter.emit('show-confirm', {
+        title: 'modalTitleDeleteTrait',
+        message: 'modalTextDeleteTrait',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
         okVariant: 'danger',
-        cancelTitle: this.$t('buttonNo')
-      })
-        .then(value => {
-          if (value) {
+        callback: (result) => {
+          if (result) {
             this.traits.splice(index, 1)
           }
-        })
+        }
+      })
     },
     emitData: function () {
       this.$emit('finished', this.traits)

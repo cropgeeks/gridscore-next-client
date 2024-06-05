@@ -7,10 +7,10 @@
       <b-col cols=12 sm=6 md=4 class="mb-4" v-for="example in exampleTrials" :key="`example-trial-${example.id}`">
         <b-card class="home-card h-100 d-flex flex-column justify-content-between" no-body>
           <div>
-            <b-card-img class="p-2 p-md-4 p-lg-5" :top="true" :src="require(`@/assets/img/example/${example.image}`)" />
+            <b-card-img class="p-2 p-md-4 p-lg-5" :top="true" :src="`img/example/${example.image}`" />
             <b-card-body>
               <b-card-title>{{ example.name }}</b-card-title>
-              <b-card-sub-title>{{ example.description }}</b-card-sub-title>
+              <b-card-subtitle>{{ example.description }}</b-card-subtitle>
             </b-card-body>
           </div>
 
@@ -31,7 +31,7 @@
                 </b-col>
               </b-row>
             </b-card-body>
-            <b-button class="w-100" variant="primary" @click="loadExample(example)"><BIconCloudDownload /> {{ $t('buttonLoad') }}</b-button>
+            <b-button class="w-100" variant="primary" @click="loadExample(example)"><IBiCloudDownload /> {{ $t('buttonLoad') }}</b-button>
           </div>
         </b-card>
       </b-col>
@@ -40,14 +40,19 @@
 </template>
 
 <script>
-import { BIconCloudDownload } from 'bootstrap-vue'
-
 import { addTrial } from '@/plugins/idb'
 
+import barley from '@/assets/data/barley.json'
+import measurementset from '@/assets/data/measurementset.json'
+import timeline from '@/assets/data/timeline.json'
+
+const data = {
+  barley,
+  measurementset,
+  timeline
+}
+
 export default {
-  components: {
-    BIconCloudDownload
-  },
   data: function () {
     return {
     }
@@ -58,7 +63,7 @@ export default {
         id: 'barley',
         name: this.$t('pageLoadExampleBarleyTrialName'),
         description: this.$t('pageLoadExampleBarleyTrialDescription'),
-        source: 'barley.json',
+        source: 'barley',
         stats: {
           traits: 5,
           rows: 28,
@@ -69,7 +74,7 @@ export default {
         id: 'multi',
         name: this.$t('pageLoadExampleTimelineName'),
         description: this.$t('pageLoadExampleTimelineDescription'),
-        source: 'timeline.json',
+        source: 'timeline',
         stats: {
           traits: 2,
           rows: 5,
@@ -80,7 +85,7 @@ export default {
         id: 'measurementset',
         name: this.$t('pageLoadExampleMeasurementSetName'),
         description: this.$t('pageLoadExampleMeasurementSetDescription'),
-        source: 'measurementset.json',
+        source: 'measurementset',
         stats: {
           traits: 3,
           rows: 3,
@@ -92,7 +97,7 @@ export default {
   },
   methods: {
     loadExample: function (example) {
-      const json = require(`@/assets/data/${example.source}`)
+      const json = data[example.source]
 
       json.createdOn = new Date().toISOString()
       json.updatedOn = new Date().toISOString()

@@ -2,27 +2,30 @@
   <div v-if="trait">
     <b-button-group class="mb-3">
       <b-button v-for="mode in plotModes" :key="`plot-mode-${mode.value}`" :pressed="plotMode === mode.value" @click="plotMode = mode.value">
-        <component :is="mode.icon" /> {{ mode.name }}
+        <IBiHr v-if="mode.value === 'average'" />
+        <IBiCardChecklist v-else-if="mode.value === 'all'" />
+        <IBiCardList v-else-if="mode.value === 'selection'" />
+        &nbsp;<span>{{ mode.name }}</span>
       </b-button>
 
-      <b-button :pressed="individualTimepoints" @click="individualTimepoints = true" class="ml-3">
-        <BIconBarChartSteps :rotate="-90" /> {{ $t('buttonIndividualTimepoints') }}
+      <b-button :pressed="individualTimepoints" @click="individualTimepoints = true" class="ms-3">
+        <IBiBarChartSteps :style="{ transform: 'rotate(-90deg)' }" /> {{ $t('buttonIndividualTimepoints') }}
       </b-button>
       <b-button :pressed="!individualTimepoints" @click="individualTimepoints = false">
-        <BIconGraphUp /> {{ $t('buttonEvolvingTimepoints') }}
+        <IBiGraphUp /> {{ $t('buttonEvolvingTimepoints') }}
       </b-button>
     </b-button-group>
     <div v-if="plotMode === 'selection'" class="select-search-wrapper">
       <b-form-input v-model="searchTerm" type="search" :placeholder="$t('formPlaceholderTimelinePlotSearch')" />
       <b-input-group>
-        <b-select multiple :options="filteredGermplasm" v-model="selectedGermplasmTemp" />
+        <b-form-select multiple :options="filteredGermplasm" v-model="selectedGermplasmTemp" />
         <b-input-group-append>
-          <b-button @click="addGermplasm"><BIconPlusSquareFill /></b-button>
+          <b-button @click="addGermplasm"><IBiPlusSquareFill /></b-button>
         </b-input-group-append>
       </b-input-group>
 
       <div class="my-3">
-        <b-badge class="mr-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`">
+        <b-badge class="me-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`">
           {{ germplasm }} <button type="button" class="close badge-close" @click="removeGermplasm(index)">×</button>
         </b-badge>
       </div>
@@ -34,25 +37,20 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import { BIconCardChecklist, BIconCardList, BIconHr, BIconPlusSquareFill, BIconBarChartSteps, BIconGraphUp } from 'bootstrap-vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { toLocalDateString } from '@/plugins/misc'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import scatter from 'plotly.js/lib/scatter'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/scatter')
+  scatter
 ])
 
 export default {
-  components: {
-    BIconPlusSquareFill,
-    BIconBarChartSteps,
-    BIconGraphUp
-  },
   props: {
     trial: {
       type: Object,
@@ -98,16 +96,13 @@ export default {
     plotModes: function () {
       return [{
         name: this.$t('widgetTimelinePlotTypeAverage'),
-        value: 'average',
-        icon: BIconHr
+        value: 'average'
       }, {
         name: this.$t('widgetTimelinePlotTypeAll'),
-        value: 'all',
-        icon: BIconCardChecklist
+        value: 'all'
       }, {
         name: this.$t('widgetTimelinePlotTypeSelection'),
-        value: 'selection',
-        icon: BIconCardList
+        value: 'selection'
       }]
     },
     safeTrialName: function () {
@@ -409,7 +404,7 @@ export default {
 
     this.update()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.update)
   }
 }

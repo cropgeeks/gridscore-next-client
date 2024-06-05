@@ -15,25 +15,25 @@
             <b-form-group :label="$t('formLabelStatisticsGermplasm')" :description="$t('formDescriptionStatisticsGermplasm')" label-for="germplasmSearch">
               <b-form-input v-model="searchTerm" type="search" :placeholder="$t('formPlaceholderTimelinePlotSearch')" id="germplasmSearch" />
               <b-input-group>
-                <b-select multiple :options="filteredGermplasm" v-model="selectedGermplasmTemp" />
+                <b-form-select multiple :options="filteredGermplasm" v-model="selectedGermplasmTemp" />
                 <b-input-group-append>
-                  <b-button @click="addGermplasm"><BIconPlusSquareFill /></b-button>
+                  <b-button @click="addGermplasm"><IBiPlusSquareFill /></b-button>
                 </b-input-group-append>
               </b-input-group>
             </b-form-group>
 
             <div v-if="selectedGermplasm && selectedGermplasm.length > 0" class="germplasm-selection-badges">
-              <b-badge class="mr-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`" >
+              <b-badge class="me-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`" >
                 {{ germplasm }} <button type="button" class="close badge-close" @click="removeGermplasm(index)">×</button>
               </b-badge>
 
-              <b-badge class="mr-2" variant="danger" href="#" @click.prevent="clearSelectedGermplasm" >
-                <BIconTrash /> {{ $t('buttonClear') }}
+              <b-badge class="me-2" variant="danger" href="#" @click.prevent="clearSelectedGermplasm" >
+                <IBiTrash /> {{ $t('buttonClear') }}
               </b-badge>
             </div>
           </b-col>
           <b-col cols=12>
-            <b-button variant="primary" @click="updateTraits"><BIconArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
+            <b-button variant="primary" @click="updateTraits"><IBiArrowClockwise /> {{ $t('buttonUpdate') }}</b-button>
           </b-col>
         </b-row>
         <b-row>
@@ -58,22 +58,23 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import TraitHeading from '@/components/TraitHeading'
+import TraitHeading from '@/components/TraitHeading.vue'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { BIconArrowClockwise, BIconPlusSquareFill, BIconTrash } from 'bootstrap-vue'
 import { getTrialById } from '@/plugins/idb'
 import { hexToRgba, invertHex, toLocalDateString } from '@/plugins/misc'
-import PlotDataSection from '@/components/PlotDataSection'
+import PlotDataSection from '@/components/PlotDataSection.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import bar from 'plotly.js/lib/bar'
+import box from 'plotly.js/lib/box'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/bar'),
-  require('plotly.js/lib/box')
+  bar,
+  box
 ])
 
 const GENERIC_TRACE = 'GENERIC_TRACE'
@@ -81,9 +82,6 @@ const GENERIC_TRACE = 'GENERIC_TRACE'
 export default {
   components: {
     TraitHeading,
-    BIconArrowClockwise,
-    BIconPlusSquareFill,
-    BIconTrash,
     PlotDataSection
   },
   computed: {
@@ -190,8 +188,8 @@ export default {
 
       if (ref) {
         const layoutDelta = {
-          'xaxis.fixedrange': !this.chartInteractionEnabled[traitIndex],
-          'yaxis.fixedrange': !this.chartInteractionEnabled[traitIndex]
+          'xaxis.fixedrange': this.chartInteractionEnabled[traitIndex],
+          'yaxis.fixedrange': this.chartInteractionEnabled[traitIndex]
         }
 
         Plotly.relayout(ref[0], layoutDelta)
@@ -533,7 +531,7 @@ export default {
 
     this.updateTrialDataCache()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.updateTrialDataCache)
   }
 }

@@ -4,25 +4,25 @@
       <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: 1 })" label-for="top-left">
           <!-- Top left corner -->
-          <GpsInput :currentPosition="corners.topLeft" @changed="corner => { corners.topLeft = corner }" id="top-left" />
+          <GpsInput :currentPosition="corners.topLeft" @data-changed="corner => { corners.topLeft = corner }" id="top-left" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: 1 })" label-for="bottom-left">
           <!-- Bottom left corner -->
-          <GpsInput :currentPosition="corners.bottomLeft" @changed="corner => { corners.bottomLeft = corner }" id="bottom-left" />
+          <GpsInput :currentPosition="corners.bottomLeft" @data-changed="corner => { corners.bottomLeft = corner }" id="bottom-left" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: columns })" label-for="top-right">
           <!-- Top right corner -->
-          <GpsInput :currentPosition="corners.topRight" @changed="corner => { corners.topRight = corner }" id="top-right" />
+          <GpsInput :currentPosition="corners.topRight" @data-changed="corner => { corners.topRight = corner }" id="top-right" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: columns })" label-for="bottom-right">
           <!-- Bottom right corner -->
-          <GpsInput :currentPosition="corners.bottomRight" @changed="corner => { corners.bottomRight = corner }" id="bottom-right" />
+          <GpsInput :currentPosition="corners.bottomRight" @data-changed="corner => { corners.bottomRight = corner }" id="bottom-right" />
         </b-form-group>
       </b-col>
     </b-row>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import GpsInput from '@/components/GpsInput'
+import GpsInput from '@/components/GpsInput.vue'
 
 import { mapGetters } from 'vuex'
 import L from 'leaflet'
@@ -60,12 +60,16 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 import { isGeographyValid, toGeoJson, isLocationValid, trialLayoutToPlots } from '@/plugins/location'
 
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  iconRetinaUrl: iconRetinaUrl,
+  iconUrl: iconUrl,
+  shadowUrl: shadowUrl
 })
 
 /**
@@ -116,7 +120,7 @@ export default {
     corners: {
       deep: true,
       handler: function (newValue) {
-        this.$emit('change', newValue)
+        this.$emit('data-changed', newValue)
 
         this.updateGrid()
       }

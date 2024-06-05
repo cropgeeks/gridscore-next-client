@@ -25,7 +25,7 @@
       <b-form-file type="file" :placeholder="$t('buttonOpenFile')" accept="text/plain" v-model="inputFile" />
     </b-form-group>
 
-    <b-button variant="primary" @click="readColumns"><BIconLayoutTextSidebar :rotate=270 /> {{ $t('buttonReadColumns') }}</b-button>
+    <b-button variant="primary" @click="readColumns"><IBiLayoutTextSidebar :style="{ transform: 'rotate(270deg)' }" /> {{ $t('buttonReadColumns') }}</b-button>
 
     <div class="mt-3" v-if="fileColumns && fileColumns.length > 0">
       <p>{{ $t('modalTextFielDBookColumnMapping') }}</p>
@@ -57,15 +57,11 @@
 
 <script>
 import { tsvParse, csvParse, autoType } from 'd3-dsv'
-import { BIconLayoutTextSidebar } from 'bootstrap-vue'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconLayoutTextSidebar
-  },
   props: {
     layout: {
       type: Object,
@@ -233,7 +229,7 @@ export default {
         }
       }
 
-      this.$emit('change', mapping)
+      this.$emit('data-changed', mapping)
       this.reset()
 
       this.hide()

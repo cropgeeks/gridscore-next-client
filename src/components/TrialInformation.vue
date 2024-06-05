@@ -2,50 +2,50 @@
   <b-container fluid class="py-3 h-100 d-flex flex-column justify-content-between align-items-start" v-if="trial">
     <div>
       <b-card-title class="trial-name">{{ trial.name }}</b-card-title>
-      <b-card-sub-title @click="trialDescriptionExpanded = !trialDescriptionExpanded" :class="{ 'trial-description': !trialDescriptionExpanded, 'mb-3': true }" v-if="trial.description" :title="trial.description">{{ trial.description }}</b-card-sub-title>
+      <b-card-subtitle @click="trialDescriptionExpanded = !trialDescriptionExpanded" :class="{ 'trial-description': !trialDescriptionExpanded, 'mb-3': true }" v-if="trial.description" :title="trial.description">{{ trial.description }}</b-card-subtitle>
     </div>
     <div class="text-center">
       <b-row>
         <b-col cols=6 class="mb-3">
-          <TrialShareTypeIcon iconTag="h5" iconClass="mb-0" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="$emit('on-share-clicked')" />
+          <TrialShareTypeIcon iconTag="h5" iconClass="mb-0" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="onShowTrialShareClicked" />
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconCollection /></h5>
+          <h5 class="mb-0"><IBiCollection /></h5>
           <span>{{ trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned') }}</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconChatLeftText /></h5>
-          <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
-          <span v-else>{{ $tc('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</span>
+          <h5 class="mb-0"><IBiChatLeftText /></h5>
+          <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $t('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
+          <span v-else>{{ $t('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconFlag /></h5>
-          <a href="#" @click.prevent="onShowTrialEventsClicked" v-if="showEvents">{{ $tc('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</a>
-          <span v-else>{{ $tc('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</span>
+          <h5 class="mb-0"><IBiFlag /></h5>
+          <a href="#" @click.prevent="onShowTrialEventsClicked" v-if="showEvents">{{ $t('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</a>
+          <span v-else>{{ $t('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconLayoutThreeColumns rotate="90" /></h5>
-          <span>{{ $tc('widgetTrialSelectorRows', trial.layout.rows) }}</span>
+          <h5 class="mb-0"><IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /></h5>
+          <span>{{ $t('widgetTrialSelectorRows', trial.layout.rows) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconLayoutThreeColumns /></h5>
-          <span>{{ $tc('widgetTrialSelectorColumns', trial.layout.columns) }}</span>
+          <h5 class="mb-0"><IBiLayoutThreeColumns /></h5>
+          <span>{{ $t('widgetTrialSelectorColumns', trial.layout.columns) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconTags /></h5>
-          <span>{{ $tc('widgetTrialSelectorTraits', trial.traits.length) }}</span>
-          <span class="d-block" v-if="hasTimeframe">(<BIconCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
+          <h5 class="mb-0"><IBiTags /></h5>
+          <span>{{ $t('widgetTrialSelectorTraits', trial.traits.length) }}</span>
+          <span class="d-block" v-if="hasTimeframe">(<IBiCalendarRange /> <a href="#" @click.prevent="$refs.trialTraitTimeframeModal.show()">{{ $t('widgetTrialSelectorTraitTimeframe') }}</a>)</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><BIconPerson /></h5>
-          <span>{{ $tc('widgetTrialSelectorPeople', (trial.people || []).length) }}</span>
+          <h5 class="mb-0"><IBiPerson /></h5>
+          <span>{{ $t('widgetTrialSelectorPeople', (trial.people || []).length) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3" v-if="trial.updatedOn">
-          <h5 class="mb-0"><BIconCalendarRange /></h5>
-          <span>{{ $tc('widgetTrialSelectorTrialDuration', trialDuration) }}</span>
+          <h5 class="mb-0"><IBiCalendarRange /></h5>
+          <span>{{ $t('widgetTrialSelectorTrialDuration', trialDuration) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3" v-if="trial.updatedOn">
-          <h5 class="mb-0"><BIconCalendarDate /></h5>
+          <h5 class="mb-0"><IBiCalendarDate /></h5>
           <span v-b-tooltip.bottom="new Date(trial.updatedOn).toLocaleString()">{{ formatTimeAgo(trial.updatedOn) }}</span>
         </b-col>
       </b-row>
@@ -56,24 +56,15 @@
 </template>
 
 <script>
-import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon'
-import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal'
-import { BIconLayoutThreeColumns, BIconCalendarRange, BIconCollection, BIconTags, BIconFlag, BIconPerson, BIconCalendarDate, BIconChatLeftText } from 'bootstrap-vue'
+import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon.vue'
+import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal.vue'
 import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
 import { formatTimeAgo, toLocalDateString } from '@/plugins/misc'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    BIconLayoutThreeColumns,
-    BIconCollection,
-    BIconTags,
-    BIconCalendarRange,
-    BIconPerson,
-    BIconFlag,
-    BIconCalendarDate,
-    BIconChatLeftText,
     TrialShareTypeIcon,
     TrialTraitTimeframeModal
   },
@@ -123,6 +114,9 @@ export default {
     },
     onShowTrialEventsClicked: function () {
       emitter.emit('show-trial-events', this.trial)
+    },
+    onShowTrialShareClicked: function () {
+      emitter.emit('show-trial-share', this.trial)
     }
   }
 }

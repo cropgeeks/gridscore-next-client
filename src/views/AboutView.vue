@@ -1,36 +1,36 @@
 <template>
   <div class="about-content">
     <b-container>
-      <div class="about-header bg-light p-5 my-4 border">
+      <div :class="`about-header ${storeDarkMode ? 'bg-dark' : 'bg-light'} p-5 my-4 border`">
         <b-row>
-          <b-col cols=12 md=4 class="text-center text-md-right" order="1" order-md="2">
+          <b-col cols=12 md=4 class="text-center text-md-end" order="1" order-md="2">
             <b-img fluid src="img/gridscore-next-text.svg" alt="GridScore logo" />
           </b-col>
           <b-col cols=12 md=8 order="2" order-md="1">
-            <h1 class="display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
-            <p class="lead text-center text-md-left"><BIconTag /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
-            <p class="lead text-center text-md-left" v-if="storeDeviceConfigString"><BIconLaptop /> {{ storeDeviceConfigString }}</p>
-            <p class="text-center text-md-left mb-0"><BIconInfoCircle /> <a href="#" @click.prevent="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
+            <h1 class="display-4 text-center text-md-start">{{ $t('appTitle') }}</h1>
+            <p class="lead text-center text-md-start"><IBiTag /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
+            <p class="lead text-center text-md-start" v-if="storeDeviceConfigString"><IBiLaptop /> {{ storeDeviceConfigString }}</p>
+            <p class="text-center text-md-start mb-0"><IBiInfoCircle /> <a href="#" @click.prevent="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
           </b-col>
         </b-row>
       </div>
 
       <p>{{ $t('pageAboutParagraphOne') }}</p>
       <p v-html="$t('pageAboutParagraphTwo')" />
-      <p class="d-flex"><BIconInfoCircleFill class="mt-1" /> <span class="ml-3" v-html="$t('pageAboutDocumentationLink')" /></p>
-      <p class="d-flex"><BIconGithub class="mt-1" /> <span class="ml-3" v-html="$t('pageAboutGitHubLink')" /></p>
-      <p class="d-flex"><BIconNewspaper class="mt-1" /> <span class="ml-3" v-html="$t('pageHomeTextCitation')" /></p>
+      <p class="d-flex"><IBiInfoCircleFill class="mt-1" /> <span class="ms-3" v-html="$t('pageAboutDocumentationLink')" /></p>
+      <p class="d-flex"><IBiGithub class="mt-1" /> <span class="ms-3" v-html="$t('pageAboutGitHubLink')" /></p>
+      <p class="d-flex"><IBiNewspaper class="mt-1" /> <span class="ms-3" v-html="$t('pageHomeTextCitation')" /></p>
 
       <!-- Funders -->
       <h2>{{ $t('pageAboutGridScoreFundersTitle') }}<small> - {{ $t('pageAboutGridScoreFundersSubtitle') }}</small></h2>
       <p>{{ $t('pageAboutGridScoreFundersText') }}</p>
       <b-row class="funders">
-        <b-col cols=6 sm=4 xl=3 v-for="(funder, i) in funders" :key="'about-funders-' + i" class="text-center pb-5 col-xxl-2">
+        <b-col cols=6 sm=4 xl=3 v-for="(funder, i) in funders" :key="'about-funders-' + i" class="text-center pb-4">
           <div :class="`p-3 p-xl-4 img-container d-flex justify-content-center ${storeDarkMode ? 'bg-secondary' : 'bg-light'}`">
             <a :href="funder.href" :title="funder.name" target="_blank" rel="noopener noreferrer" class="align-self-center" v-if="funder.href">
-              <b-img-lazy :src="require(`@/assets/img/funders/${funder.logo}`)" fluid alt="Funder logo" />
+              <b-img lazy :src="`img/funders/${funder.logo}`" fluid alt="Funder logo" />
             </a>
-            <b-img-lazy :src="require(`@/assets/img/funders/${funder.logo}`)" fluid  alt="Funder logo" v-else />
+            <b-img lazy :src="`img/funders/${funder.logo}`" fluid  alt="Funder logo" v-else />
           </div>
         </b-col>
       </b-row>
@@ -50,10 +50,10 @@
       <b-container fluid class="footer px-0">
         <b-row class="about-footer bg-dark px-3">
           <b-col cols=12 sm=6 class="about-logo">
-            <b-img :src="require('@/assets/img/ics-sdg.svg')" fluid class="my-5" alt="ICS logo" />
+            <b-img src="img/hutton.svg" fluid class="my-5" alt="ICS logo" />
           </b-col>
           <b-col cols=12 sm=6 class="about-logo">
-            <b-img :src="require('@/assets/img/hutton.svg')" fluid class="my-5" alt="Hutton logo" />
+            <b-img src="img/ics-sdg.svg" fluid class="my-5" alt="Hutton logo" />
           </b-col>
         </b-row>
         <b-row class="hutton-header">
@@ -77,19 +77,12 @@
 </template>
 
 <script>
-import ChangelogModal from '@/components/modals/ChangelogModal'
-import { BIconGithub, BIconInfoCircleFill, BIconInfoCircle, BIconNewspaper, BIconTag, BIconLaptop } from 'bootstrap-vue'
+import ChangelogModal from '@/components/modals/ChangelogModal.vue'
 import { mapGetters } from 'vuex'
 import { gridScoreVersion } from '@/plugins/constants'
 
 export default {
   components: {
-    BIconGithub,
-    BIconInfoCircleFill,
-    BIconInfoCircle,
-    BIconNewspaper,
-    BIconLaptop,
-    BIconTag,
     ChangelogModal
   },
   data: function () {

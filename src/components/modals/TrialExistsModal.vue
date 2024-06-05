@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import TrialCard from '@/components/TrialCard'
+import TrialCard from '@/components/TrialCard.vue'
 
 export default {
   components: {

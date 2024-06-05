@@ -7,11 +7,12 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import heatmap from 'plotly.js/lib/heatmap'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/heatmap')
+  heatmap
 ])
 
 export default {
@@ -46,6 +47,9 @@ export default {
     }
   },
   watch: {
+    storeLocale: function () {
+      this.update()
+    },
     isHorizontal: function () {
       this.update()
     },
@@ -88,7 +92,7 @@ export default {
       })
 
       const x = Array.from(Array(31).keys()).map(i => i + 1)
-      const y = this.months
+      const y = this.months.concat()
 
       if (this.isHorizontal) {
         z = z[0].map((col, i) => z.reverse().map(row => row[i]))
@@ -158,7 +162,7 @@ export default {
       this.width = this.$refs.wrapper.clientWidth
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     try {
       Plotly.purge(this.$refs.chart)
     } catch {

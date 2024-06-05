@@ -1,10 +1,12 @@
-import { i18n } from '@/plugins/i18n.js'
+import { i18n } from '@/plugins/i18n'
 import { getId } from '@/plugins/id'
 import { trialLayoutToPlots } from '@/plugins/location'
 import store from '@/store'
 
 import { saveAs } from 'file-saver'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from './constants'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+
+const { t } = i18n.global
 
 const DIVISIONS = [
   { amount: 60, name: 'seconds' },
@@ -53,17 +55,17 @@ const formatTimeAgo = (date) => {
 const getTraitTypeText = (trait, short = false) => {
   switch (trait.dataType) {
     case 'date':
-      return i18n.t(short ? 'traitTypeShortDate' : 'traitTypeDate')
+      return t(short ? 'traitTypeShortDate' : 'traitTypeDate')
     case 'int':
-      return i18n.t(short ? 'traitTypeShortInt' : 'traitTypeInt')
+      return t(short ? 'traitTypeShortInt' : 'traitTypeInt')
     case 'float':
-      return i18n.t(short ? 'traitTypeShortFloat' : 'traitTypeFloat')
+      return t(short ? 'traitTypeShortFloat' : 'traitTypeFloat')
     case 'range':
-      return i18n.t(short ? 'traitTypeShortRange' : 'traitTypeRange')
+      return t(short ? 'traitTypeShortRange' : 'traitTypeRange')
     case 'text':
-      return i18n.t(short ? 'traitTypeShortText' : 'traitTypeText')
+      return t(short ? 'traitTypeShortText' : 'traitTypeText')
     case 'categorical':
-      return i18n.t(short ? 'traitTypeShortCategorical' : 'traitTypeCategorical')
+      return t(short ? 'traitTypeShortCategorical' : 'traitTypeCategorical')
     default:
       return null
   }
@@ -263,8 +265,6 @@ const migrateOldGridScoreTrial = (old) => {
     resolve(converted)
   })
 }
-
-const isOffline = () => 'onLine' in navigator && !navigator.onLine
 
 const checkDataMatchesTraitType = (trait, value, checkDatesAndCategories = true) => {
   const trimmed = (typeof value === 'string') ? value.trim() : value
@@ -539,7 +539,6 @@ export {
   toLocalDateString,
   toLocalDateTimeString,
   migrateOldGridScoreTrial,
-  isOffline,
   checkDataMatchesTraitType,
   isValidDateString,
   getNumberWithSuffix,

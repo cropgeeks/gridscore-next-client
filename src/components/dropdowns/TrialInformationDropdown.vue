@@ -1,22 +1,20 @@
 <template>
-  <b-nav-item-dropdown v-if="trial" right ref="dropdown" id="trial-information-dropdown" menu-class="position-absolute">
+  <b-nav-item-dropdown v-if="trial" right ref="dropdown" id="trial-information-dropdown" menu-class="px-2">
     <template #button-content>
-      <BIconInfoCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTrialInfo') }}</span>
+      <IBiInfoCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTrialInfo') }}</span>
     </template>
     <div class="b-dropdown-form trial-info">
-      <TrialInformation class="m-0 p-0" :trial="trial" />
+      <TrialInformation :trial="trial" />
     </div>
   </b-nav-item-dropdown>
 </template>
 
 <script>
-import TrialInformation from '@/components/TrialInformation'
-import { BIconInfoCircle } from 'bootstrap-vue'
+import TrialInformation from '@/components/TrialInformation.vue'
 
 export default {
   components: {
-    TrialInformation,
-    BIconInfoCircle
+    TrialInformation
   },
   props: {
     trial: {
@@ -38,6 +36,6 @@ export default {
 <style scoped>
 .trial-info {
   max-width: 100vw;
-  min-width: 20vw;
+  min-width: min(90vw, max(20vw, 300px));
 }
 </style>

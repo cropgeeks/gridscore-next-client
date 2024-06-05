@@ -2,23 +2,23 @@
   <div>
     <p class="mt-3">{{ $t('pageExportTrialFormatBrapi') }}</p>
 
-    <b-button class="mb-3" @click="showBrapiSettings"><BIconGearFill /> {{ $t('buttonBrapiSettings') }}</b-button>
+    <b-button class="mb-3" @click="showBrapiSettings"><IBiGearFill /> {{ $t('buttonBrapiSettings') }}</b-button>
 
-    <b-form @submit.prevent="onSubmit">
+    <b-form @submit.prevent="sendData">
       <b-row>
         <b-col cols=12 md=6 class="mb-3 d-flex flex-column align-items-start justify-content-between">
           <b-card class="mb-3" :title="$t('pageBrapiExportBrapiGermplasmIdTitle')">
             <p :class="allGermplasmValidDbId ? 'text-success' : 'text-danger'">{{ $t('pageBrapiExportBrapiGermplasmIdText', germplasmWithBrapiDbIds) }}</p>
 
-            <b-button :variant="allGermplasmValidDbId ? null : 'primary'" :disabled="allGermplasmValidDbId" @click="searchBrapiGermplasmMatches"><BIconSearch /> {{ $t('buttonUpdate') }}</b-button>
+            <b-button :variant="allGermplasmValidDbId ? null : 'primary'" :disabled="allGermplasmValidDbId" @click="searchBrapiGermplasmMatches"><IBiSearch /> {{ $t('buttonUpdate') }}</b-button>
           </b-card>
         </b-col>
         <b-col cols=12 md=6 class="mb-3 d-flex flex-column align-items-start justify-content-between">
           <b-card class="mb-3" :title="$t('pageBrapiExportBrapiTraitIdTitle')">
             <p :class="allTraitsValidDbId ? 'text-success' : 'text-danger'">{{ $t('pageBrapiExportBrapiTraitIdText', traitsWithBrapiDbIds) }}</p>
-            <b-button class="mr-2" :variant="allTraitsValidDbId ? null : 'primary'" :disabled="allTraitsValidDbId" @click="searchBrapiTraitMatches"><BIconSearch /> {{ $t('buttonUpdate') }}</b-button>
+            <b-button class="mr-2" :variant="allTraitsValidDbId ? null : 'primary'" :disabled="allTraitsValidDbId" @click="searchBrapiTraitMatches"><IBiSearch /> {{ $t('buttonUpdate') }}</b-button>
             <span v-b-tooltip="allTraitsValidDbId || traitLookupRanAtLeastOnce ? '' : $t('tooltipBrapiExportBrapiTraitRunSearch')">
-              <b-button :disabled="allTraitsValidDbId || !traitLookupRanAtLeastOnce" @click="writeTraitsWithoutBrapiId"><BIconCloudPlus /> {{ $t('buttonUpload') }}</b-button>
+              <b-button :disabled="allTraitsValidDbId || !traitLookupRanAtLeastOnce" @click="writeTraitsWithoutBrapiId"><IBiCloudPlus /> {{ $t('buttonUpload') }}</b-button>
             </span>
           </b-card>
         </b-col>
@@ -49,7 +49,7 @@
           </b-col>
         </b-row>
 
-        <b-button @click="sendData" variant="primary" :disabled="!canProceed"><BIconCloudUpload /> {{ $t('buttonSendData') }}</b-button>
+        <b-button type="submit" variant="primary" :disabled="!canProceed"><IBiCloudUpload /> {{ $t('buttonSendData') }}</b-button>
       </div>
     </b-form>
   </div>
@@ -58,21 +58,13 @@
 <script>
 import { mapGetters } from 'vuex'
 
-import { BIconGearFill, BIconSearch, BIconCloudUpload, BIconCloudPlus } from 'bootstrap-vue'
-
 import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler, brapiPostObservationUnits } from '@/plugins/brapi'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { updateGermplasmBrapiIds, updateTraitBrapiIds } from '@/plugins/idb'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconSearch,
-    BIconGearFill,
-    BIconCloudUpload,
-    BIconCloudPlus
-  },
   props: {
     trial: {
       type: Object,
@@ -587,7 +579,7 @@ export default {
     emitter.on('trial-data-loaded', this.update)
     emitter.on('brapi-settings-changed', this.updatePrograms)
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.update)
     emitter.off('brapi-settings-changed', this.updatePrograms)
   }

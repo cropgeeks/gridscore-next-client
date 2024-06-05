@@ -1,4 +1,4 @@
-const fixPer = require('fix-perspective')
+import fixPer from 'fix-perspective'
 
 /**
  * The euclidean space that can be used as the source or the target for the projection. Represents the space from (0, 0) to (100, 100).

@@ -18,7 +18,7 @@ import { mapGetters } from 'vuex'
 import { plotInfoToGeoJson } from '@/plugins/location'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
-import PlotDataSection from '@/components/PlotDataSection'
+import PlotDataSection from '@/components/PlotDataSection.vue'
 
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -28,16 +28,20 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
-require('leaflet.locatecontrol')
+import 'leaflet.locatecontrol'
+
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  iconRetinaUrl: iconRetinaUrl,
+  iconUrl: iconUrl,
+  shadowUrl: shadowUrl
 })
 
 export default {
@@ -276,7 +280,7 @@ export default {
 
     // this.fakeGpsMovement()
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     emitter.off('trial-data-loaded', this.updateTrialDataCache)
   }
 }

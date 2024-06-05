@@ -1,5 +1,6 @@
 <template>
-  <div ref="wrapper">
+  <div>
+    <h3>{{ $t('widgetDataPersonChartLineTitle') }}</h3>
     <div ref="chart" v-if="chartData" />
   </div>
 </template>
@@ -7,11 +8,12 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const Plotly = require('plotly.js/lib/core')
+import Plotly from 'plotly.js/lib/core'
+import scatter from 'plotly.js/lib/scatter'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
-  require('plotly.js/lib/scatter')
+  scatter
 ])
 
 export default {
@@ -28,6 +30,9 @@ export default {
     ])
   },
   watch: {
+    storeLocale: function () {
+      this.update()
+    },
     storeDarkMode: function () {
       this.update()
     },

@@ -9,18 +9,11 @@
       <p>{{ $t('modalTextTraitDataHistory') }}</p>
       <b-input-group class="mb-3">
         <b-input-group-prepend>
-          <b-button @click="nudgeDate(false)" :disabled="prevDisabled"><BIconChevronLeft /></b-button>
+          <b-button @click="nudgeDate(false)" :disabled="prevDisabled"><IBiChevronLeft /></b-button>
         </b-input-group-prepend>
-        <b-form-datepicker :date-disabled-fn="isDateDisabled"
-                           :date-info-fn="dateStyle"
-                           :start-weekday="1"
-                           readonly
-                           :min="minDate"
-                           :max="maxDate"
-                           :value="currentDate"
-                           @input="handleDateChange" />
+        <b-form-input type="date" v-model="currentDate" disabled />
         <b-input-group-append>
-          <b-button @click="nudgeDate(true)" :disabled="nextDisabled"><BIconChevronRight /></b-button>
+          <b-button @click="nudgeDate(true)" :disabled="nextDisabled"><IBiChevronRight /></b-button>
         </b-input-group-append>
       </b-input-group>
 
@@ -38,27 +31,23 @@
           </b-form-group>
         </section>
       </div>
-      <b-button class="mt-2" @click="toggleDelete" variant="danger" :disabled="!trial.editable" v-if="toDelete[currentDateIndex]"><BIconTrashFill /> {{ $t('buttonUndeleteTimepointData') }}</b-button>
-      <b-button class="mt-2" @click="toggleDelete" variant="outline-danger" :disabled="!trial.editable" v-else><BIconTrash /> {{ $t('buttonDeleteTimepointData') }}</b-button>
+      <b-button class="mt-2" @click="toggleDelete" variant="danger" :disabled="!trial.editable" v-if="toDelete[currentDateIndex]"><IBiTrashFill /> {{ $t('buttonUndeleteTimepointData') }}</b-button>
+      <b-button class="mt-2" @click="toggleDelete" variant="outline-danger" :disabled="!trial.editable" v-else><IBiTrash /> {{ $t('buttonDeleteTimepointData') }}</b-button>
     </div>
   </b-modal>
 </template>
 
 <script>
-import Vue from 'vue'
-import TraitInput from '@/components/TraitInput'
-import { BIconChevronLeft, BIconChevronRight, BIconTrash, BIconTrashFill } from 'bootstrap-vue'
+import { mapGetters } from 'vuex'
+import TraitInput from '@/components/TraitInput.vue'
 import { changeTrialsData } from '@/plugins/idb'
+import { isProxy, toRaw } from 'vue'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
-    TraitInput,
-    BIconChevronLeft,
-    BIconChevronRight,
-    BIconTrash,
-    BIconTrashFill
+    TraitInput
   },
   props: {
     trial: {
@@ -115,6 +104,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeSelectedTrialPerson'
+    ]),
     currentDateIndex: function () {
       if (this.allDates && this.allDates.length > 0) {
         return this.allDates.indexOf(this.currentDate)
@@ -161,7 +153,7 @@ export default {
   },
   methods: {
     toggleDelete: function () {
-      Vue.set(this.toDelete, this.currentDateIndex, !this.toDelete[this.currentDateIndex])
+      this.toDelete[this.currentDateIndex] = !this.toDelete[this.currentDateIndex]
     },
     handleDateChange: function (newValue, setCurrentDate = true) {
       const oldData = this.getDataForDate(this.currentDate)
@@ -182,7 +174,7 @@ export default {
               newData = null
             }
 
-            Vue.set(oldData[s].values, i, newData)
+            oldData[s].values[i] = newData
           }
         }
 
@@ -207,20 +199,6 @@ export default {
         this.handleDateChange(this.allDates[this.currentDateIndex - 1])
       }
     },
-    dateStyle: function (ymd, date) {
-      if (this.isDateDisabled(ymd)) {
-        return null
-      } else {
-        return 'table-primary'
-      }
-    },
-    isDateDisabled: function (ymd, date) {
-      if (this.allDates) {
-        return !this.allDates.includes(ymd)
-      } else {
-        return true
-      }
-    },
     validate: function () {
       // Run validation again
       const valid = this.handleDateChange(this.currentDate, false)
@@ -232,17 +210,27 @@ export default {
       // Then check what actually changed
       const changes = []
       for (let i = 0; i < this.localMeasurements.length; i++) {
+        let ms = this.localMeasurements[i].values
+        let ts = this.localMeasurements[i].timestamp
+
+        if (isProxy(ms)) {
+          ms = toRaw(ms)
+        }
+        if (isProxy(ts)) {
+          ts = toRaw(ts)
+        }
+
         if (this.toDelete[i]) {
           changes.push({
             traitId: this.trait.id,
-            values: this.localMeasurements[i].values,
-            timestamp: this.localMeasurements[i].timestamp,
+            values: ms,
+            timestamp: ts,
             delete: true
           })
         } else {
           let changed = false
           for (let s = 0; s < (this.trait.setSize || 1); s++) {
-            if (this.localMeasurements[i].values[s] !== this.measurements[i].values[s]) {
+            if (ms[s] !== this.measurements[i].values[s]) {
               changed = true
             }
           }
@@ -250,8 +238,9 @@ export default {
           if (changed) {
             changes.push({
               traitId: this.trait.id,
-              values: this.localMeasurements[i].values,
-              timestamp: this.localMeasurements[i].timestamp
+              personId: this.storeSelectedTrialPerson,
+              values: ms,
+              timestamp: ts
             })
           }
         }

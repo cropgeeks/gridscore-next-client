@@ -13,10 +13,10 @@
       <template v-if="trial.shareStatus === TRIAL_STATE_EDITOR || trial.shareStatus === TRIAL_STATE_OWNER">
         <b-form-group label-for="captcha" :description="$t('formDescriptionTrialExpirationCaptcha')" v-if="captchaUrl">
           <template #label>
-            {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><BIconArrowRepeat /></b-button>
+            {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><IBiArrowRepeat /></b-button>
           </template>
           <div class="text-center mb-3">
-            <b-img-lazy fluid :blank-src="null" :blank-width="200" :blank-height="50" blank-color="#bdc3c7" :src="captchaUrl" />
+            <b-img lazy fluid :blank-src="null" :blank-width="200" :blank-height="50" blank-color="#bdc3c7" :src="captchaUrl" />
           </div>
           <b-form-input id="captcha" v-model="captcha" required />
         </b-form-group>
@@ -30,16 +30,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconArrowRepeat } from 'bootstrap-vue'
 import { extendTrialPeriod } from '@/plugins/api'
 import { TRIAL_STATE_VIEWER, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER } from '@/plugins/constants'
 
-const emitter = require('tiny-emitter/instance')
+import emitter from 'tiny-emitter/instance'
 
 export default {
-  components: {
-    BIconArrowRepeat
-  },
   data: function () {
     return {
       TRIAL_STATE_VIEWER,
@@ -80,6 +76,7 @@ export default {
         })
         .catch(err => {
           console.error(err)
+          console.log(err.status)
         })
         .finally(() => emitter.emit('show-loading', false))
     },
