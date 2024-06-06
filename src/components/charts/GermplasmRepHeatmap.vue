@@ -445,7 +445,7 @@ export default {
         this.allGermplasm = [...Object.keys(germplasmMap)].sort((a, b) => a.localeCompare(b))
         this.germplasmMap = germplasmMap
 
-        const hasActualReps = Object.values(germplasmMap).filter(m => {
+        let hasActualReps = Object.values(germplasmMap).filter(m => {
           const localSet = new Set()
 
           m.forEach(mm => {

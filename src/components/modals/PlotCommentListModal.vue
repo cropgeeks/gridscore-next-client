@@ -19,7 +19,7 @@
           </b-col>
           <b-col cols=6>
             <b-form-group :label="$t('formLabelPlotCommentsSortOrder')" label-for="sort-order">
-              <b-button-group>
+              <b-button-group class="d-flex flex-wrap">
                 <b-button @click="sortOrder = 'asc'" :pressed="sortOrder === 'desc'">
                   <IBiSortDownAlt /> {{ $t('formCheckboxSortOrderAscending') }}
                 </b-button>

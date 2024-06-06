@@ -131,7 +131,7 @@ import { mapGetters } from 'vuex'
 import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
 import { axiosCall, getServerSettings } from '@/plugins/api'
-import { createPlausible } from 'v-plausible/vue'
+import Plausible from 'plausible-tracker'
 
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
@@ -292,32 +292,26 @@ export default {
     },
     enablePlausible: function () {
       if (this.storePlausible) {
-        this.plausible = createPlausible({
-          init: {
-            domain: this.storePlausible.plausibleDomain,
-            apiHost: this.storePlausible.plausibleApiHost,
-            trackLocalhost: false,
-            hashMode: this.storePlausible.plausibleHashMode || true
-          },
-          settings: {
-            enableAutoPageviews: true,
-            enableAutoOutboundTracking: true
-          }
+        this.plausible = Plausible({
+          domain: this.storePlausible.plausibleDomain,
+          apiHost: this.storePlausible.plausibleApiHost,
+          trackLocalhost: false,
+          hashMode: this.storePlausible.plausibleHashMode || true
         })
 
-        // TODO: The below doesn't work. Can't load plugin properly
-        // getCurrentInstance().appContext.app.use(this.plausible)
+        this.plausible.enableAutoPageviews()
+
+        this.plausibleEvent({ key: 'app-load', props: { version: this.gridScoreVersion }})
       }
     },
     plausibleEvent: function (data) {
-      // TODO
-      // if (this.$plausible && data) {
-      //   if (data.props) {
-      //     this.$plausible.trackEvent(data.key, { props: data.props })
-      //   } else {
-      //     this.$plausible.trackEvent(data.key)
-      //   }
-      // }
+      if (this.plausible && data) {
+        if (data.props) {
+          this.plausible.trackEvent(data.key, { props: data.props })
+        } else {
+          this.plausible.trackEvent(data.key)
+        }
+      }
     },
     handleApiError: function (error) {
       const { show } = useModalController()
