@@ -87,6 +87,7 @@
   "buttonScanQR": "Scan QR",
   "buttonMainDisplayModeAuto": "Automatic",
   "buttonMainDisplayModeCanvasOnly": "Canvas only",
+  "buttonGermplasmPerformance": "Performance",
   "appTitle": "GridScore NEXT",
   "appTitleLegacy": "GridScore legacy",
   "cellCategoryControl": "Control/Check",
@@ -410,6 +411,8 @@
   "modalTextLayoutFeedback": "Some issues have been found in your trial layout and are listed below. Please check your input again and fix these issues before continuing.",
   "modalTitleLeaveSetup": "Leave setup",
   "modalTextLeaveSetup": "Are you sure you want to leave the setup screen? Your progress on the creation of this trial will be lost and you have to start over.",
+  "modalTitleLeaveDataInput": "Leave data input",
+  "modalTextLeaveDataInput": "Are you sure you want to move to the performance page? Any unsaved data input will be lost. Save changes before continuing.",
   "modalTitleCreateTrial": "Create trial",
   "modalTextCreateTrial": "Are you sure you want to create a new trial with the specified configuration? After creation, the trial layout cannot be modified.",
   "modalTextCreateTrialGerminateImport": "Are you sure you want to import the external trial the following with name? '{trialName}'",
@@ -637,6 +640,8 @@
   "pageArchiveNoArchiveFound": "No archive has been found for your trial. This either means that it has been a long, long time since you last used GridScore or that there has been an issue with backups. Please get in touch with the maintainers of GridScore.",
   "pageGuidedWalkInvalidConfig": "Invalid configuration for guided walk. Please try again.",
   "pageFooterVersion": "Version {version}",
+  "pageGermplasmPerformanceTitle": "Germplasm performance",
+  "pageGermplasmPerformanceText": "This page shows the performance of the selected germplasm across its reps against the rest of the trial. For each numeric and date trait, you will find a scale that shows the whole range of values across that trait from minimum to maximum and the average value of the selected germplasm as a coloured vertical bar.",
   "tabTitleSettingsShareExport": "Share your settings",
   "tabTextSettingsShareExport": "The QR code below will let others load your settings and overwrite their own settings.",
   "tabTitleSettingsShareImport": "Load other settings",
@@ -905,5 +910,9 @@
   "personTypeCorrespondingAuthor": "Corresponding author",
   "personTypeDataCollector": "Data collector",
   "personTypeQualityChecker": "Quality checker",
-  "personTypeDataSubmitter": "Data submitter"
+  "personTypeDataSubmitter": "Data submitter",
+  "widgetScaleMin": "Min",
+  "widgetScaleAvg": "Avg",
+  "widgetScaleMax": "Max",
+  "widgetScaleCount": "Count"
 }

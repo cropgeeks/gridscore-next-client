@@ -397,7 +397,7 @@ export default {
       })
     },
     reset: function () {
-      this.trialData = getTrialDataCached()
+      this.trialData = JSON.parse(JSON.stringify(getTrialDataCached()))
 
       if (!this.trialData) {
         // TODO

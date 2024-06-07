@@ -71,6 +71,10 @@ const router = createRouter({
       path: '/data-statistics',
       name: 'data-statistics',
       component: () => import('@/views/DataStatisticsView.vue')
+    // }, {
+    //   path: '/germplasm-performance',
+    //   name: 'germplasm-performance',
+    //   component: () => import('@/views/GermplasmPerformanceView.vue')
     }
   ]
 })

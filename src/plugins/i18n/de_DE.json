@@ -86,6 +86,7 @@
   "buttonScanQR": "QR scannen",
   "buttonMainDisplayModeAuto": "Automatisch",
   "buttonMainDisplayModeCanvasOnly": "Nur Leinwand",
+  "buttonGermplasmPerformance": "Performance",
   "cellCategoryControl": "Kontrolle",
   "changelogBadgeNew": "NEU",
   "changelogBadgeUpdate": "AKT",
@@ -402,6 +403,8 @@
   "modalTextLayoutFeedback": "Einige Fehler wurden im Versuchsaufbau gefunden und sind unten aufgelistet. Bitte diese Fehler vor dem Fortfahren beheben.",
   "modalTitleLeaveSetup": "Aufbau verlassen",
   "modalTextLeaveSetup": "Sicher, dass der Versuchsaufbau abgebrochen werden soll? Jeglicher Fortschritt beim Erstellen der Versuches geht verloren und es muss erneut angefangen werden.",
+  "modalTitleLeaveDataInput": "Dateneingabe verlassen",
+  "modalTextLeaveDataInput": "Sicher, dass die Dateneingabe verlassen werden soll? Jegliche ungespeicherte Änderungen werden nicht gesichert. Speichere Änderungen vor dem Fortsetzen.",
   "modalTitleCreateTrial": "Versuch erstellen",
   "modalTextCreateTrial": "Sicher, dass der Versuch mit dem angegebenen Aufbau erstellt werden soll? Nach der Erstellung kann der Aufbau nicht mehr verändert werden.",
   "modalTextCreateTrialGerminateImport": "Sicher, dass der externe Versuch mit folgendem Namen importiert werden soll? '{trialName}'",
@@ -628,6 +631,8 @@
   "pageArchiveNoArchiveFound": "Es wurde kein Archiv für diesen Versuch gefunden. Dies bedeutet entweder, dass es sehr, sehr lange her ist das GridScore benutzt wurde oder, dass etwas  mit der Archivierung schief gegangen ist. Bitte mit den Entwicklern von GridScore in Verbingung setzen.",
   "pageGuidedWalkInvalidConfig": "Ungültige Konfiguration für gelenkten Ablauf. Bitte erneut versuchen.",
   "pageFooterVersion": "Version {version}",
+  "pageGermplasmPerformanceTitle": "Keimplasma-Performance",
+  "pageGermplasmPerformanceText": "Diese Seite zeigt die Performance des ausgewählten Keimplasmas über alle Reps gegen den Rest des Versuches. Für alle numerischen und Daten Merkmale wird eine Skala angezeigt die den kompletten Wertebereich des Merkmals abbildet von Minimum bis Maximum und den Durchschnittswert des ausgewählten Keimplasmas als vertikale Linie.",
   "tabTitleSettingsShareExport": "Deine Einstellungen teilen",
   "tabTextSettingsShareExport": "Der QR-Code unten kann von anderen genutzt werden um deine Einstellungen zu laden und ihre eigenen zu überschreiben.",
   "tabTitleSettingsShareImport": "Andere Einstellungen laden",
@@ -895,5 +900,9 @@
   "personTypeCorrespondingAuthor": "Korrespondenzautor",
   "personTypeDataCollector": "Datensammler",
   "personTypeQualityChecker": "Qualitätsprüfer",
-  "personTypeDataSubmitter": "Datenübermittler"
+  "personTypeDataSubmitter": "Datenübermittler",
+  "widgetScaleMin": "Min",
+  "widgetScaleAvg": "Avg",
+  "widgetScaleMax": "Max",
+  "widgetScaleCount": "Anzahl"
 }
