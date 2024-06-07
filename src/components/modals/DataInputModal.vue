@@ -39,7 +39,7 @@
         </b-button>
         <b-button id="toolbar-button-camera" size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><IBiCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
         <b-button id="toolbar-button-guided-walk" size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : 'secondary'" :pressed="guidedWalk !== null"><IBiSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
-        <!-- <b-button size="sm" @click="navigateToPerformancePage"><IBiGraphUpArrow /> <span class="d-none d-xl-inline-block"> {{ $t('buttonGermplasmPerformance') }}</span></b-button> -->
+        <b-button size="sm" @click="navigateToPerformancePage"><IBiGraphUpArrow /> <span class="d-none d-xl-inline-block"> {{ $t('buttonGermplasmPerformance') }}</span></b-button>
         <b-button size="sm" @click="startTour"><IBiQuestionCircle /> <span class="d-none d-xl-inline-block"> {{ $t('toolbarHelp') }}</span></b-button>
       </b-button-group>
 
