@@ -7,8 +7,14 @@
     <h2 v-if="germplasmIdentifier">{{ germplasmIdentifier }}</h2>
 
     <b-row v-if="numericTraits.length > 0">
-      <b-col cols=12 sm=6 md=4 lg=3 v-for="trait in numericTraits" :key="`trial-scale-${trait.id}`">
-        <Scale :trait="trait" :traitStats="traitStats[trait.id]" :germplasmStats="germplasmStats[trait.id]" />
+      <b-col cols=12 sm=6 md=4 lg=3 v-for="trait in numericTraits" :key="`trial-scale-${trait.id}`" class="mb-3">
+        <Scale :trait="trait" :traitStats="numericTraitStats[trait.id]" :germplasmStats="germplasmNumericStats[trait.id]" v-if="numericTraitStats[trait.id].count > 0" />
+      </b-col>
+    </b-row>
+
+    <b-row v-if="nonNumericTraits.length > 0">
+      <b-col cols=12 md=6 lg=4 xl=3 v-for="trait in nonNumericTraits" :key="`trial-scale-${trait.id}`" class="mb-3">
+        <GermplasmPerformanceBarChart :germplasmName="germplasmIdentifier" :trait="trait" :traitStats="nonNumericTraitStats[trait.id]" v-if="nonNumericTraitStats[trait.id].count > 0" />
       </b-col>
     </b-row>
     
@@ -23,12 +29,14 @@ import { getTrialById } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import Scale from '@/components/charts/Scale.vue'
+import GermplasmPerformanceBarChart from '@/components/charts/GermplasmPerformanceBarChart.vue'
 import MapComponent from '@/components/MapComponent.vue'
 
 export default {
   components: {
     MapComponent,
-    Scale
+    Scale,
+    GermplasmPerformanceBarChart
   },
   data: function () {
     return {
@@ -36,8 +44,9 @@ export default {
       trialId: null,
       germplasmIdentifier: null,
       error: null,
-      traitStats: null,
-      germplasmStats: null,
+      numericTraitStats: null,
+      nonNumericTraitStats: null,
+      germplasmNumericStats: null,
       hasGps: false
     }
   },
@@ -51,21 +60,76 @@ export default {
       } else {
         return []
       }
+    },
+    nonNumericTraits: function () {
+      if (this.trial && this.trial.traits) {
+        return this.trial.traits.filter(t => t.dataType === 'text' || t.dataType === 'categorical')
+      } else {
+        return []
+      }
     }
   },
   watch: {
     numericTraits: function () {
-      this.updateStats()
+      this.updateNumericStats()
+    },
+    nonNumericTraits: function () {
+      this.updateNonNumericStats()
     }
   },
   methods: {
     toHighlight: function (cell) {
       return cell.germplasm === this.germplasmIdentifier
     },
-    updateStats: function () {
-      const traitStats = {}
+    updateNonNumericStats: function () {
+      const nonNumericTraitStats = {}
+      this.nonNumericTraits.forEach(t => {
+        nonNumericTraitStats[t.id] = {
+          count: 0,
+          values: new Set(),
+          valueCounts: {},
+          germplasmValueCounts: {}
+        }
+      })
+
+      Object.values(this.trialData).forEach(cell => {
+        const isSelected = cell.germplasm === this.germplasmIdentifier
+
+        this.hasGps ||= cell.geography && (cell.geography.center || cell.geography.corners)
+
+        this.nonNumericTraits.forEach(t => {
+          const traitData = cell.measurements[t.id]
+
+          if (traitData) {
+            traitData.forEach(td => {
+              td.values.forEach(v => {
+                const textValue = t.dataType === 'categorical' ? t.restrictions.categories[v] : v
+
+                nonNumericTraitStats[t.id].count++
+                nonNumericTraitStats[t.id].values.add(textValue)
+                nonNumericTraitStats[t.id].valueCounts[textValue] = (nonNumericTraitStats[t.id].valueCounts[textValue] || 0) + 1
+
+                if (isSelected) {
+                  nonNumericTraitStats[t.id].germplasmValueCounts[textValue] = (nonNumericTraitStats[t.id].germplasmValueCounts[textValue] || 0) + 1
+                }
+              })
+            })
+          }
+        })
+      })
+
+      Object.values(nonNumericTraitStats).forEach(v => {
+        v.values = [...v.values].sort((a, b) => a.localeCompare(b))
+      })
+
+      this.nonNumericTraitStats = nonNumericTraitStats
+
+      console.log(nonNumericTraitStats)
+    },
+    updateNumericStats: function () {
+      const numericTraitStats = {}
       this.numericTraits.forEach(t => {
-        traitStats[t.id] = {
+        numericTraitStats[t.id] = {
           min: Number.MAX_SAFE_INTEGER,
           max: -Number.MAX_SAFE_INTEGER,
           total: 0,
@@ -74,16 +138,14 @@ export default {
         }
       })
 
-      const germplasmStats = {}
+      const germplasmNumericStats = {}
       this.numericTraits.forEach(t => {
-        germplasmStats[t.id] = {
+        germplasmNumericStats[t.id] = {
           total: 0,
           avg: 0,
           count: 0
         }
       })
-
-      console.log(this.trialData)
 
       Object.values(this.trialData).forEach(cell => {
         const isSelected = cell.germplasm === this.germplasmIdentifier
@@ -99,30 +161,30 @@ export default {
                 const numeric = t.dataType === 'date' ? (new Date(v).getTime() / (1000 * 60 * 60 * 24)) : +v
 
                 if (isSelected) {
-                  germplasmStats[t.id].count++
-                  germplasmStats[t.id].total += numeric
+                  germplasmNumericStats[t.id].count++
+                  germplasmNumericStats[t.id].total += numeric
                 }
 
-                traitStats[t.id].count++
-                traitStats[t.id].min = Math.min(traitStats[t.id].min, numeric)
-                traitStats[t.id].max = Math.max(traitStats[t.id].max, numeric)
-                traitStats[t.id].total += numeric
+                numericTraitStats[t.id].count++
+                numericTraitStats[t.id].min = Math.min(numericTraitStats[t.id].min, numeric)
+                numericTraitStats[t.id].max = Math.max(numericTraitStats[t.id].max, numeric)
+                numericTraitStats[t.id].total += numeric
               })
             })
           }
         })
       })
 
-      Object.values(germplasmStats).forEach(gs => {
+      Object.values(germplasmNumericStats).forEach(gs => {
         gs.avg = gs.total / gs.count
       })
 
-      Object.values(traitStats).forEach(ts => {
+      Object.values(numericTraitStats).forEach(ts => {
         ts.avg = ts.total / ts.count
       })
 
-      this.traitStats = traitStats
-      this.germplasmStats = germplasmStats
+      this.numericTraitStats = numericTraitStats
+      this.germplasmNumericStats = germplasmNumericStats
     },
     updateTrialDataCache: function () {
       getTrialById(this.storeSelectedTrial)

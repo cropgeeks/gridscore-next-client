@@ -26,6 +26,7 @@ import { changeTrialsData, getTrialData } from '@/plugins/idb'
 import { checkDataMatchesTraitType, isValidDateString } from '@/plugins/misc'
 
 import emitter from 'tiny-emitter/instance'
+import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 export default {
   props: {
@@ -39,7 +40,7 @@ export default {
       content: null,
       formState: null,
       inputFile: null,
-      requiredColumns: ['Germplasm', 'Rep', 'Trait name', 'Date', 'Value'],
+      requiredColumns: ['Germplasm', 'Rep', 'Row', 'Column', 'Trait name', 'Date', 'Value'],
       errorMessage: null
     }
   },
@@ -100,7 +101,16 @@ export default {
           displayName += `-${row.Rep}`
         }
 
-        const cell = uniqueGermplasmNames.get(displayName)
+        let cell
+
+        if (row.Row !== undefined && row.Row !== null && row.Row !== '' && row.Column !== undefined && row.Column !== null && row.Column) {
+          const rowIndex = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (row.Row - 1) : (this.trial.layout.rows - row.Row)
+          const columnIndex = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (row.Column - 1) : (this.trial.layout.columns - row.Column)
+
+          cell = data[`${rowIndex}|${columnIndex}`]
+        } else {
+          cell = uniqueGermplasmNames.get(displayName)
+        }
         // Check the germplasm exists in the trial
         if (!cell) {
           this.errorMessage = this.$t('errorMessageDataImportInvalidGermplasmRep', { missing: displayName, row: r + 1 })

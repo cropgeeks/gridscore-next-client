@@ -327,4 +327,8 @@ export default {
 .leaflet-popup-content dl {
   margin-bottom: 0;
 }
+
+.dark-mode .leaflet-control-locate a .leaflet-control-locate-location-arrow {
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="white" d="M445 4 29 195c-48 23-32 93 19 93h176v176c0 51 70 67 93 19L508 67c16-38-25-79-63-63z"/></svg>');
+}
 </style>

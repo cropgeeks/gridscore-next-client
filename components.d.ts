@@ -87,6 +87,7 @@ declare module 'vue' {
     EditPeopleModal: typeof import('./src/components/modals/EditPeopleModal.vue')['default']
     FielDBookInputModal: typeof import('./src/components/modals/FielDBookInputModal.vue')['default']
     FieldHeatmap: typeof import('./src/components/charts/FieldHeatmap.vue')['default']
+    GermplasmPerformanceBarChart: typeof import('./src/components/charts/GermplasmPerformanceBarChart.vue')['default']
     GermplasmRepHeatmap: typeof import('./src/components/charts/GermplasmRepHeatmap.vue')['default']
     GpsInput: typeof import('./src/components/GpsInput.vue')['default']
     GuidedWalkSelectorModal: typeof import('./src/components/modals/GuidedWalkSelectorModal.vue')['default']

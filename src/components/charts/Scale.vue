@@ -1,9 +1,9 @@
 <template>
   <div :id="`scale-${id}`" v-if="trait && traitStats && germplasmStats">
-    <h6 class="scale-heading" :title="trait.name">{{ trait.name }}</h6>
+    <TraitHeading short :trait="trait" />
     <div class="d-flex my-2">
       <div :class="`d-flex scale-container align-items-center w-100 ${storeDarkMode ? 'bg-dark' : 'bg-light'}`">
-        <div class="scale-marker bg-primary" :style="{ marginLeft: `calc(${germplasmPercentage}% - 1px)` }" />
+        <div class="scale-marker" :style="{ backgroundColor: trait.color, marginLeft: `calc(${germplasmPercentage}% - 1px)` }" />
         <div :class="`scale-marker scale-marker-avg ${storeDarkMode ? 'bg-light' : 'bg-dark'}`" :style="{ marginLeft: `calc(${traitAveragePercentage}% - 1px)` }" />
       </div>
     </div>
@@ -14,7 +14,7 @@
         <span class="ms-2">{{ formattedMin}}</span>
       </div>
       <div class="d-flex justify-content-between">
-        <span class="d-block text-primary"><IBiSlashCircle /> {{ $t('widgetScaleAvg') }} </span>
+        <span class="d-block"><IBiSlashCircle /> {{ $t('widgetScaleAvg') }} </span>
         <span class="ms-2">{{ formattedAvg }}</span>
       </div>
       <div class="d-flex justify-content-between">
@@ -25,15 +25,24 @@
         <span class="d-block"><IBi123 /> {{ $t('widgetScaleCount') }} </span>
         <span class="ms-2">{{ traitStats.count.toLocaleString() }}</span>
       </div>
+      <hr />
+      <div class="d-flex justify-content-between">
+        <span class="d-block text-primary"><IBiFlower1 /> {{ $t('widgetScaleGermplasm') }} </span>
+        <span class="ms-2">{{ formattedGermplasmAvg }}</span>
+      </div>
     </b-tooltip>
   </div>
 </template>
 
 <script>
+import TraitHeading from '@/components/TraitHeading.vue'
 import { getId } from '@/plugins/id'
 import { mapGetters } from 'vuex'
 
 export default {
+  components: {
+    TraitHeading
+  },
   props: {
     trait: {
       type: Object,
@@ -92,19 +101,20 @@ export default {
       } else {
         return this.traitStats.avg.toFixed(4)
       }
+    },
+    formattedGermplasmAvg: function () {
+      if (this.trait.dataType === 'date') {
+        return new Date(this.germplasmStats.avg * (1000 * 60 * 60 * 24)).toLocaleDateString()
+      } else {
+        return this.germplasmStats.avg.toFixed(4)
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-.scale-heading {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .scale-container {
-  border-radius: 0.25rem;
   height: 1rem;
   margin: .25rem 0;
   position: relative;
