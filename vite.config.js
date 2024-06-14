@@ -30,7 +30,7 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,vue,txt,woff2}'],
-        globIgnores: ['**/node_modules/**/*','api/**','/api/**','**/api/**'],
+        navigateFallbackDenylist: ['/api/**','**/api/**'],
         maximumFileSizeToCacheInBytes: 30000000
       },
       filename: 'service-worker.js',
