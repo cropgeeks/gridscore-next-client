@@ -123,8 +123,6 @@ export default {
       })
 
       this.nonNumericTraitStats = nonNumericTraitStats
-
-      console.log(nonNumericTraitStats)
     },
     updateNumericStats: function () {
       const numericTraitStats = {}

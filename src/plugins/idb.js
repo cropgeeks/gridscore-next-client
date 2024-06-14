@@ -264,6 +264,9 @@ const updateTrialProperties = async (localId, updates) => {
     const plotCorners = updates.corners ? trialLayoutToPlots(updates.corners, trial.layout.rows, trial.layout.columns) : null
     const originalTraits = JSON.parse(JSON.stringify(trial.traits))
 
+    const retainedTraitIds = new Set(updates.traits.map(t => t.id))
+    const traitsToRemove = originalTraits.filter(t => !retainedTraitIds.has(t.id))
+
     trial.name = updates.name
     trial.description = updates.description
     trial.socialShareConfig = updates.socialShareConfig
@@ -334,6 +337,10 @@ const updateTrialProperties = async (localId, updates) => {
       const cell = cursor.value
 
       if (cell) {
+        traitsToRemove.forEach(t => {
+          delete cell.measurements[t.id]
+        })
+
         if (plotCorners) {
           cell.geography.corners = plotCorners[cell.row][cell.column]
         } else {

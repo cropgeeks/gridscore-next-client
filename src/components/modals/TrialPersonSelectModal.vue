@@ -18,7 +18,7 @@
             <div>
               <h5 class="mb-0">{{ person.name }}</h5>
               <p class="my-0" v-if="person.email">
-                <a :href="`mailto:${person.email}`">{{ person.email }}</a>
+                <a :href="`mailto:${person.email}`" @click.stop class="text-muted">{{ person.email }}</a>
               </p>
             </div>
           </div>

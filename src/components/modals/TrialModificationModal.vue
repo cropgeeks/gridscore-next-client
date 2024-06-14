@@ -98,6 +98,7 @@
                     <TraitIcon :trait="trait" />
                     <span class="mx-1">{{ trait.name }}</span>
                   </span>
+                  <b-button variant="danger" v-if="canDeleteTraits" @click="deleteTrait(trait)"><IBiTrash /></b-button>
                 </h4>
 
                 <b-form-group :label="$t('formLabelTraitName')" :description="$t('formDescriptionTraitName')" label-for="trait-name">
@@ -164,6 +165,7 @@ import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { updateTrialProperties, getTrialGroups } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
+import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
 
 export default {
   components: {
@@ -231,6 +233,13 @@ export default {
       } else {
         return []
       }
+    },
+    canDeleteTraits: function () {
+      if (this.trial) {
+        return this.trial.shareStatus !== undefined && this.trial.shareStatus !== null && this.trial.shareStatus === TRIAL_STATE_NOT_SHARED && this.traits.length > 1
+      } else {
+        return false
+      }
     }
   },
   watch: {
@@ -249,6 +258,20 @@ export default {
     }
   },
   methods: {
+    deleteTrait: function (trait) {
+      emitter.emit('show-confirm', {
+        title: 'modalTitleDeleteTrait',
+        message: 'modalTextDeleteTrait',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
+        okVariant: 'danger',
+        callback: (result) => {
+          if (result) {
+            this.traits = this.traits.filter(t => t.id !== trait.id)
+          }
+        }
+      })
+    },
     importExportTabular: function (xport) {
       if (xport && this.traits && this.traits.length > 0) {
         const temp = JSON.parse(JSON.stringify(this.traits))
