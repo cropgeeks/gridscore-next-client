@@ -20,6 +20,28 @@
                 </template>
                 <b-form-input id="rows" type="number" :min="1" required autofocus lazy v-model.number.lazy="layout.rows" />
               </b-form-group>
+
+              <b-form-group :label="$t('formLabelSettingsRowOrder')" :description="$t('formDescriptionSettingsRowOrder')" label-for="rowOrder">
+                <b-button-group class="w-100">
+                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM" @click="layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM"><IBiSortNumericDown /> {{ $t('buttonTopToBottom') }}</b-button>
+                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP" @click="layout.rowOrder = DISPLAY_ORDER_BOTTOM_TO_TOP"><IBiSortNumericUpAlt /> {{ $t('buttonBottomToTop') }}</b-button>
+                </b-button-group>
+              </b-form-group>
+
+              <b-form-checkbox switch v-model="showRowLabels"> {{ $t('buttonShowLabels') }}</b-form-checkbox>
+
+              <b-collapse v-model="showRowLabels">
+                <b-form-checkbox switch v-model="editRowLabels"> {{ $t('buttonEditLabels') }}</b-form-checkbox>
+                <draggable :list="layout.rowLabels" :item-key="e => e" tag="div" handle=".drag-handle" class="d-flex flex-column">
+                  <template #item="{ element, index }">
+                    <b-badge class="border" :key="`row-label-${element}`">
+                      <input v-if="editRowLabels" :style="{ width: (`${layout.rowLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy="layout.rowLabels[index]" />
+                      <span v-else>{{ element }}</span>
+                      <IBiGripVertical class="drag-handle ms-2" />
+                    </b-badge>
+                  </template>
+                </draggable>
+              </b-collapse>
             </b-col>
             <b-col cols=12 md=6>
               <!-- Field layout cols -->
@@ -29,26 +51,32 @@
                 </template>
                 <b-form-input id="columns" type="number" :min="1" required lazy v-model.number.lazy="layout.columns" />
               </b-form-group>
-            </b-col>
-            <b-col cols=12 md=6>
-              <b-form-group :label="$t('formLabelSettingsRowOrder')" :description="$t('formDescriptionSettingsRowOrder')" label-for="rowOrder">
-                <b-button-group class="w-100">
-                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM" @click="layout.rowOrder = DISPLAY_ORDER_TOP_TO_BOTTOM"><IBiSortNumericDown /> {{ $t('buttonTopToBottom') }}</b-button>
-                  <b-button variant="outline-secondary" :pressed="layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP" @click="layout.rowOrder = DISPLAY_ORDER_BOTTOM_TO_TOP"><IBiSortNumericUpAlt /> {{ $t('buttonBottomToTop') }}</b-button>
-                </b-button-group>
-              </b-form-group>
-            </b-col>
-            <b-col cols=12 md=6>
+
               <b-form-group :label="$t('formLabelSettingsColumnOrder')" :description="$t('formDescriptionSettingsColumnOrder')" label-for="columnOrder">
                 <b-button-group class="w-100">
                   <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT" @click="layout.columnOrder = DISPLAY_ORDER_LEFT_TO_RIGHT"><IBiSortNumericDown :style="{ transform: 'rotate(270deg)' }" /> {{ $t('buttonLeftToRight') }}</b-button>
                   <b-button variant="outline-secondary" :pressed="layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT" @click="layout.columnOrder = DISPLAY_ORDER_RIGHT_TO_LEFT"><IBiSortNumericUpAlt :style="{ transform: 'rotate(270deg)' }" /> {{ $t('buttonRightToLeft') }}</b-button>
                 </b-button-group>
               </b-form-group>
+
+              <b-form-checkbox switch v-model="showColumnLabels"> {{ $t('buttonShowLabels') }}</b-form-checkbox>
+
+              <b-collapse v-model="showColumnLabels">
+                <b-form-checkbox switch v-model="editColumnLabels"> {{ $t('buttonEditLabels') }}</b-form-checkbox>
+                <draggable :list="layout.columnLabels" :item-key="e => e" tag="div" handle=".drag-handle" class="d-flex flex-row flex-wrap">
+                  <template #item="{ element, index }">
+                    <b-badge class="flex-fill border" :key="`column-label-${element}`">
+                      <input v-if="editColumnLabels" :style="{ width: (`${layout.columnLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy="layout.columnLabels[index]" />
+                      <span v-else>{{ element }}</span>
+                      <IBiGripVertical class="drag-handle ms-2" />
+                    </b-badge>
+                  </template>
+                </draggable>
+              </b-collapse>
             </b-col>
           </b-row>
 
-          <div class="border border-warning text-center mb-3 p-2"><IBiExclamationTriangleFill class="text-warning" /> {{ $t('pageTrialLayoutDimensionsFielDHubNotice') }}</div>
+          <div class="border border-warning text-center my-3 p-2"><IBiExclamationTriangleFill class="text-warning" /> {{ $t('pageTrialLayoutDimensionsFielDHubNotice') }}</div>
         </b-container>
       </b-tab>
       <b-tab :disabled="!hasDimensions">
@@ -92,9 +120,12 @@ import MarkerSetup from '@/components/MarkerSetup.vue'
 import TrialLayoutCorners from '@/components/TrialLayoutCorners.vue'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_BOTTOM_TO_TOP } from '@/plugins/constants'
+import draggable from 'vuedraggable'
+import { getColumnLabel, getRowLabel } from '@/plugins/misc'
 
 export default {
   components: {
+    draggable,
     TrialLayoutGermplasmGrid,
     TrialLayoutCorners,
     MarkerSetup
@@ -112,7 +143,9 @@ export default {
         corners: null,
         markers: null,
         rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT,
+        rowLabels: [1],
+        columnLabels: [1]
       },
       germplasmMap: {},
       tabCorrect: {
@@ -120,7 +153,11 @@ export default {
         germplasm: null,
         corners: null,
         markers: null
-      }
+      },
+      showRowLabels: false,
+      showColumnLabels: false,
+      editRowLabels: false,
+      editColumnLabels: false
     }
   },
   props: {
@@ -142,6 +179,26 @@ export default {
     }
   },
   watch: {
+    'layout.rows': function (newValue) {
+      if (newValue) {
+        this.layout.rowLabels = Array.from(Array(newValue).keys()).map((_, i) => getRowLabel(this.layout, i))
+      } else {
+        this.layout.rowLabels = []
+      }
+    },
+    'layout.rowOrder': function () {
+      this.layout.rowLabels = this.layout.rowLabels.concat().reverse()
+    },
+    'layout.columns': function (newValue) {
+      if (newValue) {
+        this.layout.columnLabels = Array.from(Array(newValue).keys()).map((_, i) => getColumnLabel(this.layout, i))
+      } else {
+        this.layout.columnLabels = []
+      }
+    },
+    'layout.columnOrder': function () {
+      this.layout.columnLabels = this.layout.columnLabels.concat().reverse()
+    },
     initialLayout: {
       immediate: true,
       handler: function (newValue) {
@@ -154,7 +211,9 @@ export default {
             corners: null,
             markers: null,
             rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-            columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+            columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT,
+            rowLabels: [1],
+            columnLabels: [1]
           }
         }
       }
@@ -203,7 +262,7 @@ export default {
       if (!this.tabCorrect.rowColumn) {
         feedback.push({
           type: 'danger',
-          message: this.$t('formFeedbackSetupInvalidRowColumn', { row: this.layout.row, column: this.layout.column })
+          message: this.$t('formFeedbackSetupInvalidRowColumn', { row: this.layout.rows, column: this.layout.columns })
         })
       }
 
@@ -218,7 +277,7 @@ export default {
         if (!cell.germplasm || cell.germplasm === '') {
           feedback.push({
             type: 'danger',
-            message: this.$t('formFeedbackSetupMissingGermplasm', { rowIndex: row + 1, columnIndex: column + 1 })
+            message: this.$t('formFeedbackSetupMissingGermplasm', { rowIndex: getRowLabel(this.layout, row), columnIndex: getColumnLabel(this.layout, column) })
           })
           germplasmCorrect = false
           return
@@ -227,7 +286,7 @@ export default {
         if (row < 0 || row >= this.layout.rows) {
           feedback.push({
             type: 'danger',
-            message: this.$t('formFeedbackSetupInvalidRow', { rowIndex: row + 1, germplasm: cell.germplasm, rep: cell.rep })
+            message: this.$t('formFeedbackSetupInvalidRow', { rowIndex: getRowLabel(this.layout, row), germplasm: cell.germplasm, rep: cell.rep })
           })
           germplasmCorrect = false
           return
@@ -235,7 +294,7 @@ export default {
         if (column < 0 || column >= this.layout.columns) {
           feedback.push({
             type: 'danger',
-            message: this.$t('formFeedbackSetupInvalidColumn', { columnIndex: column + 1, germplasm: cell.germplasm, rep: cell.rep })
+            message: this.$t('formFeedbackSetupInvalidColumn', { columnIndex: getColumnLabel(this.layout, column), germplasm: cell.germplasm, rep: cell.rep })
           })
           germplasmCorrect = false
           return
@@ -249,7 +308,7 @@ export default {
         if (germplasmSet.has(displayName)) {
           feedback.push({
             type: 'warning',
-            message: this.$t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: column + 1, rowIndex: row + 1, germplasm: cell.germplasm, rep: cell.rep || 'N/A' })
+            message: this.$t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: getColumnLabel(this.layout, column), rowIndex: getRowLabel(this.layout, row), germplasm: cell.germplasm, rep: cell.rep || 'N/A' })
           })
           germplasmCorrect = false
           // eslint-disable-next-line
@@ -314,6 +373,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.drag-handle:hover {
+  cursor: move;
+}
 </style>

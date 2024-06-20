@@ -192,9 +192,6 @@ export default {
         const allComments = []
         Object.values(data).forEach(c => {
           if (c.comments) {
-            const displayRow = this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - c.row) : (c.row + 1)
-            const displayColumn = this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (this.trial.layout.columns - c.column) : (c.column + 1)
-
             c.comments.forEach(com => {
               allComments.push({
                 trialId: this.storeSelectedTrial,
@@ -203,8 +200,8 @@ export default {
                 displayName: c.displayName,
                 row: c.row,
                 column: c.column,
-                displayRow: displayRow,
-                displayColumn: displayColumn,
+                displayRow: c.displayRow,
+                displayColumn: c.displayColumn,
                 comment: com
               })
             })

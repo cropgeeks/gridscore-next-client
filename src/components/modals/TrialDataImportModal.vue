@@ -11,7 +11,7 @@
 
       <b-form @submit.prevent="onSubmit">
         <b-form-group :label="$t('formLabelTrialDataUploadContent')" :description="$t('formDescriptionTrialDataUploadContent')" label-for="content" :state="formState">
-          <b-form-textarea v-model="content" :placeholder="$t('formPlaceholderTrialDataUploadContent')" wrap="off" :state="formState" :rows="15" id="content" />
+          <LineNumberTextarea v-model="content" id="content" :state="formState" :placeholder="$t('formPlaceholderTrialDataUploadContent')" />
           <b-form-file type="file" :placeholder="$t('buttonOpenFile')" accept="text/plain" v-model="inputFile" />
         </b-form-group>
         <p class="text-danger" v-if="errorMessage">{{ errorMessage }}</p>
@@ -23,12 +23,15 @@
 <script>
 import { tsvParse, csvParse } from 'd3-dsv'
 import { changeTrialsData, getTrialData } from '@/plugins/idb'
-import { checkDataMatchesTraitType, isValidDateString } from '@/plugins/misc'
+import { checkDataMatchesTraitType, getColumnIndex, getRowIndex, isValidDateString } from '@/plugins/misc'
+import LineNumberTextarea from '@/components/LineNumberTextarea.vue'
 
 import emitter from 'tiny-emitter/instance'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 export default {
+  components: {
+    LineNumberTextarea
+  },
   props: {
     trial: {
       type: Object,
@@ -104,8 +107,8 @@ export default {
         let cell
 
         if (row.Row !== undefined && row.Row !== null && row.Row !== '' && row.Column !== undefined && row.Column !== null && row.Column) {
-          const rowIndex = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (row.Row - 1) : (this.trial.layout.rows - row.Row)
-          const columnIndex = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (row.Column - 1) : (this.trial.layout.columns - row.Column)
+          const rowIndex = getRowIndex(this.trial.layout, +row.Row)
+          const columnIndex = getColumnIndex(this.trial.layout, +row.Column)
 
           cell = data[`${rowIndex}|${columnIndex}`]
         } else {

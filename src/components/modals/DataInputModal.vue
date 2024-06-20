@@ -39,7 +39,7 @@
         </b-button>
         <b-button id="toolbar-button-camera" size="sm" @click="onShowPhotoModal(null)" :disabled="!trial.editable"><IBiCameraFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonTagPhoto') }}</span></b-button>
         <b-button id="toolbar-button-guided-walk" size="sm" @click="onGuidedWalkClicked" :disabled="!trial.editable" :variant="guidedWalk !== null ? 'success' : 'secondary'" :pressed="guidedWalk !== null"><IBiSignpostSplitFill /> <span class="d-none d-xl-inline-block"> {{ $t('buttonStartGuidedWalk') }}</span></b-button>
-        <!-- <b-button size="sm" @click="navigateToPerformancePage"><IBiGraphUpArrow /> <span class="d-none d-xl-inline-block"> {{ $t('buttonGermplasmPerformance') }}</span></b-button> -->
+        <b-button size="sm" @click="navigateToPerformancePage"><IBiGraphUpArrow /> <span class="d-none d-xl-inline-block"> {{ $t('buttonGermplasmPerformance') }}</span></b-button>
         <b-button size="sm" @click="startTour"><IBiQuestionCircle /> <span class="d-none d-xl-inline-block"> {{ $t('toolbarHelp') }}</span></b-button>
       </b-button-group>
 
@@ -54,7 +54,7 @@
     <div v-if="cell && trial">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.prev.column) : $n(guidedWalk.prev.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.prev.row) : $n(guidedWalk.prev.row + 1) })" v-if="guidedWalk.prev" />
+          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(guidedWalk.prev.displayColumn), row: $n(guidedWalk.prev.displayRow) })" v-if="guidedWalk.prev" />
         </b-col>
         <b-col cols=4>
           <b-card class="text-center h-100">
@@ -67,18 +67,24 @@
             </b-popover>
 
             <b-card-subtitle>
-              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (trial.layout.columns - cell.column) : (cell.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (trial.layout.rows - cell.row) : (cell.row + 1) }) }}
+              {{ $t('widgetGuidedWalkPreviewColumnRow', { column: $n(cell.displayColumn), row: $n(cell.displayRow) }) }}
             </b-card-subtitle>
           </b-card>
         </b-col>
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? $n(trial.layout.columns - guidedWalk.next.column) : $n(guidedWalk.next.column + 1), row: trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? $n(trial.layout.rows - guidedWalk.next.row) : $n(guidedWalk.next.row + 1) })" v-if="guidedWalk.next" />
+          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(guidedWalk.next.displayColumn), row: $n(guidedWalk.next.displayRow) })" v-if="guidedWalk.next" />
         </b-col>
       </b-row>
-      <p v-if="cell && cell.categories">
-        <b-badge v-for="cat in cell.categories" :key="`cell-category-${cell.row}-${cell.column}-${cat}`" :variant="CELL_CATEGORIES[cat].variant">
-          <component :is="CELL_CATEGORIES[cat].icon" /> {{ $t(CELL_CATEGORIES[cat].title) }}
-        </b-badge>
+      <p>
+        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapGermplasm')"><IBiFlower1 /> {{ cell.germplasm }}</b-badge>
+        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapRep')" v-if="cell.rep"><IBiListOl /> {{ cell.rep }}</b-badge>
+        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapRow')"><IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /> {{ $n(cell.displayRow) }}</b-badge>
+        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapColumn')"><IBiLayoutThreeColumns /> {{ $n(cell.displayColumn) }}</b-badge>
+        <template v-if="cell && cell.categories">
+          <b-badge class="me-2" v-for="cat in cell.categories" :key="`cell-category-${cell.row}-${cell.column}-${cat}`" :variant="CELL_CATEGORIES[cat].variant">
+            <component :is="CELL_CATEGORIES[cat].icon" /> {{ $t(CELL_CATEGORIES[cat].title) }}
+          </b-badge>
+        </template>
       </p>
       <b-tabs no-fade v-model="traitGroupTabIndex" id="trait-group-tabs">
         <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
@@ -123,7 +129,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapGetters } from 'vuex'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM, CELL_CATEGORIES } from '@/plugins/constants'
+import { CELL_CATEGORIES } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -155,10 +161,6 @@ export default {
   data: function () {
     return {
       CELL_CATEGORIES,
-      DISPLAY_ORDER_BOTTOM_TO_TOP,
-      DISPLAY_ORDER_LEFT_TO_RIGHT,
-      DISPLAY_ORDER_RIGHT_TO_LEFT,
-      DISPLAY_ORDER_TOP_TO_BOTTOM,
       cell: null,
       traitGroupTabIndex: 0,
       selectedTrait: null,

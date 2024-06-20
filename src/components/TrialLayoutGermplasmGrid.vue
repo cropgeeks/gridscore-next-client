@@ -44,6 +44,7 @@
 import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal.vue'
 import FielDBookInputModal from '@/components/modals/FielDBookInputModal.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { getColumnLabel, getRowLabel } from '@/plugins/misc';
 
 export default {
   components: {
@@ -206,7 +207,7 @@ export default {
       // Column headers
       for (let column = 0; column < this.layout.columns; column++) {
         const th = this.createElement(tRow, 'th')
-        th.innerHTML = this.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? column + 1 : (this.layout.columns - column)
+        th.innerHTML = getColumnLabel(this.layout, column)
       }
 
       const tBody = this.createElement(table, 'tbody')
@@ -214,7 +215,8 @@ export default {
       for (let row = 0; row < this.layout.rows; row++) {
         // Create a new row
         const rowElement = this.createElement(tBody, 'tr')
-        const displayRowIndex = this.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? row + 1 : (this.layout.rows - row)
+        const displayRowIndex = getRowLabel(this.layout, row)
+        
         // Row header
         this.createElement(rowElement, 'th').innerHTML = displayRowIndex
 

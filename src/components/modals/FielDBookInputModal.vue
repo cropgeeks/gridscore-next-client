@@ -60,6 +60,7 @@ import { tsvParse, csvParse, autoType } from 'd3-dsv'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
+import { getColumnIndex, getRowIndex } from '@/plugins/misc';
 
 export default {
   props: {
@@ -214,14 +215,15 @@ export default {
           this.formFeedback = this.$t('formFeedbackFielDBookMissingInvalidColumn', { line: i + 1 })
           return
         }
-        if (row < 1 || row > this.rows || column < 1 || column > this.columns) {
+
+        const rowIndex = getRowIndex(this.layout, row)
+        const columnIndex = getColumnIndex(this.layout, column)
+
+        if (rowIndex < 0 || rowIndex >= this.rows || columnIndex < 0 || columnIndex >= this.columns) {
           this.formValidated = false
           this.formFeedback = this.$t('formFeedbackFielDBookInvalidDimensions', { line: i + 1, row: row, column: column })
           return
         }
-
-        const rowIndex = this.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (row - 1) : (this.layout.rows - row)
-        const columnIndex = this.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (column - 1) : (this.layout.columns - column)
 
         mapping[`${rowIndex}|${columnIndex}`] = {
           germplasm: germplasm,

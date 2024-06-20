@@ -95,10 +95,11 @@ import { toRef } from 'vue'
 import { mapGetters } from 'vuex'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_LOW, CANVAS_SHAPE_SQUARE, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE, CANVAS_SIZE_MEDIUM } from '@/plugins/constants'
+import { CANVAS_DENSITY_HIGH, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_LOW, CANVAS_SHAPE_SQUARE, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE, CANVAS_SIZE_MEDIUM } from '@/plugins/constants'
 import { projectToEuclidean } from '@/plugins/location'
 
 import emitter from 'tiny-emitter/instance'
+import { getColumnLabel, getRowLabel } from '@/plugins/misc'
 
 export default {
   props: {
@@ -369,14 +370,14 @@ export default {
         this.columns = Array.from(Array(trial.layout.columns).keys()).map(col => {
           return {
             marked: false,
-            text: this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? this.$n(this.trial.layout.columns - col) : this.$n(col + 1),
+            text: this.$n(getColumnLabel(this.trial.layout, col)),
             index: col
           }
         })
         this.rows = Array.from(Array(trial.layout.rows).keys()).map(row => {
           return {
             marked: false,
-            text: this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? this.$n(this.trial.layout.rows - row) : this.$n(row + 1),
+            text: this.$n(getRowLabel(this.trial.layout, row)),
             index: row
           }
         })

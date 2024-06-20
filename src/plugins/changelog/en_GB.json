@@ -494,5 +494,26 @@
         "text": "Added a way to mark all occurrences of a germplasm identifier across the trial as control/check during setup."
       }
     ]
+  },
+  {
+    "version": "3.1.0",
+    "date": "2024-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Germplasm performance",
+        "text": "We added a new germplasm performance page which can be accessed from the top toolbar on the plot data input. This dedicated page shows information about the selected germplasm compared to the rest of the trial highlighting its performance."
+      },
+      {
+        "type": "new",
+        "title": "Row/column labels",
+        "text": "You can now further customise the row and column labels of your trial design. This will allow you to define trials, e.g. starting from number 2 or skipping numbers in between."
+      },
+      {
+        "type": "bugfix",
+        "title": "Service worker bug",
+        "text": "Fixed a critical bug that prevented GridScore from accessing certain server resources including export to Germinate Data Templates."
+      }
+    ]
   }
 ]

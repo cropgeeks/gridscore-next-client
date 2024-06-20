@@ -268,7 +268,9 @@ export default {
         corners: null,
         markers: null,
         rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
+        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT,
+        rowLabels: [1],
+        columnLabels: [1]
       },
       germplasmMap: {},
       traits: [],

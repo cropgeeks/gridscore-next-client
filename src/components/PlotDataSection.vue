@@ -37,7 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import TraitIcon from '@/components/icons/TraitIcon.vue'
-import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
+import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 
 export default {
   components: {
@@ -75,14 +75,14 @@ export default {
     },
     rowIndex: function () {
       if (this.trial && this.cell) {
-        return this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - this.cell.row) : (this.cell.row + 1)
+        return this.cell.displayRow
       } else {
         return null
       }
     },
     columnIndex: function () {
       if (this.trial && this.cell) {
-        return this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (this.trial.layout.columns - this.cell.column) : (this.cell.column + 1)
+        return this.cell.displayColumn
       } else {
         return null
       }

@@ -37,8 +37,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
-import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { invertHex, toLocalDateString } from '@/plugins/misc'
+import { CELL_CATEGORY_CONTROL } from '@/plugins/constants'
+import { getColumnLabel, getRowLabel, invertHex, toLocalDateString } from '@/plugins/misc'
 import { categoricalColors } from '@/plugins/color'
 import PlotDataSection from '@/components/PlotDataSection.vue'
 
@@ -353,8 +353,8 @@ export default {
         }
 
         // Get the axis ticks based on inversion state
-        const xTicks = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? Array.from(Array(this.trial.layout.columns).keys()).map(i => i + 1) : Array.from(Array(this.trial.layout.columns).keys()).map(i => this.trial.layout.columns - i)
-        const yTicks = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? Array.from(Array(this.trial.layout.rows).keys()).map(i => this.trial.layout.rows - i) : Array.from(Array(this.trial.layout.rows).keys()).map(i => i + 1)
+        const xTicks = Array.from(Array(this.trial.layout.columns).keys()).map(i => getColumnLabel(this.trial.layout, i))
+        const yTicks = Array.from(Array(this.trial.layout.rows).keys()).map(i => getRowLabel(this.trial.layout, i)).reverse()
 
         const layout = {
           margin: { autoexpand: true },

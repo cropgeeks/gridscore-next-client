@@ -217,7 +217,7 @@ export default {
               })
             }
 
-            rowText.push(this.$t('widgetChartHeatmapRowColumn', { row: cell.row + 1, column: cell.column + 1 }))
+            rowText.push(this.$t('widgetChartHeatmapRowColumn', { row: cell.displayRow, column: cell.displayColumn }))
             // rowText.push(cell.displayName)
 
             // Get all sorted measurements for this trait and plot

@@ -26,7 +26,6 @@
 import { mapGetters } from 'vuex'
 import { getTrialDataCached } from '@/plugins/datastore'
 import SearchMatchModal from '@/components/modals/SearchMatchModal.vue'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -75,8 +74,8 @@ export default {
             displayName: c.displayName,
             rep: c.rep,
             name: c.germplasm,
-            displayRow: this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (c.row + 1) : (this.trial.layout.rows - c.row),
-            displayColumn: this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (c.column + 1) : (this.trial.layout.columns - c.column)
+            displayRow: c.displayRow,
+            displayColumn: c.displayColumn
           }
         })
 

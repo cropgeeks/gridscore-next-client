@@ -494,5 +494,26 @@
         "text": "Neue Methode zum Markieren aller Vorkommen eines Keimplasmaidentifikators als Kontrollen im gesamten Versuch beim Erstellen des Versuches."
       }
     ]
+  },
+  {
+    "version": "3.1.0",
+    "date": "2024-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Keimplasma-Performance",
+        "text": "Wir haben eine neue Keimplasma-Performance Seite hinzugefügt welche von der Werkzeugleiste in der Dateneingabe eines Beetes erreicht werden kann. Diese Seite zeigt Informationen über das ausgewählte Keimplasma im Vergleich zum Rest des Versuches welches dessen Performance hervorhebt."
+      },
+      {
+        "type": "new",
+        "title": "Zeilen-/Spaltenbeschriftung",
+        "text": "Die Zeilen-/Spaltenbeschriftungen des Versuchsaufbaus können jetzt weiter angepasst werden. Dies erlaubt das Erstellen von Versuchen bei welchem z.B. die Nummerierung bei 2 anfängt oder Zahlen übersprungen werden."
+      },
+      {
+        "type": "bugfix",
+        "title": "Service-worker-Bug",
+        "text": "Ein kritischer Fehler wurde behoben der GridScore davon abgehalten hat bestimmte Serverressourcen zu nutzen wie z.B. der Export in Germinate Data Templates."
+      }
+    ]
   }
 ]

@@ -234,8 +234,8 @@ export default {
                     const dateString = new Date(m.timestamp).toLocaleString()
                     m.values.forEach((v, setIndex) => {
                       const dp = {
-                        displayColumn: this.trial.layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (this.trial.layout.columns - cell.column) : (cell.column + 1),
-                        displayRow: this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (this.trial.layout.rows - cell.row) : (cell.row + 1),
+                        displayColumn: cell.displayColumn,
+                        displayRow: cell.displayRow,
                         row: cell.row,
                         column: cell.column,
                         setIndex: setIndex,

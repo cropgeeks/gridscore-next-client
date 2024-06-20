@@ -276,9 +276,9 @@ export default {
                 germplasmName: cell.germplasm,
                 observationUnitPosition: {
                   positionCoordinateXType: 'GRID_COL',
-                  positionCoordinateX: x + 1,
+                  positionCoordinateX: cell.displayColumn,
                   positionCoordinateYType: 'GRID_ROW',
-                  positionCoordinateY: y + 1,
+                  positionCoordinateY: cell.displayRow,
                   observationLevel: (cell.rep !== undefined && cell.rep !== null)
                     ? {
                         levelName: 'rep',

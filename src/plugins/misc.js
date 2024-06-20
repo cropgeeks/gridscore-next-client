@@ -4,7 +4,7 @@ import { trialLayoutToPlots } from '@/plugins/location'
 import store from '@/store'
 
 import { saveAs } from 'file-saver'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
+import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 const { t } = i18n.global
 
@@ -365,8 +365,8 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
   if (aggregate) {
     Object.values(data).forEach(v => {
       if (v.measurements) {
-        const row = trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (v.row + 1) : (trial.layout.rows - v.row)
-        const column = trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (v.column + 1) : (trial.layout.columns - v.column)
+        const row = v.displayRow
+        const column = v.displayColumn
         const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
 
         const dates = new Set()
@@ -412,8 +412,8 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
   } else {
     Object.values(data).forEach(v => {
       if (v.measurements) {
-        const row = trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (v.row + 1) : (trial.layout.rows - v.row)
-        const column = trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (v.column + 1) : (trial.layout.columns - v.column)
+        const row = v.displayRow
+        const column = v.displayColumn
         const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
 
         const measurements = []
@@ -530,6 +530,48 @@ const debounce = (fn, wait) => {
   }
 }
 
+const getRowIndex = (layout, row) => {
+  let index = -1
+  if (layout.rowLabels && layout.rowLabels.length === layout.rows) {
+    index = layout.rowLabels.indexOf(row)
+  }
+
+  if (index === -1) {
+    index = layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (row - 1) : (layout.rows - row)
+  }
+
+  return index
+}
+
+const getColumnIndex = (layout, column) => {
+  let index = -1
+  if (layout.columnLabels && layout.columnLabels.length === layout.columns) {
+    index = layout.columnLabels.indexOf(column)
+  }
+
+  if (index === -1) {
+    index = layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (column - 1) : (layout.columns - column)
+  }
+
+  return index
+}
+
+const getRowLabel = (layout, index) => {
+  if (layout.rowLabels && layout.rowLabels.length === layout.rows) {
+    return layout.rowLabels[index]
+  } else {
+    return layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? (layout.rows - index) : (index + 1)
+  }
+}
+
+const getColumnLabel = (layout, index) => {
+  if (layout.columnLabels && layout.columnLabels.length === layout.columns) {
+    return layout.columnLabels[index]
+  } else {
+    return layout.columnOrder === DISPLAY_ORDER_RIGHT_TO_LEFT ? (layout.columns - index) : (index + 1)
+  }
+}
+
 export {
   trialsDataToMatrix,
   getTraitTypeText,
@@ -544,5 +586,9 @@ export {
   getNumberWithSuffix,
   truncateAfterWords,
   formatTimeAgo,
-  debounce
+  debounce,
+  getRowLabel,
+  getColumnLabel,
+  getRowIndex,
+  getColumnIndex
 }

@@ -88,6 +88,8 @@
   "buttonMainDisplayModeAuto": "Automatic",
   "buttonMainDisplayModeCanvasOnly": "Canvas only",
   "buttonGermplasmPerformance": "Performance",
+  "buttonShowLabels": "Show labels",
+  "buttonEditLabels": "Edit labels",
   "appTitle": "GridScore NEXT",
   "appTitleLegacy": "GridScore legacy",
   "cellCategoryControl": "Control/Check",

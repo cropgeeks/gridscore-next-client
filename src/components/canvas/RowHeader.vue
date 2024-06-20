@@ -5,7 +5,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getTouchPosition } from '@/plugins/touchinput'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP } from '@/plugins/constants'
+import { getRowLabel } from '@/plugins/misc'
 
 export default {
   props: {
@@ -100,7 +100,7 @@ export default {
 
       this.ctx.fillRect(0, y, this.dimensions.rowHeaderWidth, this.dimensions.cellHeight)
       this.ctx.fillStyle = this.fillStyleText
-      this.ctx.fillText(this.trial.layout.rowOrder === DISPLAY_ORDER_BOTTOM_TO_TOP ? this.$n(this.trial.layout.rows - row) : this.$n(row + 1), x, y + this.dimensions.cellHeight / 2)
+      this.ctx.fillText(this.$n(getRowLabel(this.trial.layout, row)), x, y + this.dimensions.cellHeight / 2)
     },
     reset: function () {
       if (this.resizeRunning) {

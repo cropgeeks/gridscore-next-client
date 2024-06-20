@@ -4,6 +4,7 @@ import store from '@/store'
 import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT } from '@/plugins/constants'
 import { trialLayoutToPlots } from './location'
 import { isProxy, toRaw } from 'vue'
+import { getColumnLabel, getRowLabel } from './misc'
 
 let db
 
@@ -601,7 +602,13 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
       // If there is a new geolocation
       if (geolocation && geolocation.lat !== undefined && geolocation.lat !== null && geolocation.lng !== undefined && geolocation.lng !== null) {
         // Check if either, there isn't a geolocation or there isn't a center or either lat or lng are missing
-        if (!cell.geography || !cell.geography.center || cell.geography.center.lat === undefined || cell.geography.lat === null || cell.geography.center.lng === undefined || cell.geography.lng === null) {
+        if (!cell.geography) {
+          cell.geography = {
+            center: null,
+            corners: null
+          }
+        }
+        if (!cell.geography.center || cell.geography.center.lat === undefined || cell.geography.lat === null || cell.geography.center.lng === undefined || cell.geography.lng === null) {
           // Set new center as the parameter
           cell.geography = {
             center: {
@@ -622,6 +629,8 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
 
       // Remove this as it was only added temporarily
       delete cell.displayName
+      delete cell.displayRow
+      delete cell.displayColumn
 
       if (logTransactions(trial)) {
         const traitMap = {}
@@ -784,6 +793,8 @@ const addTrial = async (trial) => {
 }
 
 const getCell = async (trialId, row, column) => {
+  const trial = await getTrialById(trialId)
+
   const db = await getDb()
 
   return db.get('data', [trialId, row, column])
@@ -796,6 +807,8 @@ const getCell = async (trialId, row, column) => {
         }
 
         c.displayName = displayName
+        c.displayRow = getRowLabel(trial.layout, c.row)
+        c.displayColumn = getColumnLabel(trial.layout, c.column)
       }
 
       return c
@@ -820,6 +833,8 @@ const getTrialData = async (trialId) => {
             }
 
             c.displayName = displayName
+            c.displayRow = getRowLabel(trial.layout, c.row)
+            c.displayColumn = getColumnLabel(trial.layout, c.column)
 
             result[`${c.row}|${c.column}`] = c
           })

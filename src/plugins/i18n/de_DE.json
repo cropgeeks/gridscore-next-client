@@ -87,6 +87,8 @@
   "buttonMainDisplayModeAuto": "Automatisch",
   "buttonMainDisplayModeCanvasOnly": "Nur Leinwand",
   "buttonGermplasmPerformance": "Performance",
+  "buttonShowLabels": "Beschriftung anzeigen",
+  "buttonEditLabels": "Beschriftung bearbeiten",
   "cellCategoryControl": "Kontrolle",
   "changelogBadgeNew": "NEU",
   "changelogBadgeUpdate": "AKT",

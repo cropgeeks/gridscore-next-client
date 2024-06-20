@@ -150,7 +150,7 @@ import IconBrapi from '@/components/icons/IconBrapi.vue'
 import IconGridScore from '@/components/icons/IconGridScore.vue'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal.vue'
 import { downloadText, toLocalDateString, trialsDataToMatrix } from '@/plugins/misc'
-import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, TRIAL_EVENT_TYPE_MANAGEMENT, TRIAL_EVENT_TYPE_OTHER, TRIAL_EVENT_TYPE_WEATHER } from '@/plugins/constants'
+import { TRIAL_EVENT_TYPE_MANAGEMENT, TRIAL_EVENT_TYPE_OTHER, TRIAL_EVENT_TYPE_WEATHER } from '@/plugins/constants'
 import BrapiExportSection from '@/components/BrapiExportSection.vue'
 import { UseOnline } from '@vueuse/components'
 
@@ -240,8 +240,8 @@ export default {
 
       Object.values(this.trialData).forEach(c => {
         if (c && c.comments && c.comments.length > 0) {
-          const row = this.trial.layout.rowOrder === DISPLAY_ORDER_TOP_TO_BOTTOM ? (c.row + 1) : (this.trial.layout.rows - c.row)
-          const column = this.trial.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? (c.column + 1) : (this.trial.layout.columns - c.column)
+          const row = c.displayRow
+          const column = c.displayColumn
           c.comments.forEach(cm => {
             result += `\n${c.germplasm}\t${c.rep || ''}\t${row}\t${column}\t${toLocalDateString(new Date(cm.timestamp))}\t${cm.content}`
           })
