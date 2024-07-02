@@ -26,7 +26,7 @@
 
       <div class="my-3">
         <b-badge class="me-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`">
-          {{ germplasm }} <button type="button" class="close badge-close" @click="removeGermplasm(index)">×</button>
+          {{ germplasm }} <button type="button" class="btn-close badge-close" @click="removeGermplasm(index)">×</button>
         </b-badge>
       </div>
     </div>

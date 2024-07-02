@@ -64,7 +64,7 @@
                     :disabled="!editable"
                     :readonly="!editable"
                     :options="traitOptionsSelect"
-                    @change="tts" />
+                    @change="tts(); $emit('traverse')" />
     <!-- Else show a button group for easier selection -->
     <b-button-group :id="id" v-else-if="trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && trait.restrictions.categories.length <= storeCategoryCountInline" ref="input" :state="formState">
       <b-button variant="outline-secondary" v-for="option in traitOptionsButtons" :key="`trait-option-trait-${trait.id}-option-${option.value}`" :pressed="option.value === value" @click="ttsAndSetCategory(option.value)">
@@ -323,6 +323,8 @@ export default {
       this.value = value
       // this.value = +event.target.value
       this.tts()
+
+      this.$emit('traverse')
     },
     ttsAndSet: function () {
       this.rangeChanged = true

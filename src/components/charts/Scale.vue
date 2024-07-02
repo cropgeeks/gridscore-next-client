@@ -10,16 +10,16 @@
     <b-tooltip :target="`scale-${id}`" placement="bottom">
       <h6>{{ trait.name }}</h6>
       <div class="d-flex justify-content-between">
-        <span class="d-block"><IBiArrowDown /> {{ $t('widgetScaleMin') }} </span>
-        <span class="ms-2">{{ formattedMin}}</span>
+        <span class="d-block"><IBiArrowUp /> {{ $t('widgetScaleMax') }} </span>
+        <span class="ms-2">{{ formattedMax }}</span>
       </div>
       <div class="d-flex justify-content-between">
         <span class="d-block"><IBiSlashCircle /> {{ $t('widgetScaleAvg') }} </span>
         <span class="ms-2">{{ formattedAvg }}</span>
       </div>
       <div class="d-flex justify-content-between">
-        <span class="d-block"><IBiArrowUp /> {{ $t('widgetScaleMax') }} </span>
-        <span class="ms-2">{{ formattedMax }}</span>
+        <span class="d-block"><IBiArrowDown /> {{ $t('widgetScaleMin') }} </span>
+        <span class="ms-2">{{ formattedMin}}</span>
       </div>
       <div class="d-flex justify-content-between">
         <span class="d-block"><IBi123 /> {{ $t('widgetScaleCount') }} </span>

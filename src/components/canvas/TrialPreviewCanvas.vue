@@ -17,7 +17,7 @@ export default {
       return this.storeDarkMode ? '#2f2f2f' : '#d0d0d0'
     },
     fillStyleHighlight: function () {
-      return getComputedStyle(document.documentElement).getPropertyValue('--primary')
+      return getComputedStyle(document.documentElement).getPropertyValue('--bs-primary')
     }
   },
   props: {

@@ -4,7 +4,7 @@
     <p>{{ $t('pageLoadExampleText') }}</p>
 
      <b-row>
-      <b-col cols=12 sm=6 md=4 class="mb-4" v-for="example in exampleTrials" :key="`example-trial-${example.id}`">
+      <b-col cols=12 sm=6 md=3 class="mb-4" v-for="example in exampleTrials" :key="`example-trial-${example.id}`">
         <b-card class="home-card h-100 d-flex flex-column justify-content-between" no-body>
           <div>
             <b-card-img class="p-2 p-md-4 p-lg-5" :top="true" :src="`img/example/${example.image}`" />
@@ -92,6 +92,17 @@ export default {
           columns: 3
         },
         image: 'measurementset-trial.svg'
+      }, {
+        id: 'cow',
+        name: this.$t('pageLoadExampleCowName'),
+        description: this.$t('pageLoadExampleCowDescription'),
+        source: 'cow',
+        stats: {
+          traits: 3,
+          rows: 40,
+          columns: 1
+        },
+        image: 'cow-trial.svg'
       }]
     }
   },

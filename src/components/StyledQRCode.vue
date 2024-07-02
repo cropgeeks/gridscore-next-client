@@ -78,6 +78,7 @@ export default {
               width: 300,
               height: 300,
               data: this.code,
+              // type: 'svg', // We don't use the SVG option, because we want people to be able to right-click and copy QR codes.
               dotsOptions: {
                 type: 'rounded'
               },

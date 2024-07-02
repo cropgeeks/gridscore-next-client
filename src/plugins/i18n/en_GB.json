@@ -515,6 +515,8 @@
   "pageLoadExampleTimelineDescription": "An example of a trial containing traits that have been scored multiple times over a period of time.",
   "pageLoadExampleMeasurementSetName": "3-plant set trial",
   "pageLoadExampleMeasurementSetDescription": "A trial highlighting the set measurement feature where 3 measurements are taken per plot and trait each time.",
+  "pageLoadExampleCowName": "Cow trial",
+  "pageLoadExampleCowDescription": "We don't just do plants, you can record data on basically anything, even cows!",
   "pageLoadExampleStatsTraits": "Traits",
   "pageLoadExampleStatsRows": "Rows",
   "pageLoadExampleStatsColumns": "Column",

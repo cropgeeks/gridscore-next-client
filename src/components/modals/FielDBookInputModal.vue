@@ -198,7 +198,7 @@ export default {
         const row = r[this.columnMapping.row]
         const column = r[this.columnMapping.column]
         const germplasm = r[this.columnMapping.germplasm]
-        const rep = r[this.columnMapping.rep]
+        const rep = r[this.columnMapping.rep] || null
 
         if (!germplasm || germplasm === '') {
           this.formValidated = false

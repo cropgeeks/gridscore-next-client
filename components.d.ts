@@ -139,6 +139,7 @@ declare module 'vue' {
     IBiCheck2Square: typeof import('~icons/bi/check2-square')['default']
     IBiCheckSquare: typeof import('~icons/bi/check-square')['default']
     IBiCheckSquareFill: typeof import('~icons/bi/check-square-fill')['default']
+    IBiChevronBarContract: typeof import('~icons/bi/chevron-bar-contract')['default']
     IBiChevronBarDown: typeof import('~icons/bi/chevron-bar-down')['default']
     IBiChevronBarUp: typeof import('~icons/bi/chevron-bar-up')['default']
     IBiChevronDoubleRight: typeof import('~icons/bi/chevron-double-right')['default']
