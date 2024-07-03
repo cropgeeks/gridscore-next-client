@@ -45,11 +45,13 @@ import { addTrial } from '@/plugins/idb'
 import barley from '@/assets/data/barley.json'
 import measurementset from '@/assets/data/measurementset.json'
 import timeline from '@/assets/data/timeline.json'
+import cows from '@/assets/data/cows.json'
 
 const data = {
   barley,
   measurementset,
-  timeline
+  timeline,
+  cows
 }
 
 export default {
@@ -96,7 +98,7 @@ export default {
         id: 'cow',
         name: this.$t('pageLoadExampleCowName'),
         description: this.$t('pageLoadExampleCowDescription'),
-        source: 'cow',
+        source: 'cows',
         stats: {
           traits: 3,
           rows: 40,
@@ -110,13 +112,15 @@ export default {
     loadExample: function (example) {
       const json = data[example.source]
 
-      json.createdOn = new Date().toISOString()
-      json.updatedOn = new Date().toISOString()
+      if (json.name) {
+        json.createdOn = new Date().toISOString()
+        json.updatedOn = new Date().toISOString()
 
-      addTrial(json).then(trialId => {
-        this.$store.dispatch('setSelectedTrial', trialId)
-        this.$router.push({ name: 'home' })
-      })
+        addTrial(json).then(trialId => {
+          this.$store.dispatch('setSelectedTrial', trialId)
+          this.$router.push({ name: 'home' })
+        })
+      }
     }
   }
 }
