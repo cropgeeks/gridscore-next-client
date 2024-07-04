@@ -138,6 +138,8 @@ export default {
         case 'float':
         case 'range':
           return 'numeric'
+        case 'gps':
+          return 'text'
         default:
           return type
       }

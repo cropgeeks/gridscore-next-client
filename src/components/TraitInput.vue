@@ -78,8 +78,15 @@
                         :checked="value"
                         :disabled="!editable"
                         :options="traitOptionsButtons" /> -->
+    <b-form-input :id="id" v-else-if="trait.dataType === 'gps'" v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
     <b-form-input :id="id" v-else v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
 
+    <b-input-group-append v-if="trait.dataType === 'gps'">
+      <UseGeolocation v-slot="{ coords: { latitude, longitude } }">
+        <b-button v-b-tooltip="$t('tooltipDataEntryGetGps')" variant="primary" @click="setGps(latitude, longitude)" :disabled="!editable"><IBiGeoAlt /></b-button>
+      </UseGeolocation>
+      <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
+    </b-input-group-append>
     <b-input-group-append v-if="trait.dataType === 'date' || trait.dataType === 'int'">
       <template v-if="trait.dataType === 'date'">
         <b-button v-b-tooltip="$t('tooltipDataEntryDateMinusOne')" @click="setDateMinusOne" :disabled="!editable"><IBiCaretLeftFill /></b-button>
@@ -99,10 +106,14 @@
 <script>
 import { checkDataMatchesTraitType, toLocalDateString } from '@/plugins/misc'
 import { mapGetters } from 'vuex'
+import { UseGeolocation } from '@vueuse/components'
 
 import emitter from 'tiny-emitter/instance'
 
 export default {
+  components: {
+    UseGeolocation
+  },
   props: {
     editable: {
       type: Boolean,
@@ -166,6 +177,13 @@ export default {
     }
   },
   methods: {
+    setGps: function (latitude, longitude) {
+      this.value = `${latitude};${longitude}`
+
+      emitter.emit('tts', this.$t('ttsCurrentLocation'))
+
+      this.$emit('traverse')
+    },
     getValue: function () {
       if (this.value === undefined || this.value === null || this.value === '' || (this.trait.dataType === 'range' && !this.rangeChanged)) {
         return null

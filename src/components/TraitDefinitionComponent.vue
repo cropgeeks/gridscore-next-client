@@ -326,6 +326,9 @@ export default {
         text: this.$t('traitTypeDate'),
         value: 'date'
       }, {
+        text: this.$t('traitTypeGps'),
+        value: 'gps'
+      }, {
         text: this.$t('traitTypeText'),
         value: 'text'
       }]

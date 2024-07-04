@@ -66,6 +66,8 @@ const getTraitTypeText = (trait, short = false) => {
       return t(short ? 'traitTypeShortText' : 'traitTypeText')
     case 'categorical':
       return t(short ? 'traitTypeShortCategorical' : 'traitTypeCategorical')
+    case 'gps':
+      return t(short ? 'traitTypeShortGps' : 'traitTypeGps')
     default:
       return null
   }
@@ -266,13 +268,25 @@ const migrateOldGridScoreTrial = (old) => {
   })
 }
 
+const isNumber = (value, isInt) => {
+  try {
+    const int = Number(value)
+    if (isNaN(value) || isNaN(int) || (isInt && !Number.isInteger(int))) {
+      return false
+    }
+
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
 const checkDataMatchesTraitType = (trait, value, checkDatesAndCategories = true) => {
   const trimmed = (typeof value === 'string') ? value.trim() : value
 
   if (trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range') {
     try {
-      const int = Number(trimmed)
-      if (isNaN(trimmed) || isNaN(int) || ((trait.dataType === 'int' || trait.dataType === 'range') && !Number.isInteger(int))) {
+      if (!isNumber(trimmed, (trait.dataType === 'int' || trait.dataType === 'range'))) {
         return false
       }
 
@@ -297,6 +311,14 @@ const checkDataMatchesTraitType = (trait, value, checkDatesAndCategories = true)
     return trait.restrictions.categories.includes(value)
   } else if (trait.dataType === 'date' && checkDatesAndCategories) {
     return isValidDateString(value)
+  } else if (trait.dataType === 'gps') {
+    try {
+      const [lat, lng] = trimmed.split(';')
+
+      return lat !== undefined && lat !== null && lat !== '' && isNumber(lat, false) && lng !== undefined && lng !== null && lng !== '' && isNumber(lng, false)
+    } catch (err) {
+      return false
+    }
   }
 
   return true

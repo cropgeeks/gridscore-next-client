@@ -100,8 +100,8 @@ export default {
         description: this.$t('pageLoadExampleCowDescription'),
         source: 'cows',
         stats: {
-          traits: 3,
-          rows: 40,
+          traits: 4,
+          rows: 20,
           columns: 1
         },
         image: 'cow-trial.svg'

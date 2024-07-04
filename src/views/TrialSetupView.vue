@@ -384,7 +384,7 @@ export default {
     },
     textTraitCount: function () {
       if (this.traits) {
-        return this.traits.filter(t => t.dataType === 'text').length
+        return this.traits.filter(t => t.dataType === 'text' || t.dataType === 'gps').length
       } else {
         return 0
       }

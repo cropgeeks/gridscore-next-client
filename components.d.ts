@@ -178,6 +178,7 @@ declare module 'vue' {
     IBiGear: typeof import('~icons/bi/gear')['default']
     IBiGearFill: typeof import('~icons/bi/gear-fill')['default']
     IBiGeo: typeof import('~icons/bi/geo')['default']
+    IBiGeoAlt: typeof import('~icons/bi/geo-alt')['default']
     IBiGeoAltFill: typeof import('~icons/bi/geo-alt-fill')['default']
     IBiGithub: typeof import('~icons/bi/github')['default']
     IBiGlobe2: typeof import('~icons/bi/globe2')['default']
