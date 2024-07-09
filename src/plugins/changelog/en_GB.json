@@ -510,9 +510,24 @@
         "text": "You can now further customise the row and column labels of your trial design. This will allow you to define trials, e.g. starting from number 2 or skipping numbers in between."
       },
       {
+        "type": "new",
+        "title": "GPS trait type",
+        "text": "A new trait type in the form of GPS tracking has been added. This will allow you to record your current position as a trait."
+      },
+      {
+        "type": "new",
+        "title": "New example trial",
+        "text": "We added a new example trial for you to explore. To highlight that GridScore is not restricted to plant phenotyping, we added a trial showcasing its use for trait data collection on cows including milk production, weight and GPS location."
+      },
+      {
         "type": "bugfix",
         "title": "Service worker bug",
         "text": "Fixed a critical bug that prevented GridScore from accessing certain server resources including export to Germinate Data Templates."
+      },
+      {
+        "type": "bugfix",
+        "title": "Automatic input traversal",
+        "text": "Fixed an issue where the input focus didn't automatically move to the next trait input after selecting a categorical trait value."
       }
     ]
   }

@@ -510,9 +510,24 @@
         "text": "Die Zeilen-/Spaltenbeschriftungen des Versuchsaufbaus können jetzt weiter angepasst werden. Dies erlaubt das Erstellen von Versuchen bei welchem z.B. die Nummerierung bei 2 anfängt oder Zahlen übersprungen werden."
       },
       {
+        "type": "new",
+        "title": "GPS Merkmalstyp",
+        "text": "Ein neuer Merkmalstyp wurde in Form einer GPS-Verfolgung hinzugefügt. Dies erlaubt das Aufzeichnen der aktuellen Position als Merkmal."
+      },
+      {
+        "type": "new",
+        "title": "Neuer Beispielversuch",
+        "text": "Wir haben einen neuen Beispielversuch zum Erkunden hinzugefügt. Um hervorzuheben, dass GridScore nicht auf Pflanzenphänotypisierung beschränkt ist zeigt der neue Versuch die Nutzung von Merkmalssammlung für Kühe inklusive der Milchproduktion, Gewicht und GPS-Standort."
+      },
+      {
         "type": "bugfix",
         "title": "Service-worker-Bug",
         "text": "Ein kritischer Fehler wurde behoben der GridScore davon abgehalten hat bestimmte Serverressourcen zu nutzen wie z.B. der Export in Germinate Data Templates."
+      },
+      {
+        "type": "bugfix",
+        "title": "Automatischer Eingabefortschritt",
+        "text": "Behebt einen Fehler bei dem der Fokus der Eingabe nicht automatisch auf die nächste Eingabe weitergegeben wurde beim Auswählen eines kategorischen Wertes."
       }
     ]
   }

@@ -40,11 +40,12 @@
           <b-col cols=12 lg=6 v-for="(t, tIndex) in selectedTraits" :key="`trait-heading-${t.trait.id}`">
             <div class="d-flex flex-row justify-content-between align-items-center flex-wrap">
               <h2><TraitHeading :short="true" :trait="t.trait" :traitIndex="t.index" /></h2>
-              <b-form-checkbox switch v-model="chartInteractionEnabled[tIndex]" @input="toggleChartInteraction(tIndex)"> {{ $t(chartInteractionEnabled[tIndex] ? 'formCheckboxChartInteractEnabled' : 'formCheckboxChartInteractDisabled') }}</b-form-checkbox>
+              <b-form-checkbox v-if="t.trait.dataType !== 'gps'" switch v-model="chartInteractionEnabled[tIndex]" @input="toggleChartInteraction(tIndex)"> {{ $t(chartInteractionEnabled[tIndex] ? 'formCheckboxChartInteractEnabled' : 'formCheckboxChartInteractDisabled') }}</b-form-checkbox>
             </div>
             <p v-if="t.trait.description">{{ t.trait.description }}</p>
 
-            <div :ref="`trait-stats-chart-${t.trait.id}`" />
+            <GpsTraitMap v-if="t.trait.dataType === 'gps'" :trait="t.trait" :trial="trial" :selectedGermplasm="selectedGermplasm" />
+            <div :ref="`trait-stats-chart-${t.trait.id}`" v-else />
           </b-col>
         </b-row>
       </div>
@@ -63,7 +64,8 @@ import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
 import { hexToRgba, invertHex, toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection.vue'
-import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
+import GpsTraitMap from '@/components/GpsTraitMap.vue'
+import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -82,7 +84,8 @@ const GENERIC_TRACE = 'GENERIC_TRACE'
 export default {
   components: {
     TraitHeading,
-    PlotDataSection
+    PlotDataSection,
+    GpsTraitMap
   },
   computed: {
     ...mapGetters([
