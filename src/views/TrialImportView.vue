@@ -35,11 +35,11 @@
           <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
             <b-input-group>
               <b-form-input v-model.trim="shareCode" autofocus @keyup.enter="checkCode" />
-              <b-input-group-addon>
+              <template #append>
                 <b-button @click="showCamera = !showCamera">
                   <IBiQrCodeScan /> {{ $t('buttonScanQR') }}
                 </b-button>
-              </b-input-group-addon>
+              </template>
             </b-input-group>
           </b-form-group>
           <div v-if="showCamera">

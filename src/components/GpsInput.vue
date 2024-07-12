@@ -4,11 +4,11 @@
     <b-form-input :placeholder="$t('formPlaceholderLatitude')" :min="-90" :max="90" :step="0.001" type="number" lazy v-model.number.lazy="latitude" />
     <b-form-input :placeholder="$t('formPlaceholderLongitude')" :min="-180" :max="180" :step="0.001" type="number" lazy v-model.number.lazy="longitude" />
 
-    <b-input-group-append v-if="supportsGps">
+    <template #append v-if="supportsGps">
       <!-- Button that sets user's current position -->
       <b-button @click="setGps(true)" v-b-tooltip="$t('tooltipSetupGetLocation')"><IBiGeoAltFill /></b-button>
       <b-button @click="setGps(false)" variant="danger"><IBiX /></b-button>
-    </b-input-group-append>
+    </template>
   </b-input-group>
 </template>
 

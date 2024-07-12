@@ -8,13 +8,13 @@
       <b-button :title="$t('toolbarHelp')" @click="startTour"><IBiQuestionCircle /> <span class="d-none d-lg-inline-block">{{ $t('toolbarHelp') }}</span></b-button>
       <b-button v-if="trial.transactionCount > 0" @click="synchronize" variant="info"><IBiCloudUploadFill /> {{ $t('toolbarSyncInfo', trial.transactionCount) }}</b-button>
       <b-input-group class="ms-auto flex-grow-1 flex-sm-grow-0">
-        <b-input-group-prepend>
+        <template #prepend>
           <b-button @click="$refs.scanQrCodeModal.show()"><IBiQrCodeScan /></b-button>
-        </b-input-group-prepend>
+        </template>
         <b-form-input lazy v-model.lazy="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" id="germplasm-search" />
-        <b-input-group-append>
+        <template #append>
           <b-button @click="initSearch"><IBiSearch /></b-button>
-        </b-input-group-append>
+        </template>
       </b-input-group>
     </b-button-toolbar>
 

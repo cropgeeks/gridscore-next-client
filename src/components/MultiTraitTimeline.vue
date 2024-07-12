@@ -19,9 +19,9 @@
       <b-form-input v-model="searchTerm" type="search" :placeholder="$t('formPlaceholderTimelinePlotSearch')" />
       <b-input-group>
         <b-form-select multiple :options="filteredGermplasm" v-model="selectedGermplasmTemp" />
-        <b-input-group-append>
+        <template #append>
           <b-button @click="addGermplasm"><IBiPlusSquareFill /></b-button>
-        </b-input-group-append>
+        </template>
       </b-input-group>
 
       <div class="my-3">

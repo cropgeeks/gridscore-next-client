@@ -16,7 +16,7 @@
             <template #label>
               <IBiCardText /> {{ $t('formLabelTraitDescription') }}
             </template>
-            <b-form-textarea rows=3 trim v-model="newTrait.description" id="trait-description" />
+            <b-form-textarea rows=3 trim v-model.trim="newTrait.description" id="trait-description" />
           </b-form-group>
           <b-row>
             <b-col cols=6>
@@ -52,7 +52,7 @@
                 <template #label>
                   <IBiChevronBarDown /> {{ $t('formLabelTraitRestrictionsMin') }}
                 </template>
-                <b-form-input type="number" :step="1" number v-model="newTrait.restrictions.min" id="trait-min" :state="formState.min" />
+                <b-form-input type="number" :step="1" number v-model.number="newTrait.restrictions.min" id="trait-min" :state="formState.min" />
               </b-form-group>
             </b-col>
             <b-col cols=6>
@@ -60,7 +60,7 @@
                 <template #label>
                   <IBiChevronBarUp /> {{ $t('formLabelTraitRestrictionsMax') }}
                 </template>
-                <b-form-input type="number" :step="1" number v-model="newTrait.restrictions.max" id="trait-max" :state="formState.max" />
+                <b-form-input type="number" :step="1" number v-model.number="newTrait.restrictions.max" id="trait-max" :state="formState.max" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -68,7 +68,7 @@
             <template #label>
               <IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $t('formLabelTraitSetSize') }}
             </template>
-            <b-form-input type="number" :step="1" number :min="1" required v-model="newTrait.setSize" id="trait-set-size" :state="formState.setSize" />
+            <b-form-input type="number" :step="1" number :min="1" required v-model.number="newTrait.setSize" id="trait-set-size" :state="formState.setSize" />
           </b-form-group>
           <b-form-group :description="$t('formDescriptionTraitAllowRepeats')" label-for="trait-allow-repeats">
             <template #label>

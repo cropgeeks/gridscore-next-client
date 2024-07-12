@@ -60,11 +60,8 @@
         <b-row>
           <b-col cols=6>
             <b-form-group :label="$t('formLabelEventImpact')" :description="$t('formDescriptionEventImpact')" label-for="event-impact">
-              <b-input-group>
+              <b-input-group :append="newEventImpact">
                 <b-form-input type="range" class="form-control" :min="1" :max="5" v-model.number="newEventImpact" id="event-impact" />
-                <b-input-group-append is-text>
-                  {{ newEventImpact }}
-                </b-input-group-append>
               </b-input-group>
             </b-form-group>
           </b-col>

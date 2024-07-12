@@ -11,12 +11,12 @@
       <!-- Germplasm name -->
       <b-form-group :label="$t('formLabelAddGermplasmName')" label-for="germplasm-name" :description="$t('formDescriptionAddGermplasm')">
         <b-input-group>
-          <b-input-group-prepend>
+          <template #prepend>
             <b-button @click="$refs.scanQrCodeModal.show()" v-b-tooltip="$t('tooltipScanQRCodeAddGermplasm')">
               <!-- TODO: Replace with bootstrap-vue icon once new version is released -->
               <IBiQrCodeScan />
             </b-button>
-          </b-input-group-prepend>
+          </template>
           <b-form-textarea id="germplasm-name" v-model="germplasm" required :state="state.germplasm" ref="germplasmName" />
           <b-form-invalid-feedback :state="state.varieties">
             {{ $t('formFeedbackSetupSurveyAddVariety') }}

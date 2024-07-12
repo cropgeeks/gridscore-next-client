@@ -35,7 +35,7 @@
                 <draggable :list="layout.rowLabels" :item-key="e => e" tag="div" handle=".drag-handle" class="d-flex flex-column">
                   <template #item="{ element, index }">
                     <b-badge class="border" :key="`row-label-${element}`">
-                      <input v-if="editRowLabels" :style="{ width: (`${layout.rowLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy="layout.rowLabels[index]" />
+                      <input v-if="editRowLabels" :style="{ width: (`${layout.rowLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy.trim="layout.rowLabels[index]" />
                       <span v-else>{{ element }}</span>
                       <IBiGripVertical class="drag-handle ms-2" />
                     </b-badge>
@@ -66,7 +66,7 @@
                 <draggable :list="layout.columnLabels" :item-key="e => e" tag="div" handle=".drag-handle" class="d-flex flex-row flex-wrap">
                   <template #item="{ element, index }">
                     <b-badge class="flex-fill border" :key="`column-label-${element}`">
-                      <input v-if="editColumnLabels" :style="{ width: (`${layout.columnLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy="layout.columnLabels[index]" />
+                      <input v-if="editColumnLabels" :style="{ width: (`${layout.columnLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy.trim="layout.columnLabels[index]" />
                       <span v-else>{{ element }}</span>
                       <IBiGripVertical class="drag-handle ms-2" />
                     </b-badge>

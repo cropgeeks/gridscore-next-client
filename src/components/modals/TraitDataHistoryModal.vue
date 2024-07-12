@@ -8,13 +8,13 @@
     <div v-if="trial && localMeasurements && trait">
       <p>{{ $t('modalTextTraitDataHistory') }}</p>
       <b-input-group class="mb-3">
-        <b-input-group-prepend>
+        <template #prepend>
           <b-button @click="nudgeDate(false)" :disabled="prevDisabled"><IBiChevronLeft /></b-button>
-        </b-input-group-prepend>
+        </template>
         <b-form-input type="date" v-model="currentDate" disabled />
-        <b-input-group-append>
+        <template #append>
           <b-button @click="nudgeDate(true)" :disabled="nextDisabled"><IBiChevronRight /></b-button>
-        </b-input-group-append>
+        </template>
       </b-input-group>
 
       <div :class="{ 'border border-danger table-danger px-2': toDelete[currentDateIndex] }">

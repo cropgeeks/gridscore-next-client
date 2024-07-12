@@ -1,8 +1,8 @@
 <template>
   <b-input-group class="trait-data-input">
-    <b-input-group-prepend v-if="trait.dataType === 'int'">
+    <template #prepend v-if="trait.dataType === 'int'">
       <b-button v-if="trait.dataType === 'int'" @click="nudge(-1)" :disabled="!editable">-</b-button>
-    </b-input-group-prepend>
+    </template>
 
     <b-form-input :id="id"
                   v-if="trait.dataType === 'date'"
@@ -81,13 +81,13 @@
     <b-form-input :id="id" v-else-if="trait.dataType === 'gps'" v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
     <b-form-input :id="id" v-else v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
 
-    <b-input-group-append v-if="trait.dataType === 'gps'">
+    <template #append v-if="trait.dataType === 'gps'">
       <UseGeolocation v-slot="{ coords: { latitude, longitude } }">
         <b-button v-b-tooltip="$t('tooltipDataEntryGetGps')" variant="primary" @click="setGps(latitude, longitude)" :disabled="!editable"><IBiGeoAlt /></b-button>
       </UseGeolocation>
       <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
-    </b-input-group-append>
-    <b-input-group-append v-if="trait.dataType === 'date' || trait.dataType === 'int'">
+    </template>
+    <template #append v-else-if="trait.dataType === 'date' || trait.dataType === 'int'">
       <template v-if="trait.dataType === 'date'">
         <b-button v-b-tooltip="$t('tooltipDataEntryDateMinusOne')" @click="setDateMinusOne" :disabled="!editable"><IBiCaretLeftFill /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryDateToday')" @click="setDateToday" :disabled="!editable"><IBiCalendar3 /></b-button>
@@ -95,11 +95,11 @@
         <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
       </template>
       <b-button v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
-    </b-input-group-append>
-    <b-input-group-append v-else-if="trait.dataType === 'range'">
-      <b-input-group-text :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></b-input-group-text>
+    </template>
+    <template #append v-else-if="trait.dataType === 'range'">
+      <span :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></span>
       <b-button v-b-tooltip="$t('tooltipDataEntryRangeReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
-    </b-input-group-append>
+    </template>
   </b-input-group>
 </template>
 

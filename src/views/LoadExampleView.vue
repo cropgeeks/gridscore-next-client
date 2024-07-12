@@ -7,7 +7,7 @@
       <b-col cols=12 sm=6 md=3 class="mb-4" v-for="example in exampleTrials" :key="`example-trial-${example.id}`">
         <b-card class="home-card h-100 d-flex flex-column justify-content-between" no-body>
           <div>
-            <b-card-img class="p-2 p-md-4 p-lg-5" :top="true" :src="`img/example/${example.image}`" />
+            <b-card-img class="p-2 p-md-4 p-lg-5" placement="top" :src="`img/example/${example.image}`" />
             <b-card-body>
               <b-card-title>{{ example.name }}</b-card-title>
               <b-card-subtitle>{{ example.description }}</b-card-subtitle>
@@ -42,18 +42,6 @@
 <script>
 import { addTrial } from '@/plugins/idb'
 
-import barley from '@/assets/data/barley.json'
-import measurementset from '@/assets/data/measurementset.json'
-import timeline from '@/assets/data/timeline.json'
-import cows from '@/assets/data/cows.json'
-
-const data = {
-  barley,
-  measurementset,
-  timeline,
-  cows
-}
-
 export default {
   data: function () {
     return {
@@ -65,7 +53,7 @@ export default {
         id: 'barley',
         name: this.$t('pageLoadExampleBarleyTrialName'),
         description: this.$t('pageLoadExampleBarleyTrialDescription'),
-        source: 'barley',
+        source: 'barley.json',
         stats: {
           traits: 5,
           rows: 28,
@@ -76,7 +64,7 @@ export default {
         id: 'multi',
         name: this.$t('pageLoadExampleTimelineName'),
         description: this.$t('pageLoadExampleTimelineDescription'),
-        source: 'timeline',
+        source: 'timeline.json',
         stats: {
           traits: 2,
           rows: 5,
@@ -87,7 +75,7 @@ export default {
         id: 'measurementset',
         name: this.$t('pageLoadExampleMeasurementSetName'),
         description: this.$t('pageLoadExampleMeasurementSetDescription'),
-        source: 'measurementset',
+        source: 'measurementset.json',
         stats: {
           traits: 3,
           rows: 3,
@@ -98,7 +86,7 @@ export default {
         id: 'cow',
         name: this.$t('pageLoadExampleCowName'),
         description: this.$t('pageLoadExampleCowDescription'),
-        source: 'cows',
+        source: 'cows.json',
         stats: {
           traits: 4,
           rows: 20,
@@ -109,8 +97,9 @@ export default {
     }
   },
   methods: {
-    loadExample: function (example) {
-      const json = data[example.source]
+    loadExample: async function (example) {
+      const response = await fetch(`./data/${example.source}`)
+      const json = await response.json()
 
       if (json.name) {
         json.createdOn = new Date().toISOString()

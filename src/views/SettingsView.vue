@@ -79,9 +79,9 @@
               <div>
                 <b-input-group v-for="(color, index) in traitColors" :key="`color-${index}`" class="me-2 mb-2">
                   <b-form-input type="color"  v-model="traitColors[index]"  />
-                  <b-input-group-append>
+                  <template #append>
                     <b-button variant="danger" @click="deleteColor(index)" :disabled="traitColors.length < 2"><IBiX /></b-button>
-                  </b-input-group-append>
+                  </template>
                 </b-input-group>
               </div>
             </b-form-group>
@@ -90,9 +90,9 @@
               <div>
                 <b-input-group>
                   <b-form-input type="color" id="add-color" v-model="newColor" />
-                  <b-input-group-append>
+                  <template #append>
                     <b-button variant="success" @click="addColor"><IBiPlus /></b-button>
-                  </b-input-group-append>
+                  </template>
                 </b-input-group>
               </div>
             </b-form-group>

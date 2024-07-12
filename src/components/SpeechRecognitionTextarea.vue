@@ -1,9 +1,9 @@
 <template>
   <b-input-group>
     <b-form-textarea ref="textarea" :rows="rows" v-model="textContent" :id="id" />
-    <b-input-group-addon append v-if="supportsSpeechRecognition">
+    <template #append v-if="supportsSpeechRecognition">
       <b-button @click="toggleRecording" :variant="speechRecognition ? 'danger' : 'secondary'" v-b-tooltip="tooltip"><IBiMic /></b-button>
-    </b-input-group-addon>
+    </template>
   </b-input-group>
 </template>
 
