@@ -520,6 +520,11 @@
         "text": "Wir haben einen neuen Beispielversuch zum Erkunden hinzugefügt. Um hervorzuheben, dass GridScore nicht auf Pflanzenphänotypisierung beschränkt ist zeigt der neue Versuch die Nutzung von Merkmalssammlung für Kühe inklusive der Milchproduktion, Gewicht und GPS-Standort."
       },
       {
+        "type": "update",
+        "title": "Auswahl leerer Beete",
+        "text": "Verhinter die Auswahl leerer Beete. Diese werden generell genutzt um Lücken/Guards/o.Ä. darzustellen und Auswahl dieser Beete sollte nicht die Dateneingabe öffnen."
+      },
+      {
         "type": "bugfix",
         "title": "Service-worker-Bug",
         "text": "Ein kritischer Fehler wurde behoben der GridScore davon abgehalten hat bestimmte Serverressourcen zu nutzen wie z.B. der Export in Germinate Data Templates."

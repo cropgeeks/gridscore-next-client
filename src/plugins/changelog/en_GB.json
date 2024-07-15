@@ -520,6 +520,11 @@
         "text": "We added a new example trial for you to explore. To highlight that GridScore is not restricted to plant phenotyping, we added a trial showcasing its use for trait data collection on cows including milk production, weight and GPS location."
       },
       {
+        "type": "update",
+        "title": "Empty plot selection",
+        "text": "Prevent the selection of empty plots. These are generally used to indicate gaps/guards/etc and should not open the data input window."
+      },
+      {
         "type": "bugfix",
         "title": "Service worker bug",
         "text": "Fixed a critical bug that prevented GridScore from accessing certain server resources including export to Germinate Data Templates."

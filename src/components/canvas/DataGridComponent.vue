@@ -51,13 +51,14 @@
             <div
                @click="plotClicked(row.index, column.index)"
               :class="[{
+                'cell-empty': cell === undefined,
                 'cell-marked': column.marked || row.marked,
                 'cell-column': column.index % 2 === 0,
                 'cell-highlight': userPosition && userPosition.column === column.index && userPosition.row === row.index,
                 'cell-row': row.index % 2 === 0,
                 'cell-control': storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)
               }, cellClass]">
-            <template v-if="cell">
+              <template v-if="cell">
                 <IBiBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
                 <IBiChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
                 <IBiCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
@@ -65,10 +66,10 @@
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
                     <template v-if="trait.allowRepeats">
-                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE">
+                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-square-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE">
                         <path d="M 1,15 15,1 v 14 z m 15,1 V 0 H 0 v 16 z"/>
                       </svg>
-                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-else>
+                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-circle-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-else>
                         <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"/>
                       </svg>
                     </template>
@@ -361,7 +362,12 @@ export default {
         }
       }
 
-      emitter.emit('plot-clicked', row, column)
+      const cell = this.trialData[`${row}|${column}`]
+
+      if (cell) {
+        // Emit an event to handle user selections
+        emitter.emit('plot-clicked', row, column)
+      }
     },
     loadTrial: function () {
       getTrialById(this.storeSelectedTrial).then(trial => {
@@ -660,6 +666,9 @@ export default {
 }
 .cell-marked {
   background: #c6d2de !important;
+}
+.cell-empty:hover {
+  cursor: not-allowed;
 }
 .header-marked {
   background: #aebfd0;
