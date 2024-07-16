@@ -68,6 +68,8 @@ const getTraitTypeText = (trait, short = false) => {
       return t(short ? 'traitTypeShortCategorical' : 'traitTypeCategorical')
     case 'gps':
       return t(short ? 'traitTypeShortGps' : 'traitTypeGps')
+    case 'counter':
+      return t(short ? 'traitTypeShortCounter' : 'traitTypeCounter')
     default:
       return null
   }
@@ -284,9 +286,9 @@ const isNumber = (value, isInt) => {
 const checkDataMatchesTraitType = (trait, value, checkDatesAndCategories = true) => {
   const trimmed = (typeof value === 'string') ? value.trim() : value
 
-  if (trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range') {
+  if (trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range' || trait.dataType === 'counter') {
     try {
-      if (!isNumber(trimmed, (trait.dataType === 'int' || trait.dataType === 'range'))) {
+      if (!isNumber(trimmed, (trait.dataType === 'int' || trait.dataType === 'range' || trait.dataType === 'counter'))) {
         return false
       }
 
@@ -408,7 +410,7 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
               const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
 
               if (onDate.length > 0) {
-                if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range') {
+                if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range' || t.dataType === 'counter') {
                   result += `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
                 } else if (t.dataType === 'categorical') {
                   result += `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`

@@ -489,6 +489,8 @@
   "modalTextEditPeople": "Use the form below to add new people to this trial. If defined, users will have to identify themselves by selecting a person from the list before scoring data. Please note that the assigned roles do not change the way GridScore behaves, but are exclusively used to pre-populate data export templates.",
   "modalTitleSelectTrialPerson": "Select person",
   "modalTextSelectTrialPerson": "Please select the person who will be entering the data.",
+  "modalTitleResetTraitValue": "Reset",
+  "modalTextResetTraitValue": "Are you sure you want to reset the trait value? This will erase any value you entered/selected.",
   "pageAboutChangelog": "View Changelog Information",
   "pageAboutVersion": "Version {version}",
   "pageAboutGitHubLink": "The source code of GridScore is available on <a href='https://github.com/cropgeeks/gridscore-next-client/'>GitHub</a>.",

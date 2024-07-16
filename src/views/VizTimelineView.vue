@@ -66,7 +66,7 @@ export default {
             index: i,
             trait: t
           }
-        }).filter(t => t.trait.allowRepeats && (t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'range'))
+        }).filter(t => t.trait.allowRepeats && (t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'range' || t.trait.dataType === 'counter'))
       } else {
         return []
       }
@@ -78,7 +78,7 @@ export default {
             index: i,
             trait: t
           }
-        }).filter(t => !t.trait.allowRepeats || !(t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'range'))
+        }).filter(t => !t.trait.allowRepeats || !(t.trait.dataType === 'int' || t.trait.dataType === 'float' || t.trait.dataType === 'range' || t.trait.dataType === 'counter'))
       } else {
         return []
       }

@@ -254,6 +254,7 @@ export default {
             this.$nextTick(() => {
               emitter.emit('plot-data-changed', this.row, this.column, this.trial.localId)
               emitter.emit('plot-clicked', this.row, this.column)
+              this.$emit('data-changed')
             })
             this.hide()
           })

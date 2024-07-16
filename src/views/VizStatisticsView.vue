@@ -219,6 +219,7 @@ export default {
           switch (trait.dataType) {
             case 'float':
             case 'int':
+            case 'counter':
             case 'range':
             case 'date': {
               chartType = 'box'

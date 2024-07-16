@@ -56,7 +56,7 @@ export default {
     ]),
     numericTraits: function () {
       if (this.trial && this.trial.traits) {
-        return this.trial.traits.filter(t => t.dataType === 'int' || t.dataType === 'float' || t.dataType === 'date' || t.dataType === 'range')
+        return this.trial.traits.filter(t => t.dataType === 'int' || t.dataType === 'float' || t.dataType === 'date' || t.dataType === 'range' || t.dataType === 'counter')
       } else {
         return []
       }

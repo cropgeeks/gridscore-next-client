@@ -99,7 +99,7 @@
 
           <div class="mt-3 trait-group-tab-content">
             <b-form @submit.prevent>
-              <TraitInputSection :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+              <TraitInputSection @data-changed="$emit('data-changed')" :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
             </b-form>
           </div>
         </b-tab>

@@ -42,7 +42,7 @@
       <TraitInput :editable="editable" :trait="trait" :id="`trait-input-${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
 
-    <TraitDataHistoryModal :editable="editable" :row="cell.row" :column="cell.column" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
+    <TraitDataHistoryModal @data-changed="$emit('data-changed')" :editable="editable" :row="cell.row" :column="cell.column" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
   </section>
 </template>
 

@@ -480,6 +480,8 @@
   "modalTextEditPeople": "Nutze das Formular unten um neue Personen zum Versuch hinzuzufügen. Falls definiert müssen sich Nutzer durch Auswahl einer der definierten Person identifizieren bevor Daten aufgezeichnet werden können. Es ist zu beachten, dass die zugewiesenen Rollen keinerlei Einfluss auf die Funktionsweise von GridScore haben, sondern werden ausschließlich zum Ausfüllen der Export-Vorlagen genutzt.",
   "modalTitleSelectTrialPerson": "Person auswählen",
   "modalTextSelectTrialPerson": "Bitte wähle die Person aus die Daten eingeben wird.",
+  "modalTitleResetTraitValue": "Zurücksetzen",
+  "modalTextResetTraitValue": "Sicher, dass der Merkmalswert zurückgesetzt werden. Dies entferne jegliche Werte die eingegeben/ausgewählt wurden.",
   "pageAboutChangelog": "Changelog-Information anzeigen",
   "pageAboutVersion": "Version {version}",
   "pageAboutDocumentationLink": "Eine detaillierte Anleitung für GridScore und wie man es benutzt ist auf der <a href='https://cropgeeks.github.io/gridscore-next-client'>Dokumentationsseite<a/> verfügbar.",

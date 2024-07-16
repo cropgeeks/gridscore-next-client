@@ -135,6 +135,7 @@ export default {
     toGerminateDataType: function (type) {
       switch (type) {
         case 'int':
+        case 'counter':
         case 'float':
         case 'range':
           return 'numeric'

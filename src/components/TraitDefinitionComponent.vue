@@ -46,7 +46,7 @@
             </template>
             <b-form-textarea v-model="newTrait.restrictions.categories" :rows="4" :placeholder="$t('formPlaceholderTraitRestrictionsCategories')" required id="trait-categories" :state="formState.categories" />
           </b-form-group>
-          <b-row v-if="newTrait.dataType === 'int' || newTrait.dataType === 'float' || newTrait.dataType === 'range'">
+          <b-row v-if="newTrait.dataType === 'int' || newTrait.dataType === 'float' || newTrait.dataType === 'range' || newTrait.dataType === 'counter'">
             <b-col cols=6>
               <b-form-group :description="$t('formDescriptionTraitRestrictionsMin')" label-for="trait-min">
                 <template #label>
@@ -316,6 +316,9 @@ export default {
       }, {
         text: this.$t('traitTypeRange'),
         value: 'range'
+      }, {
+        text: this.$t('traitTypeCounter'),
+        value: 'counter'
       }, {
         text: this.$t('traitTypeCategorical'),
         value: 'categorical'
