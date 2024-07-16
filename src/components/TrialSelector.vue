@@ -227,6 +227,18 @@ export default {
               if (t.traits.map(t => t.name).join('|').toLowerCase().includes(lower)) {
                 return true
               }
+              // Check if it matches any of the share codes
+              if (t.shareCodes) {
+                if (t.shareCodes.viewerCode === this.searchTerm) {
+                  return true
+                }
+                if (t.shareCodes.editorCode === this.searchTerm) {
+                  return true
+                }
+                if (t.shareCodes.ownerCode === this.searchTerm) {
+                  return true
+                }
+              }
 
               return false
             } else {
