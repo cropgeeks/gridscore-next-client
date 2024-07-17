@@ -25,6 +25,7 @@ export default createStore({
     gpsEnabled: true,
     voiceFeedbackEnabled: false,
     restrictInputToMarked: false,
+    largeButtonsForIntTraits: false,
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     homeWidgetOrder: ['banners', 'trials'],
@@ -69,6 +70,7 @@ export default createStore({
     storeTraitColors: (state) => state.traitColors,
     storeHomeWidgetOrder: (state) => state.homeWidgetOrder,
     storeSelectedTrialPerson: (state) => state.selectedTrialPerson,
+    storeLargeButtonsForIntTraits: (state) => state.largeButtonsForIntTraits,
     storeCanvasDensity: (state) => state.canvasDensity,
     storeCanvasShape: (state) => state.canvasShape,
     storeCanvasSize: (state) => state.canvasSize,
@@ -211,6 +213,9 @@ export default createStore({
     ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED: function (state, newShowFullTraitDescription) {
       state.showFullTraitDescription = newShowFullTraitDescription
     },
+    ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED: function (state, newLargeButtonsForIntTraits) {
+      state.largeButtonsForIntTraits = newLargeButtonsForIntTraits
+    },
     ON_CATEGORY_COUNT_INLINE_CHANGED: function (state, newCategoryCountInline) {
       state.categoryCountInline = newCategoryCountInline
     }
@@ -305,6 +310,9 @@ export default createStore({
     },
     setShowFullTraitDescription: function ({ commit }, showFullTraitDescription) {
       commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', showFullTraitDescription)
+    },
+    setLargeButtonsForIntTraits: function ({ commit }, largeButtonsForIntTraits) {
+      commit('ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED', largeButtonsForIntTraits)
     },
     setCategoryCountInline: function ({ commit }, categoryCountInline) {
       commit('ON_CATEGORY_COUNT_INLINE_CHANGED', categoryCountInline)

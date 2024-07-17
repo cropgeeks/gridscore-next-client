@@ -131,6 +131,12 @@
               </b-form-checkbox>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsLargeButtonsForIntTraits')" :description="$t('formDescriptionSettingsLargeButtonsForIntTraits')" label-for="largeButtonsForIntTraits">
+              <b-form-checkbox id="largeButtonsForIntTraits" v-model="largeButtonsForIntTraits" switch>
+                {{ largeButtonsForIntTraits ? $t('genericYes') : $t('genericNo') }}
+              </b-form-checkbox>
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsMinCellWidth')" :description="$t('formDescriptionSettingsMinCellWidth')" label-for="displayMinCellWidth">
               <b-form-input id="displayMinCellWidth" type="range" class="form-control" :min=2 :max=10 v-model.number="displayMinCellWidth" />
               <div>
@@ -239,6 +245,7 @@ export default {
       newColor: '#000000',
       mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
       showFullTraitDescription: true,
+      largeButtonsForIntTraits: false,
       categoricalColors
     }
   },
@@ -260,6 +267,7 @@ export default {
       'storeHomeWidgetOrder',
       'storeTraitColors',
       'storeShowFullTraitDescription',
+      'storeLargeButtonsForIntTraits',
       'storeCategoryCountInline',
       'storeMainDisplayMode'
     ]),
@@ -352,6 +360,10 @@ export default {
       this.$store.dispatch('setShowFullTraitDescription', newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { showFullTraitDescription: newValue } })
     },
+    largeButtonsForIntTraits: function (newValue) {
+      this.$store.dispatch('setLargeButtonsForIntTraits', newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { largeButtonsForIntTraits: newValue } })
+    },
     mainDisplayMode: function (newValue) {
       this.$store.dispatch('setMainDisplayMode', newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { mainDisplayMode: newValue } })
@@ -403,6 +415,7 @@ export default {
       this.canvasShape = this.storeCanvasShape
       this.canvasSize = this.storeCanvasSize
       this.showFullTraitDescription = this.storeShowFullTraitDescription
+      this.largeButtonsForIntTraits = this.storeLargeButtonsForIntTraits
       this.mainDisplayMode = this.storeMainDisplayMode || MAIN_DISPLAY_MODE_AUTO
     }
   },

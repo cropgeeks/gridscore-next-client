@@ -219,7 +219,6 @@ export default {
               break
             case 'float':
             case 'int':
-            case 'counter':
             case 'range':
               scale.dataType = 'Numeric'
               break
@@ -348,7 +347,7 @@ export default {
                   matches = t.dataType === 'text'
                   break
                 case 'Numeric':
-                  matches = t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range' || t.dataType === 'counter'
+                  matches = t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range'
                   break
                 case 'Duration':
                   matches = t.dataType === 'int'

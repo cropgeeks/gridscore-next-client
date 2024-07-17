@@ -72,6 +72,7 @@ export default {
       'storeNavigationMode',
       'storeTraitColors',
       'storeShowFullTraitDescription',
+      'storeLargeButtonsForIntTraits',
       'storeCategoryCountInline',
       'storeMainDisplayMode'
     ])
@@ -174,6 +175,12 @@ export default {
           this.$store.commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', false)
         }
 
+        if (parsed.lb === 1) {
+          this.$store.commit('ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED', true)
+        } else if (parsed.lb === 0) {
+          this.$store.commit('ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED', false)
+        }
+
         this.$emit('data-changed')
 
         this.hide()
@@ -207,6 +214,7 @@ export default {
         nm: this.storeNavigationMode === NAVIGATION_MODE_DRAG ? 1 : 0,
         tc: this.storeTraitColors.map(c => c.replace('#', '')).join(','),
         ft: this.storeShowFullTraitDescription ? 1 : 0,
+        lb: this.storeLargeButtonsForIntTraits ? 1 : 0,
         cc: this.storeCategoryCountInline
       })
 

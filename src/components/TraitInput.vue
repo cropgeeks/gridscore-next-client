@@ -1,7 +1,7 @@
 <template>
   <b-input-group class="trait-data-input">
     <template #prepend v-if="trait.dataType === 'int'">
-      <b-button v-if="trait.dataType === 'int'" @click="nudge(-1)" :disabled="!editable">-</b-button>
+      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" @click="nudge(-1)" :disabled="!editable">-</b-button>
     </template>
 
     <b-form-input :id="id"
@@ -18,7 +18,7 @@
     <b-form-input :id="id"
                   v-else-if="trait.dataType === 'int'"
                   ref="input"
-                  class="number-input"
+                  :class="`number-input ${storeLargeButtonsForIntTraits ? 'text-center' : ''}`"
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="number"
@@ -28,15 +28,6 @@
                   @keyup.enter="$emit('traverse')"
                   :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : null"
                   :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : null" />
-    <!-- For counter types, add big buttons -->
-    <div class="d-flex w-100" v-else-if="trait.dataType === 'counter'">
-      <b-button-group class="d-flex w-100 counter-buttons">
-        <b-button class="nudge" @click="nudge(-1)" :disabled="!editable">-</b-button>
-        <span class="btn label d-flex align-items-center justify-content-center"><span v-if="value !== undefined && value !== null && value !== ''">{{ (+value).toLocaleString() }}</span></span>
-        <b-button class="nudge" @click="nudge(1)" :disabled="!editable">+</b-button>
-      </b-button-group>
-      <b-button class="reset-button" v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
-    </div>
     <!-- For float types, show a number input, apply restrictions -->
     <b-form-input :id="id"
                   v-else-if="trait.dataType === 'float'"
@@ -101,13 +92,13 @@
         <b-button v-b-tooltip="$t('tooltipDataEntryDateMinusOne')" @click="setDateMinusOne" :disabled="!editable"><IBiCaretLeftFill /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryDateToday')" @click="setDateToday" :disabled="!editable"><IBiCalendar3 /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><IBiCaretRightFill /></b-button>
-        <b-button v-b-tooltip="$t('tooltipDataEntryDateReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
+        <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
       </template>
-      <b-button v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
+      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
     </template>
     <template #append v-else-if="trait.dataType === 'range'">
       <span :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></span>
-      <b-button v-b-tooltip="$t('tooltipDataEntryRangeReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
+      <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
     </template>
   </b-input-group>
 </template>
@@ -158,7 +149,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'storeCategoryCountInline'
+      'storeCategoryCountInline',
+      'storeLargeButtonsForIntTraits'
     ]),
     traitOptionsSelect: function () {
       if (this.trait && this.trait.dataType === 'categorical') {
@@ -380,16 +372,8 @@ export default {
 </script>
 
 <style scoped>
-.counter-buttons .btn.nudge {
+.btn.nudge {
   font-size: 30pt;
-}
-.counter-buttons .btn.label {
-  color: var(--bs-btn-color);
-  opacity: 1;
-  background-color: #d4d8db;
-}
-.counter-buttons .reset-button {
-  font-size: var(--bs-btn-font-size);
 }
 </style>
 

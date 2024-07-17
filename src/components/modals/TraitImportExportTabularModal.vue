@@ -105,7 +105,7 @@ export default {
               trait.restrictions.categories = p['Categories'].split(',').map(c => c.trim())
             }
 
-            if ((trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range', trait.dataType === 'counter')) {
+            if ((trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range')) {
               if (p['Minimum'] !== undefined && p['Minimum'] !== null && p['Minimum'] !== '') {
                 if (!trait.restrictions) {
                   trait.restrictions = {}
