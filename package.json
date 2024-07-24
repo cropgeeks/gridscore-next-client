@@ -24,7 +24,7 @@
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
-    "bootstrap-vue-next": "^0.23.5",
+    "bootstrap-vue-next": "^0.24.2",
     "bootswatch": "^5.3.3",
     "d3-dsv": "^3.0.1",
     "exifr": "^7.1.3",
