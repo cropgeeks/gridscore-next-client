@@ -516,6 +516,11 @@
       },
       {
         "type": "new",
+        "title": "Bild Merkmalstyp",
+        "text": "Ein neuer Merkmalstyp wurde in Form eines Bildmerkmaltyps hinzugefügt. Obwohl es vorher schon möglich war Bilder für ein Merkmal aufzuzeichnen kann dies jetzt durch einen Bildmerkmalstypen aufgezeichnet werden welcher den Dateinamen als Wert speichert und das Bild als aufgezeichnet markiert."
+      },
+      {
+        "type": "new",
         "title": "Neuer Beispielversuch",
         "text": "Wir haben einen neuen Beispielversuch zum Erkunden hinzugefügt. Um hervorzuheben, dass GridScore nicht auf Pflanzenphänotypisierung beschränkt ist zeigt der neue Versuch die Nutzung von Merkmalssammlung für Kühe inklusive der Milchproduktion, Gewicht und GPS-Standort."
       },
@@ -523,6 +528,11 @@
         "type": "update",
         "title": "Auswahl leerer Beete",
         "text": "Verhinter die Auswahl leerer Beete. Diese werden generell genutzt um Lücken/Guards/o.Ä. darzustellen und Auswahl dieser Beete sollte nicht die Dateneingabe öffnen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Merkmalsdatenverlauf",
+        "text": "Bisher konnte das Löschen von alten Merkmalsdaten im Verlauf zu Problemen führen bei Satzgrößen von mehr als 1. Der Verlaufbildschirm wurde komplett neu entworfen um die Daten sinnvoller darzustellen und die Fehler zu beheben."
       },
       {
         "type": "bugfix",

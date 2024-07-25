@@ -1,5 +1,5 @@
 <template>
-  <section v-if="trait" class="trait-section">
+  <section v-if="trait && cell" class="trait-section">
     <hr />
 
     <h4 class="d-flex justify-content-between align-items-center">
@@ -39,10 +39,10 @@
       <template #description>
         <span v-html="description ? description[index - 1] : null" />
       </template>
-      <TraitInput :editable="editable" :trait="trait" :id="`trait-input-${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
+      <TraitInput :cell="{ row: cell.row, column: cell.column, displayName: cell.displayName }" :editable="editable" :trait="trait" :id="`trait-input-${trait.id}-${index}`" :ref="`${trait.id}-${index}`" @traverse="handleTraverse(index)" />
     </b-form-group>
 
-    <TraitDataHistoryModal @data-changed="$emit('data-changed')" :editable="editable" :row="cell.row" :column="cell.column" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
+    <TraitDataHistoryModal @data-changed="$emit('data-changed')" :editable="editable" :cell="{ row: cell.row, column: cell.column, displayName: cell.displayName }" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
   </section>
 </template>
 

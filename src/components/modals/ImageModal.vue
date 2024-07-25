@@ -3,10 +3,11 @@
            :ok-title="$t('buttonSave')"
            :cancel-title="$t('buttonCancel')"
            @ok.prevent="downloadImage"
+           @hidden="hide"
            no-fade
            ref="imageModal"
            content-class="image-modal">
-    <div v-if="trial">
+    <div v-if="trial || trialName" :id="id">
       <template v-if="imageData">
         <b-button v-if="canShare" class="mb-3" @click="share"><IBiShareFill /> {{ $t('buttonShareSocial') }}</b-button>
         <!-- Preview the image -->
@@ -47,12 +48,18 @@ import { getColumnLabel, getRowLabel, toLocalDateTimeString, truncateAfterWords 
 import { saveAs } from 'file-saver'
 
 import emitter from 'tiny-emitter/instance'
+import { getTrialCached } from '@/plugins/datastore'
+import { getId } from '@/plugins/id'
 
 export default {
   props: {
     trial: {
       type: Object,
       default: () => null
+    },
+    trialName: {
+      type: String,
+      default: null
     },
     /** The variety name to use as the title */
     displayName: {
@@ -73,7 +80,10 @@ export default {
     }
   },
   data: function () {
+    const id = getId()
+
     return {
+      id: id,
       imageFile: null,
       imageData: null,
       imageDate: null,
@@ -90,7 +100,7 @@ export default {
       'storeDeviceConfig'
     ]),
     canShare: function () {
-      return 'share' in navigator
+      return 'share' in navigator && this.trial && this.trial.socialShareConfig
     },
     isIOS: function () {
       return this.storeDeviceConfig && this.storeDeviceConfig.os && this.storeDeviceConfig.os.name === 'iOS'
@@ -113,15 +123,18 @@ export default {
     shortTrialName: function () {
       if (this.trial) {
         return truncateAfterWords(this.trial.name, 3)
+      } else if (this.trialName) {
+        return this.trialName
       } else {
         return 'NA'
       }
     },
     filename: function () {
-      if (this.trial && this.imageFile) {
-        const row = getRowLabel(this.trial.layout, this.row)
-        const column = getColumnLabel(this.trial.layout, this.column)
-        return `${this.shortTrialName}_${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => this.trial.traits.find(ot => ot.id === t).name).join('-')}${this.postfix ? ('_' + this.postfix) : ''}.${this.imageFile.name.split('.').pop()}`
+      const trial = this.trial || getTrialCached()
+      if (trial && this.imageFile) {
+        const row = getRowLabel(trial.layout, this.row)
+        const column = getColumnLabel(trial.layout, this.column)
+        return `${this.shortTrialName}_${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => trial.traits.find(ot => ot.id === t).name).join('-')}${this.postfix ? ('_' + this.postfix) : ''}.${this.imageFile.name.split('.').pop()}`
       } else {
         return ''
       }
@@ -248,7 +261,7 @@ export default {
      * Downloads the image as a file attachment
      */
     downloadImage: async function () {
-      if (this.trial && this.imageFile) {
+      if (this.imageFile) {
         if (this.supportsSaving) {
           // create a new handle
           const newHandle = await window.showSaveFilePicker({
@@ -272,7 +285,10 @@ export default {
         }
       }
 
-      this.$nextTick(() => this.hide())
+      this.$nextTick(() => {
+        this.$emit('image-saved', this.filename)
+        this.hide()
+      })
     },
     /**
      * Shows the modal dialog and resets it to its initial state
@@ -293,7 +309,7 @@ export default {
 
         this.$nextTick(() => {
           // Open up the capture/file selector initially
-          document.querySelector('#image-tag-input').click()
+          document.querySelector(`#${this.id} #image-tag-input`).click()
         })
       })
     },
@@ -305,6 +321,7 @@ export default {
       this.imageData = null
       this.imageDate = null
       this.imageGps = null
+      this.postfix = null
 
       this.$nextTick(() => this.$refs.imageModal.hide())
     }

@@ -329,6 +329,9 @@ export default {
         text: this.$t('traitTypeGps'),
         value: 'gps'
       }, {
+        text: this.$t('traitTypeImage'),
+        value: 'image'
+      }, {
         text: this.$t('traitTypeText'),
         value: 'text'
       }]

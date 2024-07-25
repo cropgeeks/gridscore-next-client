@@ -1,7 +1,7 @@
 <template>
   <b-input-group class="trait-data-input">
     <template #prepend v-if="trait.dataType === 'int'">
-      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" @click="nudge(-1)" :disabled="!editable">-</b-button>
+      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" @pointerdown="nudge(-1)" :disabled="!editable">-</b-button>
     </template>
 
     <b-form-input :id="id"
@@ -79,9 +79,14 @@
                         :disabled="!editable"
                         :options="traitOptionsButtons" /> -->
     <b-form-input :id="id" v-else-if="trait.dataType === 'gps'" v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
+    <b-form-input :id="id" v-else-if="trait.dataType === 'image'" v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
     <b-form-input :id="id" v-else v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
 
-    <template #append v-if="trait.dataType === 'gps'">
+    <template #append v-if="trait.dataType === 'image'">
+      <b-button v-b-tooltip="$t('tooltipDataEntryTakeImage')" variant="primary" @click="$refs.imageModal.show()" :disabled="!editable"><IBiCameraFill /></b-button>
+      <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
+    </template>
+    <template #append v-else-if="trait.dataType === 'gps'">
       <UseGeolocation v-slot="{ coords: { latitude, longitude } }">
         <b-button v-b-tooltip="$t('tooltipDataEntryGetGps')" variant="primary" @click="setGps(latitude, longitude)" :disabled="!editable"><IBiGeoAlt /></b-button>
       </UseGeolocation>
@@ -94,12 +99,14 @@
         <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><IBiCaretRightFill /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
       </template>
-      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" v-if="trait.dataType === 'int'" @click="nudge(1)" :disabled="!editable">+</b-button>
+      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" v-if="trait.dataType === 'int'" @pointerdown="nudge(1)" :disabled="!editable">+</b-button>
     </template>
     <template #append v-else-if="trait.dataType === 'range'">
       <span :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></span>
       <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
     </template>
+
+    <ImageModal v-if="trait.dataType === 'image'" :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="trait.id" ref="imageModal" @image-saved="setImageFilename" />
   </b-input-group>
 </template>
 
@@ -109,12 +116,18 @@ import { mapGetters } from 'vuex'
 import { UseGeolocation } from '@vueuse/components'
 
 import emitter from 'tiny-emitter/instance'
+import { getTrialCached } from '@/plugins/datastore'
+import { useVibrate } from '@vueuse/core'
 
 export default {
   components: {
     UseGeolocation
   },
   props: {
+    cell: {
+      type: Object,
+      default: () => null
+    },
     editable: {
       type: Boolean,
       default: true
@@ -132,11 +145,16 @@ export default {
     }
   },
   data: function () {
+    const trial = getTrialCached()
+    trial.traits = [this.trait]
+
     return {
+      vibrate: useVibrate({ pattern: [200] }),
       value: null,
       formState: null,
       dateInput: '',
-      rangeChanged: false
+      rangeChanged: false,
+      trial: trial
     }
   },
   watch: {
@@ -152,6 +170,9 @@ export default {
       'storeCategoryCountInline',
       'storeLargeButtonsForIntTraits'
     ]),
+    canVibrate: function () {
+      return 'vibrate' in navigator
+    },
     traitOptionsSelect: function () {
       if (this.trait && this.trait.dataType === 'categorical') {
         return [{ value: null, text: this.$t('formSelectCategory') }, ...this.trait.restrictions.categories.map((c, i) => {
@@ -275,6 +296,10 @@ export default {
       // Convert back to string
       this.value = '' + newValue
 
+      if (this.vibrate.isSupported && this.storeLargeButtonsForIntTraits) {
+        this.vibrate.vibrate(200)
+      }
+
       emitter.emit('tts', newValue)
     },
     setDateMinusOne: function () {
@@ -310,6 +335,13 @@ export default {
       this.value = toLocalDateString(null)
 
       emitter.emit('tts', this.$t('ttsDaysAgo', 0))
+
+      this.$emit('traverse')
+    },
+    setImageFilename: function (filename) {
+      this.value = filename
+
+      this.tts()
 
       this.$emit('traverse')
     },

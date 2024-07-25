@@ -139,6 +139,7 @@ export default {
         case 'range':
           return 'numeric'
         case 'gps':
+        case 'image':
           return 'text'
         default:
           return type

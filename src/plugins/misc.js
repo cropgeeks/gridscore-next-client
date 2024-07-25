@@ -68,6 +68,8 @@ const getTraitTypeText = (trait, short = false) => {
       return t(short ? 'traitTypeShortCategorical' : 'traitTypeCategorical')
     case 'gps':
       return t(short ? 'traitTypeShortGps' : 'traitTypeGps')
+    case 'image':
+      return t(short ? 'traitTypeShortImage' : 'traitTypeImage')
     default:
       return null
   }

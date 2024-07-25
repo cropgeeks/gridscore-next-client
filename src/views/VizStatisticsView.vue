@@ -309,6 +309,7 @@ export default {
               break
             }
             case 'gps':
+            case 'image':
             case 'text':
             case 'categorical': {
               supportsClicking = false

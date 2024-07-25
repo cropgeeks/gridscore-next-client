@@ -1,21 +1,30 @@
-import { getCell, getTrialData } from '@/plugins/idb'
+import { getCell, getTrialById, getTrialData } from '@/plugins/idb'
 import store from '@/store'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
 
+let trial = null
 let trialData = null
 
 const loadTrialData = () => {
   if (store.getters.storeSelectedTrial) {
-    getTrialData(store.getters.storeSelectedTrial).then(td => {
-      trialData = td
+    getTrialById(store.getters.storeSelectedTrial)
+      .then(t => {
+        trial = t
+        return getTrialData(store.getters.storeSelectedTrial)
+      })
+      .then(td => {
+        trialData = td
 
-      emitter.emit('trial-data-loaded')
-    }).catch(() => {
-      trialData = null
-    })
+        emitter.emit('trial-data-loaded')
+      })
+      .catch(() => {
+        trial = null
+        trialData = null
+      })
   } else {
+    trial = null
     trialData = null
   }
 }
@@ -71,8 +80,13 @@ const getTrialDataCached = () => {
   return trialData
 }
 
+const getTrialCached = () => {
+  return JSON.parse(JSON.stringify(trial))
+}
+
 export {
   init,
   getTrialDataCached,
+  getTrialCached,
   getGermplasmMatches
 }
