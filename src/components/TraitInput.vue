@@ -149,7 +149,7 @@ export default {
     trial.traits = [this.trait]
 
     return {
-      vibrate: useVibrate({ pattern: [200] }),
+      vibrate: useVibrate({ pattern: [100] }),
       value: null,
       formState: null,
       dateInput: '',
@@ -170,9 +170,6 @@ export default {
       'storeCategoryCountInline',
       'storeLargeButtonsForIntTraits'
     ]),
-    canVibrate: function () {
-      return 'vibrate' in navigator
-    },
     traitOptionsSelect: function () {
       if (this.trait && this.trait.dataType === 'categorical') {
         return [{ value: null, text: this.$t('formSelectCategory') }, ...this.trait.restrictions.categories.map((c, i) => {

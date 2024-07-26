@@ -151,6 +151,7 @@ export default {
           tp.forEach(dp => set.add(toLocalDateString(new Date(dp))))
 
           this.timepoints = [...set]
+          this.currentTimepoint = this.timepoints.length - 1
         }
 
         this.$nextTick(() => this.update())
