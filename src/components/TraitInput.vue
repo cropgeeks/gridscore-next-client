@@ -1,7 +1,9 @@
 <template>
   <b-input-group class="trait-data-input">
     <template #prepend v-if="trait.dataType === 'int'">
-      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" @pointerdown="nudge(-1)" :disabled="!editable">-</b-button>
+      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge flex-even' : ''}`" @pointerdown="nudge(-1)" :disabled="!editable">
+        <span :class="`${storeLargeButtonsForIntTraits ? 'mx-3 mx-md-5' : ''}`">-</span>
+      </b-button>
     </template>
 
     <b-form-input :id="id"
@@ -18,7 +20,7 @@
     <b-form-input :id="id"
                   v-else-if="trait.dataType === 'int'"
                   ref="input"
-                  :class="`number-input ${storeLargeButtonsForIntTraits ? 'text-center' : ''}`"
+                  :class="`number-input ${storeLargeButtonsForIntTraits ? 'text-center flex-even' : ''}`"
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="number"
@@ -99,7 +101,9 @@
         <b-button v-b-tooltip="$t('tooltipDataEntryDatePlusOne')" @click="setDatePlusOne" :disabled="!editable"><IBiCaretRightFill /></b-button>
         <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
       </template>
-      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge px-5' : ''}`" v-if="trait.dataType === 'int'" @pointerdown="nudge(1)" :disabled="!editable">+</b-button>
+      <b-button :class="`${storeLargeButtonsForIntTraits ? 'nudge flex-even' : ''}`" v-if="trait.dataType === 'int'" @pointerdown="nudge(1)" :disabled="!editable">
+        <span :class="`${storeLargeButtonsForIntTraits ? 'mx-3 mx-md-5' : ''}`">+</span>
+      </b-button>
     </template>
     <template #append v-else-if="trait.dataType === 'range'">
       <span :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></span>
@@ -149,7 +153,7 @@ export default {
     trial.traits = [this.trait]
 
     return {
-      vibrate: useVibrate({ pattern: [100] }),
+      vibrate: useVibrate({ pattern: [50] }),
       value: null,
       formState: null,
       dateInput: '',
@@ -403,6 +407,9 @@ export default {
 <style scoped>
 .btn.nudge {
   font-size: 30pt;
+}
+.flex-even {
+  flex: 1;
 }
 </style>
 
