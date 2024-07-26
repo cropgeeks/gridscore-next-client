@@ -64,7 +64,7 @@
             </b-col>
 
             <b-col cols=12 md=4 class="d-flex align-items-center justify-content-center">
-              <router-link :to="{ name: 'about', query: { showChangelog: true } }" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</router-link>
+              <a href="#" @click.prevent="showChangelog" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</a>
             </b-col>
 
             <b-col cols=12 md=4>
@@ -369,6 +369,13 @@ export default {
       
       if (this.registration) {
         this.registration()
+      }
+    },
+    showChangelog: function () {
+      if (this.$route.name === 'about') {
+        emitter.emit('show-changelog')
+      } else {
+        this.$router.push({ name: 'about', query: { showChangelog: true } })
       }
     }
   },

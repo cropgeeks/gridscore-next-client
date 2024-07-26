@@ -5,6 +5,7 @@
            scrollable
            no-fade
            size="lg"
+           @hidden="$emit('modal-hidden')"
            ref="changelogModal">
     <p v-html="$t('modalTextChangelog')" />
 

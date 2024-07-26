@@ -72,7 +72,7 @@
       </b-container>
     </b-container>
 
-    <ChangelogModal ref="changelogModal" />
+    <ChangelogModal ref="changelogModal" @modal-hidden="removeUrlParam" />
   </div>
 </template>
 
@@ -80,6 +80,7 @@
 import ChangelogModal from '@/components/modals/ChangelogModal.vue'
 import { mapGetters } from 'vuex'
 import { gridScoreVersion } from '@/plugins/constants'
+import emitter from 'tiny-emitter/instance'
 
 export default {
   components: {
@@ -162,10 +163,23 @@ export default {
       }
     }
   },
+  methods: {
+    showChangelog: function () {
+      this.$refs.changelogModal.show()
+    },
+    removeUrlParam: function () {
+      this.$router.replace({ query: null })
+    }
+  },
   mounted: function () {
     if (this.$route.query && this.$route.query.showChangelog) {
-      this.$nextTick(() => this.$refs.changelogModal.show())
+      this.$nextTick(() => this.showChangelog())
     }
+
+    emitter.on('show-changelog', this.showChangelog)
+  },
+  beforeUnmount: function () {
+    emitter.off('show-changelog', this.showChangelog)
   }
 }
 </script>
