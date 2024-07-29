@@ -17,10 +17,20 @@ This tab will allow you to export your data in a tab-delimited format where the 
 
 These files can easily be imported into tools like Excel, R and Python for data analysis or further visualization.
 
+## Trait definitions
+<img src="img/export-traits.png" style="max-width: 100%;" alt="Export of traits">
+
+Along with the data the trait definitions can also be exported. They are available in Germinate and GridScore format.
+
 ## Tab-delimited comments
 <img src="img/export-comments.png" style="max-width: 100%;" alt="Export of comments">
 
 Trial and plot comments can also be exported in tab-delimited form. They will be timestamped and in the case of plot comments, the germplasm identifier, rep number, row and column index are also exported.
+
+## Events
+<img src="img/export-events.png" style="max-width: 100%;" alt="Export of events">
+
+In case any events have been recorded with GridScore, these can be exported in a tab-delimited form as well.
 
 ## Germinate
 <img src="img/export-germinate.png" style="max-width: 100%;" alt="Export to Germinate Data Templates">

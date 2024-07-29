@@ -14,6 +14,8 @@ A modal window will open asking you to provide your data in a specific format. T
 
 - **Germplasm**: The germplasm identifier/name as specified in the trial setup.
 - **Rep**: The rep number as specified in the trial setup. Leave blank (not N/A or similar) if no reps are used.
+- **Row**: The row index as specified during setup. Leave blank (not N/A or similar) if mapping should take place based on germplasm identifier and rep.
+- **Column**: The column index as specified during setup. Leave blank (not N/A or similar) if mapping should take place based on germplasm identifier and rep.
 - **Trait name**: The name of the trait as specified in the trial setup.
 - **Date**: The date when this data was recorded in ISO format `yyyy-MM-dd` (4-digit year, 2-digit month, 2-digit day). If no date is specified, today will be used.
 - **Value**: The value for this germplasm/rep/trait combination. This value has to be of the correct type specified for the trait as well as within the restricted limits for numeric traits or one of the specified categories for categorical traits.

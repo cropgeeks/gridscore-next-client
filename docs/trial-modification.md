@@ -20,6 +20,7 @@ Here you can make changes to trial properties. Check the <a href="trial-setup.ht
   - **Trait name**: The name of a trait can be changed. Please note that the name may be used later when exporting the trial via BrAPI for the trait database id lookup.
   - **Trait description**: You can modify the description of the trait.
   - **Trait group**: You can add traits to a group or reassign groups as required.
+  - **Deletion**: If the trial hasn't been shared yet, you will also be able to delete traits from the trial.
 
 <img src="img/trial-modification.png" style="max-width: 100%;" alt="Trial modification screen">
 

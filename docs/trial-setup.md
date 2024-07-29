@@ -15,6 +15,8 @@ The screenshot above shows the trial setup screen. We have reduced the clutter o
 
 - **Name**: This should ideally be a unique and distinctive, yet short name for your trial. It often makes sense to include the trial year and maybe a project code in the name.
 - **Description**: This is where you can add more information about the trial. Anything that may be useful while using GridScore out in the field or that should be included once the trial is exported.
+- **Group**: Trials can be grouped into logical sets. Pick one of the already existing groups or type in a new group name.
+- **People involved**: People involved in the creation of the trial or the data collection can optionally be defined.
 
 The two cards below the text fields summarize the two other areas that need to be provided for the trial. These include the `trial layout` (including dimensions, germplasm information, geographic information and visual markers) as well as the `traits` (including their data types, restrictions and groupings).
 
@@ -34,6 +36,8 @@ If your trial does not follow a rectangular layout, you can still use GridScore,
 
 In addition to the dimensionality, you can choose in which order rows and columns are numbered. By default, GridScore will number them from the top-left corner, starting at row 1, column 1. You can switch both the row and column order separately to change this behavior to better suit your needs. If, for example, you are counting rows and columns from the bottom-left corner, reverse the row order to go from bottom to top, but keep the column order the same. This used to be a global setting in the old GridScore, but we realized that everyone working on the same trial will be using the same ordering while they may use different orderings for individual trials.
 
+To give you even more customization options, the actual labels for rows and columns can also be adjusted. You can drag and drop the labels around after clicking on `Show labels` and you can change the label text by enabling `Edit labels`. This gives you the maximum amount of flexibility. A possible use case are guard rows that are technically numbered, but you may not want to include these in your trial setup. For example, if you have 8 columns and a guard column in the middle, then you can set the number of columns to 8 which will give you default labels `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`. You can then adjust this by changing the text of `5`, `6`, `7`, `8` to `6`, `7`, `8`, `9`. In the end you have column labels `1`-`4` and `6`-`9`.
+
 > NOTE: If you're importing a trial design from FielDHub, please make sure to select 'bottom to top' for the row order.
 
 ### Germplasm grid
@@ -43,16 +47,19 @@ Once the dimensions have been specified, GridScore needs to know which germplasm
 
 - **Germplasm identifier**: This is the identifier used for the germplasm in this plot. It can be an internal code, the variety name or something else.
 - **Rep number**: Optionally, you can use rep numbers as well. These are specified here.
+- **Control/Check**: By ticking this box, you're marking the plot as a control or check. This allows GridScore to highlight these plots in the main data display as well as all visualizations so it's easier to compare the rest of your data to just those controls/checks.
 
-Please note that the combination of `Germplasm identifier` and `Rep number` needs to be unique for each cell/plot. This means you cannot use, for example, `Heris` and `2` as the germplasm identifier and rep number more than once.
+Please note that the combination of `Germplasm identifier` and `Rep number` should be unique for each cell/plot. This means you should not use, for example, `Heris` and `2` as the germplasm identifier and rep number more than once. If you do, GridScore will show a warning, but you will be able to proceed.
 
-If you are using controls in your trial, these will have to be uniquely identified by using the rep number. So if you have 8 controls and you're not using unique codes, give them the same `Germplasm identifier` but different `Rep number`s.
+#### Marking as checks/controls
+
+Rather than checking all checkboxes of checks/controls manually, you can use the search box above the table to enter a germplasm identifier. Using the button next to the input field will then mark all occurrences of this germplasm identifier in the trial as checks/controls.
+
+#### Import Germplasm grid/table
 
 Rather than specifying the values for each plot manually, you can import data in different formats.
 
 <img src="img/setup-grid-import.png" style="max-width: 50%;" alt="Trial germplasm grid import">
-
-#### Import Germplasm grid/table
 
 If you have your germplasm identifiers in the same format/shape as the field layout (same number of columns and rows), you can use the `Import Germplasm grid/table` import option. Paste your information in tab-delimited form into the text box and import your data. The table fill automatically be filled.
 
@@ -106,6 +113,8 @@ The trait definition section can look a bit overwhelming the first time you use 
   - `Category` (requires specification of valid values)
   - `Truth value` (either `true` or `false`)
   - `Date` (a date for when a certain event has taken place)
+  - `GPS position` (your current location will be used as the trait value)
+  - `Image` (You can take a photo and GridScore will store the filename as the trait value)
   - `Text` (for anything that requires input of free text)
 - **Trait group**: Optionally, traits can be divided into groups. These are used to declutter the user interface during data collection. They can also be used to toggle the visibility of whole groups of traits. This can be useful if you only want to score the traits of a specific group at a point in time and you can hide all other traits temporarily.
 - **Set size**: The set size determines how many individual measurements you are going to take together as a set. For example, if you're always measuring something like the plant height for 3 individual plants within the plot, set this value to `3`. If you are only taking a single measurement for the whole plot, set it to `1`. If you are selecting 4 individual fruit and measuring their brix, set this to `4`.

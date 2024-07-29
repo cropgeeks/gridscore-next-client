@@ -15,6 +15,7 @@ General settings include things that affect every page of GridScore. They includ
 
 - **Locale/Language**: Use this dropdown box to select your language of choice from a pre-defined list of supported locales. If you're language/locale isn't available in the list, please get in touch and we can try and change this together.
 - **Dark mode**: Depending on the lighting conditions you're working in, the user interface may be more usable in light or dark mode. Use the toggle to switch between them. Generally speaking, the light mode will work better in bright environments, whereas the dark mode is easier on the eyes in darker environments.
+- **Home widget order**: The order in which the sections on the front page are displayed can be changed by dragging them around. This means you can either have the getting-started banners or the list of trials on top.
 
 You can also access both of these settings from the main navigation menu at the top of the page from anywhere in GridScore.
 
@@ -26,7 +27,9 @@ This section contains any settings that affect the way data is collected.
   - *Defining trial corners*: The corners of a trial are used to determine the location and shape of each individual plot within the trial. You can either define the corner points during the trial setup or you can adjust them by using the <a href="trial-modification.html">trial modification</a> functionality.
   - *Georeferencing*: GridScore can use your GPS location to highlight where you are positioned within the trial both on the main data view as well as the map. This can be useful when navigating a trial.
   - *Data tagging*: While collecting phenotypic data, GridScore may use your GPS location to record where you have collected data for each plot. This information sits alongside the potentially available shape of each plot.
+  - *GPS data input*: For GPS type traits your GPS location will be used to gather location information as trait values.
 - **Navigation mode**: The navigation mode determines how you navigate the main data view. By default, this is set to `drag`, which means that you move around the trial by dragging the main data view like you would a map on a touch device. You can switch this to `jump` which will not react to drag events, but instead shows a button in the bottom right corner of the main data view that can be used to move the main data view in any direction using a directional pad.
+- **Category count inline**: Decide how many category trait options are displayed inline before switching to a dropdown selection box.
 - **Voice feedback**: When enabled, GridScore will use the speech synthesis (text-to-speech) functionality of your device to provide feedback on your data input. This is done in the form of audibly repeating the data you entered as well as the plot identifier and trait which has been selected.
 - **Restrict data input**: Sometimes you want to make sure that you're only selecting plots to score from a certain row or column. For example, you may be walking along the first column in the trial and want to make sure you're not accidentally selecting a plot from the neighboring column. When this setting is enabled, GridScore will restrict the ability to select plots on the main data view to only those within the marked rows/columns. If no columns or rows are marked, any plot can be selected.
 
@@ -35,8 +38,15 @@ This section contains any settings that affect the way data is collected.
 Visual settings affect the way in which data is displayed on the user interface. You can adjust these settings here if you have a preference that differs from the default.
 
 - **Trait colors**: GridScore uses colors to represent traits within the main data view as well as in any other location across the user interface. These colors have been chosen to be strike the balance between being colorblind-safe and visually appealing. Depending on your personal preference or visual needs, you can adjust these colors here by removing any colors you don't like and replacing them with any other colors.
+- **Highlight controls**: Decide whether plots marked as controls/checks should be highlighted in charts and the main data input display.
 - **Show marker indicators**: Marker indicators can be used to aid navigation within the trial. They will be displayed in a repeating pattern across both dimensions of the trial. Their position can be set during trial setup or adjusted later on. This setting determines whether they will be displayed on top of the main data display or hidden completely.
+- **Show full trait description**: Decide whether or not the full trait description should be displayed in the data input window. If disabled, only a single line of the description will be shown to make more space for the actual data input.
+- **Counter buttons**: In cases where whole number traits are used as counters (e.g. flower count, plant count etc) the `+` and `-` buttons to the right and left of the input field can be changed in size to make them much easier to use. If enabled, the buttons will be increased in size and, on devices that support it, a slight vibration feedback is used to provide tactile feedback.
 - **Minimum cell/plot width**: GridScore will try and fit as much data and as many plots as possible onto the main data view. This may result in the trial circles being wrapped multiple times to make more use of the horizontal space on screen. If you wish to ensure that at least a certain number of trait circles is displayed per row then adjust this setting. The more circles you choose the wider each cell/plot will become.
+- **Data point shape**: The shape of the data points on the main data display can be switched between circles and squares.
+- **Data point size**: The size of the data points in the main data display can be adjusted. Smaller data points allow for more data to be visible at once while larger data points make it easier to identify which data has been collected and which still needs to be collected.
+- **Data point density**: Similar to the data point size, the density of the data points on the main data display can be adjusted to change how much data (plots) are visible at once.
+- **Main display mode**: The main data display can be displayed using two different technologies. Both have their pros and cons. By default, for smaller trials, HTML elements will be used for better compatibility, while larger trials will use a Canvas element for better performance. This setting can be switched to the canvas if required as this is the way data was displayed originally in GridScore.
 
 ## Sharing settings
 

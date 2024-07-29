@@ -39,6 +39,7 @@ Once you have created or imported some trials, they will be listed on the front 
 - **Duplicate trial**: You can duplicate an existing trial. While doing so, you can make modifications to the layout and traits. You can also decide whether you want to copy any existing data across or start with a blank trial. There is a dedicated page explaining the <a href="trial-duplication.html">trial duplication</a> in more detail.
 - **Edit trial**: The owners of the trial (see <a href="trial-sharing.html"> sharing page</a>) can make certain changes to a trial like changing name and description of the trial and the contained traits as well as adjust trial corner points and visual markers.
 - **Add trait**: Trial owners and editors can add more traits at a later date if they have not been included in the initial trial setup. GridScore shows the exact same trait definition screen as during the trial setup, so you should be familiar with the process.
+- **Add person**: More people can be added to an existing trial if required.
 - **Import data**: Sometimes you want to import pre-existing data into GridScore and you can do this right here. There's a <a href="data-import.html">dedicated page</a> to explain this.
 - **Delete**: At any time, you can delete any trial from your local device. Be aware that any unsynchronized changes made to a shared trial will be lost, so synchronize before you delete a trial. This trial will not be deleted from any other device it has been shared with and it will still exist on the GridScore server until it expires.
 

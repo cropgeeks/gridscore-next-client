@@ -46,7 +46,8 @@ This example shows a set size of `3`. In this case you get three input boxes for
 
 Sometimes you may be in a situation where someone has recorded some of the data by other means and you want to retrospectively add it to GridScore. Since GridScore will usually assume that the time point when you enter the data is also when it has been recorded, it will default to using the current timestamp for new data points. You can, however, tell GridScore that the data you're entering is from a different day. Use the `Pick date` button at the top of the screen to select the date and then proceed to entering the data. The selected date will remain active until you set the date back to today. A large yellow banner will make sure that you cannot miss the fact that a different date has been selected.
 
-<img src="img/collection-guided-walk.png" style="max-width: 100%;" alt="Guided walk">
+<img src="img/collection-guided-walk.png" style="max-width: 100%;" alt="Guided walk Snake">
+<img src="img/collection-guided-walk2.png" style="max-width: 100%;" alt="Guided walk Zig Zag">
 
 Guided walks are a way for GridScore to guide you through the trial along one of eight pre-defined routes. This way you don't have to worry about selecting the correct next plot in the trial.
 
