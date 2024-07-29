@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown :title="$t('toolbarTraitVisibility')" ref="dropdown" id="trait-dropdown" auto-close="outside">
+  <b-dropdown :title="$t('toolbarTraitVisibility')" menuClass="overflow-hidden" ref="dropdown" id="trait-dropdown" auto-close="outside">
     <template #button-content>
       <IBiDiamondHalf :style="{ transform: 'rotate(45deg)' }" width="1.3em" height="1.3em" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
@@ -15,7 +15,7 @@
           <b-form-checkbox :checked="group.allMarked" @change="updateHiddenTraits(group)">{{ group.name || $t('toolbarTraitGroupGeneric') }}</b-form-checkbox>
         </template>
         <b-dropdown-item-button v-for="trait in group.traits"
-                                class="position-relative"
+                                buttonClass="position-relative"
                                 :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
                                 @click="toggleTraitVisibility(trait)">
           <span :style="{ color: trait.visible ? trait.color : 'lightgray' }"><TraitIcon :trait="trait" /> {{ trait.name }}</span>
