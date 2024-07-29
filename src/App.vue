@@ -359,6 +359,7 @@ export default {
       return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === ''
     },
     updateAvailable: function (event) {
+      this.plausibleEvent({ key: 'update-shown', props: { from: this.gridScoreVersion } })
       console.log('swUpdated called', event.detail)
       this.registration = event.detail
       this.updateExists = true
@@ -368,6 +369,7 @@ export default {
       this.updateExists = false
       
       if (this.registration) {
+        this.plausibleEvent({ key: 'update-finished', props: { from: this.gridScoreVersion } })
         this.registration()
       }
     },

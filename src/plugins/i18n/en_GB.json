@@ -839,6 +839,7 @@
   "widgetChartTraceValueRange": "Value range",
   "widgetChartTraceAverage": "Average",
   "widgetChartStatisticsBoxplotAllTrace": "All data",
+  "widgetChartNoData": "No data found",
   "widgetTimelinePlotTypeAverage": "Average",
   "widgetTimelinePlotTypeAll": "All",
   "widgetTimelinePlotTypeSelection": "Selection",

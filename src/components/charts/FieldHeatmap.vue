@@ -26,6 +26,7 @@
 
       <!-- Heatmap element -->
       <div ref="heatmapChart"/>
+      <div class="border border-warning text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
     </div>
 
     <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
@@ -101,7 +102,8 @@ export default {
       timepoints: [],
       currentTimepoint: 0,
       selectedCell: null,
-      chartInteractionEnabled: false
+      chartInteractionEnabled: false,
+      message: null
     }
   },
   watch: {
@@ -166,6 +168,8 @@ export default {
         } catch {
         }
 
+        this.message = null
+
         let minDate = new Date('9999-12-31')
         let maxDate = new Date('1900-01-01')
         let minValue = Number.MAX_SAFE_INTEGER
@@ -177,6 +181,7 @@ export default {
         const text = []
         const customdata = []
         const shapes = []
+        let dataPointCount = 0
         for (let row = this.trial.layout.rows - 1; row >= 0; row--) {
           const rowData = []
           const rowText = []
@@ -247,6 +252,7 @@ export default {
               })
 
               if (finalValue) {
+                dataPointCount++
                 if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text' || this.selectedTrait.dataType === 'gps' || this.selectedTrait.dataType === 'image') {
                   rowData.push(new Date(finalValue.timestamp))
                   rowCustomdata.push(null)
@@ -278,6 +284,11 @@ export default {
           z.push(rowData)
           text.push(rowText)
           customdata.push(rowCustomdata)
+        }
+
+        if (dataPointCount < 1) {
+          this.message = 'widgetChartNoData'
+          return
         }
 
         // Adjust date-based data to be "days since first recording" using the min date

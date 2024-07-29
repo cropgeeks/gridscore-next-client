@@ -25,6 +25,7 @@
 
     <!-- Heatmap element -->
     <div ref="heatmapRepCompareChart" />
+    <div class="border border-warning text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
 
     <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
       <PlotDataSection :trial="trial" :cell="selectedCell" :traits="[selectedTrait]" />
@@ -102,7 +103,8 @@ export default {
       allGermplasm: [],
       germplasmMap: {},
       selectedCell: null,
-      chartInteractionEnabled: false
+      chartInteractionEnabled: false,
+      message: null
     }
   },
   watch: {
@@ -161,6 +163,13 @@ export default {
   methods: {
     update: function () {
       if (this.$refs.heatmapRepCompareChart && this.selectedTrait) {
+        try {
+          Plotly.purge(this.$refs.heatmapRepCompareChart)
+        } catch {
+        }
+
+        this.message = null
+
         let minDate = new Date('9999-12-31')
         let maxDate = new Date('1900-01-01')
         let minValue = Number.MAX_SAFE_INTEGER
@@ -173,6 +182,7 @@ export default {
         const customdata = []
         const ids = []
         const shapes = []
+        let dataPointCount = 0
         for (let row = this.allGermplasm.length - 1; row >= 0; row--) {
           const rowData = []
           const rowText = []
@@ -257,6 +267,7 @@ export default {
               })
 
               if (finalValue) {
+                dataPointCount++
                 rowIds.push(`${cell.row}|${cell.column}`)
 
                 if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text' || this.selectedTrait.dataType === 'gps' || this.selectedTrait.dataType === 'image') {
@@ -293,6 +304,11 @@ export default {
           text.push(rowText)
           customdata.push(rowCustomdata)
           ids.push(rowIds)
+        }
+
+        if (dataPointCount < 1) {
+          this.message = 'widgetChartNoData'
+          return
         }
 
         // Adjust date-based data to be "days since first recording" using the min date

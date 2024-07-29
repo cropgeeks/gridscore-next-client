@@ -46,6 +46,8 @@
 
             <GpsTraitMap v-if="t.trait.dataType === 'gps'" :trait="t.trait" :trial="trial" :selectedGermplasm="selectedGermplasm" />
             <div :ref="`trait-stats-chart-${t.trait.id}`" v-else />
+
+            <div class="border border-warning text-center my-3 p-2" v-if="t.message">{{ $t(t.message) }}</div>
           </b-col>
         </b-row>
       </div>
@@ -202,6 +204,7 @@ export default {
       this.chartInteractionEnabled = this.selectedTraits.map(_ => false)
 
       this.selectedTraits.forEach(t => {
+        t.message = null
         const trait = t.trait
         const ref = this.$refs[`trait-stats-chart-${trait.id}`]
 
@@ -215,6 +218,8 @@ export default {
           let chartType
 
           let supportsClicking = true
+
+          let dataPointCount = 0
 
           switch (trait.dataType) {
             case 'float':
@@ -236,6 +241,7 @@ export default {
                   cell.measurements[trait.id].forEach(m => {
                     const dateString = new Date(m.timestamp).toLocaleString()
                     m.values.forEach((v, setIndex) => {
+                      dataPointCount++
                       const dp = {
                         displayColumn: cell.displayColumn,
                         displayRow: cell.displayRow,
@@ -329,6 +335,7 @@ export default {
                   const isSelected = this.selectedGermplasm.includes(cell.displayName)
                   cell.measurements[trait.id].forEach(m => {
                     m.values.forEach(v => {
+                      dataPointCount++
                       let value
                       if (trait.dataType === 'categorical') {
                         value = trait.restrictions.categories[v]
@@ -386,6 +393,11 @@ export default {
 
               break
             }
+          }
+
+          if (dataPointCount < 1) {
+            t.message = 'widgetChartNoData'
+            return
           }
 
           const layout = {

@@ -830,6 +830,7 @@
   "widgetChartTraceValueRange": "Wertespanne",
   "widgetChartTraceAverage": "Durchschnitt",
   "widgetChartStatisticsBoxplotAllTrace": "Alle Daten",
+  "widgetChartNoData": "Keine Daten gefunden",
   "widgetTimelinePlotTypeAverage": "Durchschnitt",
   "widgetTimelinePlotTypeAll": "Alle",
   "widgetTimelinePlotTypeSelection": "Auswahl",
