@@ -430,7 +430,7 @@
   "modalTitleTraitImportTrial": "Trait import from other trial",
   "modalTextTraitImportTrial": "You can import traits from another trial available on this device. Select the trial you want to import traits from, then select the traits to import.",
   "modalTitleTraitDataHistory": "Trait data history",
-  "modalTextTraitDataHistory": "This window shows the data which has been recorded for this plot and the selected trait. Use the buttons next to the calendar at the top to switch between data from different dates (if available) and you can remove or change values to fix issues.",
+  "modalTextTraitDataHistory": "This window shows the data which has been recorded for this plot and the selected trait. The list below shows all values recorded over time. You can remove or change values to fix issues as required.",
   "modalTextTraitDataHistoryHeading": "Measurement set",
   "modalTitleApiError": "API error",
   "modalTextApiError": "An unexpected error occurred while trying to communicate with the GridScore server: {error}",

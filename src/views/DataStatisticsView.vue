@@ -6,8 +6,11 @@
 
       <b-row>
         <b-col cols=12 md=6>
+          <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
+            <b-form-input v-model.trim="searchTerm" id="search-term" type="search" />
+          </b-form-group>
           <b-form-group :label="$t('formLabelDataStatsTrial')" label-for="trials">
-            <b-form-select id="trials" multiple v-model="selectedTrials" :options="trialOptions" />
+            <b-form-select id="trials" multiple v-model="selectedTrials" :options="filteredTrials" />
           </b-form-group>
         </b-col>
         <b-col cols=12 md=6>
@@ -133,6 +136,7 @@ export default {
     return {
       trials: [],
       selectedTrials: [],
+      searchTerm: null,
       personBarData: null,
       personLineData: null,
       chartData: null,
@@ -145,10 +149,46 @@ export default {
     ...mapGetters([
       'storeDarkMode',
       'storeMapLayer',
-      'storeTraitColors'
+      'storeTraitColors',
+      'storeSelectedTrial'
     ]),
-    trialOptions: function () {
-      return this.trials.map(t => {
+    filteredTrials: function () {
+      let result = []
+      if (this.searchTerm && this.trials && this.trials.length > 0 && this.searchTerm !== '') {
+        result = this.trials.filter(t => {
+          const lower = this.searchTerm.toLowerCase()
+          // Check if the name matches
+          if (t.name.toLowerCase().includes(lower)) {
+            return true
+          }
+          // Check if the description matches
+          if (t.description && t.description.toLowerCase().includes(lower)) {
+            return true
+          }
+          // Check if any of the trait names matches
+          if (t.traits.map(t => t.name).join('|').toLowerCase().includes(lower)) {
+            return true
+          }
+          // Check if it matches any of the share codes
+          if (t.shareCodes) {
+            if (t.shareCodes.viewerCode === this.searchTerm) {
+              return true
+            }
+            if (t.shareCodes.editorCode === this.searchTerm) {
+              return true
+            }
+            if (t.shareCodes.ownerCode === this.searchTerm) {
+              return true
+            }
+          }
+
+          return false
+        })
+      } else {
+        result = this.trials
+      }
+
+      return result.map(t => {
         return {
           text: t.name,
           value: t
@@ -573,6 +613,10 @@ export default {
         if (result) {
           result.sort((a, b) => a.name.localeCompare(b.name))
           this.trials = result
+
+          if (this.storeSelectedTrial) {
+            this.selectedTrials = this.trials.filter(t => t.localId === this.storeSelectedTrial)
+          }
         }
       })
   }

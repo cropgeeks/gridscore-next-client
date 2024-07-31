@@ -438,7 +438,7 @@
   "modalTitleTraitTimeframe": "Merkmalszeitspannen",
   "modalTextTraitTimeframe": "Das Diagramm unten zeigt die Zeitspannen in welchen Daten für die jeweiligen Merkmale aufgezeichnet werden können oder müssen.",
   "modalTitleTraitDataHistory": "Merkmalsdatenverlauf",
-  "modalTextTraitDataHistory": "Dieses Fenster zeigt die Daten die für dieses Beet und das ausgewählte Merkmal aufgezeighnet wurden. Nutze die Knöpfe neben dem Kalendar zwischen verschiedenen Aufzeichnungsdaten (falls vorhanden) zu wechseln und es können aufgezeichnete Daten entfernt oder bearbeitet werden um Fehler zu beheben.",
+  "modalTextTraitDataHistory": "Dieses Fenster zeigt die Daten die für dieses Beet und das ausgewählte Merkmal aufgezeighnet wurden. Die Liste zeigt alle Daten die über die Zeit aufgezeichnet wurden. Es können aufgezeichnete Daten entfernt oder bearbeitet werden um Fehler zu beheben.",
   "modalTextTraitDataHistoryHeading": "Messungssatz",
   "modalTitleGuidedWalk": "Gelenkter Ablauf",
   "modalTextGuidedWalk": "Ein gelenkter Ablauf führt durch den Versuch Beet bei Beet auf einer spezifischen Route. Nachfolgend kann die Route beginnend beim aktuellen Beet ausgewählt werden. Danach kann der Ablauf gestartet werden. Mit Hilfe der 'Zurück' und 'Weiter' Knöpfe am unteren Rand kann zwischen den Beeten navigiert werden.",
