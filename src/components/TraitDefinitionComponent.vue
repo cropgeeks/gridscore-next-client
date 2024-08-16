@@ -353,6 +353,9 @@ export default {
         }
       })
     },
+    clearTraitsNoConfirm: function () {
+      this.traits = []
+    },
     importBrapiTraits: function (newTraits) {
       if (newTraits && newTraits.length > 0) {
         newTraits.forEach(t => {

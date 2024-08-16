@@ -396,6 +396,8 @@
   "modalTextDeleteTrials": "Diese Operation wird die ausgewählten Versuche von diesem Gerät löschen. Jegliche ungespeicherte Änderungen gehen dabei verloren. Sicher, dass die ausgewählten Versuche gelöscht werden sollen?",
   "modalTitleDeleteTrait": "Merkmal löschen",
   "modalTextDeleteTrait": "Sicher, dass das ausgewählte Merkmal gelöscht werden soll?",
+  "modalTextDeleteTraitFromSharedTrial": "<p>Sicher, dass das ausgewählte Merkmal gelöscht werden soll?</p><p class='text-danger'>Dieser Versuch wurde geteilt. Das Löschen eines Merkmals entfernt alle für das Merkmal gesammelten Daten auf diesem Gerät sowie auf jedem anderen Gerät mit dem der Versuch geteilt wurde sobald synchronisiert wird.</p>",
+  "modalConfirmMessageConfirm": "Bitte Entscheidung bestätigen um fortzufahren.",
   "modalTitleDeleteTraits": "Merkmale löschen",
   "modalTextDeleteTraits": "Sicher, dass alle aktuellen Merkmale gelöscht werden sollen?",
   "modalTitleTabbedInputToGrid": "Tabulierte Dateneingabe",

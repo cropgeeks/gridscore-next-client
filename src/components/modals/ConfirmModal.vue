@@ -8,10 +8,13 @@
            scrollable
            no-fade
            @ok="emitOk"
+           :ok-disabled="internalNeedsConfirmation && !internalConfirmed"
            @cancel="emitCancel"
            :size="internalSize"
            ref="confirmModal">
-    <p v-if="internalMessage">{{ $t(internalMessage) }}</p>
+    <div v-if="internalMessage" v-html="$t(internalMessage)" />
+
+    <b-form-checkbox v-if="internalNeedsConfirmation" v-model="internalConfirmed">{{ $t('modalConfirmMessageConfirm') }}</b-form-checkbox>
   </b-modal>
 </template>
 
@@ -51,6 +54,10 @@ export default {
     size: {
       type: String,
       default: 'md'
+    },
+    needsConfirmation: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -62,7 +69,9 @@ export default {
       internalCancelVariant: 'secondary',
       internalOkVariant: 'primary',
       internalSize: 'md',
-      internalOkOnly : false
+      internalOkOnly : false,
+      internalNeedsConfirmation: false,
+      internalConfirmed: false
     }
   },
   methods: {
@@ -75,7 +84,9 @@ export default {
       this.internalCancelVariant = this.cancelVariant
       this.internalSize = this.size
       this.internalOkOnly = this.okOnly
+      this.internalNeedsConfirmation = this.needsConfirmation
       this.callback = null
+      this.internalConfirmed = false
 
       this.$nextTick(() => this.$refs.confirmModal.show())
     },
@@ -89,6 +100,8 @@ export default {
       this.internalSize = params.size || 'md'
       this.internalOkOnly = params.okOnly || false
       this.callback = params.callback
+      this.internalNeedsConfirmation = params.needsConfirmation || false
+      this.internalConfirmed = false
 
       this.$nextTick(() => this.$refs.confirmModal.show())
     },

@@ -165,7 +165,7 @@ import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { updateTrialProperties, getTrialGroups } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
-import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
+import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 
 export default {
   components: {
@@ -236,7 +236,18 @@ export default {
     },
     canDeleteTraits: function () {
       if (this.trial) {
-        return this.trial.shareStatus !== undefined && this.trial.shareStatus !== null && this.trial.shareStatus === TRIAL_STATE_NOT_SHARED && this.traits.length > 1
+        if (this.isSharedTrial) {
+          return this.trial.shareStatus === TRIAL_STATE_OWNER
+        } else {
+          return this.traits.length > 1
+        }
+      } else {
+        return false
+      }
+    },
+    isSharedTrial: function () {
+      if (this.trial) {
+        return this.trial.shareStatus !== undefined && this.trial.shareStatus !== null && this.trial.shareStatus !== TRIAL_STATE_NOT_SHARED
       } else {
         return false
       }
@@ -261,7 +272,8 @@ export default {
     deleteTrait: function (trait) {
       emitter.emit('show-confirm', {
         title: 'modalTitleDeleteTrait',
-        message: 'modalTextDeleteTrait',
+        message: this.isSharedTrial ? 'modalTextDeleteTraitFromSharedTrial' : 'modalTextDeleteTrait',
+        needsConfirmation: this.isSharedTrial,
         okTitle: 'buttonYes',
         cancelTitle: 'buttonNo',
         okVariant: 'danger',

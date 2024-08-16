@@ -11,7 +11,7 @@
     <div v-if="trials && trials.length > 0">
       <p>{{ $t('modalTextAddTrait') }}</p>
 
-      <TraitDefinitionComponent :trials="trials" @data-changed="updateTraits" />
+      <TraitDefinitionComponent :trials="trials" @data-changed="updateTraits" ref="traitDefinitionComponent" />
     </div>
   </b-modal>
 </template>
@@ -66,6 +66,9 @@ export default {
      * Shows and resets modal dialog
      */
     show: function () {
+      this.traits = []
+      this.$refs.traitDefinitionComponent.clearTraitsNoConfirm()
+      this.$refs.traitDefinitionComponent.reset()
       this.$refs.addTraitsModal.show()
     },
     /**

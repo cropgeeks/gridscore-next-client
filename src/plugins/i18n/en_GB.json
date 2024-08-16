@@ -404,6 +404,8 @@
   "modalTextDeleteTrials": "This operation will remove the selected trials from your device. Any unsaved changes will be lost. Are you sure you want to delete the selected trials?",
   "modalTitleDeleteTrait": "Delete trait",
   "modalTextDeleteTrait": "Are you sure you want to delete the selected trait?",
+  "modalTextDeleteTraitFromSharedTrial": "<p>Are you sure you want to delete the selected trait?</p><p class='text-danger'>This is a shared trial, deleting a trait will remove any recorded data for this trait on your device but also on other people's devices once they synchronize.</p>",
+  "modalConfirmMessageConfirm": "Please confirm your decision before continuing.",
   "modalTitleDeleteTraits": "Clear traits",
   "modalTextDeleteTraits": "Are you sure you want to delete all current trait?",
   "modalTitleTabbedInputToGrid": "Tabbed data input",

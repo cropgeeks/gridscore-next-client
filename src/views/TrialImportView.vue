@@ -110,6 +110,8 @@ import { TRIAL_STATE_EDITOR, TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_ST
 
 import { UseOnline } from '@vueuse/components'
 
+import emitter from 'tiny-emitter/instance'
+
 export default {
   components: {
     BarcodeScanner,
