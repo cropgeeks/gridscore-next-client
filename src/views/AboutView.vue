@@ -17,9 +17,9 @@
 
       <p>{{ $t('pageAboutParagraphOne') }}</p>
       <p v-html="$t('pageAboutParagraphTwo')" />
-      <p class="d-flex"><IBiInfoCircleFill class="mt-1" /> <span class="ms-3" v-html="$t('pageAboutDocumentationLink')" /></p>
-      <p class="d-flex"><IBiGithub class="mt-1" /> <span class="ms-3" v-html="$t('pageAboutGitHubLink')" /></p>
-      <p class="d-flex"><IBiNewspaper class="mt-1" /> <span class="ms-3" v-html="$t('pageHomeTextCitation')" /></p>
+      <p class="d-flex"><IBiInfoCircleFill class="mt-1 flex-shrink-0" /> <span class="ms-3" v-html="$t('pageAboutDocumentationLink')" /></p>
+      <p class="d-flex"><IBiGithub class="mt-1 flex-shrink-0" /> <span class="ms-3" v-html="$t('pageAboutGitHubLink')" /></p>
+      <p class="d-flex"><IBiNewspaper class="mt-1 flex-shrink-0" /> <span class="ms-3" v-html="$t('pageHomeTextCitation')" /></p>
 
       <!-- Funders -->
       <h2>{{ $t('pageAboutGridScoreFundersTitle') }}<small> - {{ $t('pageAboutGridScoreFundersSubtitle') }}</small></h2>

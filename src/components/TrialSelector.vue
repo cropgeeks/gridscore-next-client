@@ -4,13 +4,13 @@
       <span>{{ $t('widgetTrialSelectorTitle') }}</span>
       <div>
         <b-button-group class="me-2">
-          <b-dropdown size="sm" variant="secondary" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" v-if="multiSelectEnabled && selectedTrialsToEdit && selectedTrialsToEdit.length > 0">
+          <b-dropdown class="d-flex" size="sm" variant="secondary" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" v-if="multiSelectEnabled && selectedTrialsToEdit && selectedTrialsToEdit.length > 0">
             <template #button-content>
               <IBiCheck2Square /> {{ selectedTrialsToEdit.length }}
             </template>
             <b-dropdown-item @click="multiSelectEnabled = false"><IBiBan /> {{ $t('buttonCancelSelection') }}</b-dropdown-item>
             <b-dropdown-divider />
-            <b-dropdown-item @click="addTraits"><IBiTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
+            <b-dropdown-item :disabled="!selectedTrialsToEditEditable || selectedTrialsToEditEditable.length < 1" @click="addTraits"><IBiTags /> {{ $t('buttonAddTrait') }}</b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item variant="danger" @click="deleteTrials"><IBiTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
           </b-dropdown>
