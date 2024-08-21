@@ -366,7 +366,7 @@ export default {
         layoutValid: Object.values(this.tabCorrect).every(t => t === true || t === null),
         layout: this.layout,
         germplasmMap: this.germplasmMap,
-        feedback: feedback
+        feedback
       })
     }
   }

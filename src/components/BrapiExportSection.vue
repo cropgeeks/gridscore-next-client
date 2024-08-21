@@ -292,7 +292,7 @@ export default {
                 observations: []
               }
 
-              this.trial.traits.forEach((t, i) => {
+              this.trial.traits.forEach(t => {
                 const measurements = cell.measurements[t.id]
 
                 if (measurements) {

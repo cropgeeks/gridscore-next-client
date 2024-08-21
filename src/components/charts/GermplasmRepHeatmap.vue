@@ -324,10 +324,10 @@ export default {
           x: this.reps.map((r, i) => this.$n(i)),
           // Y Values are the row indices
           y: Array.from(Array(this.allGermplasm.length).keys()).map(i => this.$n(i + 1)),
-          z: z,
-          text: text,
-          customdata: customdata,
-          ids: ids,
+          z,
+          text,
+          customdata,
+          ids,
           type: 'heatmap',
           colorscale: this.selectedTrait.dataType === 'categorical'
             ? restrictions.categories.map((_, i) => {
@@ -410,7 +410,7 @@ export default {
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
             fixedrange: !this.chartInteractionEnabled
           },
-          shapes: shapes
+          shapes
         }
 
         const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
@@ -474,7 +474,7 @@ export default {
           return localSet.size > 1
         }).length > 0
 
-        if (reps.length > 10 && reps.length > allGermplasm.length / 2) {
+        if (reps.length > 10 && reps.length > this.allGermplasm.length / 2) {
           // If there are this many reps, they're probably fairly unique identifiers and this heatmap makes no sense.
           hasActualReps = false
         }

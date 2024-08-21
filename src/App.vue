@@ -138,7 +138,7 @@ import { gridScoreVersion } from '@/plugins/constants'
 
 import { UAParser } from 'ua-parser-js'
 import { getTrialById, initDb } from '@/plugins/idb'
-import { useModalController } from 'bootstrap-vue-next'
+import { BModal, useModalController } from 'bootstrap-vue-next'
 import { h } from 'vue'
 import emitter from 'tiny-emitter/instance'
 
@@ -301,7 +301,7 @@ export default {
 
         this.plausible.enableAutoPageviews()
 
-        this.plausibleEvent({ key: 'app-load', props: { version: this.gridScoreVersion }})
+        this.plausibleEvent({ key: 'app-load', props: { version: this.gridScoreVersion } })
       }
     },
     plausibleEvent: function (data) {
@@ -367,7 +367,7 @@ export default {
     refreshApp: function () {
       console.log('refreshApp')
       this.updateExists = false
-      
+
       if (this.registration) {
         this.plausibleEvent({ key: 'update-finished', props: { from: this.gridScoreVersion } })
         this.registration()
@@ -390,7 +390,7 @@ export default {
     init()
 
     if (!this.storePlausible || !this.storePlausible.plausibleDomain) {
-      getServerSettings() 
+      getServerSettings()
         .then(result => {
           if (result) {
             this.$store.commit('ON_PLAUSIBLE_CHANGED', result)
@@ -422,7 +422,7 @@ export default {
         const data = {
           application: 'GridScore',
           runCount: this.storeRunCount + 1,
-          id: id,
+          id,
           version: `${gridScoreVersion}`,
           locale: this.storeLocale,
           os: `${config.os.name} ${config.os.version}`

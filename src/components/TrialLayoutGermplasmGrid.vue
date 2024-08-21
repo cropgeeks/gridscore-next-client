@@ -44,7 +44,7 @@
 import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal.vue'
 import FielDBookInputModal from '@/components/modals/FielDBookInputModal.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { getColumnLabel, getRowLabel } from '@/plugins/misc';
+import { getColumnLabel, getRowLabel } from '@/plugins/misc'
 
 export default {
   components: {
@@ -216,7 +216,7 @@ export default {
         // Create a new row
         const rowElement = this.createElement(tBody, 'tr')
         const displayRowIndex = getRowLabel(this.layout, row)
-        
+
         // Row header
         this.createElement(rowElement, 'th').innerHTML = displayRowIndex
 
@@ -283,7 +283,7 @@ export default {
             tempMap[`${row}|${column}`] = {
               germplasm: germplasm === '' ? null : germplasm.trim(),
               rep: rep === '' ? null : rep.trim(),
-              control: control
+              control
             }
           }
         }

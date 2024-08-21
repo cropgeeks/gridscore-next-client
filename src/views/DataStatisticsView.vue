@@ -121,9 +121,9 @@ import { categoricalColors } from '@/plugins/color'
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: iconRetinaUrl,
-  iconUrl: iconUrl,
-  shadowUrl: shadowUrl
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl
 })
 
 let plotInfo = {}
@@ -291,7 +291,7 @@ export default {
             personBarData[trial.localId][p.id] = {
               name: p.name,
               y: trial.traits.map(t => t.name),
-              x: trial.traits.map(t => 0),
+              x: trial.traits.map(() => 0),
               type: 'bar',
               orientation: 'h'
             }
@@ -402,7 +402,7 @@ export default {
             plotInfo[trial.localId][person] = {
               // plots: plotInfoToGeoJson(plotInfo[trial.localId], false),
               plots: null,
-              points: points
+              points
             }
           })
         }
@@ -542,7 +542,7 @@ export default {
 
         if (pi.overall.plots) {
           const geoJsonLayer = L.geoJSON(pi.plots, {
-            style: (feature) => {
+            style: () => {
               return {
                 fillColor: '#00a0f1',
                 color: '#00a0f1',

@@ -168,7 +168,7 @@ export default {
         }
       }
 
-      this.serverError = this.$t('modalTextTrialImportNoValidQRCode', { code: code })
+      this.serverError = this.$t('modalTextTrialImportNoValidQRCode', { code })
 
       this.$nextTick(() => window.scrollTo(0, document.body.scrollHeight))
 

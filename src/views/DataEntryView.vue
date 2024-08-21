@@ -151,7 +151,7 @@ export default {
 
           // We need to listen to fullscreenchange events for example when the user exits fullscreen by other means than using the same button again
           if (!this.hasFullscreenEventListener) {
-            this.$refs.dataEntryView.addEventListener('fullscreenchange', event => {
+            this.$refs.dataEntryView.addEventListener('fullscreenchange', () => {
               // Update the fullscreen field
               this.isFullscreen = document.fullscreenElement !== null
             })
@@ -308,7 +308,7 @@ export default {
               lat: dLat,
               lng: dLng,
               elv: 100,
-              heading: heading
+              heading
             }
           }
         }, 100)

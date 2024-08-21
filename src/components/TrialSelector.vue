@@ -15,7 +15,7 @@
             <b-dropdown-item variant="danger" @click="deleteTrials"><IBiTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
           </b-dropdown>
           <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" :pressed="multiSelectEnabled" @click="multiSelectEnabled = !multiSelectEnabled" v-else><IBiCheck2Square /></b-button>
-          
+
         </b-button-group>
         <b-button-group class="me-2">
           <b-button size="sm" variant="outline-secondary" v-b-tooltip="$t('tooltipTrialSelectorArrangementGrid')" :pressed="trialListArrangement === TRIAL_LIST_GRID" @click="trialListArrangement = TRIAL_LIST_GRID"><IBiGrid /></b-button>
@@ -140,9 +140,9 @@ import { mapGetters } from 'vuex'
 import { deleteTrial, getTrialById, getTrialGroups, getTrials } from '@/plugins/idb'
 import { postCheckUpdate } from '@/plugins/api'
 
-const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
-
 import emitter from 'tiny-emitter/instance'
+
+const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
 
 export default {
   components: {
@@ -156,7 +156,7 @@ export default {
     AddGermplasmModal,
     TrialModificationModal,
     TrialExpirationModal,
-    EditPeopleModal,
+    EditPeopleModal
   },
   data: function () {
     return {
@@ -319,7 +319,7 @@ export default {
     }
   },
   watch: {
-    multiSelectEnabled: function (newValue) {
+    multiSelectEnabled: function () {
       this.selectedTrialsToEdit = []
     },
     trialListMode: function (newValue) {

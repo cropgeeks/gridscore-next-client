@@ -140,7 +140,7 @@ export default {
             y: this.origin.y + dataHeight * euclideanPosition.y / 100,
             euclideanX: euclideanPosition.x,
             euclideanY: euclideanPosition.y,
-            rotate: rotate
+            rotate
           }
         }
       } else {

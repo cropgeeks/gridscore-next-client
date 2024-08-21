@@ -80,7 +80,6 @@ import { mapGetters } from 'vuex'
 import emitter from 'tiny-emitter/instance'
 
 import { getTrialDataCached } from '@/plugins/datastore'
-import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 
 export default {
   props: {

@@ -53,7 +53,7 @@ export default {
   data: function () {
     const id = getId()
     return {
-      id: id,
+      id,
       formValidated: null,
       formFeedback: null,
       input: null,

@@ -220,7 +220,7 @@ export default createStore({
       state.categoryCountInline = newCategoryCountInline
     }
   },
-    actions: {
+  actions: {
     setUniqueClientId: function ({ commit }, uniqueClientId) {
       commit('ON_UNIQUE_CLIENT_ID_CHANGED', uniqueClientId)
     },

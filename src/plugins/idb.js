@@ -3,7 +3,6 @@ import { getId } from '@/plugins/id'
 import store from '@/store'
 import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT } from '@/plugins/constants'
 import { trialLayoutToPlots } from './location'
-import { isProxy, toRaw } from 'vue'
 import { getColumnLabel, getRowLabel } from './misc'
 
 let db
@@ -771,8 +770,8 @@ const addTrial = async (trial) => {
 
       allData.push({
         trialId: id,
-        row: row,
-        column: column,
+        row,
+        column,
         germplasm: cell.germplasm,
         rep: cell.rep,
         brapiId: cell.brapiId,
@@ -848,7 +847,7 @@ const getTrialData = async (trialId) => {
 
 const getEmptyTransaction = (trialId) => {
   return {
-    trialId: trialId,
+    trialId,
     plotCommentAddedTransactions: {},
     plotCommentDeletedTransactions: {},
     plotMarkedTransactions: {},
@@ -1041,7 +1040,7 @@ const addTrialGermplasm = async (trialId, germplasm) => {
 
     const newData = germplasm.map((g, i) => {
       const cell = {
-        trialId: trialId,
+        trialId,
         row: trial.layout.rows + i,
         column: 0,
         germplasm: g,

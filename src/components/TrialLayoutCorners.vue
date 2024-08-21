@@ -67,9 +67,9 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: iconRetinaUrl,
-  iconUrl: iconUrl,
-  shadowUrl: shadowUrl
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl
 })
 
 /**

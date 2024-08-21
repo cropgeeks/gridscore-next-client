@@ -98,25 +98,25 @@ export default {
               group: p['Group name']
             }
 
-            if (trait.dataType === 'categorical' && p['Categories'] && p['Categories'].length > 0) {
+            if (trait.dataType === 'categorical' && p.Categories && p.Categories.length > 0) {
               if (!trait.restrictions) {
                 trait.restrictions = {}
               }
-              trait.restrictions.categories = p['Categories'].split(',').map(c => c.trim())
+              trait.restrictions.categories = p.Categories.split(',').map(c => c.trim())
             }
 
             if ((trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range')) {
-              if (p['Minimum'] !== undefined && p['Minimum'] !== null && p['Minimum'] !== '') {
+              if (p.Minimum !== undefined && p.Minimum !== null && p.Minimum !== '') {
                 if (!trait.restrictions) {
                   trait.restrictions = {}
                 }
-                trait.restrictions.min = p['Minimum']
+                trait.restrictions.min = p.Minimum
               }
-              if (p['Maximum'] !== undefined && p['Maximum'] !== null && p['Maximum'] !== '') {
+              if (p.Maximum !== undefined && p.Maximum !== null && p.Maximum !== '') {
                 if (!trait.restrictions) {
                   trait.restrictions = {}
                 }
-                trait.restrictions.max = p['Maximum']
+                trait.restrictions.max = p.Maximum
               }
             }
 
@@ -131,8 +131,8 @@ export default {
                 const start = p['Timeframe start']
 
                 if (!start.match(regex)) {
-                 this.dataValid = false
-                 this.errorMessage = this.$t('formFeedbackTraitImportInvalidDateFormat')
+                  this.dataValid = false
+                  this.errorMessage = this.$t('formFeedbackTraitImportInvalidDateFormat')
                 } else {
                   trait.timeframe.start = start
                 }
@@ -142,8 +142,8 @@ export default {
                 const end = p['Timeframe end']
 
                 if (!end.match(regex)) {
-                 this.dataValid = false
-                 this.errorMessage = this.$t('formFeedbackTraitImportInvalidDateFormat')
+                  this.dataValid = false
+                  this.errorMessage = this.$t('formFeedbackTraitImportInvalidDateFormat')
                 } else {
                   trait.timeframe.end = end
                 }
@@ -185,7 +185,7 @@ export default {
 
         this.traits.forEach(t => {
           text += `\n${t.name}\t${t.description || ''}\t${t.dataType}\t${t.allowRepeats ? 1 : 0}\t${t.setSize}\t${t.group || ''}`
-          
+
           // Restrictions
           text += `\t${(t.restrictions && t.restrictions.categories) ? t.restrictions.categories.join(',') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`
 

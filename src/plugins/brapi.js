@@ -62,9 +62,9 @@ const brapiDefaultCatchHandler = (err) => {
     }
 
     emitter.emit('toast', {
-      message: message,
-      title: title,
-      variant: variant,
+      message,
+      title,
+      variant,
       autoHideDelay: 5000,
       appendToast: true
     })
@@ -122,10 +122,10 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
 
   const axiosParams = {
     baseURL: baseUrl,
-    url: url,
+    url,
     params: method === 'get' ? params : null,
     data: method !== 'get' ? params : null,
-    method: method,
+    method,
     crossDomain: true,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
@@ -263,7 +263,7 @@ const brapiPostObservationVariableSearch = (params) => {
 }
 
 const brapiGetObservationUnits = (studyDbId) => {
-  return brapiAxios('observationunits', 'observationunits', { studyDbId: studyDbId, includeObservations: false }, 'get', true)
+  return brapiAxios('observationunits', 'observationunits', { studyDbId, includeObservations: false }, 'get', true)
     .then(result => {
       if (result && result.data && result.data.result && result.data.result.data) {
         return result.data.result.data

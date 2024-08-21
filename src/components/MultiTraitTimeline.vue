@@ -158,10 +158,10 @@ export default {
 
       const sortedDates = [...allDates].sort((a, b) => a - b)
       // Keep track of statistics
-      const mins = sortedDates.map(d => Number.MAX_SAFE_INTEGER)
+      const mins = sortedDates.map(() => Number.MAX_SAFE_INTEGER)
       const maxs = mins.map(d => -d)
-      const totals = mins.map(d => 0)
-      const counts = mins.map(d => 0)
+      const totals = mins.map(() => 0)
+      const counts = mins.map(() => 0)
       let traces = []
 
       if (this.individualTimepoints) {
@@ -219,7 +219,7 @@ export default {
 
           const traitMeasurements = c.measurements[this.trait.id] || []
 
-          const y = sortedDates.map(_ => NaN)
+          const y = sortedDates.map(() => NaN)
 
           // let lastIndex = sortedDates.length - 1
           // for (let i = sortedDates.length - 1; i >= 0; i--) {
@@ -273,7 +273,7 @@ export default {
           if (this.plotMode === 'all' || (this.plotMode === 'selection' && this.selectedGermplasm.indexOf(c.displayName) !== -1)) {
             return {
               x: sortedDates.map(d => new Date(d)),
-              y: y,
+              y,
               type: 'scatter',
               mode: 'lines+markers',
               name: c.displayName

@@ -87,7 +87,7 @@ export default {
         hoverinfo: 'skip',
         showlegend: false,
         marker: {
-          color: timeframeTraits.map(t => 'rgba(0, 0, 0, 0)')
+          color: timeframeTraits.map(() => 'rgba(0, 0, 0, 0)')
         }
       }
 

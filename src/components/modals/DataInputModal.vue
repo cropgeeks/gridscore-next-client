@@ -311,7 +311,7 @@ export default {
       if (this.trial && this.trial.traits && this.cell) {
         const result = {}
 
-        this.trial.traits.forEach((t, i) => {
+        this.trial.traits.forEach(t => {
           if (this.storeHiddenTraits.includes(t.id)) {
             return
           }
@@ -357,7 +357,7 @@ export default {
   watch: {
     traitsByGroup: function (newValue) {
       if (newValue) {
-        this.tabStates = newValue.map(t => null)
+        this.tabStates = newValue.map(() => null)
       } else {
         this.tabStates = null
       }
@@ -421,7 +421,7 @@ export default {
           const order = match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout).filter(c => validCells.includes(`${c.y}|${c.x}`))
 
           this.guidedWalk = {
-            order: order,
+            order,
             index: 0,
             prev: null,
             next: null
@@ -625,7 +625,7 @@ export default {
             mapping.push({
               traitId: t.id,
               personId: this.storeSelectedTrialPerson,
-              values: values,
+              values,
               timestamp: date.toISOString()
             })
           }

@@ -69,7 +69,7 @@ export default {
       internalCancelVariant: 'secondary',
       internalOkVariant: 'primary',
       internalSize: 'md',
-      internalOkOnly : false,
+      internalOkOnly: false,
       internalNeedsConfirmation: false,
       internalConfirmed: false
     }

@@ -130,7 +130,7 @@ export default {
       Plotly.newPlot(this.$refs.chart, data, layout, {
         responsive: true,
         displaylogo: false,
-        modeBarButtonsToRemove: [ 'select2d', 'lasso2d' ],
+        modeBarButtonsToRemove: ['select2d', 'lasso2d'],
         toImageButtonOptions: {
           format: 'png',
           filename: `germplasm-perf-${germplasm}-${traitName}-${toLocalDateString(new Date())}`
@@ -138,7 +138,7 @@ export default {
       })
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     try {
       Plotly.purge(this.$refs.chart)
     } catch {

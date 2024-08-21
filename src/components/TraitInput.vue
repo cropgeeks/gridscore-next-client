@@ -158,7 +158,7 @@ export default {
       formState: null,
       dateInput: '',
       rangeChanged: false,
-      trial: trial
+      trial
     }
   },
   watch: {

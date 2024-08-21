@@ -112,8 +112,8 @@ export default {
       getTrialById(this.storeSelectedTrial).then(trial => {
         this.trial = trial
 
-        this.markedColumns = Array.from(Array(trial.layout.columns).keys()).map(i => false)
-        this.markedRows = Array.from(Array(trial.layout.rows).keys()).map(i => false)
+        this.markedColumns = Array.from(Array(trial.layout.columns).keys()).map(() => false)
+        this.markedRows = Array.from(Array(trial.layout.rows).keys()).map(() => false)
 
         this.reset()
       })

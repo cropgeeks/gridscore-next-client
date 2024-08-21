@@ -200,8 +200,8 @@ export default {
 
         newData[`${cell.row}|${cell.column}`].push({
           traitId: trait.id,
-          timestamp: timestamp,
-          values: values
+          timestamp,
+          values
         })
       }
 

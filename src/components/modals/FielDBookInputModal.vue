@@ -60,7 +60,7 @@ import { tsvParse, csvParse, autoType } from 'd3-dsv'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
-import { getColumnIndex, getRowIndex } from '@/plugins/misc';
+import { getColumnIndex, getRowIndex } from '@/plugins/misc'
 
 export default {
   props: {
@@ -221,13 +221,13 @@ export default {
 
         if (rowIndex < 0 || rowIndex >= this.rows || columnIndex < 0 || columnIndex >= this.columns) {
           this.formValidated = false
-          this.formFeedback = this.$t('formFeedbackFielDBookInvalidDimensions', { line: i + 1, row: row, column: column })
+          this.formFeedback = this.$t('formFeedbackFielDBookInvalidDimensions', { line: i + 1, row, column })
           return
         }
 
         mapping[`${rowIndex}|${columnIndex}`] = {
-          germplasm: germplasm,
-          rep: rep
+          germplasm,
+          rep
         }
       }
 

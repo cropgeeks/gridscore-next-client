@@ -26,9 +26,9 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: iconRetinaUrl,
-  iconUrl: iconUrl,
-  shadowUrl: shadowUrl
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl
 })
 
 export default {
@@ -58,7 +58,6 @@ export default {
   },
   data: function () {
     return {
-      trial: null,
       selectedFeature: null
     }
   },
@@ -174,7 +173,7 @@ export default {
 
           const color = (this.selectedGermplasm.length < 1 || this.selectedGermplasm.includes(cell.displayName)) ? categoricalColors.D3schemeCategory10[kIndex % categoricalColors.D3schemeCategory10.length] : 'gray'
 
-          const line = L.polyline(gps.map(g => g.latLng), { weight: 3, color: color }).addTo(this.layerGroup)
+          const line = L.polyline(gps.map(g => g.latLng), { weight: 3, color }).addTo(this.layerGroup)
           line.bindTooltip(cell.displayName)
           line.on('mouseover', e => {
             const l = e.target
@@ -196,7 +195,7 @@ export default {
           gps.forEach(g => {
             const m = L.circleMarker(g.latLng, { radius: 5, stroke: false, fillColor: color, fillOpacity: 0.8 })
             m.bindTooltip(`${g.displayName}: ${new Date(g.timestamp).toLocaleDateString()}`)
-            m.on('click', e => {
+            m.on('click', () => {
               this.selectedFeature = cell
               this.$nextTick(() => this.$refs.plotModal.show())
             })

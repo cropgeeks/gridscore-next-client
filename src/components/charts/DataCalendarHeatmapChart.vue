@@ -99,7 +99,7 @@ export default {
       }
 
       const data = [{
-        z: z,
+        z,
         x: this.isHorizontal ? y.reverse() : x,
         y: this.isHorizontal ? x : y,
         name: '',

@@ -19,7 +19,7 @@ export default defineConfig({
     Icons({
       compiler: 'vue3',
       autoInstall: true,
-      iconCustomizer(collection, icon, props) {
+      iconCustomizer (collection, icon, props) {
         if (collection === 'bi') {
           props.width = '1em'
           props.height = '1em'

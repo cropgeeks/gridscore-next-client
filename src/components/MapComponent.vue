@@ -34,9 +34,9 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: iconRetinaUrl,
-  iconUrl: iconUrl,
-  shadowUrl: shadowUrl
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl
 })
 
 export default {
@@ -173,8 +173,8 @@ export default {
               properties: {
                 germplasm: this.trialData[td].germplasm,
                 rep: this.trialData[td].rep,
-                row: row,
-                column: column,
+                row,
+                column,
                 categories: this.trialData[td].categories || []
               },
               corners: this.trialData[td].geography.corners,
@@ -189,7 +189,7 @@ export default {
         const geoJsonLayer = L.geoJSON(geoJson, {
           style: (feature) => {
             let color = '#00a0f1'
-            
+
             if (this.showControls) {
               if (this.storeHighlightControls && feature.properties.categories.includes(CELL_CATEGORY_CONTROL)) {
                 color = '#910080'
@@ -203,7 +203,7 @@ export default {
 
             return {
               fillColor: color,
-              color: color,
+              color,
               weight: 1
             }
           },

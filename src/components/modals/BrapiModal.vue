@@ -10,10 +10,10 @@
            ref="brapiModal">
     <b-form @submit.prevent="updateBrapiUrl">
       <b-form-group label-for="brapiUrl">
-        <template v-slot:label>
+        <template #label>
           <span v-html="$t('formLabelBrapiUrl')" />
         </template>
-        <template slot="description">
+        <template #description>
           <span v-html="$t('formDescriptionBrapiUrl')" />
         </template>
         <!-- BrAPI URL input field -->

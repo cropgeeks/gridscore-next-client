@@ -60,7 +60,7 @@ export default {
       if (this.traits) {
         const result = {}
 
-        this.traits.forEach((t, i) => {
+        this.traits.forEach(t => {
           const group = t.group ? t.group.name : this.$t('dropdownOptionTraitNoGroup')
           const traitDef = {
             id: t.id,

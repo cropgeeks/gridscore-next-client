@@ -86,7 +86,7 @@ export default {
       Plotly.newPlot(this.$refs.chart, data, layout, config)
     }
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     try {
       Plotly.purge(this.$refs.chart)
     } catch {

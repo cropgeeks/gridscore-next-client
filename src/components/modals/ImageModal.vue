@@ -83,7 +83,7 @@ export default {
     const id = getId()
 
     return {
-      id: id,
+      id,
       imageFile: null,
       imageData: null,
       imageDate: null,

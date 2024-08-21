@@ -141,7 +141,7 @@ export default {
 
           return {
             x: sorted.map(t => new Date(t)),
-            y: y,
+            y,
             type: 'scatter',
             mode: 'lines+markers',
             name: trait.name,

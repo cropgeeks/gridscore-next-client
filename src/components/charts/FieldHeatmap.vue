@@ -305,9 +305,9 @@ export default {
           x: Array.from({ length: this.trial.layout.columns }, (v, k) => this.$n(k + 1)),
           // Y Values are the row indices
           y: Array.from({ length: this.trial.layout.rows }, (v, k) => this.$n(k + 1)),
-          z: z,
-          text: text,
-          customdata: customdata,
+          z,
+          text,
+          customdata,
           type: 'heatmap',
           colorscale: this.selectedTrait.dataType === 'categorical'
             ? restrictions.categories.map((_, i) => {
@@ -393,7 +393,7 @@ export default {
             tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
             fixedrange: !this.chartInteractionEnabled
           },
-          shapes: shapes
+          shapes
         }
 
         const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()

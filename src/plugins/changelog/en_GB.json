@@ -545,5 +545,16 @@
         "text": "Fixed an issue where the input focus didn't automatically move to the next trait input after selecting a categorical trait value."
       }
     ]
+  },
+  {
+    "version": "3.2.0",
+    "date": "2024-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Trait deletion",
+        "text": "It is now possible for trial owners to delete a trait even after the trial has been shared. This operation should be well considered as it has far-reaching consequences. Any data collected for this trait on any other device will be lost once they synchronize."
+      }
+    ]
   }
 ]

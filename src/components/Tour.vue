@@ -191,7 +191,7 @@ export default {
     document.addEventListener('keyup', this.handleKeys)
     emitter.on('page-navigation', this.handlePageNavigation)
   },
-  destroyed: function () {
+  unmounted: function () {
     document.removeEventListener('keyup', this.handleKeys)
     emitter.off('page-navigation', this.handlePageNavigation)
   }

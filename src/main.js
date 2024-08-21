@@ -18,15 +18,15 @@ if (import.meta.env.VITE_BASE_URL) {
 store.commit('ON_SERVER_URL_CHANGED', baseUrl)
 
 const updateSW = registerSW({
-  onNeedRefresh() {
+  onNeedRefresh () {
     console.log('onNeedRefresh')
     document.dispatchEvent(
       new CustomEvent('swUpdated', { detail: updateSW })
     )
   },
-  onOfflineReady() {
+  onOfflineReady () {
     console.log('onOfflineReady')
-  },
+  }
 })
 
 const app = createApp(App)

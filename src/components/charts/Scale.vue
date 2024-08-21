@@ -60,7 +60,7 @@ export default {
   data: function () {
     const id = getId()
     return {
-      id: id
+      id
     }
   },
   computed: {

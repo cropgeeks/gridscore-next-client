@@ -29,10 +29,10 @@ const axiosCall = ({ baseUrl = null, url = null, params = null, method = 'get', 
   return new Promise((resolve, reject) => {
     axios.default({
       baseURL: baseUrl || store.getters.storeServerUrl,
-      url: url,
+      url,
       params: requestParams,
       data: requestData,
-      method: method,
+      method,
       crossDomain: true,
       headers: {
         'Content-Type': 'application/json; charset=utf-8'

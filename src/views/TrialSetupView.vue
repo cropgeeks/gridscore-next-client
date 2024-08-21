@@ -547,7 +547,7 @@ export default {
               layout: this.layout,
               traits: this.traits,
               people: this.people,
-              data: data,
+              data,
               comments: [],
               updatedOn: now,
               createdOn: now,

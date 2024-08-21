@@ -17,7 +17,7 @@
         <GermplasmPerformanceBarChart :germplasmName="germplasmIdentifier" :trait="trait" :traitStats="nonNumericTraitStats[trait.id]" v-if="nonNumericTraitStats[trait.id].count > 0" />
       </b-col>
     </b-row>
-    
+
     <MapComponent :highlightCheck="toHighlight" :showControls="false" v-if="hasGps" />
 
     <p v-if="error" class="text-danger">{{ $t(error) }}</p>

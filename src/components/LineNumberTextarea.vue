@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-row border">
     <div ref="lineNumbers" class="container__lines border-end" />
-    <b-form-textarea :id="id" ref="textarea" wrap="off" class="container__textarea" :placeholder="placeholder" :state="state" :value="modelValue" :rows="15" @input="$emit('update:modelValue', $event.target.value)" />  
+    <b-form-textarea :id="id" ref="textarea" wrap="off" class="container__textarea" :placeholder="placeholder" :state="state" :value="modelValue" :rows="15" @input="$emit('update:modelValue', $event.target.value)" />
   </div>
 </template>
 
@@ -57,13 +57,13 @@ export default {
       const lines = textarea.value.split(/\r?\n/)
       const numLines = lines.concat()
 
-      let lineNumbers = []
+      const lineNumbers = []
       let i = 1
       while (numLines.length > 0) {
         const numLinesOfSentence = numLines.shift()
         lineNumbers.push(i)
         if (numLinesOfSentence > 1) {
-          Array(numLinesOfSentence - 1).fill('').forEach((_) => lineNumbers.push(''))
+          Array(numLinesOfSentence - 1).fill('').forEach(() => lineNumbers.push(''))
         }
         i++
       }

@@ -201,7 +201,7 @@ export default {
       }
     },
     update: function () {
-      this.chartInteractionEnabled = this.selectedTraits.map(_ => false)
+      this.chartInteractionEnabled = this.selectedTraits.map(() => false)
 
       this.selectedTraits.forEach(t => {
         t.message = null
@@ -247,7 +247,7 @@ export default {
                         displayRow: cell.displayRow,
                         row: cell.row,
                         column: cell.column,
-                        setIndex: setIndex,
+                        setIndex,
                         value: v,
                         name: cell.displayName,
                         rep: cell.rep,
