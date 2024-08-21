@@ -9,8 +9,12 @@ module.exports = {
     '@vue/standard'
   ],
   parserOptions: {
-    ecmaVersion: 'latest',
-    parser: '@babel/eslint-parser'
+    ecmaVersion: 13,
+    sourceType: 'module',
+    parser: '@babel/eslint-parser',
+    ecmaFeatures: {
+      module: true
+    }
   },
   rules: {
     'vue/multi-word-component-names': 'off'
