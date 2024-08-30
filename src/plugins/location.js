@@ -231,6 +231,61 @@ const geodesicArea = (latLngs) => {
   return Math.abs((area * 6378137.0 * 6378137.0) / 2.0)
 }
 
+const getPlotGeoCoordinates = cell => {
+  if (cell && cell.geometry) {
+    if (cell.geography.corners && isGeographyValid(cell.geography.corners)) {
+      const c = cell.geography.corners
+      // Counter-clockwise direction with start and end identical
+
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [c.topLeft.lat, c.topLeft.lng],
+              [c.bottomLeft.lat, c.bottomLeft.lng],
+              [c.bottomRight.lat, c.bottomRight.lng],
+              [c.topRight.lat, c.topRight.lng],
+              [c.topLeft.lat, c.topLeft.lng]
+            ]
+          ]
+        }
+      }
+    } else {
+      const center = getPlotCenter(cell)
+
+      if (center) {
+        return {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: center
+          }
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+const getPlotCenter = cell => {
+  if (cell && cell.geography) {
+    if (cell.geography.corners && isGeographyValid(cell.geography.corners)) {
+      const c = cell.geography.corners
+      const lat = c.topLeft.lat + c.topRight.lat + c.bottomRight.lat + c.bottomLeft.lat
+      const lng = c.topLeft.lng + c.topRight.lng + c.bottomRight.lng + c.bottomLeft.lng
+
+      return [lng / 4, lat / 4]
+    } else if (cell.geography.center && isLocationValid(cell.geography.center)) {
+      return [cell.geography.center.lng, cell.geography.center.lat]
+    }
+  }
+
+  return null
+}
+
 export {
   euclideanSpace,
   projectToEuclidean,
@@ -242,5 +297,7 @@ export {
   isGeographyValid,
   isGeographyAllNull,
   convexHull,
-  geodesicArea
+  geodesicArea,
+  getPlotCenter,
+  getPlotGeoCoordinates
 }

@@ -127,7 +127,8 @@ import Tour from '@/components/Tour.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { guideOrderTypes } from '@/plugins/guidedwalk'
 import { CELL_CATEGORIES } from '@/plugins/constants'
 
@@ -171,7 +172,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeCalendarLocale',

@@ -1,7 +1,7 @@
 import { i18n } from '@/plugins/i18n'
 import { getId } from '@/plugins/id'
 import { trialLayoutToPlots } from '@/plugins/location'
-import store from '@/store'
+import { coreStore } from '@/store'
 
 import { saveAs } from 'file-saver'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
@@ -30,10 +30,19 @@ const hexToRgba = (hex, a) => {
   }
 }
 
+let store
+
+const getStore = () => {
+  if (!store) {
+    store = coreStore()
+  }
+  return store
+}
+
 const invertHex = (hex) => (Number(`0x1${hex.replace('#', '')}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
 
 const formatTimeAgo = (date) => {
-  const formatter = new Intl.RelativeTimeFormat((store.getters.storeLocale || 'en-GB').split('-')[0], {
+  const formatter = new Intl.RelativeTimeFormat((getStore().storeLocale || 'en-GB').split('-')[0], {
     numeric: 'always'
   })
 
@@ -355,7 +364,7 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
 
   // Check if advanced number formatting is available
   if ('Intl' in window && Intl.NumberFormat) {
-    const locale = (store.getters.storeLocale || 'en-GB').replace('_', '-')
+    const locale = (getStore().storeLocale || 'en-GB').replace('_', '-')
     let formatter
     if (k === 1024) {
       // Handle byte values

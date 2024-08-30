@@ -144,6 +144,10 @@
               </div>
             </b-form-group>
 
+            <b-form-group :label="$t('formLabelSettingsPlotDisplayField')" :description="$t('formDescriptionSettingsPlotDisplayField')" label-for="plotDisplayField">
+              <b-form-select id="plotDisplayField" :options="plotDisplayFieldOptions" v-model="plotDisplayField" />
+            </b-form-group>
+
             <b-form-group :label="$t('formLabelSettingsCanvasShape')" :description="$t('formDescriptionSettingsCanvasShape')" label-for="canvasShape">
               <b-button-group class="w-100 canvas-shape">
                 <b-button variant="outline-secondary" :pressed="canvasShape === CANVAS_SHAPE_CIRCLE" @click="canvasShape = CANVAS_SHAPE_CIRCLE">
@@ -198,9 +202,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
-import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, MAIN_DISPLAY_MODE_AUTO, MAIN_DISPLAY_MODE_CANVAS_ONLY, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE } from '@/plugins/constants'
+import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, MAIN_DISPLAY_MODE_AUTO, MAIN_DISPLAY_MODE_CANVAS_ONLY, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE, PLOT_DISPLAY_FIELD_DISPLAY_NAME, PLOT_DISPLAY_FIELD_GERMPLASM, PLOT_DISPLAY_FIELD_REP, PLOT_DISPLAY_FIELD_NOTHING } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal.vue'
 import draggable from 'vuedraggable'
 import { categoricalColors } from '@/plugins/color'
@@ -234,6 +239,7 @@ export default {
       displayMinCellWidth: 4,
       categoryCountInline: 4,
       homeWidgetOrder: [{ id: 0, value: 'banners' }, { id: 1, value: 'trials' }],
+      plotDisplayField: 'displayName',
       canvasDensity: CANVAS_DENSITY_LOW,
       canvasShape: CANVAS_SHAPE_CIRCLE,
       canvasSize: CANVAS_SIZE_SMALL,
@@ -250,7 +256,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeLocale',
       'storeDarkMode',
       'storeHideCitationMessage',
@@ -260,6 +267,7 @@ export default {
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
       'storeRestrictInputToMarked',
+      'storePlotDisplayField',
       'storeCanvasDensity',
       'storeCanvasShape',
       'storeCanvasSize',
@@ -279,6 +287,21 @@ export default {
         }
       })
     },
+    plotDisplayFieldOptions: function () {
+      return [{
+        value: PLOT_DISPLAY_FIELD_DISPLAY_NAME,
+        text: this.$t('formSettingsOptionPlotDisplayFieldDisplayName')
+      }, {
+        value: PLOT_DISPLAY_FIELD_GERMPLASM,
+        text: this.$t('formSettingsOptionPlotDisplayFieldGermplasm')
+      }, {
+        value: PLOT_DISPLAY_FIELD_REP,
+        text: this.$t('formSettingsOptionPlotDisplayFieldRep')
+      }, {
+        value: PLOT_DISPLAY_FIELD_NOTHING,
+        text: this.$t('formSettingsOptionPlotDisplayFieldNothing')
+      }]
+    },
     homeWidgetOptions: function () {
       return {
         banners: {
@@ -296,82 +319,89 @@ export default {
   },
   watch: {
     locale: function (newValue) {
-      this.$store.dispatch('setLocale', newValue)
-      loadLanguageAsync(newValue)
-      emitter.emit('plausible-event', { key: 'locale-changed', props: { locale: newValue } })
+      loadLanguageAsync(newValue).then(() => {
+        this.$i18n.locale = newValue
+        this.coreStore.setLocale(newValue)
+
+        emitter.emit('plausible-event', { key: 'locale-changed', props: { locale: newValue } })
+      })
     },
     darkMode: function (newValue) {
-      this.$store.dispatch('setDarkMode', newValue)
+      this.coreStore.setDarkMode(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: newValue } })
     },
     hideCitationMessage: function (newValue) {
-      this.$store.dispatch('setHideCitationMessage', newValue)
+      this.coreStore.setHideCitationMessage(newValue)
       emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: newValue } })
     },
     highlightControls: function (newValue) {
-      this.$store.dispatch('setHighlightControls', newValue)
+      this.coreStore.setHighlightControls(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { highlightControls: newValue } })
     },
     displayMarkerIndicators: function (newValue) {
-      this.$store.dispatch('setDisplayMarkerIndicators', newValue)
+      this.coreStore.setDisplayMarkerIndicators(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMarkerIndicators: newValue } })
     },
     displayMinCellWidth: function (newValue) {
-      this.$store.dispatch('setDisplayMinCellWidth', newValue)
+      this.coreStore.setDisplayMinCellWidth(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMinCellWidth: newValue } })
     },
     categoryCountInline: function (newValue) {
-      this.$store.dispatch('setCategoryCountInline', newValue)
+      this.coreStore.setCategoryCountInline(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { categoryCountInline: newValue } })
     },
     gpsEnabled: function (newValue) {
-      this.$store.dispatch('setGpsEnabled', newValue)
+      this.coreStore.setGpsEnabled(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { gpsEnabled: newValue } })
     },
     voiceFeedbackEnabled: function (newValue) {
-      this.$store.dispatch('setVoiceFeedbackEnabled', newValue)
+      this.coreStore.setVoiceFeedbackEnabled(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { voiceFeedbackEnabled: newValue } })
     },
     restrictInputToMarked: function (newValue) {
-      this.$store.dispatch('setRestrictInputToMarked', newValue)
+      this.coreStore.setRestrictInputToMarked(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { restrictInputToMarked: newValue } })
     },
     navigationMode: function (newValue) {
-      this.$store.dispatch('setNavigationMode', newValue)
+      this.coreStore.setNavigationMode(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { navigationMode: newValue } })
     },
     traitColors: function (newValue) {
-      this.$store.dispatch('setTraitColors', newValue)
+      this.coreStore.setTraitColors(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { traitColors: newValue } })
     },
     canvasDensity: function (newValue) {
-      this.$store.dispatch('setCanvasDensity', newValue)
+      this.coreStore.setCanvasDensity(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasDensity: newValue } })
     },
+    plotDisplayField: function (newValue) {
+      this.coreStore.setPlotDisplayField(newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { plotDisplayField: newValue } })
+    },
     canvasShape: function (newValue) {
-      this.$store.dispatch('setCanvasShape', newValue)
+      this.coreStore.setCanvasShape(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasShape: newValue } })
     },
     canvasSize: function (newValue) {
-      this.$store.dispatch('setCanvasSize', newValue)
+      this.coreStore.setCanvasSize(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasSize: newValue } })
     },
     showFullTraitDescription: function (newValue) {
-      this.$store.dispatch('setShowFullTraitDescription', newValue)
+      this.coreStore.setShowFullTraitDescription(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { showFullTraitDescription: newValue } })
     },
     largeButtonsForIntTraits: function (newValue) {
-      this.$store.dispatch('setLargeButtonsForIntTraits', newValue)
+      this.coreStore.setLargeButtonsForIntTraits(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { largeButtonsForIntTraits: newValue } })
     },
     mainDisplayMode: function (newValue) {
-      this.$store.dispatch('setMainDisplayMode', newValue)
+      this.coreStore.setMainDisplayMode(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { mainDisplayMode: newValue } })
     },
     homeWidgetOrder: {
       deep: true,
       handler: function (newValue) {
-        this.$store.dispatch('setHomeWidgetOrder', newValue.map(o => o.value))
+        this.coreStore.setHomeWidgetOrder(newValue.map(o => o.value))
         emitter.emit('plausible-event', { key: 'settings-changed', props: { homeWidgetOrder: newValue.map(o => o.value) } })
       }
     }
@@ -411,6 +441,7 @@ export default {
       })
       this.navigationMode = this.storeNavigationMode
       this.traitColors = this.storeTraitColors
+      this.plotDisplayField = this.storePlotDisplayField
       this.canvasDensity = this.storeCanvasDensity
       this.canvasShape = this.storeCanvasShape
       this.canvasSize = this.storeCanvasSize

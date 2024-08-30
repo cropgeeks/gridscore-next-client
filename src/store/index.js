@@ -1,6 +1,5 @@
-import { createStore } from 'vuex'
-import createPersistedState from 'vuex-persistedstate'
-import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
+import { defineStore } from 'pinia'
+import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, PLOT_DISPLAY_FIELD_DISPLAY_NAME, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
 import { getTrialById } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
@@ -11,8 +10,8 @@ if (!name) {
   name = 'gridscore-next-' + window.location.pathname
 }
 
-export default createStore({
-  state: {
+export const coreStore = defineStore('core', {
+  state: () => ({
     uniqueClientId: null,
     runCount: 0,
     serverUrl: null,
@@ -29,6 +28,7 @@ export default createStore({
     navigationMode: NAVIGATION_MODE_DRAG,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     homeWidgetOrder: ['banners', 'trials'],
+    plotDisplayField: PLOT_DISPLAY_FIELD_DISPLAY_NAME,
     selectedTrialPerson: null,
     canvasDensity: CANVAS_DENSITY_MEDIUM,
     canvasShape: CANVAS_SHAPE_CIRCLE,
@@ -52,7 +52,7 @@ export default createStore({
     },
     changelogVersionNumber: null,
     deviceConfig: null
-  },
+  }),
   getters: {
     storeUniqueClientId: (state) => state.uniqueClientId,
     storeRunCount: (state) => state.runCount,
@@ -69,6 +69,7 @@ export default createStore({
     storeNavigationMode: (state) => state.navigationMode,
     storeTraitColors: (state) => state.traitColors,
     storeHomeWidgetOrder: (state) => state.homeWidgetOrder,
+    storePlotDisplayField: (state) => state.plotDisplayField,
     storeSelectedTrialPerson: (state) => state.selectedTrialPerson,
     storeLargeButtonsForIntTraits: (state) => state.largeButtonsForIntTraits,
     storeCanvasDensity: (state) => state.canvasDensity,
@@ -88,42 +89,42 @@ export default createStore({
     storeShowFullTraitDescription: (state) => state.showFullTraitDescription,
     storeCategoryCountInline: (state) => state.categoryCountInline
   },
-  mutations: {
-    ON_UNIQUE_CLIENT_ID_CHANGED: function (state, newUniqueClientId) {
-      state.uniqueClientId = newUniqueClientId
+  actions: {
+    setUniqueClientId: function (newUniqueClientId) {
+      this.uniqueClientId = newUniqueClientId
     },
-    ON_RUN_COUNT_CHANGED: function (state, newRunCount) {
-      state.runCount = newRunCount
+    setRunCount: function (newRunCount) {
+      this.runCount = newRunCount
     },
-    ON_HIDDEN_TRAITS_CHANGED: function (state, newHiddenTraits) {
-      state.hiddenTraits = newHiddenTraits
+    setHiddenTraits: function (newHiddenTraits) {
+      this.hiddenTraits = newHiddenTraits
     },
-    ON_SELECTED_TRIAL_PERSON_CHANGED: function (state, newSelectedTrialPerson) {
-      state.selectedTrialPerson = newSelectedTrialPerson
+    setSelectedTrialPerson: function (newSelectedTrialPerson) {
+      this.selectedTrialPerson = newSelectedTrialPerson
     },
-    ON_SELECTED_TRIAL_CHANGED: function (state, newSelectedTrial) {
+    setSelectedTrial: function (newSelectedTrial) {
       /* Remember to reset everything here */
-      const currentId = state.selectedTrial
-      state.selectedTrial = newSelectedTrial
-      state.hiddenTraits = []
+      const currentId = this.selectedTrial
+      this.selectedTrial = newSelectedTrial
+      this.hiddenTraits = []
       if (currentId !== newSelectedTrial) {
-        state.selectedTrialPerson = null
+        this.selectedTrialPerson = null
       }
 
       if (newSelectedTrial) {
         getTrialById(newSelectedTrial)
           .then(trial => {
             if (trial.brapiConfig) {
-              state.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(trial.brapiConfig)))
+              this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(trial.brapiConfig)))
             } else {
-              state.brapiConfig = {
+              this.brapiConfig = {
                 url: null,
                 token: null
               }
             }
           })
       } else {
-        state.brapiConfig = {
+        this.brapiConfig = {
           url: null,
           token: null
         }
@@ -131,198 +132,99 @@ export default createStore({
 
       emitter.emit('trial-selected')
     },
-    ON_MAIN_DISPLAY_MODE_CHANGED: function (state, newMainDisplayMode) {
-      state.mainDisplayMode = newMainDisplayMode
+    setMainDisplayMode: function (newMainDisplayMode) {
+      this.mainDisplayMode = newMainDisplayMode
     },
-    ON_DARK_MODE_CHANGED: function (state, newDarkMode) {
-      state.darkMode = newDarkMode
+    setDarkMode: function (newDarkMode) {
+      this.darkMode = newDarkMode
     },
-    ON_MAP_LAYER_CHANGED: function (state, newMapLayer) {
-      state.mapLayer = newMapLayer
+    setMapLayer: function (newMapLayer) {
+      this.mapLayer = newMapLayer
     },
-    ON_LOCALE_CHANGED: function (state, newLocale) {
-      state.locale = newLocale
+    setLocale: function (newLocale) {
+      this.locale = newLocale
     },
-    ON_HIDE_CITATION_MESSAGE_CHANGED: function (state, newHideCitationMessage) {
-      state.hideCitationMessage = newHideCitationMessage
+    setHideCitationMessage: function (newHideCitationMessage) {
+      this.hideCitationMessage = newHideCitationMessage
     },
-    ON_HIGHLIGHT_CONTROLS_CHANGED: function (state, newHighlightControls) {
-      state.highlightControls = newHighlightControls
+    setHighlightControls: function (newHighlightControls) {
+      this.highlightControls = newHighlightControls
     },
-    ON_DISPLAY_MARKER_INDICATORS_CHANGED: function (state, newDisplayMarkerIndicators) {
-      state.displayMarkerIndicators = newDisplayMarkerIndicators
+    setDisplayMarkerIndicators: function (newDisplayMarkerIndicators) {
+      this.displayMarkerIndicators = newDisplayMarkerIndicators
     },
-    ON_DISPLAY_MIN_CELL_WIDTH_CHANGED: function (state, newDisplayMinCellWidth) {
-      state.displayMinCellWidth = newDisplayMinCellWidth
+    setDisplayMinCellWidth: function (newDisplayMinCellWidth) {
+      this.displayMinCellWidth = newDisplayMinCellWidth
     },
-    ON_GPS_ENABLED_CHANGED: function (state, newGpsEnabled) {
-      state.gpsEnabled = newGpsEnabled
+    setGpsEnabled: function (newGpsEnabled) {
+      this.gpsEnabled = newGpsEnabled
     },
-    ON_VOICE_FEEDBACK_ENABLED_CHANGED: function (state, newVoiceFeedbackEnabled) {
-      state.voiceFeedbackEnabled = newVoiceFeedbackEnabled
+    setVoiceFeedbackEnabled: function (newVoiceFeedbackEnabled) {
+      this.voiceFeedbackEnabled = newVoiceFeedbackEnabled
     },
-    ON_CANVAS_DENSITY_CHANGED: function (state, newCanvasDensity) {
-      state.canvasDensity = newCanvasDensity
+    setCanvasDensity: function (newCanvasDensity) {
+      this.canvasDensity = newCanvasDensity
     },
-    ON_CANVAS_SHAPE_CHANGED: function (state, newCanvasShape) {
-      state.canvasShape = newCanvasShape
+    setCanvasShape: function (newCanvasShape) {
+      this.canvasShape = newCanvasShape
     },
-    ON_CANVAS_SIZE_CHANGED: function (state, newCanvasSize) {
-      state.canvasSize = newCanvasSize
+    setCanvasSize: function (newCanvasSize) {
+      this.canvasSize = newCanvasSize
     },
-    ON_TRIAL_LIST_MODE_CHANGED: function (state, newTrialListMode) {
-      state.trialListMode = newTrialListMode
+    setTrialListMode: function (newTrialListMode) {
+      this.trialListMode = newTrialListMode
     },
-    ON_TRIAL_LIST_ARRANGEMENT_CHANGED: function (state, newTrialListArrangement) {
-      state.trialListArrangement = newTrialListArrangement
+    setTrialListArrangement: function (newTrialListArrangement) {
+      this.trialListArrangement = newTrialListArrangement
     },
-    ON_RESTRICT_INPUT_TO_MARKED_CHANGED: function (state, newRestrictInputToMarked) {
-      state.restrictInputToMarked = newRestrictInputToMarked
+    setRestrictInputToMarked: function (newRestrictInputToMarked) {
+      this.restrictInputToMarked = newRestrictInputToMarked
     },
-    ON_NAVIGATION_MODE_CHANGED: function (state, newNavigationMode) {
-      state.navigationMode = newNavigationMode
+    setNavigationMode: function (newNavigationMode) {
+      this.navigationMode = newNavigationMode
     },
-    ON_TRAIT_COLORS_CHANGED: function (state, newTraitColors) {
-      state.traitColors = newTraitColors
+    setTraitColors: function (newTraitColors) {
+      this.traitColors = newTraitColors
     },
-    ON_HOME_WIDGET_ORDER_CHANGED: function (state, newHomeWidgetOrder) {
-      state.homeWidgetOrder = newHomeWidgetOrder
+    setHomeWidgetOrder: function (newHomeWidgetOrder) {
+      this.homeWidgetOrder = newHomeWidgetOrder
     },
-    ON_PLAUSIBLE_CHANGED: function (state, newPlausible) {
-      state.plausible = newPlausible
+    setPlotDisplayField: function (newPlotDisplayField) {
+      this.plotDisplayField = newPlotDisplayField
     },
-    ON_SERVER_URL_CHANGED: function (state, newServerUrl) {
-      state.serverUrl = newServerUrl
+    setPlausible: function (newPlausible) {
+      this.plausible = newPlausible
     },
-    ON_BRAPI_CONFIG_CHANGED: function (state, newBrapiConfig) {
+    setServerUrl: function (newServerUrl) {
+      this.serverUrl = newServerUrl
+    },
+    setBrapiConfig: function (newBrapiConfig) {
       if (newBrapiConfig) {
-        state.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(newBrapiConfig)))
+        this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(newBrapiConfig)))
       } else {
-        state.brapiConfig = {
+        this.brapiConfig = {
           url: null,
           token: null
         }
       }
     },
-    ON_CHANGELOG_VERSION_NUMBER_CHANGED: function (state, newChangelogVersionNumber) {
-      state.changelogVersionNumber = newChangelogVersionNumber
+    setChangelogVersionNumber: function (newChangelogVersionNumber) {
+      this.changelogVersionNumber = newChangelogVersionNumber
     },
-    ON_DEVICE_CONFIG_CHANGED: function (state, newDeviceConfig) {
-      state.deviceConfig = newDeviceConfig
+    setDeviceConfig: function (newDeviceConfig) {
+      this.deviceConfig = newDeviceConfig
     },
-    ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED: function (state, newShowFullTraitDescription) {
-      state.showFullTraitDescription = newShowFullTraitDescription
+    setShowFullTraitDescription: function (newShowFullTraitDescription) {
+      this.showFullTraitDescription = newShowFullTraitDescription
     },
-    ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED: function (state, newLargeButtonsForIntTraits) {
-      state.largeButtonsForIntTraits = newLargeButtonsForIntTraits
+    setLargeButtonsForIntTraits: function (newLargeButtonsForIntTraits) {
+      this.largeButtonsForIntTraits = newLargeButtonsForIntTraits
     },
-    ON_CATEGORY_COUNT_INLINE_CHANGED: function (state, newCategoryCountInline) {
-      state.categoryCountInline = newCategoryCountInline
+    setCategoryCountInline: function (newCategoryCountInline) {
+      this.categoryCountInline = newCategoryCountInline
     }
   },
-  actions: {
-    setUniqueClientId: function ({ commit }, uniqueClientId) {
-      commit('ON_UNIQUE_CLIENT_ID_CHANGED', uniqueClientId)
-    },
-    setRunCount: function ({ commit }, runCount) {
-      commit('ON_RUN_COUNT_CHANGED', runCount)
-    },
-    setHiddenTraits: function ({ commit }, hiddenTraits) {
-      commit('ON_HIDDEN_TRAITS_CHANGED', hiddenTraits)
-    },
-    setSelectedTrialPerson: function ({ commit }, selectedTrialPerson) {
-      commit('ON_SELECTED_TRIAL_PERSON_CHANGED', selectedTrialPerson)
-    },
-    setSelectedTrial: function ({ commit }, selectedTrial) {
-      commit('ON_SELECTED_TRIAL_CHANGED', selectedTrial)
-    },
-    setDarkMode: function ({ commit }, darkMode) {
-      commit('ON_DARK_MODE_CHANGED', darkMode)
-    },
-    setMapLayer: function ({ commit }, mapLayer) {
-      commit('ON_MAP_LAYER_CHANGED', mapLayer)
-    },
-    setLocale: function ({ commit }, locale) {
-      commit('ON_LOCALE_CHANGED', locale)
-    },
-    setHideCitationMessage: function ({ commit }, hideCitationMessage) {
-      commit('ON_HIDE_CITATION_MESSAGE_CHANGED', hideCitationMessage)
-    },
-    setHighlightControls: function ({ commit }, highlightControls) {
-      commit('ON_HIGHLIGHT_CONTROLS_CHANGED', highlightControls)
-    },
-    setDisplayMarkerIndicators: function ({ commit }, displayMarkerIndicators) {
-      commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', displayMarkerIndicators)
-    },
-    setDisplayMinCellWidth: function ({ commit }, displayMinCellWidth) {
-      commit('ON_DISPLAY_MIN_CELL_WIDTH_CHANGED', displayMinCellWidth)
-    },
-    setGpsEnabled: function ({ commit }, gpsEnabled) {
-      commit('ON_GPS_ENABLED_CHANGED', gpsEnabled)
-    },
-    setMainDisplayMode: function ({ commit }, mainDisplayMode) {
-      commit('ON_MAIN_DISPLAY_MODE_CHANGED', mainDisplayMode)
-    },
-    setCanvasDensity: function ({ commit }, canvasDensity) {
-      commit('ON_CANVAS_DENSITY_CHANGED', canvasDensity)
-    },
-    setCanvasShape: function ({ commit }, canvasShape) {
-      commit('ON_CANVAS_SHAPE_CHANGED', canvasShape)
-    },
-    setCanvasSize: function ({ commit }, canvasSize) {
-      commit('ON_CANVAS_SIZE_CHANGED', canvasSize)
-    },
-    setTrialListMode: function ({ commit }, trialListMode) {
-      commit('ON_TRIAL_LIST_MODE_CHANGED', trialListMode)
-    },
-    setTrialListArrangement: function ({ commit }, trialListArrangement) {
-      commit('ON_TRIAL_LIST_ARRANGEMENT_CHANGED', trialListArrangement)
-    },
-    setVoiceFeedbackEnabled: function ({ commit }, voiceFeedbackEnabled) {
-      commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', voiceFeedbackEnabled)
-    },
-    setRestrictInputToMarked: function ({ commit }, restrictInputToMarked) {
-      commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', restrictInputToMarked)
-    },
-    setNavigationMode: function ({ commit }, navigationMode) {
-      commit('ON_NAVIGATION_MODE_CHANGED', navigationMode)
-    },
-    setTraitColors: function ({ commit }, traitColors) {
-      commit('ON_TRAIT_COLORS_CHANGED', traitColors)
-    },
-    setHomeWidgetOrder: function ({ commit }, homeWidgetOrder) {
-      commit('ON_HOME_WIDGET_ORDER_CHANGED', homeWidgetOrder)
-    },
-    setPlausible: function ({ commit }, plausible) {
-      commit('ON_PLAUSIBLE_CHANGED', plausible)
-    },
-    setServerUrl: function ({ commit }, serverUrl) {
-      commit('ON_SERVER_URL_CHANGED', serverUrl)
-    },
-    setBrapiConfig: function ({ commit }, brapiConfig) {
-      commit('ON_BRAPI_CONFIG_CHANGED', brapiConfig)
-    },
-    setChangelogVersionNumber: function ({ commit }, changelogVersionNumber) {
-      commit('ON_CHANGELOG_VERSION_NUMBER_CHANGED', changelogVersionNumber)
-    },
-    setDeviceConfig: function ({ commit }, deviceConfig) {
-      commit('ON_DEVICE_CONFIG_CHANGED', deviceConfig)
-    },
-    setShowFullTraitDescription: function ({ commit }, showFullTraitDescription) {
-      commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', showFullTraitDescription)
-    },
-    setLargeButtonsForIntTraits: function ({ commit }, largeButtonsForIntTraits) {
-      commit('ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED', largeButtonsForIntTraits)
-    },
-    setCategoryCountInline: function ({ commit }, categoryCountInline) {
-      commit('ON_CATEGORY_COUNT_INLINE_CHANGED', categoryCountInline)
-    }
-  },
-  modules: {
-  },
-  plugins: [
-    createPersistedState({
-      key: name
-    })
-  ]
+  persist: {
+    key: name
+  }
 })

@@ -62,7 +62,7 @@
                 <IBiBookmarkCheckFill class="grid-icon bookmark" v-if="cell.isMarked" />
                 <IBiChatRightTextFill class="grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
                 <IBiCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
-                <div class="cell-text my-1">{{ cell.displayName }}</div>
+                <div class="cell-text my-1">{{ cell[storePlotDisplayField] }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0">
                     <template v-if="trait.allowRepeats">
@@ -93,7 +93,8 @@
 
 <script>
 import { toRef } from 'vue'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { CANVAS_DENSITY_HIGH, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_LOW, CANVAS_SHAPE_SQUARE, CELL_CATEGORY_CONTROL, NAVIGATION_MODE_JUMP, CANVAS_SIZE_SMALL, CANVAS_SIZE_LARGE, CANVAS_SIZE_MEDIUM } from '@/plugins/constants'
@@ -125,7 +126,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeHiddenTraits',
       'storeSelectedTrial',
       'storeDisplayMinCellWidth',
@@ -135,7 +137,8 @@ export default {
       'storeNavigationMode',
       'storeCanvasSize',
       'storeCanvasShape',
-      'storeCanvasDensity'
+      'storeCanvasDensity',
+      'storePlotDisplayField'
     ]),
     cellClass: function () {
       return {
@@ -348,7 +351,7 @@ export default {
       return ((row % 2 === 0) ? 1 : 0) + ((column % 2 === 0) ? 1 : 0)
     },
     disableMarkingRestriction: function () {
-      this.$store.dispatch('setRestrictInputToMarked', false)
+      this.coreStore.setRestrictInputToMarked(false)
     },
     plotClicked: function (row, column) {
       if (this.storeRestrictInputToMarked) {
@@ -432,7 +435,7 @@ export default {
         const circleRows = Math.ceil(this.visibleTraits.length / circlesPerRow)
 
         const heightProportion = this.$refs.wrapper.clientHeight / this.trial.layout.rows
-        const textHeight = 30
+        const textHeight = this.storePlotDisplayField === null ? 0 : 30
         let tempHeight = Math.max(textHeight + circleRows * (this.circleDiameter + padding) + padding, heightProportion)
 
         if (this.visibleTraits.length === 1) {

@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 import exifr from 'exifr/dist/lite.umd.js'
 import { getColumnLabel, getRowLabel, toLocalDateTimeString, truncateAfterWords } from '@/plugins/misc'
@@ -95,7 +96,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeGpsEnabled',
       'storeDeviceConfig'
     ]),

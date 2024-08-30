@@ -25,6 +25,9 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+import { coreStore } from '@/store'
+
 import { TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER } from '@/plugins/constants'
 import TrialCard from '@/components/TrialCard.vue'
 
@@ -47,6 +50,7 @@ export default {
     }
   },
   computed: {
+    ...mapStores(coreStore),
     localPermission: function () {
       if (this.localPermissionType) {
         return this.getPermissionText(this.localPermissionType)
@@ -64,7 +68,7 @@ export default {
   },
   methods: {
     loadTrial: function () {
-      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', this.trial.localId)
+      this.coreStore.setSelectedTrial(this.trial.localId)
       this.hide()
       this.$router.push({ name: 'data-entry' })
     },

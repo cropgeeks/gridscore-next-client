@@ -554,6 +554,21 @@
         "type": "new",
         "title": "Trait deletion",
         "text": "It is now possible for trial owners to delete a trait even after the trial has been shared. This operation should be well considered as it has far-reaching consequences. Any data collected for this trait on any other device will be lost once they synchronize."
+      },
+      {
+        "type": "new",
+        "title": "Germplasm display",
+        "text": "Added options to choose how germplasm is displayed on the main data input, e.g. germplasm identifier, rep, both or none."
+      },
+      {
+        "type": "new",
+        "title": "BrAPI trial creation",
+        "text": "Added functionality to create a GridScore trial based on a Breeding API (BrAPI) study."
+      },
+      {
+        "type": "new",
+        "title": "Remote trials",
+        "text": "Allowed sharing of GridScore trials with a remote self-hosted GridScore server instead of the default one."
       }
     ]
   }

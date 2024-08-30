@@ -23,7 +23,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialDataCached } from '@/plugins/datastore'
 import SearchMatchModal from '@/components/modals/SearchMatchModal.vue'
 
@@ -46,7 +47,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeGpsEnabled'
     ]),
     hasMarkedPlots: function () {

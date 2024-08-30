@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { invertHex, toLocalDateString } from '@/plugins/misc'
 import { categoricalColors } from '@/plugins/color'
@@ -62,7 +63,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeLocale',
       'storeHighlightControls'

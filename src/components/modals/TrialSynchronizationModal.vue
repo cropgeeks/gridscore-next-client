@@ -193,6 +193,9 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+import { coreStore } from '@/store'
+
 import TraitHeading from '@/components/TraitHeading.vue'
 
 import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
@@ -220,18 +223,21 @@ export default {
       transaction: null
     }
   },
+  computed: {
+    ...mapStores(coreStore)
+  },
   methods: {
     askToSynchronize: function () {
       if (!this.trial.shareCodes.ownerCode && !this.trial.shareCodes.editorCode) {
         emitter.emit('show-loading', true)
-        getTrialByCode(this.trial.shareCodes.viewerCode)
+        getTrialByCode((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.shareCodes.viewerCode)
           .then(result => {
             return deleteTrial(this.trial.localId)
               .then(() => {
                 return addTrial(result)
               })
               .then(localId => {
-                this.$store.dispatch('setSelectedTrial', localId)
+                this.coreStore.setSelectedTrial(localId)
                 emitter.emit('trials-updated')
                 emitter.emit('show-loading', false)
                 emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })
@@ -264,7 +270,7 @@ export default {
     },
     synchronize: function () {
       emitter.emit('show-loading', true)
-      synchronizeTrial(this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
+      synchronizeTrial((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
         .then(result => {
           if (this.trial.group && this.trial.group.name) {
             result.group = {
@@ -279,7 +285,7 @@ export default {
               return addTrial(result)
             })
             .then(localId => {
-              this.$store.dispatch('setSelectedTrial', localId)
+              this.coreStore.setSelectedTrial(localId)
               emitter.emit('trials-updated')
               emitter.emit('show-loading', false)
               emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })

@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 import Plotly from 'plotly.js/lib/core'
 import heatmap from 'plotly.js/lib/heatmap'
@@ -28,7 +29,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeLocale',
       'storeDarkMode'
     ]),

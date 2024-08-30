@@ -9,7 +9,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { plotInfoToGeoJson } from '@/plugins/location'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
@@ -44,7 +45,8 @@ export default {
     PlotDataSection
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial',
       'storeDarkMode',
       'storeMapLayer',
@@ -132,13 +134,13 @@ export default {
       this.map.on('baselayerchange', e => {
         switch (e.name) {
           case 'Theme-based':
-            this.$store.dispatch('setMapLayer', 'theme')
+            this.coreStore.setMapLayer('theme')
             break
           case 'OpenStreetMap':
-            this.$store.dispatch('setMapLayer', 'osm')
+            this.coreStore.setMapLayer('osm')
             break
           case 'Esri WorldImagery':
-            this.$store.dispatch('setMapLayer', 'satellite')
+            this.coreStore.setMapLayer('satellite')
             break
         }
       })

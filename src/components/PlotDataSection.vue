@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 
@@ -63,7 +64,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeHighlightControls'
     ]),
     isControl: function () {

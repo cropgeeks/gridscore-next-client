@@ -44,7 +44,7 @@
 import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal.vue'
 import FielDBookInputModal from '@/components/modals/FielDBookInputModal.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { getColumnLabel, getRowLabel } from '@/plugins/misc'
+import { getColumnIndex, getColumnLabel, getRowLabel } from '@/plugins/misc'
 
 export default {
   components: {
@@ -130,11 +130,15 @@ export default {
       for (let row = 0; row < this.layout.rows; row++) {
         for (let column = 0; column < this.layout.columns; column++) {
           const tableRep = document.querySelector(`#rep-${row}-${column}`).value
+          const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
+          const tableControl = document.querySelector(`#control-${row}-${column}`).checked
 
           if (!this.germplasmMap[`${row}|${column}`]) {
             this.germplasmMap[`${row}|${column}`] = {
               germplasm: null,
-              rep: null
+              rep: null,
+              control: false,
+              brapiId: null
             }
           }
 
@@ -142,6 +146,8 @@ export default {
           document.querySelector(`#germplasm-${row}-${column}`).value = parsedGrid[row][column]
           // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
           this.germplasmMap[`${row}|${column}`].rep = tableRep
+          this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
+          this.germplasmMap[`${row}|${column}`].control = tableControl
         }
       }
 
@@ -151,17 +157,23 @@ export default {
       for (let row = 0; row < this.layout.rows; row++) {
         for (let column = 0; column < this.layout.columns; column++) {
           const tableGermplasm = document.querySelector(`#germplasm-${row}-${column}`).value
+          const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
+          const tableControl = document.querySelector(`#control-${row}-${column}`).checked
 
           if (!this.germplasmMap[`${row}|${column}`]) {
             this.germplasmMap[`${row}|${column}`] = {
               germplasm: null,
-              rep: null
+              rep: null,
+              control: false,
+              brapiId: null
             }
           }
 
           // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
           this.germplasmMap[`${row}|${column}`].germplasm = tableGermplasm
+          this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
           this.germplasmMap[`${row}|${column}`].rep = parsedGrid[row][column]
+          this.germplasmMap[`${row}|${column}`].control = tableControl
           document.querySelector(`#rep-${row}-${column}`).value = parsedGrid[row][column]
         }
       }
@@ -221,7 +233,7 @@ export default {
         this.createElement(rowElement, 'th').innerHTML = displayRowIndex
 
         for (let column = 0; column < this.layout.columns; column++) {
-          const displayColumnIndex = this.layout.columnOrder === DISPLAY_ORDER_LEFT_TO_RIGHT ? column + 1 : (this.layout.columns - column)
+          const displayColumnIndex = getColumnLabel(this.layout, column)
           // New cell
           const cell = this.createElement(rowElement, 'td')
           cell.id = `cell-${row}-${column}`
@@ -242,14 +254,22 @@ export default {
           // Rep input
           const rep = this.createElement(cell, 'input')
           rep.id = `rep-${row}-${column}`
-          // rep.type = 'number'
           rep.className = 'grid-input'
           rep.placeholder = 'Rep'
-          // rep.min = 1
           if (dataCell) {
             rep.value = dataCell.rep
           } else {
             rep.value = ''
+          }
+          // BrapiId input
+          const brapiId = this.createElement(cell, 'input')
+          brapiId.id = `brapiId-${row}-${column}`
+          brapiId.className = 'grid-input d-none'
+          brapiId.placeholder = 'BrAPI DB Id'
+          if (dataCell) {
+            brapiId.value = dataCell.brapiId
+          } else {
+            brapiId.value = ''
           }
           // Add the control
           const container = this.createElement(cell, 'div')
@@ -278,12 +298,14 @@ export default {
           const germplasm = document.querySelector(`#germplasm-${row}-${column}`).value
           const rep = document.querySelector(`#rep-${row}-${column}`).value
           const control = document.querySelector(`#control-${row}-${column}`).checked
+          const brapiId = document.querySelector(`#brapiId-${row}-${column}`).value
 
           if (germplasm !== '' || rep !== '') {
             tempMap[`${row}|${column}`] = {
               germplasm: germplasm === '' ? null : germplasm.trim(),
               rep: rep === '' ? null : rep.trim(),
-              control
+              control,
+              brapiId: brapiId === '' ? null : brapiId
             }
           }
         }

@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 import TraitInput from '@/components/TraitInput.vue'
@@ -89,7 +90,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeCanvasShape',
       'storeShowFullTraitDescription'
     ]),

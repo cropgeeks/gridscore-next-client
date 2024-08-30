@@ -5,6 +5,7 @@
               :cancelTitle="'buttonCancel'"
               :okDisabled="!selectedTraits || selectedTraits.length < 1"
               size="lg"
+              preventHide
               @submit="onSubmit"
               no-fade
               @brapi-settings-changed="getTraits">
@@ -41,6 +42,9 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+import { coreStore } from '@/store'
+
 import BrapiModal from '@/components/modals/BrapiModal.vue'
 
 import { brapiGetVariables, brapiDefaultCatchHandler } from '@/plugins/brapi'
@@ -65,6 +69,7 @@ export default {
     }
   },
   computed: {
+    ...mapStores(coreStore),
     traitOptions: function () {
       if (this.traits) {
         return this.traits.concat()
@@ -162,7 +167,7 @@ export default {
         return
       }
 
-      this.$store.dispatch('setBrapiConfig', this.brapiConfig)
+      this.coreStore.setBrapiConfig(this.brapiConfig)
 
       this.$emit('traits-selected', this.selectedTraits)
 

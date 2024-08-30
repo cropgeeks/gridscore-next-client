@@ -4,14 +4,16 @@
 
 <script>
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 const canvas = document.createElement('canvas')
 let ctx = canvas.getContext('2d', { alpha: false })
 
 export default {
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeCanvasShape'
     ]),

@@ -17,7 +17,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import FieldHeatmap from '@/components/charts/FieldHeatmap.vue'
 import GermplasmRepHeatmap from '@/components/charts/GermplasmRepHeatmap.vue'
 import { getTrialById } from '@/plugins/idb'
@@ -28,7 +29,8 @@ export default {
     GermplasmRepHeatmap
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial'
     ]),
     cols: function () {

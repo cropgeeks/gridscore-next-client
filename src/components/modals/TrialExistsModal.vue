@@ -13,6 +13,9 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+import { coreStore } from '@/store'
+
 import TrialCard from '@/components/TrialCard.vue'
 
 export default {
@@ -25,9 +28,12 @@ export default {
       default: () => null
     }
   },
+  computed: {
+    ...mapStores(coreStore)
+  },
   methods: {
     loadTrial: function () {
-      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', this.trial.localId)
+      this.coreStore.setSelectedTrial(this.trial.localId)
       this.hide()
       this.$router.push({ name: 'data-entry' })
     },

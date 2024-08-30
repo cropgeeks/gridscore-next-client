@@ -3,6 +3,8 @@
            :ok-title="$t(okTitle)"
            :cancel-title="$t(cancelTitle)"
            :ok-disabled="okDisabled"
+           class="brapi-modal"
+           @shown="update"
            scrollable
            no-fade
            @ok="$emit('submit')"
@@ -38,7 +40,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { updateTrialBrapiConfig } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
@@ -80,22 +83,28 @@ export default {
     errorMessage: {
       type: String,
       default: null
+    },
+    preventHide: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
-    /** Mapgetters exposing the store configuration */
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeBrapiConfig',
       'storeSelectedTrial'
     ])
   },
   methods: {
+    update: function () {
+      this.brapiUrl = this.storeBrapiConfig && this.storeBrapiConfig.url ? this.storeBrapiConfig.url : null
+      this.brapiToken = this.storeBrapiConfig && this.storeBrapiConfig.token ? this.storeBrapiConfig.token : null
+    },
     /**
      * Shows the modal and gets the current BrAPI URL from the configuration
      */
     show: function () {
-      this.brapiUrl = this.storeBrapiConfig && this.storeBrapiConfig.url ? this.storeBrapiConfig.url : null
-      this.brapiToken = this.storeBrapiConfig && this.storeBrapiConfig.token ? this.storeBrapiConfig.token : null
       this.$nextTick(() => this.$refs.brapiModal.show())
     },
     /**
@@ -118,18 +127,22 @@ export default {
         url: this.brapiUrl,
         token: this.brapiToken
       }
-      this.$store.commit('ON_BRAPI_CONFIG_CHANGED', config)
+      this.coreStore.setBrapiConfig(config)
 
       if (this.storeSelectedTrial) {
         updateTrialBrapiConfig(this.storeSelectedTrial, config)
           .then(() => {
             this.$emit('brapi-settings-changed', config)
             emitter.emit('trial-selected')
-            // this.hide()
+            if (!this.preventHide) {
+              this.hide()
+            }
           })
       } else {
         this.$emit('brapi-settings-changed', config)
-        // this.hide()
+        if (!this.preventHide) {
+          this.hide()
+        }
       }
     }
   }
@@ -137,5 +150,10 @@ export default {
 </script>
 
 <style>
-
+.brapi-modal {
+  z-index: 1500 !important;
+}
+.brapi-modal .modal-dialog {
+  z-index: 1501 !important;
+}
 </style>

@@ -17,7 +17,8 @@
 
 <script>
 import { toLocalDateString, toLocalDateTimeString } from '@/plugins/misc'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import Plotly from 'plotly.js/lib/core'
 import bar from 'plotly.js/lib/bar'
 
@@ -40,7 +41,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode'
     ]),
     safeTrialName: function () {

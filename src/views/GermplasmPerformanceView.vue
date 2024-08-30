@@ -26,7 +26,8 @@
 
 <script>
 import { getTrialById } from '@/plugins/idb'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialDataCached } from '@/plugins/datastore'
 import Scale from '@/components/charts/Scale.vue'
 import GermplasmPerformanceBarChart from '@/components/charts/GermplasmPerformanceBarChart.vue'
@@ -51,7 +52,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial'
     ]),
     numericTraits: function () {

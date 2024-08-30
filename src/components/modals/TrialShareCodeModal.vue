@@ -31,12 +31,23 @@
             </b-col>
           </b-row>
 
-          <StyledQRCode class="mt-3" :text="selectedShareCode" v-if="selectedShareCode" />
+          <StyledQRCode class="mt-3" :baseUrl="trial.remoteUrl || null" :text="selectedShareCode" v-if="selectedShareCode" />
         </div>
         <div v-else>
           <p v-html="$t('modalTextTrialShare')" />
 
-          <b-button @click="getShareCodes" :disabled="isOnline === false" variant="primary"><IBiQrCodeScan /> {{ $t('buttonGenerateShareCodes') }}</b-button>
+          <div class="mb-3">
+            <b-form-checkbox v-model="shareWithRemote">{{ $t('formCheckboxShareWithRemote') }}</b-form-checkbox>
+
+            <b-form-group v-if="shareWithRemote" :label="$t('formLabelTrialShareRemoteUrl')" label-for="remoteUrl">
+              <b-form-input v-model="remoteUrl" id="remoteUrl" />
+              <template #description>
+                <span v-html="$t('formDescriptionTrialShareRemoteUrl')" />
+              </template>
+            </b-form-group>
+          </div>
+
+          <b-button @click="getShareCodes" :disabled="isOnline === false || buttonDisabled === true" variant="primary"><IBiQrCodeScan /> {{ $t('buttonGenerateShareCodes') }}</b-button>
         </div>
       </div>
     </UseOnline>
@@ -70,13 +81,26 @@ export default {
       selectedShareCode: null,
       TRIAL_STATE_EDITOR,
       TRIAL_STATE_OWNER,
-      TRIAL_STATE_VIEWER
+      TRIAL_STATE_VIEWER,
+      shareWithRemote: false,
+      remoteUrl: null
+    }
+  },
+  computed: {
+    buttonDisabled: function () {
+      const remoteUrlValid = this.remoteUrl !== undefined && this.remoteUrl !== null && this.remoteUrl !== ''
+
+      if (this.shareWithRemote) {
+        return !remoteUrlValid
+      } else {
+        return false
+      }
     }
   },
   methods: {
     getShareCodes: function () {
       emitter.emit('show-loading', true)
-      shareTrial(this.trial.localId)
+      shareTrial(this.shareWithRemote ? this.remoteUrl : null, this.trial.localId)
         .then(() => emitter.emit('plausible-event', { key: 'trial-shared' }))
         .catch(error => {
           console.error(error)

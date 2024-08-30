@@ -35,10 +35,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 import HomeBanners from '@/components/HomeBanners.vue'
 import TrialSelector from '@/components/TrialSelector.vue'
+import { coreStore } from '@/store'
+import { mapState, mapStores } from 'pinia'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -60,7 +60,8 @@ export default {
     TrialSelector
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeHideCitationMessage',
       'storeHomeWidgetOrder',
       'storeDarkMode'
@@ -75,7 +76,7 @@ export default {
   },
   methods: {
     hideCitationConfirm: function () {
-      this.$store.dispatch('setHideCitationMessage', true)
+      this.coreStore.setHideCitationMessage(true)
 
       emitter.emit('plausible-event', { key: 'citation-hidden', props: { hidden: true } })
     },

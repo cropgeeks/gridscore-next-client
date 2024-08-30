@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import PersonTypeIcon from '@/components/icons/PersonTypeIcon.vue'
 import { PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_QUALITY_CHECKER, PERSON_TYPE_DATA_SUBMITTER } from '@/plugins/constants'
 
@@ -57,7 +58,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeTraitColors',
       'storeSelectedTrialPerson'
     ]),
@@ -100,7 +102,7 @@ export default {
     },
     selectPerson: function (person) {
       this.$emit('personSelected', person)
-      this.$store.dispatch('setSelectedTrialPerson', person.id)
+      this.coreStore.setSelectedTrialPerson(person.id)
     }
   },
   mounted: function () {

@@ -78,7 +78,8 @@
 
 <script>
 import ChangelogModal from '@/components/modals/ChangelogModal.vue'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { gridScoreVersion } from '@/plugins/constants'
 import emitter from 'tiny-emitter/instance'
 
@@ -130,7 +131,8 @@ export default {
   },
   computed: {
     /** Mapgetters exposing the store configuration */
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeDeviceConfig'
     ]),

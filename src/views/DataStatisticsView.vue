@@ -105,7 +105,8 @@
 <script>
 import DataCalendarHeatmapChart from '@/components/charts/DataCalendarHeatmapChart.vue'
 
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialData, getTrials } from '@/plugins/idb'
 import { toLocalDateString } from '@/plugins/misc'
 import { convexHull, geodesicArea } from '@/plugins/location'
@@ -146,7 +147,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeMapLayer',
       'storeTraitColors',
@@ -522,13 +524,13 @@ export default {
         map.on('baselayerchange', e => {
           switch (e.name) {
             case 'Theme-based':
-              this.$store.dispatch('setMapLayer', 'theme')
+              this.coreStore.setMapLayer('theme')
               break
             case 'OpenStreetMap':
-              this.$store.dispatch('setMapLayer', 'osm')
+              this.coreStore.setMapLayer('osm')
               break
             case 'Esri WorldImagery':
-              this.$store.dispatch('setMapLayer', 'satellite')
+              this.coreStore.setMapLayer('satellite')
               break
           }
         })

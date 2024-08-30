@@ -1,18 +1,27 @@
 import { openDB } from 'idb'
 import { getId } from '@/plugins/id'
-import store from '@/store'
+import { coreStore } from '@/store'
 import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT } from '@/plugins/constants'
 import { trialLayoutToPlots } from './location'
 import { getColumnLabel, getRowLabel } from './misc'
 
+let store
+
 let db
+
+const getStore = () => {
+  if (!store) {
+    store = coreStore()
+  }
+  return store
+}
 
 const getDb = async () => {
   return new Promise((resolve, reject) => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 5, {
+      openDB('gridscore-next-' + window.location.pathname, 6, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -60,6 +69,10 @@ const getDb = async () => {
           if (oldVersion < 5) {
             trials = transaction.objectStore('trials')
             trials.createIndex('people', 'people', { unique: false })
+          }
+          if (oldVersion < 6) {
+            trials = transaction.objectStore('trials')
+            trials.createIndex('remoteUrl', 'remoteUrl', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -123,7 +136,7 @@ const getTrials = async () => {
 
             if (trial.traits) {
               trial.traits.forEach((t, i) => {
-                t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
+                t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
                 t.progress = 0
                 t.editable = true
                 if (t.timeframe && t.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE) {
@@ -424,7 +437,7 @@ const getTrialById = async (localId) => {
 
     if (trial.traits) {
       trial.traits.forEach((t, i) => {
-        t.color = store.getters.storeTraitColors[i % store.getters.storeTraitColors.length]
+        t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
         t.progress = 0
         t.editable = true
         if (t.timeframe && t.timeframe.type === TRAIT_TIMEFRAME_TYPE_ENFORCE) {
@@ -475,7 +488,7 @@ const getTrialById = async (localId) => {
   }
 
   if (trial) {
-    store.dispatch('setBrapiConfig', trial.brapiConfig)
+    getStore().setBrapiConfig(trial.brapiConfig)
   }
 
   if (trial) {

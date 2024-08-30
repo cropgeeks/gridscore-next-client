@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapStores, mapState } from 'pinia'
+import { coreStore } from '@/store'
 
 import deDE from '@/plugins/changelog/de_DE.json'
 import enGB from '@/plugins/changelog/en_GB.json'
@@ -66,7 +67,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeLocale'
     ]),
     badge: function () {

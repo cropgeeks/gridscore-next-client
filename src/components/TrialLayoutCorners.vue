@@ -54,7 +54,8 @@
 <script>
 import GpsInput from '@/components/GpsInput.vue'
 
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
@@ -97,7 +98,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeMapLayer'
     ]),
@@ -288,13 +290,13 @@ export default {
       this.map.on('baselayerchange', e => {
         switch (e.name) {
           case 'Theme-based':
-            this.$store.dispatch('setMapLayer', 'theme')
+            this.coreStore.setMapLayer('theme')
             break
           case 'OpenStreetMap':
-            this.$store.dispatch('setMapLayer', 'osm')
+            this.coreStore.setMapLayer('osm')
             break
           case 'Esri WorldImagery':
-            this.$store.dispatch('setMapLayer', 'satellite')
+            this.coreStore.setMapLayer('satellite')
             break
         }
       })

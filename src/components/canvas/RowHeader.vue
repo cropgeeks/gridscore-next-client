@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTouchPosition } from '@/plugins/touchinput'
 import { getRowLabel } from '@/plugins/misc'
 
@@ -35,7 +36,8 @@ export default {
   },
   computed: {
     /** Mapgetters exposing the store configuration */
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode'
     ]),
     fillStyleMarked: function () {

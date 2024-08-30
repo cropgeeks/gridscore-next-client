@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { extendTrialPeriod } from '@/plugins/api'
 import { TRIAL_STATE_VIEWER, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER } from '@/plugins/constants'
 
@@ -46,7 +47,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeServerUrl'
     ]),
     shareCode: function () {
@@ -69,7 +71,7 @@ export default {
     },
     sendCaptcha: function () {
       emitter.emit('show-loading', true)
-      extendTrialPeriod(this.shareCode, { captcha: this.captcha })
+      extendTrialPeriod((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.shareCode, { captcha: this.captcha })
         .then(() => {
           this.hide()
           emitter.emit('trials-updated')

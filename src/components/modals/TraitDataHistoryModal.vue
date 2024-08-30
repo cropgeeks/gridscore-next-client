@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import TraitInput from '@/components/TraitInput.vue'
 import { changeTrialsData } from '@/plugins/idb'
 import { isProxy, toRaw } from 'vue'
@@ -84,7 +85,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrialPerson'
     ])
   },

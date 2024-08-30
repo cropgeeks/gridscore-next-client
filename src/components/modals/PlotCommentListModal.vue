@@ -75,7 +75,8 @@
 
 <script>
 import { deletePlotComment } from '@/plugins/idb'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -99,7 +100,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial'
     ]),
     orderByOptions: function () {

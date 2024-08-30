@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_DENSITY_LOW, NAVIGATION_MODE_DRAG, NAVIGATION_MODE_JUMP, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE, MAIN_DISPLAY_MODE_CANVAS_ONLY, MAIN_DISPLAY_MODE_AUTO } from '@/plugins/constants'
@@ -55,7 +56,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeLocale',
       'storeDarkMode',
       'storeHighlightControls',
@@ -74,7 +76,8 @@ export default {
       'storeShowFullTraitDescription',
       'storeLargeButtonsForIntTraits',
       'storeCategoryCountInline',
-      'storeMainDisplayMode'
+      'storeMainDisplayMode',
+      'storePlotDisplayField'
     ])
   },
   methods: {
@@ -88,97 +91,100 @@ export default {
         }
 
         if (parsed.lc) {
-          this.$store.commit('ON_LOCALE_CHANGED', parsed.lc)
+          this.coreStore.setLocale(parsed.lc)
           loadLanguageAsync(parsed.lc)
         }
         if (parsed.hw) {
-          this.$store.commit('ON_HOME_WIDGET_ORDER_CHANGED', parsed.hw)
+          this.coreStore.setHomeWidgetOrder(parsed.hw)
         }
         if (parsed.dm === 1) {
-          this.$store.commit('ON_DARK_MODE_CHANGED', true)
+          this.coreStore.setDarkMode(true)
         } else if (parsed.dm === 0) {
-          this.$store.commit('ON_DARK_MODE_CHANGED', false)
+          this.coreStore.setDarkMode(false)
         }
         if (parsed.mi === 1) {
-          this.$store.commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', true)
+          this.coreStore.setDisplayMarkerIndicators(true)
         } else if (parsed.mi === 0) {
-          this.$store.commit('ON_DISPLAY_MARKER_INDICATORS_CHANGED', false)
+          this.coreStore.setDisplayMarkerIndicators(false)
         }
         if (parsed.cw !== undefined && parsed.cw !== null) {
-          this.$store.commit('ON_DISPLAY_MIN_CELL_WIDTH_CHANGED', +parsed.cw)
+          this.coreStore.setDisplayMinCellWidth(+parsed.cw)
         }
         if (parsed.cc !== undefined && parsed.cc !== null) {
-          this.$store.commit('ON_CATEGORY_COUNT_INLINE_CHANGED', +parsed.cc)
+          this.coreStore.setCategoryCountInline(+parsed.cc)
         }
         if (parsed.ge === 1) {
-          this.$store.commit('ON_GPS_ENABLED_CHANGED', true)
+          this.coreStore.setGpsEnabled(true)
         } else if (parsed.ge === 0) {
-          this.$store.commit('ON_GPS_ENABLED_CHANGED', false)
+          this.coreStore.setGpsEnabled(false)
         }
         if (parsed.vf === 1) {
-          this.$store.commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', true)
+          this.coreStore.setVoiceFeedbackEnabled(true)
         } else if (parsed.vf === 0) {
-          this.$store.commit('ON_VOICE_FEEDBACK_ENABLED_CHANGED', false)
+          this.coreStore.setVoiceFeedbackEnabled(false)
         }
         if (parsed.hc === 1) {
-          this.$store.commit('ON_HIDE_CITATION_MESSAGE_CHANGED', true)
+          this.coreStore.setHideCitationMessage(true)
         } else if (parsed.hc === 0) {
-          this.$store.commit('ON_HIDE_CITATION_MESSAGE_CHANGED', false)
+          this.coreStore.setHideCitationMessage(false)
         }
         if (parsed.hi === 1) {
-          this.$store.commit('ON_HIGHLIGHT_CONTROLS_CHANGED', true)
+          this.coreStore.setHighlightControls(true)
         } else if (parsed.hi === 0) {
-          this.$store.commit('ON_HIGHLIGHT_CONTROLS_CHANGED', false)
+          this.coreStore.setHighlightControls(false)
         }
         if (parsed.rm === 1) {
-          this.$store.commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', true)
+          this.coreStore.setRestrictInputToMarked(true)
         } else if (parsed.rm === 0) {
-          this.$store.commit('ON_RESTRICT_INPUT_TO_MARKED_CHANGED', false)
+          this.coreStore.setRestrictInputToMarked(false)
         }
         if (parsed.nm === 1) {
-          this.$store.commit('ON_NAVIGATION_MODE_CHANGED', NAVIGATION_MODE_DRAG)
+          this.coreStore.setNavigationMode(NAVIGATION_MODE_DRAG)
         } else if (parsed.nm === 0) {
-          this.$store.commit('ON_NAVIGATION_MODE_CHANGED', NAVIGATION_MODE_JUMP)
+          this.coreStore.setNavigationMode(NAVIGATION_MODE_JUMP)
         }
         if (parsed.cd === 0) {
-          this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_HIGH)
+          this.coreStore.setCanvasDensity(CANVAS_DENSITY_HIGH)
         } else if (parsed.cd === 1) {
-          this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_MEDIUM)
+          this.coreStore.setCanvasDensity(CANVAS_DENSITY_MEDIUM)
         } else if (parsed.cd === 2) {
-          this.$store.commit('ON_CANVAS_DENSITY_CHANGED', CANVAS_DENSITY_LOW)
+          this.coreStore.setCanvasDensity(CANVAS_DENSITY_LOW)
         }
         if (parsed.cs === 0) {
-          this.$store.commit('ON_CANVAS_SHAPE_CHANGED', CANVAS_SHAPE_CIRCLE)
+          this.coreStore.setCanvasShape(CANVAS_SHAPE_CIRCLE)
         } else if (parsed.cs === 1) {
-          this.$store.commit('ON_CANVAS_SHAPE_CHANGED', CANVAS_SHAPE_SQUARE)
+          this.coreStore.setCanvasShape(CANVAS_SHAPE_SQUARE)
         }
         if (parsed.sz === 0) {
-          this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_SMALL)
+          this.coreStore.setCanvasSize(CANVAS_SIZE_SMALL)
         } else if (parsed.sz === 1) {
-          this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_MEDIUM)
+          this.coreStore.setCanvasSize(CANVAS_SIZE_MEDIUM)
         } else if (parsed.sz === 2) {
-          this.$store.commit('ON_CANVAS_SIZE_CHANGED', CANVAS_SIZE_LARGE)
+          this.coreStore.setCanvasSize(CANVAS_SIZE_LARGE)
         }
         if (parsed.md === 0) {
-          this.$store.commit('ON_MAIN_DISPLAY_MODE_CHANGED', MAIN_DISPLAY_MODE_AUTO)
+          this.coreStore.setMainDisplayMode(MAIN_DISPLAY_MODE_AUTO)
         } else if (parsed.md === 1) {
-          this.$store.commit('ON_MAIN_DISPLAY_MODE_CHANGED', MAIN_DISPLAY_MODE_CANVAS_ONLY)
+          this.coreStore.setMainDisplayMode(MAIN_DISPLAY_MODE_CANVAS_ONLY)
+        }
+        if (parsed.df) {
+          this.coreStore.setPlotDisplayField(parsed.df)
         }
         if (parsed.tc) {
           const traitColors = parsed.tc.split(',').map(c => `#${c}`)
-          this.$store.commit('ON_TRAIT_COLORS_CHANGED', traitColors)
+          this.coreStore.setTraitColors(traitColors)
         }
 
         if (parsed.ft === 1) {
-          this.$store.commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', true)
+          this.coreStore.setShowFullTraitDescription(true)
         } else if (parsed.ft === 0) {
-          this.$store.commit('ON_SHOW_FULL_TRAIT_DESCRIPTION_CHANGED', false)
+          this.coreStore.setShowFullTraitDescription(false)
         }
 
         if (parsed.lb === 1) {
-          this.$store.commit('ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED', true)
+          this.coreStore.setLargeButtonsForIntTraits(true)
         } else if (parsed.lb === 0) {
-          this.$store.commit('ON_LARGE_BUTTONS_FOR_INT_TRAITS_CHANGED', false)
+          this.coreStore.setLargeButtonsForIntTraits(false)
         }
 
         this.$emit('data-changed')
@@ -201,6 +207,7 @@ export default {
         sz: this.storeCanvasSize === CANVAS_SIZE_LARGE ? 2 : (this.storeCanvasSize === CANVAS_SIZE_MEDIUM ? 1 : 0),
         cs: this.storeCanvasShape === CANVAS_SHAPE_SQUARE ? 1 : 0,
         md: this.storeMainDisplayMode === MAIN_DISPLAY_MODE_CANVAS_ONLY ? 1 : 0,
+        df: this.storePlotDisplayField,
         lc: this.storeLocale,
         hc: this.storeHideCitationMessage ? 1 : 0,
         hi: this.storeHighlightControls ? 1 : 0,

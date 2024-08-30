@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import TraitHeading from '@/components/TraitHeading.vue'
 import MultiTraitTimeline from '@/components/MultiTraitTimeline.vue'
 import { getTrialDataCached } from '@/plugins/datastore'
@@ -47,7 +48,8 @@ export default {
     MultiTraitTimeline
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeLocale',
       'storeSelectedTrial'
@@ -188,7 +190,11 @@ export default {
               showarrow: true,
               arrowhead: 7,
               ax: 0,
-              ay: -ay
+              ay: -ay,
+              arrowcolor: this.storeDarkMode ? 'white' : 'black',
+              font: {
+                color: this.storeDarkMode ? 'white' : 'black'
+              }
             })
             layout.shapes.push({
               type: 'line',
@@ -199,7 +205,8 @@ export default {
               y1: 1,
               line: {
                 width: 1.5,
-                dash: 'dot'
+                dash: 'dot',
+                color: this.storeDarkMode ? 'white' : 'black'
               }
             })
           })

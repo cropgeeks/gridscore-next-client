@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 export default {
   props: {
@@ -28,7 +29,8 @@ export default {
   },
   computed: {
     /** Mapgetters exposing the store configuration */
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode'
     ])
   },

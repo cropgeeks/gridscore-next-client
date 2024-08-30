@@ -53,7 +53,8 @@
 import { PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_QUALITY_CHECKER, PERSON_TYPE_DATA_SUBMITTER } from '@/plugins/constants'
 import PersonTypeIcon from '@/components/icons/PersonTypeIcon.vue'
 import { getId } from '@/plugins/id'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { addTrialPeople } from '@/plugins/idb'
 
 export default {
@@ -82,7 +83,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeTraitColors'
     ]),
     okDisabled: function () {

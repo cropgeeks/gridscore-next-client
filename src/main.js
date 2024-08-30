@@ -1,21 +1,13 @@
 import '@/plugins/workaround'
 import { createApp } from 'vue'
 import { createBootstrap } from 'bootstrap-vue-next'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from '@/App.vue'
 import router from '@/router'
-import store from '@/store'
 import { i18n } from '@/plugins/i18n'
 
 import { registerSW } from 'virtual:pwa-register'
-
-// Set base URL based on environment
-let baseUrl = './api/'
-
-if (import.meta.env.VITE_BASE_URL) {
-  baseUrl = import.meta.env.VITE_BASE_URL
-}
-
-store.commit('ON_SERVER_URL_CHANGED', baseUrl)
 
 const updateSW = registerSW({
   onNeedRefresh () {
@@ -29,10 +21,12 @@ const updateSW = registerSW({
   }
 })
 
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 const app = createApp(App)
 
 app.use(router)
-app.use(store)
 app.use(createBootstrap())
 app.use(i18n)
+app.use(pinia)
 app.mount('#app')

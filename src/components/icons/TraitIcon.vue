@@ -12,7 +12,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
 
 export default {
@@ -28,7 +29,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeCanvasShape'
     ])
   }

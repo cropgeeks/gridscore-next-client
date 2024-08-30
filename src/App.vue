@@ -79,11 +79,12 @@
       </footer>
     </div>
 
-    <BrapiModal ref="brapiSettingsModal"
+    <BrapiModal v-model="brapiSettingsModalVisible"
                 :title="'modalTitleBrapiSettings'"
                 :okTitle="'buttonOk'"
                 :cancelTitle="'buttonCancel'"
                 :okDisabled="true"
+                :preventHide="false"
                 :errorMessage="brapiErrorMessage"
                 @brapi-settings-changed="onBrapiSettingsChanged"
                 no-fade />
@@ -127,7 +128,6 @@ import TrialCommentModal from '@/components/modals/TrialCommentModal.vue'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal.vue'
 import TrialEventModal from '@/components/modals/TrialEventModal.vue'
 import ConfirmModal from '@/components/modals/ConfirmModal.vue'
-import { mapGetters } from 'vuex'
 import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
 import { axiosCall, getServerSettings } from '@/plugins/api'
@@ -138,9 +138,15 @@ import { gridScoreVersion } from '@/plugins/constants'
 
 import { UAParser } from 'ua-parser-js'
 import { getTrialById, initDb } from '@/plugins/idb'
-import { BModal, useModalController } from 'bootstrap-vue-next'
-import { h } from 'vue'
 import emitter from 'tiny-emitter/instance'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
+
+// Set base URL based on environment
+let baseUrl = './api/'
+if (import.meta.env.VITE_BASE_URL) {
+  baseUrl = import.meta.env.VITE_BASE_URL
+}
 
 const trialInfoPages = ['data-entry', 'guided-walk', 'trial-export', 'visualization-heatmap', 'visualization-timeline', 'visualization-statistics', 'visualization-map']
 
@@ -168,11 +174,13 @@ export default {
       trialForShare: null,
       updateExists: false,
       changelogVersionNumber: null,
-      brapiErrorMessage: null
+      brapiErrorMessage: null,
+      brapiSettingsModalVisible: false
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeLocale',
       'storeDarkMode',
       'storeSelectedTrial',
@@ -280,12 +288,12 @@ export default {
     },
     toggleDarkMode: function () {
       emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: !this.storeDarkMode } })
-      this.$store.dispatch('setDarkMode', !this.storeDarkMode)
+      this.coreStore.setDarkMode(!this.storeDarkMode)
     },
     onLocaleChanged: function (language) {
       loadLanguageAsync(language.locale).then(() => {
         this.$i18n.locale = language.locale
-        this.$store.dispatch('setLocale', language.locale)
+        this.coreStore.setLocale(language.locale)
 
         emitter.emit('plausible-event', { key: 'locale-changed', props: { locale: language.locale } })
       })
@@ -314,19 +322,18 @@ export default {
       }
     },
     handleApiError: function (error) {
-      const { show } = useModalController()
-
-      show({
-        props: {
-          title: this.$t('modalTitleApiError'),
-          variant: 'primary'
-        },
-        component: h(BModal, null, this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) }))
+      console.log(error)
+      emitter.emit('show-confirm', {
+        title: 'modalTitleApiError',
+        message: this.$t('modalTextApiError', { error: JSON.stringify(error) }),
+        okTitle: 'buttonOk',
+        okOnly: true,
+        okVariant: 'primary'
       })
     },
     showBrapiSettings: function (message = null) {
       this.brapiErrorMessage = message
-      this.$refs.brapiSettingsModal.show()
+      this.brapiSettingsModalVisible = true
     },
     showLoading: function (visible) {
       this.loadingVisible = visible
@@ -393,7 +400,7 @@ export default {
       getServerSettings()
         .then(result => {
           if (result) {
-            this.$store.commit('ON_PLAUSIBLE_CHANGED', result)
+            this.coreStore.setPlausible(result)
             this.enablePlausible()
           }
         })
@@ -407,7 +414,7 @@ export default {
     }
 
     const config = new UAParser().getResult()
-    this.$store.dispatch('setDeviceConfig', config)
+    this.coreStore.setDeviceConfig(config)
 
     // Log the run
     if (!this.isLocalhost()) {
@@ -415,7 +422,7 @@ export default {
       if (!id) {
         id = getId()
 
-        this.$store.dispatch('setUniqueClientId', id)
+        this.coreStore.setUniqueClientId(id)
       }
 
       if (config.os !== undefined && config.os !== null && config.os.name !== undefined && config.os.name !== null && config.os.name !== 'Search Bot') {
@@ -427,14 +434,14 @@ export default {
           locale: this.storeLocale,
           os: `${config.os.name} ${config.os.version}`
         }
-        axiosCall({ baseUrl: 'https://ics.hutton.ac.uk/app-logger/', url: 'log', params: data, method: 'get', ignoreErrors: true })
+        axiosCall({ baseUrl: 'https://ics.hutton.ac.uk/app-logger/', url: 'log', params: data, method: 'get', ignoreErrors: true, checkRemote: false })
           .then(() => {
             // If the call succeeds, reset the run count
-            this.$store.dispatch('setRunCount', 0)
+            this.coreStore.setRunCount(0)
           })
           .catch(() => {
             // If this call fails (e.g. no internet), remember the run
-            this.$store.dispatch('setRunCount', this.storeRunCount + 1)
+            this.coreStore.setRunCount(this.storeRunCount + 1)
           })
       }
     }
@@ -442,9 +449,9 @@ export default {
     this.changelogVersionNumber = this.storeChangelogVersionNumber
     if (this.changelogVersionNumber !== null && this.changelogVersionNumber !== gridScoreVersion) {
       this.$refs.changelogModal.show()
-      this.$store.dispatch('setChangelogVersionNumber', gridScoreVersion)
+      this.coreStore.setChangelogVersionNumber(gridScoreVersion)
     } else if (this.changelogVersionNumber === null) {
-      this.$store.dispatch('setChangelogVersionNumber', gridScoreVersion)
+      this.coreStore.setChangelogVersionNumber(gridScoreVersion)
     }
 
     emitter.on('trial-properties-changed', this.updateSelectedTrialData)
@@ -471,6 +478,8 @@ export default {
   created: function () {
     // Listen for our custom event from the SW registration
     document.addEventListener('swUpdated', this.updateAvailable, { once: true })
+
+    this.coreStore.setServerUrl(baseUrl)
 
     // Prevent multiple refreshes
     // navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -620,5 +629,9 @@ body {
 
 .modal-banner {
   margin: -1rem -1rem 0 -1rem
+}
+
+.button-disabled:hover {
+  cursor: default;
 }
 </style>

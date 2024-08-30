@@ -37,7 +37,8 @@
 <script>
 import TraitHeading from '@/components/TraitHeading.vue'
 import { getId } from '@/plugins/id'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 export default {
   components: {
@@ -64,7 +65,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode'
     ]),
     germplasmPercentage: function () {

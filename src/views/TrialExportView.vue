@@ -141,7 +141,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialById } from '@/plugins/idb'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { exportToGerminate, exportToShapefile, shareTrial } from '@/plugins/api'
@@ -178,7 +179,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial',
       'storeServerUrl'
     ]),
@@ -272,7 +274,7 @@ export default {
                 this.$refs.traitSyncModal.show()
               } else {
                 emitter.emit('show-loading', true)
-                exportToShapefile(shareCode)
+                exportToShapefile((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode)
                   .then(uuid => {
                     this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
                     emitter.emit('show-loading', false)
@@ -283,7 +285,7 @@ export default {
           })
         } else {
           emitter.emit('show-loading', true)
-          exportToShapefile(shareCode)
+          exportToShapefile((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode)
             .then(uuid => {
               this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
               emitter.emit('show-loading', false)
@@ -292,7 +294,7 @@ export default {
         }
       } else {
         emitter.emit('show-loading', true)
-        shareTrial(this.trial.localId)
+        shareTrial((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.localId)
           .then(() => {
             return getTrialById(this.trial.localId)
           })
@@ -382,7 +384,7 @@ export default {
                 this.$refs.traitSyncModal.show()
               } else {
                 emitter.emit('show-loading', true)
-                exportToGerminate(shareCode, this.germinateAggregate)
+                exportToGerminate((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode, this.germinateAggregate)
                   .then(uuid => {
                     this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
                     emitter.emit('show-loading', false)
@@ -393,7 +395,7 @@ export default {
           })
         } else {
           emitter.emit('show-loading', true)
-          exportToGerminate(shareCode, this.germinateAggregate)
+          exportToGerminate((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode, this.germinateAggregate)
             .then(uuid => {
               this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
               emitter.emit('show-loading', false)
@@ -402,7 +404,7 @@ export default {
         }
       } else {
         emitter.emit('show-loading', true)
-        shareTrial(this.trial.localId)
+        shareTrial((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.localId)
           .then(() => {
             return getTrialById(this.trial.localId)
           })

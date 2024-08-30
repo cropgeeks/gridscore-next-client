@@ -60,7 +60,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import TraitHeading from '@/components/TraitHeading.vue'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { getTrialById } from '@/plugins/idb'
@@ -90,7 +91,8 @@ export default {
     GpsTraitMap
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeHighlightControls',
       'storeSelectedTrial',
       'storeDarkMode',

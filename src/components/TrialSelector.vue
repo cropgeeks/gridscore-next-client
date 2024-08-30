@@ -136,7 +136,8 @@ import TrialDataImportModal from '@/components/modals/TrialDataImportModal.vue'
 import AddGermplasmModal from '@/components/modals/AddGermplasmModal.vue'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal.vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { deleteTrial, getTrialById, getTrialGroups, getTrials } from '@/plugins/idb'
 import { postCheckUpdate } from '@/plugins/api'
 
@@ -188,7 +189,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial',
       'storeTrialListMode',
       'storeTrialListArrangement'
@@ -324,11 +326,11 @@ export default {
     },
     trialListMode: function (newValue) {
       this.selectedTrialsToEdit = []
-      this.$store.dispatch('setTrialListMode', newValue)
+      this.coreStore.setTrialListMode(newValue)
     },
     trialListArrangement: function (newValue) {
       this.selectedTrialsToEdit = []
-      this.$store.dispatch('setTrialListArrangement', newValue)
+      this.coreStore.setTrialListArrangement(newValue)
     },
     sortedTrials: function () {
       if (this.storeTrialListMode === TRIAL_LIST_TABBED && this.storeSelectedTrial) {
@@ -392,7 +394,7 @@ export default {
       this.$nextTick(() => this.$refs.trialShareCodeModal.show())
     },
     loadTrial: function (trial) {
-      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', trial.localId)
+      this.coreStore.setSelectedTrial(trial.localId)
       this.$router.push({ name: 'data-entry' })
     },
     addPerson: function (trial) {
@@ -420,7 +422,7 @@ export default {
       this.$nextTick(() => this.$refs.addGermplasmModal.show())
     },
     deleteTrialConfirmed: function () {
-      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', null)
+      this.coreStore.setSelectedTrial(null)
       deleteTrial(this.selectedTrial.localId).then(() => {
         this.update()
       })
@@ -428,7 +430,7 @@ export default {
       emitter.emit('plausible-event', { key: 'trial-deleted' })
     },
     deleteTrialsConfirmed: function () {
-      this.$store.commit('ON_SELECTED_TRIAL_CHANGED', null)
+      this.coreStore.setSelectedTrial(null)
 
       Promise.all(this.selectedTrialsToEdit.map(t => deleteTrial(t.localId)))
         .then(() => this.update())

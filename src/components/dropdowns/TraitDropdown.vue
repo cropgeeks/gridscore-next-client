@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 
@@ -52,7 +53,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeHiddenTraits',
       'storeCanvasShape'
     ]),
@@ -106,7 +108,7 @@ export default {
         }
       })
 
-      this.$store.dispatch('setHiddenTraits', [...distinct])
+      this.coreStore.setHiddenTraits([...distinct])
       emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'group' } })
     },
     toggleTraitVisibility: function (trait) {
@@ -120,14 +122,14 @@ export default {
         distinct.delete(trait.id)
       }
 
-      this.$store.dispatch('setHiddenTraits', [...distinct])
+      this.coreStore.setHiddenTraits([...distinct])
       emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'individual' } })
     },
     toggleVisibilityAll: function (select) {
       if (select) {
-        this.$store.dispatch('setHiddenTraits', [])
+        this.coreStore.setHiddenTraits([])
       } else {
-        this.$store.dispatch('setHiddenTraits', this.traits.map(t => t.id))
+        this.coreStore.setHiddenTraits(this.traits.map(t => t.id))
       }
       emitter.emit('plausible-event', { key: 'toggle-traits', props: { type: 'all' } })
     },

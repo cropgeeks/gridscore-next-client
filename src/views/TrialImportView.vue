@@ -32,6 +32,16 @@
           <b-form-group :label="$t('formLabelTrialImportUrl')" :description="$t('formDescriptionTrialImportUrl')" label-for="url" v-if="gridScoreVersion === 'legacy'">
             <b-form-input id="url" type="url" v-model="gridScoreUrl" required />
           </b-form-group>
+          <div class="mb-3" v-else>
+            <b-form-checkbox v-model="loadFromRemote">{{ $t('formCheckboxLoadFromRemote') }}</b-form-checkbox>
+
+            <b-form-group v-if="loadFromRemote" :label="$t('formLabelTrialLoadRemoteUrl')" label-for="remoteUrl">
+              <b-form-input v-model="remoteUrl" id="remoteUrl" />
+              <template #description>
+                <span v-html="$t('formDescriptionTrialLoadRemoteUrl')" />
+              </template>
+            </b-form-group>
+          </div>
           <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
             <b-input-group>
               <b-form-input v-model.trim="shareCode" autofocus @keyup.enter="checkCode" />
@@ -108,6 +118,9 @@ import { addTrial, getTrialGroups, getTrials, updateTrialShareCodes } from '@/pl
 import { migrateOldGridScoreTrial } from '@/plugins/misc'
 import { TRIAL_STATE_EDITOR, TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER } from '@/plugins/constants'
 
+import { mapStores } from 'pinia'
+import { coreStore } from '@/store'
+
 import { UseOnline } from '@vueuse/components'
 
 import emitter from 'tiny-emitter/instance'
@@ -133,16 +146,22 @@ export default {
       localPermissionType: null,
       remotePermissionType: null,
       localTrialMatch: null,
-      gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore'
+      gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore',
+      loadFromRemote: false,
+      remoteUrl: null
     }
   },
   computed: {
+    ...mapStores(coreStore),
     buttonDisabled: function () {
       const shareCodeValid = this.shareCode !== undefined && this.shareCode !== null && this.shareCode !== ''
       const urlValid = this.gridScoreUrl !== undefined && this.gridScoreUrl !== null && this.gridScoreUrl !== ''
+      const remoteUrlValid = this.remoteUrl !== undefined && this.remoteUrl !== null && this.remoteUrl !== ''
 
       if (this.gridScoreVersion === 'legacy') {
         return !shareCodeValid || !urlValid
+      } else if (this.loadFromRemote) {
+        return !shareCodeValid || !remoteUrlValid
       } else {
         return !shareCodeValid
       }
@@ -194,7 +213,7 @@ export default {
 
       addTrial(this.trial)
         .then(trialId => {
-          this.$store.dispatch('setSelectedTrial', trialId)
+          this.coreStore.setSelectedTrial(trialId)
           this.$router.push({ name: 'home' })
         })
     },
@@ -229,8 +248,24 @@ export default {
             }
           })
       } else {
-        getTrialByCode(this.shareCode)
+        let remoteUrlWithApi = null
+        if (this.remoteUrl) {
+          if (!this.remoteUrl.endsWith('/')) {
+            this.remoteUrl += '/'
+          }
+
+          remoteUrlWithApi = this.remoteUrl
+          if (!remoteUrlWithApi.endsWith('api/')) {
+            remoteUrlWithApi += 'api/'
+          }
+        }
+
+        getTrialByCode(remoteUrlWithApi || null, this.shareCode)
           .then(result => {
+            if (result) {
+              result.remoteUrl = this.remoteUrl
+            }
+
             this.trial = result
 
             const match = this.existingTrials.filter(t => {
@@ -292,7 +327,7 @@ export default {
           if (value === true) {
             updateTrialShareCodes(this.localTrialMatch.localId, this.trial.shareCodes)
               .then(() => {
-                this.$store.dispatch('setSelectedTrial', this.localTrialMatch.localId)
+                this.coreStore.setSelectedTrial(this.localTrialMatch.localId)
                 this.$router.push({ name: 'home' })
               })
           }

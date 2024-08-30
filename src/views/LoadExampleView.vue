@@ -41,6 +41,8 @@
 
 <script>
 import { addTrial } from '@/plugins/idb'
+import { mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 export default {
   data: function () {
@@ -48,6 +50,7 @@ export default {
     }
   },
   computed: {
+    ...mapStores(coreStore),
     exampleTrials: function () {
       return [{
         id: 'barley',
@@ -106,7 +109,7 @@ export default {
         json.updatedOn = new Date().toISOString()
 
         addTrial(json).then(trialId => {
-          this.$store.dispatch('setSelectedTrial', trialId)
+          this.coreStore.setSelectedTrial(trialId)
           this.$router.push({ name: 'home' })
         })
       }

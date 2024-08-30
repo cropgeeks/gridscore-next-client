@@ -116,7 +116,8 @@
 
 <script>
 import { checkDataMatchesTraitType, toLocalDateString } from '@/plugins/misc'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { UseGeolocation } from '@vueuse/components'
 
 import emitter from 'tiny-emitter/instance'
@@ -170,7 +171,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeCategoryCountInline',
       'storeLargeButtonsForIntTraits'
     ]),

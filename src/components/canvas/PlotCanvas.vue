@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import OffscreenCanvas from '@/components/canvas/OffscreenCanvas.vue'
 import { CELL_CATEGORY_CONTROL, NAVIGATION_MODE_DRAG } from '@/plugins/constants'
 import { projectToEuclidean } from '@/plugins/location'
@@ -87,13 +88,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeNavigationMode',
       'storeDarkMode',
       'storeHiddenTraits',
       'storeDisplayMarkerIndicators',
       'storeRestrictInputToMarked',
-      'storeHighlightControls'
+      'storeHighlightControls',
+      'storePlotDisplayField'
     ]),
     userPosition: function () {
       if (this.geolocation && this.gridProjection) {
@@ -277,7 +280,7 @@ export default {
   },
   methods: {
     disableMarkingRestriction: function () {
-      this.$store.dispatch('setRestrictInputToMarked', false)
+      this.coreStore.setRestrictInputToMarked(false)
     },
     onColumnMarked: function (col) {
       const minRow = Math.max(0, Math.floor(Math.abs(this.origin.y) / this.dimensions.cellHeight))
@@ -760,13 +763,18 @@ export default {
         return
       }
 
+      let maxY
       // Add the name text
-      const text = this.fittingString(cell.displayName || 'N/A', this.dimensions.coreWidth)
-      this.ctx.fillStyle = this.fillStyleText
-      this.ctx.fillText(text, x + this.dimensions.cellWidth / 2, y + this.dimensions.padding + this.dimensions.fontSize / 2)
+      if (this.storePlotDisplayField !== null) {
+        const text = this.fittingString(cell[this.storePlotDisplayField] || 'N/A', this.dimensions.coreWidth)
+        this.ctx.fillStyle = this.fillStyleText
+        this.ctx.fillText(text, x + this.dimensions.cellWidth / 2, y + this.dimensions.padding + this.dimensions.fontSize / 2)
+        maxY = y + this.dimensions.padding + this.dimensions.fontSize / 2
+      } else {
+        maxY = y + this.dimensions.padding
+      }
 
       // How many circle rows do we need?
-      let maxY = y + this.dimensions.padding + this.dimensions.fontSize / 2
       let traitCounter = 0
       for (let r = 0; r < this.dimensions.circleRows; r++) {
         // How many circles are in this row?

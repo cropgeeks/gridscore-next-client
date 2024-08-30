@@ -56,13 +56,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
-import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler, brapiPostObservationUnits } from '@/plugins/brapi'
+import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler, brapiPostObservationUnits, brapiPostObservations } from '@/plugins/brapi'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { updateGermplasmBrapiIds, updateTraitBrapiIds } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
+import { getPlotGeoCoordinates } from '@/plugins/location'
+import { CELL_CATEGORY_CONTROL, PERSON_TYPE_DATA_SUBMITTER } from '@/plugins/constants'
 
 export default {
   props: {
@@ -120,7 +123,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial'
     ]),
     allGermplasmValidDbId: function () {
@@ -262,71 +266,175 @@ export default {
       if (trialData) {
         emitter.emit('set-loading', true)
 
-        const data = []
-
-        for (let y = 0; y < this.trial.layout.rows; y++) {
-          // And each field column
-          for (let x = 0; x < this.trial.layout.columns; x++) {
-            // Get the data cell
-            const cell = trialData[`${y}|${x}`]
-
-            if (cell) {
-              const dp = {
-                germplasmDbId: cell.brapiId,
-                germplasmName: cell.germplasm,
-                observationUnitPosition: {
-                  positionCoordinateXType: 'GRID_COL',
-                  positionCoordinateX: cell.displayColumn,
-                  positionCoordinateYType: 'GRID_ROW',
-                  positionCoordinateY: cell.displayRow,
-                  observationLevel: (cell.rep !== undefined && cell.rep !== null)
-                    ? {
-                        levelName: 'rep',
-                        levelCode: cell.rep
-                      }
-                    : null
-                },
-                programDbId: this.selectedProgram.programDbId,
-                trialDbId: this.selectedTrial.trialDbId,
-                studyDbId: this.selectedStudy.studyDbId,
-                observations: []
+        // For legacy reasons we now need to send the observations as part of the ObservationUnit, then check if what we get back is what we sent.
+        // If so, then the Germinate BrAPI backend is the old (wrong) version. However, that's all that's required in that case. If not, we need
+        // to go on and actually send the observations separately using the observationunits we got back.
+        this.sendDataLegacy(trialData)
+          .then((data) => {
+            if (data && data.length === 2) {
+              if (data[0] === false) {
+                this.sendDataCurrent(trialData, data[1])
               }
+            }
+          })
+      }
+    },
+    sendDataLegacy: function (trialData) {
+      const data = []
 
-              this.trial.traits.forEach(t => {
-                const measurements = cell.measurements[t.id]
+      for (let y = 0; y < this.trial.layout.rows; y++) {
+        // And each field column
+        for (let x = 0; x < this.trial.layout.columns; x++) {
+          // Get the data cell
+          const cell = trialData[`${y}|${x}`]
 
-                if (measurements) {
-                  measurements.forEach(m => {
-                    m.values.forEach(v => {
-                      dp.observations.push({
-                        germplasmDbId: cell.brapiId,
-                        germplasmName: cell.germplasm,
-                        observationVariableDbId: t.brapiId,
-                        observationVariableName: t.name,
-                        studyDbId: this.selectedStudy.studyDbId,
-                        value: v,
-                        observationTimeStamp: this.toIsoString(m.timestamp),
-                        additionalInfo: {
-                          traitMType: t.allowRepeats ? 'multi' : 'single'
-                        }
-                      })
+          if (cell) {
+            const geoCoordinates = getPlotGeoCoordinates(cell)
+
+            const ou = {
+              germplasmDbId: cell.brapiId,
+              germplasmName: cell.germplasm,
+              observationUnitPosition: {
+                entryType: cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL) ? 'CHECK' : 'TEST',
+                geoCoordinates: geoCoordinates,
+                positionCoordinateXType: 'GRID_COL',
+                positionCoordinateX: cell.displayColumn,
+                positionCoordinateYType: 'GRID_ROW',
+                positionCoordinateY: cell.displayRow,
+                observationLevel: (cell.rep !== undefined && cell.rep !== null)
+                  ? {
+                      levelName: 'rep',
+                      levelCode: cell.rep
+                    }
+                  : null
+              },
+              programDbId: this.selectedProgram.programDbId,
+              trialDbId: this.selectedTrial.trialDbId,
+              studyDbId: this.selectedStudy.studyDbId,
+              observations: []
+            }
+
+            this.trial.traits.forEach(t => {
+              const measurements = cell.measurements[t.id]
+
+              if (measurements) {
+                measurements.forEach(m => {
+                  m.values.forEach(v => {
+                    ou.observations.push({
+                      germplasmDbId: cell.brapiId,
+                      germplasmName: cell.germplasm,
+                      observationVariableDbId: t.brapiId,
+                      observationVariableName: t.name,
+                      studyDbId: this.selectedStudy.studyDbId,
+                      value: t.dataType === 'categorical' ? t.restrictions.categories[v] : `${v}`,
+                      observationTimeStamp: this.toIsoString(m.timestamp),
+                      additionalInfo: {
+                        traitMType: t.allowRepeats ? 'multi' : 'single'
+                      }
                     })
                   })
-                }
-              })
-
-              if (dp.observations.length > 0) {
-                data.push(dp)
+                })
               }
+            })
+
+            if (ou.observations.length > 0) {
+              data.push(ou)
             }
           }
         }
-
-        brapiPostObservationUnits(data)
-          .then(() => emitter.emit('plausible-event', { key: 'dataset-export', props: { format: 'brapi' } }))
-          .catch(brapiDefaultCatchHandler)
-          .finally(() => emitter.emit('set-loading', false))
       }
+
+      return new Promise((resolve, reject) => {
+        brapiPostObservationUnits(data)
+          .then(observationUnits => {
+            emitter.emit('plausible-event', { key: 'dataset-export', props: { format: 'brapi' } })
+            // If any data has been returned, that means that we're dealing with the legacy implementation of Germinate.
+            const dataAccepted = observationUnits.some(ou => ou.observations && ou.observations.length > 0)
+            resolve([dataAccepted, observationUnits])
+          })
+          .catch(e => {
+            brapiDefaultCatchHandler(e)
+            reject(e)
+          })
+          .finally(() => emitter.emit('set-loading', false))
+      })
+    },
+    sendDataCurrent: function (trialData, observationUnits) {
+      emitter.emit('set-loading', true)
+
+      const data = []
+      const observationUnitMap = {}
+
+      observationUnits.forEach(ou => {
+        observationUnitMap[`${ou.observationUnitPosition.positionCoordinateY}|${ou.observationUnitPosition.positionCoordinateX}`] = ou.observationUnitDbId
+      })
+
+      for (let y = 0; y < this.trial.layout.rows; y++) {
+        // And each field column
+        for (let x = 0; x < this.trial.layout.columns; x++) {
+          // Get the data cell
+          const cell = trialData[`${y}|${x}`]
+
+          if (cell) {
+            const observationUnit = observationUnitMap[`${cell.displayRow}|${cell.displayColumn}`]
+
+            if (!observationUnit) {
+              console.error(`Missing observation unit for plot in row ${cell.displayRow} and column ${cell.displayColumn}`)
+              continue
+            }
+
+            const geoCoordinates = getPlotGeoCoordinates(cell)
+
+            const obs = {
+              germplasmDbId: cell.brapiId,
+              germplasmName: cell.germplasm,
+              observationUnitDbId: observationUnit,
+              studyDbId: this.selectedStudy.studyDbId,
+              geoCoordinates: geoCoordinates
+            }
+
+            if (cell.measurements) {
+              this.trial.traits.forEach(t => {
+                const measurements = cell.measurements[t.id]
+                measurements.forEach(m => {
+                  let collector = null
+                  let submitter = null
+
+                  if (this.trial.people) {
+                    const coll = this.trial.people.find(p => p.id === m.personId)
+                    collector = coll ? coll.name : null
+
+                    const sub = this.trial.people.find(p => p.types.includes(PERSON_TYPE_DATA_SUBMITTER))
+                    submitter = sub ? sub.name : null
+                  }
+
+                  m.values.forEach(v => {
+                    const currentObservation = Object.assign({
+                      observationVariableDbId: t.brapiId,
+                      observationTimeStamp: this.toIsoString(m.timestamp),
+                      additionalInfo: {
+                        traitMType: t.allowRepeats ? 'multi' : 'single'
+                      },
+                      value: t.dataType === 'categorical' ? t.restrictions.categories[v] : `${v}`,
+                      collector: collector,
+                      uploadedBy: submitter
+                    }, obs)
+
+                    data.push(currentObservation)
+                  })
+                })
+              })
+            }
+          }
+        }
+      }
+
+      brapiPostObservations(data)
+        .then(() => {
+          emitter.emit('plausible-event', { key: 'dataset-export', props: { format: 'brapi' } })
+        })
+        .catch(brapiDefaultCatchHandler)
+        .finally(() => emitter.emit('set-loading', false))
     },
     updateBrapiTraitDbIdsInDatabase: function (map) {
       const mapping = {}

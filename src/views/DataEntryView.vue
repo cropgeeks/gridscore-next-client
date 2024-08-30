@@ -45,7 +45,8 @@ import JumpToDropdown from '@/components/dropdowns/JumpToDropdown.vue'
 import Tour from '@/components/Tour.vue'
 import { getTrialById } from '@/plugins/idb'
 import { MAIN_DISPLAY_MODE_CANVAS_ONLY, NAVIGATION_MODE_JUMP } from '@/plugins/constants'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getGermplasmMatches, getTrialDataCached } from '@/plugins/datastore'
 
 import emitter from 'tiny-emitter/instance'
@@ -64,7 +65,8 @@ export default {
     Tour
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeGpsEnabled',
       'storeSelectedTrial',
       'storeHiddenTraits',

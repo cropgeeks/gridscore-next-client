@@ -1,5 +1,5 @@
 import { getCell, getTrialById, getTrialData } from '@/plugins/idb'
-import store from '@/store'
+import { coreStore } from '@/store'
 import { DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
@@ -7,12 +7,22 @@ import emitter from 'tiny-emitter/instance'
 let trial = null
 let trialData = null
 
+let store
+
+const getStore = () => {
+  if (!store) {
+    store = coreStore()
+  }
+
+  return store
+}
+
 const loadTrialData = () => {
-  if (store.getters.storeSelectedTrial) {
-    getTrialById(store.getters.storeSelectedTrial)
+  if (getStore().storeSelectedTrial) {
+    getTrialById(getStore().storeSelectedTrial)
       .then(t => {
         trial = t
-        return getTrialData(store.getters.storeSelectedTrial)
+        return getTrialData(getStore().storeSelectedTrial)
       })
       .then(td => {
         trialData = td
@@ -30,7 +40,7 @@ const loadTrialData = () => {
 }
 
 const updateCellCache = (row, column, trialId) => {
-  if (store.getters.storeSelectedTrial === trialId) {
+  if (getStore().storeSelectedTrial === trialId) {
     if (trialData) {
       getCell(trialId, row, column)
         .then(cell => {
@@ -49,7 +59,7 @@ const init = () => {
   emitter.on('plot-marked-changed', updateCellCache)
   emitter.on('plot-data-changed', updateCellCache)
 
-  if (store.getters.storeSelectedTrial) {
+  if (getStore().storeSelectedTrial) {
     loadTrialData()
   }
 }

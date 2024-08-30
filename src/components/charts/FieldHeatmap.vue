@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 import { getColumnLabel, getRowLabel, invertHex, toLocalDateString } from '@/plugins/misc'
@@ -64,7 +65,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeLocale',
       'storeHighlightControls'

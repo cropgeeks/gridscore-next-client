@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 
 import { getTrialDataCached } from '@/plugins/datastore'
 import { toLocalDateString } from '@/plugins/misc'
@@ -76,7 +77,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode'
     ]),
     searchTermLowerCase: function () {

@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { checkTrialArchiveExists } from '@/plugins/api'
 import { getNumberWithSuffix } from '@/plugins/misc'
 
@@ -41,7 +42,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeServerUrl'
     ]),
     fileSize: function () {
@@ -61,7 +63,7 @@ export default {
   },
   methods: {
     checkArchiveExists: function () {
-      checkTrialArchiveExists(this.shareCode)
+      checkTrialArchiveExists((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.shareCode)
         .then(result => {
           this.archiveExists = true
           this.archiveInformation = result

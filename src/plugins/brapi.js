@@ -1,10 +1,19 @@
 import { i18n } from '@/plugins/i18n'
 import { updateTrialBrapiConfig } from '@/plugins/idb'
-import store from '@/store'
+import { coreStore } from '@/store'
 import axios from 'axios'
 import emitter from 'tiny-emitter/instance'
 
 const serverInfos = {}
+
+let store
+
+const getStore = () => {
+  if (!store) {
+    store = coreStore()
+  }
+  return store
+}
 
 const { t } = i18n.global
 
@@ -25,13 +34,13 @@ const brapiDefaultCatchHandler = (err) => {
       case 401:
         message = t('httpErrorFourOOne')
         // We're using the emitter to show the brapi settings modal
-        updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.storeBrapiConfig.url, token: null })
+        updateTrialBrapiConfig(getStore().storeSelectedTrial, { url: getStore().storeBrapiConfig.url, token: null })
           .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionUnauthorized'))
         return
       case 403: {
         message = t('httpErrorFourOThree')
         // We're using the emitter to show the brapi settings modal
-        updateTrialBrapiConfig(store.getters.storeSelectedTrial, { url: store.getters.storeBrapiConfig.url, token: null })
+        updateTrialBrapiConfig(getStore().storeSelectedTrial, { url: getStore().storeBrapiConfig.url, token: null })
           .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionForbidden'))
         break
       }
@@ -99,7 +108,7 @@ const brapiDefaultCatchHandler = (err) => {
  * @returns Promise
  */
 const brapiAxios = async (url, callName, params = null, method = 'get', infoCheck = true) => {
-  const brapiConfig = store.getters.storeBrapiConfig
+  const brapiConfig = getStore().storeBrapiConfig
   const baseUrl = brapiConfig ? brapiConfig.url : null
   const token = brapiConfig ? brapiConfig.token : null
 
@@ -146,7 +155,7 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
  * Retrieves the `serverinfo` from the BrAPI server to check availability of certain endpoints. Sets the field `serverInfo` for this BrAPI server
  */
 const brapiGetInfo = async () => {
-  const url = store.getters.storeBrapiConfig ? store.getters.storeBrapiConfig.url : null
+  const url = getStore().storeBrapiConfig ? getStore().storeBrapiConfig.url : null
   if (url) {
     await brapiAxios('serverinfo', 'serverinfo', null, 'get', false)
       .then(result => {
@@ -273,6 +282,17 @@ const brapiGetObservationUnits = (studyDbId) => {
     })
 }
 
+const brapiPostObservations = (params) => {
+  return brapiAxios('observations', 'observations', params, 'post', true)
+    .then(result => {
+      if (result && result.data && result.data.result && result.data.result.data) {
+        return result.data.result.data
+      } else {
+        return []
+      }
+    })
+}
+
 const brapiPostObservationUnits = (params) => {
   return brapiAxios('observationunits', 'observationunits', params, 'post', true)
     .then(result => {
@@ -305,6 +325,7 @@ export {
   brapiGetStudies,
   brapiPostGermplasmSearch,
   brapiGetObservationUnits,
+  brapiPostObservations,
   brapiPostObservationUnits,
   brapiPostObservationVariables,
   brapiPostObservationVariableSearch,

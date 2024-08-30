@@ -2,7 +2,12 @@
   <b-container class="my-4">
     <div class="d-flex align-items-center justify-content-between">
       <h1 class="display-4">{{ $t(trialToCopy ? 'modalTitleTrialDuplicate' : 'pageTrialSetupTitle') }}</h1>
-      <h4><a href="#" class="text-dark" @click.prevent="$refs.setupTour.start()"><IBiQuestionCircle /></a></h4>
+      <span class="d-flex align-items-center">
+        <b-dropdown :text="$t('dropdownImportTrial')">
+          <b-dropdown-item-button @click="brapiTrialImportVisible = true">{{ $t('dropdownOptionBrapiTrialImport') }}</b-dropdown-item-button>
+        </b-dropdown>
+        <h4 class="ms-2 mb-0"><a href="#" class="text-dark" @click.prevent="$refs.setupTour.start()"><IBiQuestionCircle /></a></h4>
+      </span>
     </div>
     <p>{{ $t(trialToCopy ? 'modalTextTrialDuplicate' : 'pageTrialSetupText') }}</p>
 
@@ -219,13 +224,19 @@
     <EditPeopleModal ref="editPeopleModal" @person-added="addPerson" />
 
     <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="setupTour" />
+
+    <b-modal teleport-disabled size="xl" :title="$t('modalTitleBrapiTrialImport')" hide-footer v-model="brapiTrialImportVisible">
+      <BrapiTrialImportSection v-if="brapiTrialImportVisible" :studyDbId="preselectStudyDbId" @data-changed="updateInternalData" />
+    </b-modal>
   </b-container>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import TrialLayoutComponent from '@/components/TrialLayoutComponent.vue'
 import TraitDefinitionComponent from '@/components/TraitDefinitionComponent.vue'
+import BrapiTrialImportSection from '@/components/BrapiTrialImportSection.vue'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal.vue'
 import EditPeopleModal from '@/components/modals/EditPeopleModal.vue'
 import PersonTypeIcon from '@/components/icons/PersonTypeIcon.vue'
@@ -233,7 +244,6 @@ import Tour from '@/components/Tour.vue'
 import { addTrial, getTrialById, getTrialData, getTrialGroups } from '@/plugins/idb'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_DATA_SUBMITTER, PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_QUALITY_CHECKER } from '@/plugins/constants'
-import { brapiGetObservationUnits, brapiGetStudies } from '@/plugins/brapi'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -244,7 +254,8 @@ export default {
     TrialLayoutComponent,
     EditPeopleModal,
     TraitDefinitionComponent,
-    LayoutFeedbackModal
+    LayoutFeedbackModal,
+    BrapiTrialImportSection
   },
   data: function () {
     return {
@@ -281,6 +292,7 @@ export default {
         layout: null
       },
       brapiConfig: null,
+      preselectStudyDbId: null,
       layoutFeedback: null,
       layoutDataIsValid: false,
       traitFeedback: null,
@@ -289,6 +301,7 @@ export default {
       copyData: false,
       layoutFeedbackIsOnlyWarning: true,
       warningsAccepted: false,
+      brapiTrialImportVisible: false,
       PERSON_TYPE_DATA_COLLECTOR,
       PERSON_TYPE_DATA_SUBMITTER,
       PERSON_TYPE_CORRESPONDING_AUTHOR,
@@ -315,7 +328,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeTraitColors',
       'storeDarkMode'
     ]),
@@ -447,6 +461,20 @@ export default {
     }
   },
   methods: {
+    updateInternalData: function (payload) {
+      if (payload.trialInfo) {
+        this.trialName = payload.trialInfo.name
+        this.trialDescription = payload.trialInfo.description
+        this.trialBrapiId = payload.trialInfo.brapiId
+      }
+      if (payload.layout) {
+        this.layout = JSON.parse(JSON.stringify(payload.layout))
+      }
+      if (payload.plots) {
+        this.germplasmMap = payload.plots
+      }
+      this.brapiTrialImportVisible = false
+    },
     deletePerson: function (index) {
       this.people.splice(index, 1)
     },
@@ -520,6 +548,7 @@ export default {
 
               if (c.control) {
                 c.categories = [CELL_CATEGORY_CONTROL]
+                delete c.control
               } else {
                 c.categories = []
               }
@@ -567,7 +596,7 @@ export default {
 
             addTrial(finalTrial).then(trialId => {
               this.newTrialCreatedSuccessfully = true
-              this.$store.dispatch('setSelectedTrial', trialId)
+              this.coreStore.setSelectedTrial(trialId)
               this.$router.push({ name: 'home' })
             })
           }
@@ -576,7 +605,7 @@ export default {
     }
   },
   mounted: function () {
-    this.$store.dispatch('setSelectedTrial', null)
+    this.coreStore.setSelectedTrial(null)
 
     getTrialGroups().then(groups => {
       this.trialGroups = groups || []
@@ -632,77 +661,12 @@ export default {
       const cf = JSON.parse(this.$route.query.germinateConfig)
 
       if (cf.brapiConfig && cf.brapiConfig.url && cf.brapiConfig.token && cf.datasetId) {
-        this.$store.commit('ON_BRAPI_CONFIG_CHANGED', cf.brapiConfig)
-
         this.brapiConfig = JSON.parse(JSON.stringify(cf.brapiConfig))
+        this.coreStore.setBrapiConfig(this.brapiConfig)
 
-        brapiGetStudies({ studyDbId: cf.datasetId }).then(result => {
-          if (result && result.length > 0) {
-            emitter.emit('show-confirm', {
-              title: 'modalTitleCreateTrialGerminateImport',
-              message: 'modalTextCreateTrialGerminateImport',
-              okTitle: 'buttonYes',
-              cancelTitle: 'buttonNo',
-              okVariant: 'danger',
-              callback: (result) => {
-                if (result) {
-                  this.trialName = result[0].studyName
-                  this.trialDescription = result[0].studyDescription
-                  this.trialBrapiId = `${cf.datasetId}`
+        this.preselectStudyDbId = `${cf.datasetId}`
 
-                  brapiGetObservationUnits(cf.datasetId).then(result => {
-                    if (result && result.length > 0) {
-                      let rows = 1
-                      let columns = 1
-
-                      const map = {}
-
-                      result.forEach(c => {
-                        const cell = {
-                          germplasm: c.germplasmName,
-                          rep: null,
-                          brapiId: c.germplasmDbId
-                        }
-                        if (c.observationUnitPosition) {
-                          const pos = c.observationUnitPosition
-                          if (pos.observationLevel && pos.observationLevel.levelName === 'rep') {
-                            cell.rep = pos.observationLevel.levelCode
-                          }
-
-                          let row = null
-                          let column = null
-                          if (pos.positionCoordinateXType === 'GRID_COL') {
-                            column = +pos.positionCoordinateY
-                            columns = Math.max(columns, column)
-                          }
-                          if (pos.positionCoordinateYType === 'GRID_ROW') {
-                            row = +pos.positionCoordinateX
-                            rows = Math.max(rows, row)
-                          }
-
-                          map[`${row}|${column}`] = cell
-                        }
-                      })
-
-                      this.layout = {
-                        rows: rows + 1,
-                        columns: columns + 1,
-                        corners: null,
-                        markers: null,
-                        rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM,
-                        columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT
-                      }
-
-                      // TODO: Preset order to be FielDHub default?
-
-                      this.germplasmMap = map
-                    }
-                  })
-                }
-              }
-            })
-          }
-        })
+        this.brapiTrialImportVisible = true
       }
     }
   }

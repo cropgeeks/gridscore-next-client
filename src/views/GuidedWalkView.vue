@@ -15,7 +15,8 @@
 
 <script>
 import DataInputModal from '@/components/modals/DataInputModal.vue'
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialById } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
@@ -25,7 +26,8 @@ export default {
     DataInputModal
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeGpsEnabled',
       'storeSelectedTrial'
     ])

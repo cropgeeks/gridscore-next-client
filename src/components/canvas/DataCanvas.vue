@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { getTrialById } from '@/plugins/idb'
 
 import ColumnHeader from '@/components/canvas/ColumnHeader.vue'
@@ -84,13 +85,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeDarkMode',
       'storeSelectedTrial',
       'storeHiddenTraits',
       'storeDisplayMinCellWidth',
       'storeCanvasDensity',
-      'storeCanvasSize'
+      'storeCanvasSize',
+      'storePlotDisplayField'
     ])
   },
   watch: {
@@ -181,7 +184,7 @@ export default {
         this.dimensions.cellWidth = Math.max(this.dimensions.canvasWidth / this.trial.layout.columns, this.dimensions.padding * 2 + this.storeDisplayMinCellWidth * this.dimensions.circleRadius * 2 + (this.storeDisplayMinCellWidth - 1) * this.dimensions.padding / 2)
         this.dimensions.coreWidth = this.dimensions.cellWidth - this.dimensions.padding * 2
         this.dimensions.circlesPerRow = this.getCirclesPerRow()
-        this.dimensions.textPartHeight = this.dimensions.fontSize + 2 * this.dimensions.padding
+        this.dimensions.textPartHeight = this.storePlotDisplayField === null ? this.dimensions.padding : (this.dimensions.fontSize + 2 * this.dimensions.padding)
         this.dimensions.circleRows = Math.ceil(this.dimensions.visibleTraitCount / this.dimensions.circlesPerRow)
         this.dimensions.scaledCanvasHeight = this.dimensions.canvasHeight * window.devicePixelRatio
         this.dimensions.scaledCanvasWidth = this.dimensions.canvasWidth * window.devicePixelRatio

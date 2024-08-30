@@ -49,6 +49,12 @@
         <IBiCheckSquare v-if="selectedToEdit" /><IBiSquare v-else /> {{ selectedToEdit ? $t('buttonDeselect') : $t('buttonSelect') }}
       </b-button>
 
+      <div>
+        <b-button v-if="trial.remoteUrl" class="button-disabled" variant="secondary" v-b-tooltip.hover="trial.remoteUrl">
+          <IBiCloudPlusFill /> {{ $t('buttonTrialRemoteUrl') }}
+        </b-button>
+      </div>
+
       <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip.hover="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
         <IBiCalendarXFill /> {{ $t('widgetTrialSelectorTrialExpiryWarning') }}
       </b-button>
@@ -76,7 +82,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapStores } from 'pinia'
+import { coreStore } from '@/store'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
 import TrialTraitTimeframeModal from '@/components/modals/TrialTraitTimeframeModal.vue'
 import TrialShareTypeIcon from '@/components/icons/TrialShareTypeIcon.vue'
@@ -116,7 +123,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
       'storeSelectedTrial',
       'storeDarkMode'
     ]),

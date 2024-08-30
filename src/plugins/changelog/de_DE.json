@@ -554,6 +554,21 @@
         "type": "new",
         "title": "Löschen von Merkmalen",
         "text": "Es ist Versuchsbesitzern jetzt möglich Merkmale von einem Versuch zu löschen selbst nachdem der Versuch geteilt wurde. Dieser Vorgang sollte gut durchdacht werden da es weitreichende Folgen hat. Jegliche Daten die für dieses Merkmal gesammelt wurden werden von allen Geräten gelöscht sobald diese ihre Daten synchronisieren."
+      },
+      {
+        "type": "new",
+        "title": "Keimplasmadarstellung",
+        "text": "Optionen zur Darstellung von Keimplasma auf der Hauptdateneingabe hinzugefügt, z.B. Keimplasmaidentifikator, Rep, beide oder nichts."
+      },
+      {
+        "type": "new",
+        "title": "BrAPI Versuchserstellung",
+        "text": "Funktionalität hinzugefügt um GridScore Versuche basierend auf Breeding API (BrAPI) Studies anzulegen."
+      },
+      {
+        "type": "new",
+        "title": "Versuch auf anderem Server",
+        "text": "Erlauben des Teilens von GridScore Versuchen mit anderen, selbst-gehosteten GridScore Servern anstelle des Standardservers."
       }
     ]
   }
