@@ -49,7 +49,7 @@
           </b-col>
         </b-row>
 
-        <b-button type="submit" variant="primary" :disabled="!canProceed"><IBiCloudUpload /> {{ $t('buttonSendData') }}</b-button>
+        <b-button class="mb-3" type="submit" variant="primary" :disabled="!canProceed"><IBiCloudUpload /> {{ $t('buttonSendData') }}</b-button>
       </div>
     </b-form>
   </div>
@@ -59,7 +59,7 @@
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
 
-import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler, brapiPostObservationUnits, brapiPostObservations } from '@/plugins/brapi'
+import { brapiGetPrograms, brapiGetTrials, brapiGetStudies, brapiGetStudyTypes, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch, brapiDefaultCatchHandler, brapiPostObservationUnits, brapiPostObservations, brapiGetObservationUnits } from '@/plugins/brapi'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { updateGermplasmBrapiIds, updateTraitBrapiIds } from '@/plugins/idb'
 
@@ -224,7 +224,7 @@ export default {
             case 'float':
             case 'int':
             case 'range':
-              scale.dataType = 'Numeric'
+              scale.dataType = 'Numerical'
               break
             case 'categorical':
               scale.dataType = 'Ordinal'
@@ -266,6 +266,34 @@ export default {
       if (trialData) {
         emitter.emit('set-loading', true)
 
+        // Generate a mapping based on display row and column for lookup
+        const displayMapping = {}
+        for (let y = 0; y < this.trial.layout.rows; y++) {
+          // And each field column
+          for (let x = 0; x < this.trial.layout.columns; x++) {
+            // Get the data cell
+            const cell = trialData[`${y}|${x}`]
+
+            if (cell) {
+              displayMapping[`${cell.displayRow}|${cell.displayColumn}`] = `${y}|${x}`
+            }
+          }
+        }
+
+        // First, search for observation units from this study, save the observationUnitDbId for those that have local matches
+        brapiGetObservationUnits(this.selectedStudy.studyDbId)
+          .then(ous => {
+            if (ous && ous.length > 0) {
+              ous.forEach(ou => {
+                const match = displayMapping[`${ou.observationUnitPosition.positionCoordinateY}|${ou.observationUnitPosition.positionCoordinateX}`]
+
+                if (match) {
+                  trialData[match].observationUnitDbId = ou.observationUnitDbId
+                }
+              })
+            }
+          })
+
         // For legacy reasons we now need to send the observations as part of the ObservationUnit, then check if what we get back is what we sent.
         // If so, then the Germinate BrAPI backend is the old (wrong) version. However, that's all that's required in that case. If not, we need
         // to go on and actually send the observations separately using the observationunits we got back.
@@ -298,9 +326,9 @@ export default {
                 entryType: cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL) ? 'CHECK' : 'TEST',
                 geoCoordinates: geoCoordinates,
                 positionCoordinateXType: 'GRID_COL',
-                positionCoordinateX: cell.displayColumn,
+                positionCoordinateX: `${cell.displayColumn}`,
                 positionCoordinateYType: 'GRID_ROW',
-                positionCoordinateY: cell.displayRow,
+                positionCoordinateY: `${cell.displayRow}`,
                 observationLevel: (cell.rep !== undefined && cell.rep !== null)
                   ? {
                       levelName: 'rep',
@@ -365,6 +393,19 @@ export default {
       const data = []
       const observationUnitMap = {}
 
+      // Get the locally know ids first from the GET observationunits call
+      for (let y = 0; y < this.trial.layout.rows; y++) {
+        // And each field column
+        for (let x = 0; x < this.trial.layout.columns; x++) {
+          // Get the data cell
+          const cell = trialData[`${y}|${x}`]
+          if (cell.observationUnitDbId) {
+            observationUnitMap[`${cell.displayRow}|${cell.displayColumn}`] = cell.observationUnitDbId
+          }
+        }
+      }
+
+      // Then write the remote ones as well
       observationUnits.forEach(ou => {
         observationUnitMap[`${ou.observationUnitPosition.positionCoordinateY}|${ou.observationUnitPosition.positionCoordinateX}`] = ou.observationUnitDbId
       })
@@ -455,11 +496,13 @@ export default {
                   matches = t.dataType === 'text'
                   break
                 case 'Numeric':
+                case 'Numerical':
                   matches = t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range'
                   break
                 case 'Duration':
                   matches = t.dataType === 'int'
                   break
+                case 'Nominal':
                 case 'Ordinal':
                   matches = t.dataType === 'categorical'
                   break

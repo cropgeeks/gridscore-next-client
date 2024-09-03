@@ -45,6 +45,13 @@
                 <span v-html="$t('formDescriptionTrialShareRemoteUrl')" />
               </template>
             </b-form-group>
+
+            <b-form-group v-if="shareWithRemote" :label="$t('formLabelTrialShareRemoteToken')" label-for="remoteToken">
+              <b-form-input v-model="remoteToken" id="remoteToken" />
+              <template #description>
+                <span v-html="$t('formDescriptionTrialShareRemoteToken')" />
+              </template>
+            </b-form-group>
           </div>
 
           <b-button @click="getShareCodes" :disabled="isOnline === false || buttonDisabled === true" variant="primary"><IBiQrCodeScan /> {{ $t('buttonGenerateShareCodes') }}</b-button>
@@ -83,7 +90,8 @@ export default {
       TRIAL_STATE_OWNER,
       TRIAL_STATE_VIEWER,
       shareWithRemote: false,
-      remoteUrl: null
+      remoteUrl: null,
+      remoteToken: null
     }
   },
   computed: {
@@ -100,7 +108,7 @@ export default {
   methods: {
     getShareCodes: function () {
       emitter.emit('show-loading', true)
-      shareTrial(this.shareWithRemote ? this.remoteUrl : null, this.trial.localId)
+      shareTrial({ url: this.shareWithRemote ? this.remoteUrl : null, token: this.remoteToken }, this.trial.localId)
         .then(() => emitter.emit('plausible-event', { key: 'trial-shared' }))
         .catch(error => {
           console.error(error)

@@ -63,7 +63,16 @@ export default {
   },
   methods: {
     checkArchiveExists: function () {
-      checkTrialArchiveExists((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.shareCode)
+      let remoteConfig = null
+
+      if (this.trial && this.trial.remoteUrl) {
+        remoteConfig = {
+          url: this.trial.remoteUrl,
+          token: this.trial.remoteToken || null
+        }
+      }
+
+      checkTrialArchiveExists(remoteConfig, this.shareCode)
         .then(result => {
           this.archiveExists = true
           this.archiveInformation = result

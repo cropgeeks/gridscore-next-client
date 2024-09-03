@@ -230,7 +230,17 @@ export default {
     askToSynchronize: function () {
       if (!this.trial.shareCodes.ownerCode && !this.trial.shareCodes.editorCode) {
         emitter.emit('show-loading', true)
-        getTrialByCode((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.shareCodes.viewerCode)
+
+        let remoteConfig = null
+
+        if (this.trial && this.trial.remoteUrl) {
+          remoteConfig = {
+            url: this.trial.remoteUrl,
+            token: this.trial.remoteToken || null
+          }
+        }
+
+        getTrialByCode(remoteConfig, this.trial.shareCodes.viewerCode)
           .then(result => {
             return deleteTrial(this.trial.localId)
               .then(() => {
@@ -270,7 +280,17 @@ export default {
     },
     synchronize: function () {
       emitter.emit('show-loading', true)
-      synchronizeTrial((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
+
+      let remoteConfig = null
+
+      if (this.trial && this.trial.remoteUrl) {
+        remoteConfig = {
+          url: this.trial.remoteUrl,
+          token: this.trial.remoteToken || null
+        }
+      }
+
+      synchronizeTrial(remoteConfig, this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode, this.transaction)
         .then(result => {
           if (this.trial.group && this.trial.group.name) {
             result.group = {

@@ -21,7 +21,7 @@ const getDb = async () => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 6, {
+      openDB('gridscore-next-' + window.location.pathname, 7, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -73,6 +73,10 @@ const getDb = async () => {
           if (oldVersion < 6) {
             trials = transaction.objectStore('trials')
             trials.createIndex('remoteUrl', 'remoteUrl', { unique: false })
+          }
+          if (oldVersion < 7) {
+            trials = transaction.objectStore('trials')
+            trials.createIndex('remoteToken', 'remoteToken', { unique: false })
           }
         }
       }).then(db => resolve(db))

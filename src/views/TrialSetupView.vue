@@ -50,7 +50,7 @@
             </template>
             <div>
               <h5 v-for="(person, personIndex) in people" :key="`person-${person.id}`" class="d-inline-block">
-                <b-badge :variant="storeDarkMode ? 'dark' : 'light'"><PersonTypeIcon class="me-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" /> {{ person.name }}</b-badge>
+                <b-badge :style="{ color: personStyle[type] }" :variant="storeDarkMode ? 'dark' : 'light'"><PersonTypeIcon class="me-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" /> {{ person.name }}</b-badge>
                 <b-badge variant="danger" href="#" @click.prevent="deletePerson(personIndex)" class="me-2">
                   <IBiTrash />
                 </b-badge>
@@ -331,7 +331,8 @@ export default {
     ...mapStores(coreStore),
     ...mapState(coreStore, [
       'storeTraitColors',
-      'storeDarkMode'
+      'storeDarkMode',
+      'storeBrapiConfig'
     ]),
     personStyle: function () {
       const result = {}
@@ -474,6 +475,7 @@ export default {
         this.germplasmMap = payload.plots
       }
       this.brapiTrialImportVisible = false
+      this.brapiConfig = JSON.parse(JSON.stringify(this.storeBrapiConfig))
     },
     deletePerson: function (index) {
       this.people.splice(index, 1)

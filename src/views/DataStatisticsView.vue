@@ -299,7 +299,11 @@ export default {
             }
             personLineData[trial.localId][p.id] = {
               name: p.name,
+              mode: 'lines+markers',
               type: 'scatter',
+              marker: {
+                size: 3
+              },
               x: [],
               y: [],
               dateMap: {}

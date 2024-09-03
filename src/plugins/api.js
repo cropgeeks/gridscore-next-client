@@ -24,7 +24,7 @@ const acceptableStatusCodes = [400, 401, 403, 404, 409]
  * @param {String} method (Optional) REST method (default: `'get'`)
  * @returns Promise
  */
-const axiosCall = ({ baseUrl = null, url = null, params = null, method = 'get', ignoreErrors = false, checkRemote = true }) => {
+const axiosCall = ({ baseUrl = null, url = null, remoteToken = null, params = null, method = 'get', ignoreErrors = false, checkRemote = true }) => {
   let requestData = null
   let requestParams = null
 
@@ -45,21 +45,21 @@ const axiosCall = ({ baseUrl = null, url = null, params = null, method = 'get', 
             emitter.emit('api-error', 'Incompatible remote server version. Please update your client to match the server version.')
             reject(new Error('Incompatible remote server version. Please update your client to match the server version.'))
           } else {
-            internalAxiosCall(baseUrl, url, method, requestParams, requestData, ignoreErrors, resolve, reject)
+            internalAxiosCall(baseUrl, url, remoteToken, method, requestParams, requestData, ignoreErrors, resolve, reject)
           }
         })
         .catch(() => {
           // If the request fails, attempt to go ahead with it anyway.
-          internalAxiosCall(baseUrl, url, method, requestParams, requestData, ignoreErrors, resolve, reject)
+          internalAxiosCall(baseUrl, url, remoteToken, method, requestParams, requestData, ignoreErrors, resolve, reject)
         })
     } else {
-      internalAxiosCall(baseUrl, url, method, requestParams, requestData, ignoreErrors, resolve, reject)
+      internalAxiosCall(baseUrl, url, remoteToken, method, requestParams, requestData, ignoreErrors, resolve, reject)
     }
   })
 }
 
-const internalAxiosCall = (baseUrl, url, method, requestParams, requestData, ignoreErrors, resolve, reject) => {
-  axios.default({
+const internalAxiosCall = (baseUrl, url, remoteToken, method, requestParams, requestData, ignoreErrors, resolve, reject) => {
+  const config = {
     baseURL: baseUrl || getStore().storeServerUrl,
     url,
     params: requestParams,
@@ -69,7 +69,14 @@ const internalAxiosCall = (baseUrl, url, method, requestParams, requestData, ign
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
-  }).then(data => {
+  }
+
+  if ((remoteToken !== undefined) && (remoteToken !== null) && (remoteToken !== '')) {
+    config.withCredentials = true
+    config.headers.Authorization = `Bearer: ${remoteToken}`
+  }
+
+  axios.default(config).then(data => {
     if (data && data.data) {
       resolve(data.data)
     } else {
@@ -113,20 +120,20 @@ const getServerSettings = () => {
   return axiosCall({ url: 'settings', method: 'get', ignoreErrors: true })
 }
 
-const getServerVersion = (remoteUrl) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: 'settings/version', method: 'get', ignoreErrors: true })
+const getServerVersion = (remoteConfig) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.url || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: 'settings/version', method: 'get', ignoreErrors: true })
 }
 
-const shareTrial = async (remoteOverrideUrl, localId) => {
+const shareTrial = async (remoteConfig, localId) => {
   const trial = await getTrialById(localId)
 
   let remoteUrlWithApi = null
-  if (remoteOverrideUrl) {
-    if (!remoteOverrideUrl.endsWith('/')) {
-      remoteOverrideUrl += '/'
+  if (remoteConfig && remoteConfig.url) {
+    if (!remoteConfig.url.endsWith('/')) {
+      remoteConfig.url += '/'
     }
 
-    remoteUrlWithApi = remoteOverrideUrl
+    remoteUrlWithApi = remoteConfig.url
     if (!remoteUrlWithApi.endsWith('api/')) {
       remoteUrlWithApi += 'api/'
     }
@@ -138,12 +145,13 @@ const shareTrial = async (remoteOverrideUrl, localId) => {
         const copy = JSON.parse(JSON.stringify(trial))
         copy.data = data
 
-        return axiosCall({ baseUrl: remoteUrlWithApi || ((trial && trial.remoteUrl) ? trial.remoteUrl : null), url: 'trial/share', params: copy, method: 'post' })
+        return axiosCall({ baseUrl: remoteUrlWithApi || ((trial && trial.remoteUrl) ? trial.remoteUrl : null), remoteToken: remoteConfig ? remoteConfig.token : null, url: 'trial/share', params: copy, method: 'post' })
       })
       .then(result => {
         if (result) {
           result.localId = localId
-          result.remoteUrl = remoteOverrideUrl || null
+          result.remoteUrl = remoteConfig ? (remoteConfig.url || null) : null
+          result.remoteToken = remoteConfig ? remoteConfig.token : null
           return updateTrial(localId, result)
         } else {
           return new Promise(resolve => resolve(null))
@@ -171,20 +179,23 @@ const postCheckUpdate = () => {
               remote += 'api/'
             }
 
-            let arr = remotes.get(remote || null)
+            const config = remotes.get(remote || null)
+            let arr
             if (!arr) {
               arr = []
+            } else {
+              arr = config.list
             }
 
             arr.push(t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode)
 
-            remotes.set(remote || null, arr)
+            remotes.set(remote || null, { list: arr, token: t.remoteToken || (config ? config.token : null) })
           })
 
         const remoteCalls = []
 
         remotes.forEach((value, key) => {
-          remoteCalls.push(axiosCall({ baseUrl: key, url: 'trial/checkupdate', params: value, method: 'post', ignoreErrors: true }))
+          remoteCalls.push(axiosCall({ baseUrl: key, remoteToken: value.token, url: 'trial/checkupdate', params: value.list, method: 'post', ignoreErrors: true }))
         })
 
         return Promise.all(remoteCalls)
@@ -193,8 +204,8 @@ const postCheckUpdate = () => {
   })
 }
 
-const getTrialByCode = (remoteUrl, shareCode) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: `trial/${shareCode}`, method: 'get' })
+const getTrialByCode = (remoteConfig, shareCode) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.url || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}`, method: 'get' })
 }
 
 const getLegacyTrialByCode = (remoteUrl, shareCode) => {
@@ -210,24 +221,24 @@ const getLegacyTrialByCode = (remoteUrl, shareCode) => {
   return axiosCall({ baseUrl: remoteUrl, url: `config/${shareCode}`, method: 'get' })
 }
 
-const synchronizeTrial = (remoteUrl, shareCode, transactions) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: `trial/${shareCode}/transaction`, params: transactions, method: 'post' })
+const synchronizeTrial = (remoteConfig, shareCode, transactions) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}/transaction`, params: transactions, method: 'post' })
 }
 
-const exportToGerminate = (remoteUrl, shareCode, aggregate = true) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: `trial/${shareCode}/export/g8?aggregate=${aggregate}`, method: 'get' })
+const exportToGerminate = (remoteConfig, shareCode, aggregate = true) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}/export/g8?aggregate=${aggregate}`, method: 'get' })
 }
 
-const exportToShapefile = (remoteUrl, shareCode) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: `trial/${shareCode}/export/shapefile`, method: 'get' })
+const exportToShapefile = (remoteConfig, shareCode) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}/export/shapefile`, method: 'get' })
 }
 
-const extendTrialPeriod = (remoteUrl, shareCode, captcha) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: `trial/${shareCode}/renew`, method: 'post', params: captcha })
+const extendTrialPeriod = (remoteConfig, shareCode, captcha) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}/renew`, method: 'post', params: captcha })
 }
 
-const checkTrialArchiveExists = (remoteUrl, shareCode) => {
-  return axiosCall({ baseUrl: remoteUrl || null, url: `trial/${shareCode}/export/archive/exists`, method: 'get' })
+const checkTrialArchiveExists = (remoteConfig, shareCode) => {
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}/export/archive/exists`, method: 'get' })
 }
 
 export {

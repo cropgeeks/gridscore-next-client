@@ -41,6 +41,13 @@
                 <span v-html="$t('formDescriptionTrialLoadRemoteUrl')" />
               </template>
             </b-form-group>
+
+            <b-form-group v-if="loadFromRemote" :label="$t('formLabelTrialLoadRemoteToken')" label-for="remoteToken">
+              <b-form-input v-model="remoteToken" id="remoteToken" />
+              <template #description>
+                <span v-html="$t('formDescriptionTrialLoadRemoteToken')" />
+              </template>
+            </b-form-group>
           </div>
           <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
             <b-input-group>
@@ -148,7 +155,8 @@ export default {
       localTrialMatch: null,
       gridScoreUrl: 'https://ics.hutton.ac.uk/gridscore',
       loadFromRemote: false,
-      remoteUrl: null
+      remoteUrl: null,
+      remoteToken: null
     }
   },
   computed: {
@@ -260,10 +268,11 @@ export default {
           }
         }
 
-        getTrialByCode(remoteUrlWithApi || null, this.shareCode)
+        getTrialByCode({ url: remoteUrlWithApi || null, token: this.remoteToken }, this.shareCode)
           .then(result => {
             if (result) {
               result.remoteUrl = this.remoteUrl
+              result.remoteToken = this.remoteToken
             }
 
             this.trial = result

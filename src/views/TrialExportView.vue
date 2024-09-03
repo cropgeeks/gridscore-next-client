@@ -274,7 +274,16 @@ export default {
                 this.$refs.traitSyncModal.show()
               } else {
                 emitter.emit('show-loading', true)
-                exportToShapefile((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode)
+
+                let remoteConfig = null
+
+                if (this.trial && this.trial.remoteUrl) {
+                  remoteConfig = {
+                    url: this.trial.remoteUrl,
+                    token: this.trial.remoteToken || null
+                  }
+                }
+                exportToShapefile(remoteConfig, shareCode)
                   .then(uuid => {
                     this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
                     emitter.emit('show-loading', false)
@@ -285,7 +294,16 @@ export default {
           })
         } else {
           emitter.emit('show-loading', true)
-          exportToShapefile((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode)
+
+          let remoteConfig = null
+
+          if (this.trial && this.trial.remoteUrl) {
+            remoteConfig = {
+              url: this.trial.remoteUrl,
+              token: this.trial.remoteToken || null
+            }
+          }
+          exportToShapefile(remoteConfig, shareCode)
             .then(uuid => {
               this.exportedFiles.shapefile = `${this.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`
               emitter.emit('show-loading', false)
@@ -294,7 +312,16 @@ export default {
         }
       } else {
         emitter.emit('show-loading', true)
-        shareTrial((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.localId)
+
+        let remoteConfig = null
+
+        if (this.trial && this.trial.remoteUrl) {
+          remoteConfig = {
+            url: this.trial.remoteUrl,
+            token: this.trial.remoteToken || null
+          }
+        }
+        shareTrial(remoteConfig, this.trial.localId)
           .then(() => {
             return getTrialById(this.trial.localId)
           })
@@ -384,7 +411,16 @@ export default {
                 this.$refs.traitSyncModal.show()
               } else {
                 emitter.emit('show-loading', true)
-                exportToGerminate((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode, this.germinateAggregate)
+
+                let remoteConfig = null
+
+                if (this.trial && this.trial.remoteUrl) {
+                  remoteConfig = {
+                    url: this.trial.remoteUrl,
+                    token: this.trial.remoteToken || null
+                  }
+                }
+                exportToGerminate(remoteConfig, shareCode, this.germinateAggregate)
                   .then(uuid => {
                     this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
                     emitter.emit('show-loading', false)
@@ -395,7 +431,16 @@ export default {
           })
         } else {
           emitter.emit('show-loading', true)
-          exportToGerminate((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, shareCode, this.germinateAggregate)
+
+          let remoteConfig = null
+
+          if (this.trial && this.trial.remoteUrl) {
+            remoteConfig = {
+              url: this.trial.remoteUrl,
+              token: this.trial.remoteToken || null
+            }
+          }
+          exportToGerminate(remoteConfig, shareCode, this.germinateAggregate)
             .then(uuid => {
               this.exportedFiles.germinate = `${this.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`
               emitter.emit('show-loading', false)
@@ -404,7 +449,16 @@ export default {
         }
       } else {
         emitter.emit('show-loading', true)
-        shareTrial((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.trial.localId)
+
+        let remoteConfig = null
+
+        if (this.trial && this.trial.remoteUrl) {
+          remoteConfig = {
+            url: this.trial.remoteUrl,
+            token: this.trial.remoteToken || null
+          }
+        }
+        shareTrial(remoteConfig, this.trial.localId)
           .then(() => {
             return getTrialById(this.trial.localId)
           })

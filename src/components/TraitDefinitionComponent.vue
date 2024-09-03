@@ -372,11 +372,13 @@ export default {
                 type = 'text'
                 break
               case 'Numeric':
+              case 'Numerical':
                 type = 'float'
                 break
               case 'Duration':
                 type = 'int'
                 break
+              case 'Nominal':
               case 'Ordinal':
                 type = 'categorical'
                 break
@@ -395,7 +397,7 @@ export default {
               restrictions.max = +t.scale.validValues.maximumValue
             }
             if (t.scale.validValues.categories && t.scale.validValues.categories.length > 0) {
-              restrictions.categories = t.scale.validValues.categories.map(c => c.value)
+              restrictions.categories = t.scale.validValues.categories.map(c => c.label)
             }
           }
 

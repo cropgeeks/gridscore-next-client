@@ -97,12 +97,13 @@ export default {
                 case 'Text':
                   type = this.$t('traitTypeShortText')
                   break
-                case 'Numeric':
+                case 'Numerical':
                   type = this.$t('traitTypeShortFloat')
                   break
                 case 'Duration':
                   type = this.$t('traitTypeShortInt')
                   break
+                case 'Nominal':
                 case 'Ordinal':
                   type = this.$t('traitTypeShortCategorical')
                   break
@@ -112,18 +113,18 @@ export default {
               }
 
               if (type && type.length > 0) {
-                type = `<span class="badge badge-primary ms-2">${type}</span>`
+                type = `<span class="badge text-bg-primary ms-2">${type}</span>`
               }
 
               if (t.scale.validValues) {
                 if (t.scale.validValues.minimumValue !== undefined && t.scale.validValues.minimumValue !== null) {
-                  restrictions += `<span class="badge badge-secondary ms-2">&ge;${t.scale.validValues.minimumValue}</span>`
+                  restrictions += `<span class="badge text-bg-secondary ms-2">&ge;${t.scale.validValues.minimumValue}</span>`
                 }
                 if (t.scale.validValues.maximumValue !== undefined && t.scale.validValues.maximumValue !== null) {
-                  restrictions += `<span class="badge badge-secondary ms-2">&le;${t.scale.validValues.maximumValue}</span>`
+                  restrictions += `<span class="badge text-bg-secondary ms-2">&le;${t.scale.validValues.maximumValue}</span>`
                 }
                 if (t.scale.validValues.categories) {
-                  restrictions += `<span class="badge badge-secondary ms-2">${t.scale.validValues.categories.map(tr => tr.value).join(', ')}</span>`
+                  restrictions += `<span class="badge text-bg-secondary ms-2">${t.scale.validValues.categories.map(tr => tr.label).join(', ')}</span>`
                 }
               }
             }

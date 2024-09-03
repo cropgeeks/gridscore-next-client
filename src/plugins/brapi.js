@@ -144,7 +144,9 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
   const useAuth = token !== undefined && token !== null
 
   if (useAuth) {
-    axiosParams.withCredentials = true
+    // TODO: Whyyyyyyyy?
+    // axiosParams.withCredentials = true
+    axiosParams.headers['Access-Control-Allow-Credentials'] = true
     axiosParams.headers.Authorization = `Bearer ${token}`
   }
 

@@ -71,7 +71,17 @@ export default {
     },
     sendCaptcha: function () {
       emitter.emit('show-loading', true)
-      extendTrialPeriod((this.trial && this.trial.remoteUrl) ? this.trial.remoteUrl : null, this.shareCode, { captcha: this.captcha })
+
+      let remoteConfig = null
+
+      if (this.trial && this.trial.remoteUrl) {
+        remoteConfig = {
+          url: this.trial.remoteUrl,
+          token: this.trial.remoteToken || null
+        }
+      }
+
+      extendTrialPeriod(remoteConfig, this.shareCode, { captcha: this.captcha })
         .then(() => {
           this.hide()
           emitter.emit('trials-updated')

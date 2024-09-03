@@ -38,7 +38,15 @@
 
         <TrialLayoutDimensionComponent class="mt-3" :editLabelsAllowed="false" :editValuesAllowed="false" :layout="layout" @layout-changed="updateLayout" ref="trialDimensionComponent" />
 
-        <b-button @click="importData" variant="primary" :disabled="!canProceed"><IBiCloudDownload /> {{ $t('buttonImportData') }}</b-button>
+        <div v-if="errors && errors.length > 0" class="my-3">
+          <h3>{{ $t('widgetBrapiTrialImportErrorsTitle') }}</h3>
+
+          <b-list-group class="import-errors">
+            <b-list-group-item variant="danger" v-for="(error, index) in errors" :key="`import-error-${index}`">{{ error }}</b-list-group-item>
+          </b-list-group>
+        </div>
+
+        <b-button @click="importData" variant="primary" :disabled="!canImport"><IBiCloudDownload /> {{ $t('buttonImportData') }}</b-button>
       </template>
     </b-form>
   </b-container>
@@ -80,7 +88,8 @@ export default {
         columnLabels: [],
         columnOrder: DISPLAY_ORDER_LEFT_TO_RIGHT,
         rowOrder: DISPLAY_ORDER_TOP_TO_BOTTOM
-      }
+      },
+      errors: []
     }
   },
   watch: {
@@ -107,6 +116,9 @@ export default {
     ]),
     canProceed: function () {
       return this.selectedProgram && this.selectedTrial && this.selectedStudyType && this.selectedStudy
+    },
+    canImport: function () {
+      return this.canProceed && this.errors.length < 1 && this.layoutValid
     },
     programOptions: function () {
       if (this.programs) {
@@ -162,6 +174,7 @@ export default {
       this.layout = JSON.parse(JSON.stringify(layout))
     },
     importData: function () {
+      this.errors = []
       const plotMapping = {}
 
       this.cells.forEach(c => {
@@ -206,16 +219,24 @@ export default {
                 if (ou.observationUnitPosition.positionCoordinateXType === 'GRID_COL') {
                   columnIndex = +ou.observationUnitPosition.positionCoordinateX
                   columns.add(columnIndex)
+                } else {
+                  this.errors.push(this.$t('widgetBrapiTrialImportErrorNoColumnInformation', { germplasm: ou.germplasmName || ou.observationUnitDbId }))
                 }
                 if (ou.observationUnitPosition.positionCoordinateYType === 'GRID_ROW') {
                   rowIndex = +ou.observationUnitPosition.positionCoordinateY
                   rows.add(rowIndex)
+                } else {
+                  this.errors.push(this.$t('widgetBrapiTrialImportErrorNoRowInformation', { germplasm: ou.germplasmName || ou.observationUnitDbId }))
                 }
                 if (ou.germplasmName) {
                   germplasmIdentifier = ou.germplasmName
+                } else {
+                  this.errors.push(this.$t('widgetBrapiTrialImportErrorNoGermplasmName', { germplasm: ou.observationUnitDbId }))
                 }
                 if (ou.germplasmDbId) {
                   brapiId = ou.germplasmDbId
+                } else {
+                  this.errors.push(this.$t('widgetBrapiTrialImportErrorNoGermplasmDbId', { germplasm: ou.observationUnitDbId }))
                 }
                 if (ou.observationUnitPosition.observationLevel) {
                   if (ou.observationUnitPosition.observationLevel.levelName === 'rep') {
@@ -342,6 +363,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.import-errors {
+  max-height: min(300px, 50vh);
+  overflow-y: auto;
+}
 </style>
