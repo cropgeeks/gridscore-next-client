@@ -35,19 +35,21 @@
           <div class="mb-3" v-else>
             <b-form-checkbox v-model="loadFromRemote">{{ $t('formCheckboxLoadFromRemote') }}</b-form-checkbox>
 
-            <b-form-group v-if="loadFromRemote" :label="$t('formLabelTrialLoadRemoteUrl')" label-for="remoteUrl">
-              <b-form-input v-model="remoteUrl" id="remoteUrl" />
-              <template #description>
-                <span v-html="$t('formDescriptionTrialLoadRemoteUrl')" />
-              </template>
-            </b-form-group>
+            <b-card v-if="loadFromRemote">
+              <b-form-group :label="$t('formLabelTrialLoadRemoteUrl')" label-for="remoteUrl">
+                <b-form-input v-model="remoteUrl" id="remoteUrl" />
+                <template #description>
+                  <span v-html="$t('formDescriptionTrialLoadRemoteUrl')" />
+                </template>
+              </b-form-group>
 
-            <b-form-group v-if="loadFromRemote" :label="$t('formLabelTrialLoadRemoteToken')" label-for="remoteToken">
-              <b-form-input v-model="remoteToken" id="remoteToken" />
-              <template #description>
-                <span v-html="$t('formDescriptionTrialLoadRemoteToken')" />
-              </template>
-            </b-form-group>
+              <b-form-group :label="$t('formLabelTrialLoadRemoteToken')" label-for="remoteToken">
+                <b-form-input v-model="remoteToken" id="remoteToken" />
+                <template #description>
+                  <span v-html="$t('formDescriptionTrialLoadRemoteToken')" />
+                </template>
+              </b-form-group>
+            </b-card>
           </div>
           <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
             <b-input-group>
@@ -68,9 +70,9 @@
 
           <b-card bg-variant="warning" border-variant="warning" class="mb-3" v-if="gridScoreVersion === 'legacy'"><b-card-text>{{ $t('pageImportLegacyWarning') }}</b-card-text></b-card>
 
-          <b-button @click="checkCode" variant="primary" :disabled="buttonDisabled"><IBiSearch /> {{ $t('buttonCheckShareCode') }}</b-button>
+          <p class="text-danger mt-3 mb-0" v-if="serverError"><span v-html="serverError" /></p>
 
-          <p class="text-danger mt-3" v-if="serverError"><span v-html="serverError" /></p>
+          <b-button class="my-3" @click="checkCode" variant="primary" :disabled="buttonDisabled"><IBiSearch /> {{ $t('buttonCheckShareCode') }}</b-button>
         </b-form>
 
         <b-modal :cancel-title="$t('buttonNo')"
@@ -249,7 +251,9 @@ export default {
             this.$nextTick(() => this.$refs.confirmationModal.show())
           })
           .catch(error => {
-            if (error.status === 404) {
+            if (error.status === 401) {
+              this.serverError = this.$t('errorMessageRemoteTrialInvalidToken')
+            } else if (error.status === 404) {
               this.serverError = this.$t('apiErrorTrialNotFound')
             } else {
               this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
@@ -315,7 +319,9 @@ export default {
             }
           })
           .catch(error => {
-            if (error.status === 404) {
+            if (error.status === 401) {
+              this.serverError = this.$t('errorMessageRemoteTrialInvalidToken')
+            } else if (error.status === 404) {
               this.serverError = this.$t('apiErrorTrialNotFound')
             } else {
               this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })

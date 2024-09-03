@@ -766,6 +766,8 @@ const addTrial = async (trial) => {
     brapiConfig: copy.brapiConfig,
     createdOn: copy.createdOn || new Date().toISOString(),
     updatedOn: copy.updatedOn || new Date().toISOString(),
+    remoteUrl: copy.remoteUrl || null,
+    remoteToken: copy.remoteToken || null,
     lastSyncedOn: copy.lastSyncedOn,
     comments: copy.comments || [],
     events: copy.events || [],

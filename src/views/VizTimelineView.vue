@@ -146,6 +146,7 @@ export default {
             y,
             type: 'scatter',
             mode: 'lines+markers',
+            showlegend: true,
             name: trait.name,
             line: {
               color: trait.color

@@ -73,7 +73,7 @@ const internalAxiosCall = (baseUrl, url, remoteToken, method, requestParams, req
 
   if ((remoteToken !== undefined) && (remoteToken !== null) && (remoteToken !== '')) {
     config.withCredentials = true
-    config.headers.Authorization = `Bearer: ${remoteToken}`
+    config.headers.Authorization = `Bearer ${remoteToken}`
   }
 
   axios.default(config).then(data => {

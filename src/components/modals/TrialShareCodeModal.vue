@@ -39,20 +39,24 @@
           <div class="mb-3">
             <b-form-checkbox v-model="shareWithRemote">{{ $t('formCheckboxShareWithRemote') }}</b-form-checkbox>
 
-            <b-form-group v-if="shareWithRemote" :label="$t('formLabelTrialShareRemoteUrl')" label-for="remoteUrl">
-              <b-form-input v-model="remoteUrl" id="remoteUrl" />
-              <template #description>
-                <span v-html="$t('formDescriptionTrialShareRemoteUrl')" />
-              </template>
-            </b-form-group>
+            <b-card v-if="shareWithRemote">
+              <b-form-group :label="$t('formLabelTrialShareRemoteUrl')" label-for="remoteUrl">
+                <b-form-input v-model="remoteUrl" id="remoteUrl" />
+                <template #description>
+                  <span v-html="$t('formDescriptionTrialShareRemoteUrl')" />
+                </template>
+              </b-form-group>
 
-            <b-form-group v-if="shareWithRemote" :label="$t('formLabelTrialShareRemoteToken')" label-for="remoteToken">
-              <b-form-input v-model="remoteToken" id="remoteToken" />
-              <template #description>
-                <span v-html="$t('formDescriptionTrialShareRemoteToken')" />
-              </template>
-            </b-form-group>
+              <b-form-group :label="$t('formLabelTrialShareRemoteToken')" label-for="remoteToken">
+                <b-form-input v-model="remoteToken" id="remoteToken" />
+                <template #description>
+                  <span v-html="$t('formDescriptionTrialShareRemoteToken')" />
+                </template>
+              </b-form-group>
+            </b-card>
           </div>
+
+          <div v-if="error" class="my-3 text-danger">{{ error }}</div>
 
           <b-button @click="getShareCodes" :disabled="isOnline === false || buttonDisabled === true" variant="primary"><IBiQrCodeScan /> {{ $t('buttonGenerateShareCodes') }}</b-button>
         </div>
@@ -91,7 +95,8 @@ export default {
       TRIAL_STATE_VIEWER,
       shareWithRemote: false,
       remoteUrl: null,
-      remoteToken: null
+      remoteToken: null,
+      error: null
     }
   },
   computed: {
@@ -107,11 +112,17 @@ export default {
   },
   methods: {
     getShareCodes: function () {
+      this.error = null
       emitter.emit('show-loading', true)
       shareTrial({ url: this.shareWithRemote ? this.remoteUrl : null, token: this.remoteToken }, this.trial.localId)
         .then(() => emitter.emit('plausible-event', { key: 'trial-shared' }))
         .catch(error => {
-          console.error(error)
+          if (error.status === 401) {
+            this.error = this.$t('errorMessageRemoteTrialInvalidToken')
+          } else {
+            this.error = error.message
+            console.error(error)
+          }
         })
         .finally(() => emitter.emit('show-loading', false))
     },
@@ -119,6 +130,7 @@ export default {
      * Shows and resets modal dialog
      */
     show: function () {
+      this.error = null
       this.selectedShareCode = null
       this.$refs.trialShareCodesModal.show()
     },
