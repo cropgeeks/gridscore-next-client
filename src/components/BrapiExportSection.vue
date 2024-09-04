@@ -264,7 +264,7 @@ export default {
     sendData: function () {
       const trialData = getTrialDataCached()
       if (trialData) {
-        emitter.emit('set-loading', true)
+        emitter.emit('show-loading', true)
 
         // Generate a mapping based on display row and column for lookup
         const displayMapping = {}
@@ -384,11 +384,11 @@ export default {
             brapiDefaultCatchHandler(e)
             reject(e)
           })
-          .finally(() => emitter.emit('set-loading', false))
+          .finally(() => emitter.emit('show-loading', false))
       })
     },
     sendDataCurrent: function (trialData, observationUnits) {
-      emitter.emit('set-loading', true)
+      emitter.emit('show-loading', true)
 
       const data = []
       const observationUnitMap = {}
@@ -475,7 +475,7 @@ export default {
           emitter.emit('plausible-event', { key: 'dataset-export', props: { format: 'brapi' } })
         })
         .catch(brapiDefaultCatchHandler)
-        .finally(() => emitter.emit('set-loading', false))
+        .finally(() => emitter.emit('show-loading', false))
     },
     updateBrapiTraitDbIdsInDatabase: function (map) {
       const mapping = {}
@@ -525,7 +525,7 @@ export default {
     updateBrapiGermplasmDbIdsInDatabase: function (map) {
       const trialData = getTrialDataCached()
       if (trialData) {
-        emitter.emit('set-loading', true)
+        emitter.emit('show-loading', true)
 
         const mapping = {}
         // For each field row
@@ -545,7 +545,7 @@ export default {
           }
         }
 
-        emitter.emit('set-loading', false)
+        emitter.emit('show-loading', false)
 
         // Store the data in the database
         if (Object.keys(mapping).length > 0) {

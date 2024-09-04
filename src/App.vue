@@ -313,7 +313,7 @@ export default {
       }
     },
     plausibleEvent: function (data) {
-      if (this.plausible && data) {
+      if (this.plausible && this.storePlausible.plausibleDomain && data) {
         if (data.props) {
           this.plausible.trackEvent(data.key, { props: data.props })
         } else {

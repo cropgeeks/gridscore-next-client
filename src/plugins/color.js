@@ -54,10 +54,33 @@ const categoricalColors = {
   Hutton: ['#FF9E15', '#D6C200', '#799900', '#6AA2B8', '#00748C', '#CF009E', '#853175', '#C2002F', '#555559']
 }
 
+const validateColorName = color => {
+  const style = new Option().style
+  style.color = color
+
+  // Check if the computed color is the same as the input color
+  return style.color === color
+}
+
+const toCssNamedColors = colors => {
+  const result = {}
+
+  colors.forEach(c => {
+    const shortened = c.toLowerCase().replace(/[^a-z]/g, '')
+    if (shortened.length > 0 && validateColorName(shortened)) {
+      result[c] = shortened
+    }
+  })
+
+  return result
+}
+
 export {
   getHighContrastTextColor,
   shadeColor,
   hexToRgb,
   rgbToHex,
+  validateColorName,
+  toCssNamedColors,
   categoricalColors
 }

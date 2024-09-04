@@ -228,7 +228,9 @@ export default {
                 } else {
                   this.errors.push(this.$t('widgetBrapiTrialImportErrorNoRowInformation', { germplasm: ou.germplasmName || ou.observationUnitDbId }))
                 }
-                if (ou.germplasmName) {
+                if (ou.observationUnitName) {
+                  germplasmIdentifier = ou.observationUnitName
+                } else if (ou.germplasmName) {
                   germplasmIdentifier = ou.germplasmName
                 } else {
                   this.errors.push(this.$t('widgetBrapiTrialImportErrorNoGermplasmName', { germplasm: ou.observationUnitDbId }))

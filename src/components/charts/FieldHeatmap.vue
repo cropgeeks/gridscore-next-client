@@ -41,7 +41,7 @@ import { coreStore } from '@/store'
 import { getTrialDataCached } from '@/plugins/datastore'
 import { CELL_CATEGORY_CONTROL } from '@/plugins/constants'
 import { getColumnLabel, getRowLabel, invertHex, toLocalDateString } from '@/plugins/misc'
-import { categoricalColors } from '@/plugins/color'
+import { categoricalColors, toCssNamedColors, validateColorName } from '@/plugins/color'
 import PlotDataSection from '@/components/PlotDataSection.vue'
 
 import emitter from 'tiny-emitter/instance'
@@ -302,6 +302,10 @@ export default {
           }
         }
 
+        const catColors = this.selectedTrait.dataType === 'categorical' ? restrictions.categories : []
+        const colorMap = toCssNamedColors(catColors)
+        const allValidNamedColors = Object.keys(colorMap).length === catColors.length
+
         const traces = [{
           // X values are the column indices
           x: Array.from({ length: this.trial.layout.columns }, (v, k) => this.$n(k + 1)),
@@ -312,9 +316,22 @@ export default {
           customdata,
           type: 'heatmap',
           colorscale: this.selectedTrait.dataType === 'categorical'
-            ? restrictions.categories.map((_, i) => {
+            ? restrictions.categories.map((cat, i) => {
               const l = restrictions.categories.length
-              const c = categoricalColors.D3schemeCategory10[i % categoricalColors.D3schemeCategory10.length]
+              let c
+
+              if (allValidNamedColors) {
+                if (cat === 'white') {
+                  c = '#dddddd'
+                } else if (cat === 'black') {
+                  c = '#222222'
+                } else {
+                  c = colorMap[cat]
+                }
+              } else {
+                c = categoricalColors.D3schemeCategory10[i % categoricalColors.D3schemeCategory10.length]
+              }
+
               return [[i / l, c], [(i + 1) / l, c]]
             }).flat()
             : [[0, this.storeDarkMode ? '#444444' : '#dddddd'], [1, this.selectedTrait.color]],
