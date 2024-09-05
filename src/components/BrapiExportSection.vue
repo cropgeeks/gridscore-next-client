@@ -264,7 +264,7 @@ export default {
     sendData: function () {
       const trialData = getTrialDataCached()
       if (trialData) {
-        emitter.emit('show-loading', true)
+        emitter.emit('show-loading', true, 1)
 
         // Generate a mapping based on display row and column for lookup
         const displayMapping = {}
@@ -308,6 +308,8 @@ export default {
       }
     },
     sendDataLegacy: function (trialData) {
+      emitter.emit('show-loading', true, 33.3)
+
       const data = []
 
       for (let y = 0; y < this.trial.layout.rows; y++) {
@@ -384,11 +386,10 @@ export default {
             brapiDefaultCatchHandler(e)
             reject(e)
           })
-          .finally(() => emitter.emit('show-loading', false))
       })
     },
     sendDataCurrent: function (trialData, observationUnits) {
-      emitter.emit('show-loading', true)
+      emitter.emit('show-loading', true, 66.6)
 
       const data = []
       const observationUnitMap = {}

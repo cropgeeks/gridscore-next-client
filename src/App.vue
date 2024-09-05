@@ -89,10 +89,12 @@
                 @brapi-settings-changed="onBrapiSettingsChanged"
                 no-fade />
 
-    <b-modal v-model="loadingVisible" hide-header hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
+    <b-modal v-model="loadingConfig.visible" hide-header hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
       <div class="text-center">
         <b-spinner style="width: 3rem; height: 3rem;" variant="primary" type="grow" />
         <p class="text-muted mt-3" v-if="$t('modalTextLoading')">{{ $t('modalTextLoading') }}</p>
+
+        <b-progress :value="loadingConfig.progress" v-if="(loadingConfig.progress !== undefined) && (loadingConfig.progress !== null)" striped animated />
       </div>
     </b-modal>
 
@@ -165,7 +167,10 @@ export default {
     return {
       gridScoreVersion,
       languages: locales,
-      loadingVisible: false,
+      loadingConfig: {
+        visible: false,
+        progress: null
+      },
       refreshing: false,
       registration: null,
       selectedTrial: null,
@@ -335,8 +340,11 @@ export default {
       this.brapiErrorMessage = message
       this.brapiSettingsModalVisible = true
     },
-    showLoading: function (visible) {
-      this.loadingVisible = visible
+    showLoading: function (visible, progress) {
+      this.loadingConfig = {
+        visible: visible,
+        progress: visible ? progress : null
+      }
     },
     handleVisibilityChange: async function () {
       // If the apps visibility changed (tab changed or window minimized), re-aquire the lock after return

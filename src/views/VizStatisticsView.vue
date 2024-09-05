@@ -23,11 +23,11 @@
             </b-form-group>
 
             <div v-if="selectedGermplasm && selectedGermplasm.length > 0" class="germplasm-selection-badges">
-              <b-badge class="me-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`" >
+              <b-badge class="me-2 mt-2" v-for="(germplasm, index) in selectedGermplasm" :key="`germplasm-badge-${germplasm}`" >
                 {{ germplasm }} <button type="button" class="btn-close badge-close" @click="removeGermplasm(index)">×</button>
               </b-badge>
 
-              <b-badge class="me-2" variant="danger" href="#" @click.prevent="clearSelectedGermplasm" >
+              <b-badge class="me-2 mt-2" variant="danger" href="#" @click.prevent="clearSelectedGermplasm" >
                 <IBiTrash /> {{ $t('buttonClear') }}
               </b-badge>
             </div>

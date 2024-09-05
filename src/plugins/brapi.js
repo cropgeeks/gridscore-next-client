@@ -138,7 +138,8 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
     crossDomain: true,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
-    }
+    },
+    timeout: 120000
   }
 
   const useAuth = token !== undefined && token !== null

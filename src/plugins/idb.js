@@ -787,6 +787,12 @@ const addTrial = async (trial) => {
         cell = JSON.parse(JSON.stringify(cell))
       }
 
+      trial.traits.forEach(t => {
+        if (!cell.measurements[t.id]) {
+          cell.measurements[t.id] = []
+        }
+      })
+
       allData.push({
         trialId: id,
         row,
