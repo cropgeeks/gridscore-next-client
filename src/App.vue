@@ -118,6 +118,8 @@
     <TrialShareCodeModal :trial="trialForShare" @hidden="showTrialShare(null)" ref="trialShareModal" v-if="trialForShare" />
 
     <ConfirmModal />
+
+    <BToastOrchestrator />
   </div>
 </template>
 
@@ -134,6 +136,7 @@ import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
 import { axiosCall, getServerSettings } from '@/plugins/api'
 import Plausible from 'plausible-tracker'
+import { useToast } from 'bootstrap-vue-next'
 
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
@@ -340,6 +343,18 @@ export default {
       this.brapiErrorMessage = message
       this.brapiSettingsModalVisible = true
     },
+    showToast: function (p) {
+      const { show } = useToast()
+      show({
+        props: {
+          title: p.title,
+          body: p.message,
+          variant: p.variant,
+          pos: 'bottom-end',
+          interval: p.autoHideDelay || 1000
+        }
+      })
+    },
     showLoading: function (visible, progress) {
       this.loadingConfig = {
         visible: visible,
@@ -470,6 +485,7 @@ export default {
     emitter.on('api-error', this.handleApiError)
     emitter.on('show-brapi-settings', this.showBrapiSettings)
     emitter.on('show-loading', this.showLoading)
+    emitter.on('show-toast', this.showToast)
 
     this.updateSelectedTrial()
   },
@@ -482,6 +498,7 @@ export default {
     emitter.off('api-error', this.handleApiError)
     emitter.off('show-brapi-settings', this.showBrapiSettings)
     emitter.off('show-loading', this.showLoading)
+    emitter.off('show-toast', this.showToast)
   },
   created: function () {
     // Listen for our custom event from the SW registration
@@ -577,6 +594,10 @@ $danger: #EA2027;
 
 .input-group .form-range {
   height: unset;
+}
+
+.toast {
+  --bs-bg-opacity: 0.65;
 }
 
 .modal.show {

@@ -8,7 +8,7 @@
       </div>
     </div>
     <b-tooltip :target="`scale-${id}`" placement="bottom">
-      <h6>{{ trait.name }}</h6>
+      <h6 class="fw-bold">{{ trait.name }}</h6>
       <div class="d-flex justify-content-between">
         <span class="d-block"><IBiArrowUp /> {{ $t('widgetScaleMax') }} </span>
         <span class="ms-2">{{ formattedMax }}</span>
@@ -28,7 +28,7 @@
       <hr />
       <div class="d-flex justify-content-between">
         <span class="d-block text-primary"><IBiFlower1 /> {{ $t('widgetScaleGermplasm') }} </span>
-        <span class="ms-2">{{ formattedGermplasmAvg }}</span>
+        <span class="ms-2">{{ formattedGermplasmAvg || $t('widgetChartNoData') }}</span>
       </div>
     </b-tooltip>
   </div>
@@ -70,14 +70,14 @@ export default {
       'storeDarkMode'
     ]),
     germplasmPercentage: function () {
-      if (this.germplasmStats && this.traitStats) {
+      if (this.germplasmStats && this.germplasmStats.count > 0 && this.traitStats) {
         return (this.germplasmStats.avg - this.traitStats.min) * (100 - 0) / (this.traitStats.max - this.traitStats.min)
       } else {
         return 33
       }
     },
     traitAveragePercentage: function () {
-      if (this.germplasmStats && this.traitStats) {
+      if (this.germplasmStats && this.germplasmStats.count > 0 && this.traitStats) {
         return (this.traitStats.avg - this.traitStats.min) * (100 - 0) / (this.traitStats.max - this.traitStats.min)
       } else {
         return 33
@@ -105,10 +105,14 @@ export default {
       }
     },
     formattedGermplasmAvg: function () {
-      if (this.trait.dataType === 'date') {
-        return new Date(this.germplasmStats.avg * (1000 * 60 * 60 * 24)).toLocaleDateString()
+      if (this.germplasmStats && this.germplasmStats.count > 0) {
+        if (this.trait.dataType === 'date') {
+          return new Date(this.germplasmStats.avg * (1000 * 60 * 60 * 24)).toLocaleDateString()
+        } else {
+          return this.germplasmStats.avg.toFixed(4)
+        }
       } else {
-        return this.germplasmStats.avg.toFixed(4)
+        return null
       }
     }
   }

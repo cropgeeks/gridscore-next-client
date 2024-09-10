@@ -19,7 +19,7 @@
             <template v-slot:label>
               <IBiTextareaT /> <span>{{ $t('formLabelTrialSetupTrialName') }}</span>
             </template>
-            <b-form-input id="trial-name" :state="formState.trialName" required autofocus v-model.trim="trialName" />
+            <b-form-input id="trial-name" :state="formState.trialName" required autofocus v-model.trim.lazy="trialName" trim lazy />
           </b-form-group>
 
           <!-- Trial group -->
@@ -27,7 +27,7 @@
             <template v-slot:label>
               <IBiCollection /> <span>{{ $t('formLabelTrialSetupTrialGroup') }}</span>
             </template>
-            <b-form-input list="trial-groups" :state="formState.trialGroup" v-model.trim="trialGroup" id="trial-group" />
+            <b-form-input list="trial-groups" :state="formState.trialGroup" v-model.trim.lazy="trialGroup" trim lazy id="trial-group" />
 
             <datalist id="trial-groups">
               <option v-for="group in trialGroups" :key="`trial-group-${group}`">{{ group }}</option>
@@ -72,19 +72,19 @@
                   <template v-slot:label>
                     <IBiCardHeading /> <span> {{ $t('formLabelTrialSetupTrialSocialTitle') }}</span>
                   </template>
-                  <b-form-input id="trial-social-title" v-model.trim="trialSocialConfig.title" />
+                  <b-form-input id="trial-social-title" lazy trim v-model.trim.lazy="trialSocialConfig.title" />
                 </b-form-group>
                 <b-form-group label-for="trial-social-text" :description="$t('formDescriptionTrialSetupTrialSocialText')">
                   <template v-slot:label>
                     <IBiTextareaResize /> <span> {{ $t('formLabelTrialSetupTrialSocialText') }}</span>
                   </template>
-                  <b-form-textarea id="trial-social-text" v-model.trim="trialSocialConfig.text" />
+                  <b-form-textarea id="trial-social-text" lazy trim v-model.trim.lazy="trialSocialConfig.text" />
                 </b-form-group>
                 <b-form-group label-for="trial-social-url" :description="$t('formDescriptionTrialSetupTrialSocialUrl')">
                   <template v-slot:label>
                     <IBiLink /> <span> {{ $t('formLabelTrialSetupTrialSocialUrl') }}</span>
                   </template>
-                  <b-form-input id="trial-social-url" v-model.trim="trialSocialConfig.url" />
+                  <b-form-input id="trial-social-url" lazy trim v-model.trim.lazy="trialSocialConfig.url" />
                 </b-form-group>
               </b-card>
             </b-collapse>

@@ -10,10 +10,10 @@
         <IBiCloudDownloadFill class="card-corner-icon" />
       </template>
     </a>
-    <TrialInformation :trial="trial" @on-share-clicked="$emit('showShareCodes')" />
-    <b-button v-if="trial.remoteUrl" class="button-disabled" variant="secondary" v-b-tooltip.hover="trial.remoteUrl">
+    <b-button v-if="trial.remoteUrl" class="button-disabled py-0" variant="info" v-b-tooltip.hover="trial.remoteUrl">
       <IBiCloudPlusFill /> {{ $t('buttonTrialRemoteUrl') }}
     </b-button>
+    <TrialInformation :trial="trial" @on-share-clicked="$emit('showShareCodes')" />
     <b-button v-if="selectable" :variant="selectedToEdit ? 'info' : 'secondary'" @click="selectedToEdit = !selectedToEdit">
       <IBiCheckSquare v-if="selectedToEdit" /><IBiSquare v-else /> {{ selectedToEdit ? $t('buttonDeselect') : $t('buttonSelect') }}
     </b-button>

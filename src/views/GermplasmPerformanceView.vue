@@ -18,7 +18,7 @@
       </b-col>
     </b-row>
 
-    <MapComponent :highlightCheck="toHighlight" :showControls="false" v-if="hasGps" />
+    <MapComponent mapClass="vh-50" :highlightCheck="toHighlight" :showControls="false" v-if="hasGps" />
 
     <p v-if="error" class="text-danger">{{ $t(error) }}</p>
   </b-container>

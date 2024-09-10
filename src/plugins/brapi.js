@@ -70,21 +70,21 @@ const brapiDefaultCatchHandler = (err) => {
         break
     }
 
-    emitter.emit('toast', {
+    emitter.emit('show-toast', {
       message,
       title,
       variant,
-      autoHideDelay: 5000,
+      autoHideDelay: 10000,
       appendToast: true
     })
   } else if (err.request) {
     // The request was made but no response was received `err.request` is an instance of XMLHttpRequest in the browser
     if (err.request.textStatus === 'timeout') {
-      emitter.emit('toast', {
+      emitter.emit('show-toast', {
         message: t('toastTextBrapiTimeout'),
         title: t('toastTitleBrapiError'),
         variant: 'danger',
-        autoHideDelay: 5000,
+        autoHideDelay: 10000,
         appendToast: true
       })
     }
@@ -118,11 +118,11 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
     }
 
     if (!serverInfos[baseUrl] || !serverInfos[baseUrl].some(c => c.service === callName && c.versions.indexOf('2.1') !== -1)) {
-      emitter.emit('toast', {
+      emitter.emit('show-toast', {
         message: t('toastTextBrapiCallNotAvailable'),
         title: t('toastTitleBrapiError'),
         variant: 'danger',
-        autoHideDelay: 5000,
+        autoHideDelay: 10000,
         appendToast: true
       })
       return Promise.reject(new Error(`BrAPI call not available for the given URL: ${callName}`))
@@ -145,7 +145,7 @@ const brapiAxios = async (url, callName, params = null, method = 'get', infoChec
   const useAuth = token !== undefined && token !== null
 
   if (useAuth) {
-    // TODO: Whyyyyyyyy?
+    // TODO: Whyyyyyyyy? The line below causes CORS issues, while the one below that works just fine.
     // axiosParams.withCredentials = true
     axiosParams.headers['Access-Control-Allow-Credentials'] = true
     axiosParams.headers.Authorization = `Bearer ${token}`

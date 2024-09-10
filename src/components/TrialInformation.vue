@@ -14,16 +14,6 @@
           <span>{{ trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned') }}</span>
         </b-col>
         <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><IBiChatLeftText /></h5>
-          <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $t('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
-          <span v-else>{{ $t('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</span>
-        </b-col>
-        <b-col cols=6 class="mb-3">
-          <h5 class="mb-0"><IBiFlag /></h5>
-          <a href="#" @click.prevent="onShowTrialEventsClicked" v-if="showEvents">{{ $t('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</a>
-          <span v-else>{{ $t('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</span>
-        </b-col>
-        <b-col cols=6 class="mb-3">
           <h5 class="mb-0"><IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /></h5>
           <span>{{ $t('widgetTrialSelectorRows', trial.layout.rows) }}</span>
         </b-col>
@@ -39,6 +29,16 @@
         <b-col cols=6 class="mb-3">
           <h5 class="mb-0"><IBiPerson /></h5>
           <span>{{ $t('widgetTrialSelectorPeople', (trial.people || []).length) }}</span>
+        </b-col>
+        <b-col cols=6 class="mb-3">
+          <h5 class="mb-0"><IBiChatLeftText /></h5>
+          <a href="#" @click.prevent="onShowTrialCommentsClicked" v-if="showComments">{{ $t('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</a>
+          <span v-else>{{ $t('widgetTrialSelectorComments', trial.comments ? trial.comments.length : 0) }}</span>
+        </b-col>
+        <b-col cols=6 class="mb-3">
+          <h5 class="mb-0"><IBiFlag /></h5>
+          <a href="#" @click.prevent="onShowTrialEventsClicked" v-if="showEvents">{{ $t('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</a>
+          <span v-else>{{ $t('widgetTrialSelectorEvents', trial.events ? trial.events.length : 0) }}</span>
         </b-col>
         <b-col cols=6 class="mb-3" v-if="trial.updatedOn">
           <h5 class="mb-0"><IBiCalendarRange /></h5>

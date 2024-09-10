@@ -7,7 +7,7 @@
             <template #label>
               <IBiTextarea /> {{ $t('formLabelTraitName') }}
             </template>
-            <b-form-input v-model.trim="newTrait.name" id="trait-name" autofocus required :state="formState.name" ref="traitName" v-on:keyup.enter="newTrait.id ? updateTrait() : addTrait()" />
+            <b-form-input v-model.trim.lazy="newTrait.name" trim lazy id="trait-name" autofocus required :state="formState.name" ref="traitName" v-on:keyup.enter="newTrait.id ? updateTrait() : addTrait()" />
             <b-form-invalid-feedback>
               {{ $t('formFeedbackTraitNameInvalidOrDuplicate') }}
             </b-form-invalid-feedback>
@@ -16,7 +16,7 @@
             <template #label>
               <IBiCardText /> {{ $t('formLabelTraitDescription') }}
             </template>
-            <b-form-textarea rows=3 trim v-model.trim="newTrait.description" id="trait-description" />
+            <b-form-textarea rows=3 trim lazy v-model.trim.lazy="newTrait.description" id="trait-description" />
           </b-form-group>
           <b-row>
             <b-col cols=6>
@@ -32,7 +32,7 @@
                 <template #label>
                   <IBiCollection /> {{ $t('formLabelTraitGroup') }}
                 </template>
-                <b-form-input list="trait-groups" v-model.trim="newTrait.group" id="trait-group" />
+                <b-form-input list="trait-groups" trim lazy v-model.trim.lazy="newTrait.group" id="trait-group" />
 
                 <datalist id="trait-groups">
                   <option v-for="group in traitGroups" :key="`trait-group-${group}`">{{ group }}</option>

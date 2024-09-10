@@ -879,7 +879,7 @@
   "widgetTrialSelectorTraitTimeframe": "Show trait timeframes",
   "widgetTrialSelectorComments": "No comments | One comment | {count} comments",
   "widgetTrialSelectorEvents": "No events | One event | {count} events",
-  "widgetTrialSelectorTrialDuration": "0 days | 1 day | {count} days",
+  "widgetTrialSelectorTrialDuration": "0 active days | 1 active day | {count} active days",
   "widgetTrialSelectorPeople": "No people | One person | {count} people",
   "widgetTrialSelectorNoMatchFound": "No matching trial found for your search query.",
   "widgetTrialSelectorTrialExpiryWarning": "Trial will expire soon!",

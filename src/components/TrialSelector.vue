@@ -33,7 +33,7 @@
       <b-row>
         <b-col cols=12 md=6 lg=4>
           <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
-            <b-form-input v-model.trim="searchTerm" id="search-term" type="search" />
+            <b-form-input v-model="searchTerm" id="search-term" type="search" />
           </b-form-group>
         </b-col>
         <b-col cols=12 md=6 lg=4>
@@ -216,7 +216,8 @@ export default {
         const sortedAndFiltered = JSON.parse(JSON.stringify(this.trials))
           .filter(t => {
             if (this.searchTerm && (this.searchTerm !== '')) {
-              const lower = this.searchTerm.toLowerCase()
+              const trimmed = this.searchTerm.trim()
+              const lower = trimmed.toLowerCase()
               // Check if the name matches
               if (t.name.toLowerCase().includes(lower)) {
                 return true
@@ -231,13 +232,13 @@ export default {
               }
               // Check if it matches any of the share codes
               if (t.shareCodes) {
-                if (t.shareCodes.viewerCode === this.searchTerm) {
+                if (t.shareCodes.viewerCode === trimmed) {
                   return true
                 }
-                if (t.shareCodes.editorCode === this.searchTerm) {
+                if (t.shareCodes.editorCode === trimmed) {
                   return true
                 }
-                if (t.shareCodes.ownerCode === this.searchTerm) {
+                if (t.shareCodes.ownerCode === trimmed) {
                   return true
                 }
               }

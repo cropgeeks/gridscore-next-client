@@ -24,7 +24,7 @@
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="number"
-                  v-model.trim="value"
+                  v-model="value"
                   :readonly="!editable"
                   @change="tts"
                   @keyup.enter="$emit('traverse')"
@@ -38,7 +38,7 @@
                   :state="formState"
                   @wheel="$event.target.blur()"
                   type="number"
-                  v-model.trim="value"
+                  v-model="value"
                   :readonly="!editable"
                   @change="tts"
                   @keyup.enter="$emit('traverse')"
@@ -80,9 +80,9 @@
                         :checked="value"
                         :disabled="!editable"
                         :options="traitOptionsButtons" /> -->
-    <b-form-input :id="id" v-else-if="trait.dataType === 'gps'" v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
-    <b-form-input :id="id" v-else-if="trait.dataType === 'image'" v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
-    <b-form-input :id="id" v-else v-model.trim="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
+    <b-form-input :id="id" v-else-if="trait.dataType === 'gps'" v-model="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
+    <b-form-input :id="id" v-else-if="trait.dataType === 'image'" v-model="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
+    <b-form-input :id="id" v-else v-model="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
 
     <template #append v-if="trait.dataType === 'image'">
       <b-button v-b-tooltip="$t('tooltipDataEntryTakeImage')" variant="primary" @click="$refs.imageModal.show()" :disabled="!editable"><IBiCameraFill /></b-button>
@@ -213,7 +213,11 @@ export default {
       if (this.value === undefined || this.value === null || this.value === '' || (this.trait.dataType === 'range' && !this.rangeChanged)) {
         return null
       } else {
-        return this.value
+        if ((typeof this.value) === 'string') {
+          return this.value.trim()
+        } else {
+          return this.value
+        }
       }
     },
     focus: function () {

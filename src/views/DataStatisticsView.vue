@@ -7,7 +7,7 @@
       <b-row>
         <b-col cols=12 md=6>
           <b-form-group :label="$t('formLabelTrialSelectorSearch')" :description="$t('formDescriptionTrialSelectorSearch')" label-for="search-term">
-            <b-form-input v-model.trim="searchTerm" id="search-term" type="search" />
+            <b-form-input lazy trim v-model.trim.lazy="searchTerm" id="search-term" type="search" />
           </b-form-group>
           <b-form-group :label="$t('formLabelDataStatsTrial')" label-for="trials">
             <b-form-select id="trials" multiple v-model="selectedTrials" :options="filteredTrials" />

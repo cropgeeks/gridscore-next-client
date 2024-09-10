@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="data-map" ref="map" />
+    <div :class="`data-map-${mapClass}`" ref="map" />
 
     <div v-if="selectedFeature" ref="popupContent">
       <PlotDataSection :trial="trial" :traits="trial.traits" :cell="selectedFeature" />
@@ -54,6 +54,10 @@ export default {
     ])
   },
   props: {
+    mapClass: {
+      type: String,
+      default: 'vh-75'
+    },
     highlightCheck: {
       type: Function,
       default: () => false
@@ -188,6 +192,14 @@ export default {
         // Create the geojson and the layer, then add to the map
         const geoJson = plotInfoToGeoJson(plotInfo)
 
+        if (this.highlightCheck && !this.trial.layout.corners) {
+          const checks = plotInfo.filter(pi => this.highlightCheck(pi.properties) && pi.center)
+
+          checks.forEach(c => {
+            L.circle(c.center, { radius: 5, fillColor: '#910080', color: '#910080', fillOpacity: 0.3, weight: 0 }).addTo(this.map)
+          })
+        }
+
         const geoJsonLayer = L.geoJSON(geoJson, {
           style: (feature) => {
             let color = '#00a0f1'
@@ -307,8 +319,14 @@ export default {
 </script>
 
 <style scoped>
-.data-map {
+.data-map-vh-50 {
+  height: 50vh;
+}
+.data-map-vh-75 {
   height: 75vh;
+}
+.data-map-vh-100 {
+  height: 100vh;
 }
 .map-measurement-list {
   max-height: 60vh;
@@ -321,10 +339,18 @@ export default {
 }
 .leaflet-popup-content {
   min-width: 200px!important;
-  max-height: 50vh;
   line-height: 1em;
   overflow-x: hidden;
   height: auto !important;
+}
+.data-map-vh-50 .leaflet-popup-content {
+  max-height: max(300px, calc(50vh - 100px));
+}
+.data-map-vh-75 .leaflet-popup-content {
+  max-height: max(300px, calc(75vh - 100px));
+}
+.data-map-vh-100 .leaflet-popup-content {
+  max-height: max(300px, calc(100vh - 100px));
 }
 .leaflet-popup-content dl {
   margin-bottom: 0;

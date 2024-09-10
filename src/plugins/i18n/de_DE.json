@@ -869,7 +869,7 @@
   "widgetTrialSelectorTraits": "Keine Merkmale | Ein Merkmal | {count} Merkmale",
   "widgetTrialSelectorTraitTimeframe": "Merkmalzeitspannen anzeigen",
   "widgetTrialSelectorComments": "Keine Kommentare | Ein Kommentar | {count} Kommentare",
-  "widgetTrialSelectorTrialDuration": "0 Tage | 1 Tag | {count} Tage",
+  "widgetTrialSelectorTrialDuration": "0 aktive Tage | 1 aktiver Tag | {count} aktive Tage",
   "widgetTrialSelectorPeople": "Keine Personen | Eine Person | {count} Personen",
   "widgetTrialSelectorNoMatchFound": "Kein passender Versuch für die Suchanfrage gefunden.",
   "widgetTrialSelectorTrialExpiryWarning": "Versuch wird bald ablaufen!",

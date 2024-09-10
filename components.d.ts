@@ -67,6 +67,7 @@ declare module 'vue' {
     BTab: typeof import('bootstrap-vue-next')['BTab']
     BTabs: typeof import('bootstrap-vue-next')['BTabs']
     BToast: typeof import('bootstrap-vue-next')['BToast']
+    BToastOrchestrator: typeof import('bootstrap-vue-next')['BToastOrchestrator']
     BTooltip: typeof import('bootstrap-vue-next')['BTooltip']
     ChangelogModal: typeof import('./src/components/modals/ChangelogModal.vue')['default']
     ColumnHeader: typeof import('./src/components/canvas/ColumnHeader.vue')['default']

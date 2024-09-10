@@ -50,7 +50,7 @@
       </b-button>
 
       <div>
-        <b-button v-if="trial.remoteUrl" class="button-disabled" variant="secondary" v-b-tooltip.hover="trial.remoteUrl">
+        <b-button v-if="trial.remoteUrl" class="button-disabled" variant="info" v-b-tooltip.hover="trial.remoteUrl">
           <IBiCloudPlusFill /> {{ $t('buttonTrialRemoteUrl') }}
         </b-button>
       </div>
