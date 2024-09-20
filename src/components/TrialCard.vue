@@ -10,7 +10,7 @@
         <IBiCloudDownloadFill class="card-corner-icon" />
       </template>
     </a>
-    <template v-if="showRemoteVsLocal">
+    <template v-if="trial.shareStatus !== TRIAL_STATE_NOT_SHARED && showRemoteVsLocal">
       <b-button v-if="trial.remoteUrl" class="button-disabled py-0" variant="info" v-b-tooltip.hover="trial.remoteUrl">
         <IBiCloudPlusFill /> {{ $t('buttonTrialRemoteUrl') }}
       </b-button>
