@@ -197,7 +197,9 @@ export default {
     initSearch: function () {
       this.searchMatches = []
 
-      const matches = getGermplasmMatches(this.trial, this.searchTerm)
+      const trimmed = this.searchTerm.trim()
+
+      const matches = getGermplasmMatches(this.trial, trimmed)
 
       if (matches.length === 1) {
         emitter.emit('plot-clicked', matches[0].row, matches[0].column)

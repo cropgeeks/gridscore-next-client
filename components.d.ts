@@ -155,6 +155,7 @@ declare module 'vue' {
     IBiCloudUploadFill: typeof import('~icons/bi/cloud-upload-fill')['default']
     IBiCollection: typeof import('~icons/bi/collection')['default']
     IBiCursorFill: typeof import('~icons/bi/cursor-fill')['default']
+    IBiDatabaseFill: typeof import('~icons/bi/database-fill')['default']
     IBiDiamondHalf: typeof import('~icons/bi/diamond-half')['default']
     IBiDot: typeof import('~icons/bi/dot')['default']
     IBiDownload: typeof import('~icons/bi/download')['default']

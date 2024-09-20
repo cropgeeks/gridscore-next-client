@@ -12,11 +12,11 @@
     <b-form @submit.prevent="onSubmit">
       <!-- Person name -->
       <b-form-group :label="$t('formLabelPersonName')" label-for="person-name" :description="$t('formDescriptionPersonName')">
-        <b-form-input id="person-name" v-model="name" required :state="state.name" ref="name" />
+        <b-form-input id="person-name" v-model.trim.lazy="name" lazy trim required :state="state.name" ref="name" />
       </b-form-group>
       <!-- Person email -->
       <b-form-group :label="$t('formLabelPersonEmail')" label-for="person-email" :description="$t('formDescriptionPersonEmail')">
-        <b-form-input id="person-email" type="email" v-model="email" :state="state.email" ref="email" />
+        <b-form-input id="person-email" type="email" v-model.trim.lazy="email" lazy trim :state="state.email" ref="email" />
       </b-form-group>
       <!-- Person role -->
       <b-form-group :label="$t('formLabelPersonRole')" label-for="person-role" :description="$t('formDescriptionPersonRole')">

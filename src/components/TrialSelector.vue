@@ -86,6 +86,7 @@
                 <b-col cols=12 sm=6 md=4 lg=3 v-for="trial in trialGroup.trials" :key="`trial-selector-${trial.localId}`" class="mb-3">
                   <TrialCard :trial="trial"
                             :selectable="multiSelectEnabled"
+                            :showRemoteVsLocal="hasRemoteTrials"
                             @selected="(v) => onSelectTrialToEdit(trial, v)"
                             @loadTrial="loadTrial(trial)"
                             @handleTrialExpiration="handleTrialExpiration(trial)"
@@ -184,7 +185,26 @@ export default {
       modalToShow: null,
       sorting: {
         latestUpdate: (a, b) => this.sortDescending ? (new Date(b.updatedOn) - new Date(a.updatedOn)) : (new Date(a.updatedOn) - new Date(b.updatedOn)),
-        name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
+        name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name),
+        localVsRemote: (a, b) => {
+          let result = 0
+          const aExists = a.remoteUrl !== undefined && a.remoteUrl !== null
+          const bExists = b.remoteUrl !== undefined && b.remoteUrl !== null
+
+          if ((!aExists && !bExists) || (aExists && bExists)) {
+            result = a.name.localeCompare(b.name)
+          } else if (!aExists) {
+            result = 1
+          } else if (!bExists) {
+            result = -1
+          }
+
+          if (this.sortDescending) {
+            result = -result
+          }
+
+          return result
+        }
       }
     }
   },
@@ -209,7 +229,17 @@ export default {
       }, {
         text: this.$t('formSelectOptionTrialSortName'),
         value: 'name'
+      }, {
+        text: this.$t('formSelectOptionTrialSortLocalRemove'),
+        value: 'localVsRemote'
       }]
+    },
+    hasRemoteTrials: function () {
+      if (this.trials && this.trials.length > 0) {
+        return this.trials.some(t => t.remoteUrl !== undefined && t.remoteUrl !== null)
+      } else {
+        return false
+      }
     },
     sortedTrials: function () {
       if (this.trials) {

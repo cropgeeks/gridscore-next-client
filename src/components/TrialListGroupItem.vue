@@ -21,7 +21,7 @@
 
       <h6 :title="trial.description" @click="trialDescriptionExpanded = !trialDescriptionExpanded" :class="trialDescriptionExpanded ? '' : 'trial-description'" v-if="trial.description">{{ trial.description }}</h6>
 
-      <div><TrialShareTypeIcon iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="$emit('showShareCodes')" /></div>
+      <div><TrialShareTypeIcon iconClass="me-1" iconTag="span" :shareStatus="trial.shareStatus" :isTextCode="false" @on-share-clicked="$emit('showShareCodes')" /></div>
 
       <div class="d-flex flex-wrap flex-row my-2">
         <div class="me-3" v-b-tooltip.hover="trial.group ? trial.group.name : $t('widgetTrialSelectorGroupUnassigned')"><IBiCollection /></div>

@@ -10,9 +10,14 @@
         <IBiCloudDownloadFill class="card-corner-icon" />
       </template>
     </a>
-    <b-button v-if="trial.remoteUrl" class="button-disabled py-0" variant="info" v-b-tooltip.hover="trial.remoteUrl">
-      <IBiCloudPlusFill /> {{ $t('buttonTrialRemoteUrl') }}
-    </b-button>
+    <template v-if="showRemoteVsLocal">
+      <b-button v-if="trial.remoteUrl" class="button-disabled py-0" variant="info" v-b-tooltip.hover="trial.remoteUrl">
+        <IBiCloudPlusFill /> {{ $t('buttonTrialRemoteUrl') }}
+      </b-button>
+      <b-button v-else class="button-disabled py-0" variant="success">
+        <IBiDatabaseFill /> {{ $t('buttonTrialLocalTrial') }}
+      </b-button>
+    </template>
     <TrialInformation :trial="trial" @on-share-clicked="$emit('showShareCodes')" />
     <b-button v-if="selectable" :variant="selectedToEdit ? 'info' : 'secondary'" @click="selectedToEdit = !selectedToEdit">
       <IBiCheckSquare v-if="selectedToEdit" /><IBiSquare v-else /> {{ selectedToEdit ? $t('buttonDeselect') : $t('buttonSelect') }}
@@ -66,6 +71,10 @@ export default {
       default: true
     },
     selectable: {
+      type: Boolean,
+      default: false
+    },
+    showRemoteVsLocal: {
       type: Boolean,
       default: false
     }

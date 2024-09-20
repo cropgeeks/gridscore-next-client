@@ -569,6 +569,11 @@
         "type": "new",
         "title": "Remote trials",
         "text": "Allowed sharing of GridScore trials with a remote self-hosted GridScore server instead of the default one."
+      },
+      {
+        "type": "bugfix",
+        "title": "Leading/trailing spaces",
+        "text": "Fixed issues with the automatic removal of leading and trailing spaces in input fields."
       }
     ]
   }

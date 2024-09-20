@@ -569,6 +569,11 @@
         "type": "new",
         "title": "Versuch auf anderem Server",
         "text": "Erlauben des Teilens von GridScore Versuchen mit anderen, selbst-gehosteten GridScore Servern anstelle des Standardservers."
+      },
+      {
+        "type": "bugfix",
+        "title": "Führende/anhängende Leerzeichen",
+        "text": "Behebt einen Fehler bei dem führende oder angängende Leerzeichen in Eingabefeldern automatisch entfernt werden."
       }
     ]
   }
