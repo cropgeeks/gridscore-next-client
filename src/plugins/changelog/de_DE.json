@@ -571,6 +571,11 @@
         "text": "Erlauben des Teilens von GridScore Versuchen mit anderen, selbst-gehosteten GridScore Servern anstelle des Standardservers."
       },
       {
+        "type": "new",
+        "title": "Merkmalsexport im 'long' Format",
+        "text": "Wir haben ein neues Exportformat für Merkmalsdaten in tabulierter Form im 'langen' Format hinzugefügt. Hier wird jeder einzelne Datenpunkt in einer eigenen Zeile exportiert verglichen mit dem 'breiten' Format wo Daten in Keimplasma-Merkmal-Matrix-Format exportiert werden."
+      },
+      {
         "type": "bugfix",
         "title": "Führende/anhängende Leerzeichen",
         "text": "Behebt einen Fehler bei dem führende oder angängende Leerzeichen in Eingabefeldern automatisch entfernt werden."

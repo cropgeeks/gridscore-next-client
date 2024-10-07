@@ -571,6 +571,11 @@
         "text": "Allowed sharing of GridScore trials with a remote self-hosted GridScore server instead of the default one."
       },
       {
+        "type": "new",
+        "title": "Trials export 'long' format",
+        "text": "We've added another export option for tab-delimited export into the 'long' format where each individual data point is stored in its own row compared to the 'wide' format where data is exported as a germplasm by trait matrix."
+      },
+      {
         "type": "bugfix",
         "title": "Leading/trailing spaces",
         "text": "Fixed issues with the automatic removal of leading and trailing spaces in input fields."
