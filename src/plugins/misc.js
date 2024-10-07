@@ -392,6 +392,92 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
   }
 }
 
+const trialsDataToLongFormat = (data, trial, aggregate = true) => {
+  let result = 'Germplasm\tRep\tRow\tColumn\tDate\tLatitude\tLongitude\tTrait\tValue'
+
+  if (aggregate) {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = v.displayRow
+        const column = v.displayColumn
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        const dates = new Set()
+        Object.values(v.measurements).forEach(td => {
+          td.forEach(dp => dates.add(dp.timestamp.split('T')[0]))
+        })
+
+        const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
+
+        dateArray.forEach(date => {
+          trial.traits.forEach(t => {
+            const td = v.measurements[t.id]
+
+            if (td) {
+              const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
+
+              let values
+              if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range') {
+                values = `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
+              } else if (t.dataType === 'categorical') {
+                values = `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`
+              } else {
+                values = `\t${onDate[onDate.length - 1]}`
+              }
+
+              result += `\n${germplasmMeta}\t${date}`
+
+              if (v.geography) {
+                result += getLatLngAverage(v.geography)
+              } else {
+                result += '\t\t'
+              }
+
+              result += `\t${t.name}\t${values}`
+            }
+          })
+        })
+      }
+    })
+  } else {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = v.displayRow
+        const column = v.displayColumn
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        trial.traits.forEach(t => {
+          const td = v.measurements[t.id]
+
+          if (td) {
+            td.forEach(dp => {
+              const values = (dp.values || []).filter(val => val !== undefined && val !== null && val !== '')
+                .reduce((acc, value) => acc.concat(value), [])
+                .filter(val => val !== undefined && val !== null && val !== '')
+
+              if (values && values.length > 0) {
+                values.forEach(val => {
+                  result += `\n${germplasmMeta}\t${dp.timestamp.split('T')[0]}`
+
+                  if (v.geography) {
+                    result += getLatLngAverage(v.geography)
+                  } else {
+                    result += '\t\t'
+                  }
+
+                  result += `\t${t.name}\t${t.dataType === 'categorical' ? t.restrictions.categories[+val] : val}`
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+  }
+
+  return result
+}
+
 const trialsDataToMatrix = (data, trial, aggregate = true) => {
   let result = `Line/Trait\tRep\tRow\tColumn\tDate\t${trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
 
@@ -606,6 +692,7 @@ const getColumnLabel = (layout, index) => {
 }
 
 export {
+  trialsDataToLongFormat,
   trialsDataToMatrix,
   getTraitTypeText,
   invertHex,

@@ -19,9 +19,13 @@ const acceptableStatusCodes = [400, 401, 403, 404, 409]
 
 /**
  * Sends an axios REST request to the server with the given parameter configuration
+ * @param {String} baseUrl The base URL of this request
  * @param {String} url The remote URL (relative) to send the request to
+ * @param {String} remoteToken (Optional) Token to be provided for remote authentication
  * @param {Object} params (Optional) Request payload in the form of a Javascript object
  * @param {String} method (Optional) REST method (default: `'get'`)
+ * @param {Boolean} ignoreErrors (Optional) Should any API errors be ignored rather than showing UI feedback? (default: `false`)
+ * @param {Boolean} checkRemote (Optional) Should the remote endpoint be checked to see if it has a matching version? If they don't match, the returned Promise will be rejected (default: `true`)
  * @returns Promise
  */
 const axiosCall = ({ baseUrl = null, url = null, remoteToken = null, params = null, method = 'get', ignoreErrors = false, checkRemote = true }) => {
@@ -152,14 +156,22 @@ const shareTrial = async (remoteConfig, localId) => {
           result.localId = localId
           result.remoteUrl = remoteConfig ? (remoteConfig.url || null) : null
           result.remoteToken = remoteConfig ? remoteConfig.token : null
-          return updateTrial(localId, result)
+          return new Promise((resolve, reject) => {
+            updateTrial(localId, result)
+              .then(id => {
+                resolve({
+                  id: id,
+                  trial: result
+                })
+              })
+          })
         } else {
           return new Promise(resolve => resolve(null))
         }
       })
-      .then(trial => {
-        emitter.emit('trial-properties-changed', localId)
-        return trial
+      .then(result => {
+        emitter.emit('trial-properties-changed', result.id)
+        return result.trial
       })
   } else {
     return new Promise(resolve => resolve(null))

@@ -14,14 +14,25 @@
 
           <b-row>
             <b-col cols=12 md=6>
-              <b-card class="mb-3" :title="$t('pageExportTrialFormatTabDataCardTitle')" :subtitle="$t('pageExportTrialFormatTabDataCardSubtitle')">
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatTabWideDataCardTitle')" :subtitle="$t('pageExportTrialFormatTabWideDataCardSubtitle')">
                 <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
                   <b-form-checkbox id="aggregate" v-model="tabAggregate" switch>
                     {{ tabAggregate ? $t('genericYes') : $t('genericNo') }}
                   </b-form-checkbox>
                 </b-form-group>
 
-                <b-button @click="exportDataTab" variant="primary"><IBiFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
+                <b-button @click="exportDataTab('wide')" variant="primary"><IBiFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
+              </b-card>
+            </b-col>
+            <b-col cols=12 md=6>
+              <b-card class="mb-3" :title="$t('pageExportTrialFormatTabLongDataCardTitle')" :subtitle="$t('pageExportTrialFormatTabLongDataCardSubtitle')">
+                <b-form-group :label="$t('formLabelExportTrialFormatGerminateAggregate')" :description="$t('formDescriptionExportTrialFormatGerminateAggregate')" label-for="aggregate">
+                  <b-form-checkbox id="aggregate" v-model="tabAggregate" switch>
+                    {{ tabAggregate ? $t('genericYes') : $t('genericNo') }}
+                  </b-form-checkbox>
+                </b-form-group>
+
+                <b-button @click="exportDataTab('long')" variant="primary"><IBiFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
               </b-card>
             </b-col>
           </b-row>
@@ -150,7 +161,7 @@ import IconGerminate from '@/components/icons/IconGerminate.vue'
 import IconBrapi from '@/components/icons/IconBrapi.vue'
 import IconGridScore from '@/components/icons/IconGridScore.vue'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal.vue'
-import { downloadText, toLocalDateString, trialsDataToMatrix } from '@/plugins/misc'
+import { downloadText, toLocalDateString, trialsDataToLongFormat, trialsDataToMatrix } from '@/plugins/misc'
 import { TRIAL_EVENT_TYPE_MANAGEMENT, TRIAL_EVENT_TYPE_OTHER, TRIAL_EVENT_TYPE_WEATHER } from '@/plugins/constants'
 import BrapiExportSection from '@/components/BrapiExportSection.vue'
 import { UseOnline } from '@vueuse/components'
@@ -370,12 +381,17 @@ export default {
         downloadText(text, `gridscore-traits-${this.safeTrialName}.txt`)
       }
     },
-    exportDataTab: function () {
+    exportDataTab: function (direction = 'wide') {
       emitter.emit('show-loading', true)
 
       const data = getTrialDataCached()
       // Header row
-      const result = trialsDataToMatrix(data, this.trial, this.tabAggregate)
+      let result
+      if (direction === 'wide') {
+        result = trialsDataToMatrix(data, this.trial, this.tabAggregate)
+      } else if (direction === 'long') {
+        result = trialsDataToLongFormat(data, this.trial, this.tabAggregate)
+      }
 
       downloadText(result, `gridscore-data-${this.safeTrialName}.txt`)
 
