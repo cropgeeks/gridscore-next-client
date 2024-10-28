@@ -552,6 +552,11 @@
     "items": [
       {
         "type": "new",
+        "title": "Merkmals-Referenzbild",
+        "text": "Der Versuchsbesitzer kann jetzt Referenzbilder zu Merkmalen eines bereits geteilten Versuchs hinzufügen. Dies bietet Datensammlern eine visuelle Referenz beim Sammeln von Daten die den Prozess erleichtern sollte."
+      },
+      {
+        "type": "new",
         "title": "Löschen von Merkmalen",
         "text": "Es ist Versuchsbesitzern jetzt möglich Merkmale von einem Versuch zu löschen selbst nachdem der Versuch geteilt wurde. Dieser Vorgang sollte gut durchdacht werden da es weitreichende Folgen hat. Jegliche Daten die für dieses Merkmal gesammelt wurden werden von allen Geräten gelöscht sobald diese ihre Daten synchronisieren."
       },

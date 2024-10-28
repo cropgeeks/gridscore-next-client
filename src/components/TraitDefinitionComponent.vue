@@ -165,7 +165,7 @@
               <small v-if="element.restrictions">
                 <b-badge class="me-2" v-if="element.restrictions.min !== undefined && element.restrictions.min !== null"><IBiChevronBarDown /> {{ element.restrictions.min }}</b-badge>
                 <b-badge class="me-2" v-if="element.restrictions.max !== undefined && element.restrictions.max !== null"><IBiChevronBarUp /> {{ element.restrictions.max }}</b-badge>
-                <b-badge class="me-2" v-if="element.restrictions.categories !== undefined && element.restrictions.categories !== null && element.restrictions.categories.length > 0"><IBiTags /> {{ element.restrictions.categories.join(', ') }}</b-badge>
+                <b-badge class="me-2 text-wrap" v-if="element.restrictions.categories !== undefined && element.restrictions.categories !== null && element.restrictions.categories.length > 0"><IBiTags /> {{ element.restrictions.categories.join(', ') }}</b-badge>
               </small>
 
               <b-button-group class="d-block mt-2">

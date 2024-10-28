@@ -97,8 +97,16 @@
                   <span :style="{ color: trait.color }">
                     <TraitIcon :trait="trait" />
                     <span class="mx-1">{{ trait.name }}</span>
+                    <b-badge class="mx-1" variant="light" v-if="trait.hasImage">
+                      <IBiImage />
+                    </b-badge>
                   </span>
-                  <b-button variant="danger" v-if="canDeleteTraits" @click="deleteTrait(trait)"><IBiTrash /></b-button>
+                  <b-button-group>
+                    <span class="d-inline-block" tabindex="0" v-b-tooltip:hover="canUploadTraitImage ? '' : $t('tooltipTraitImageUploadTrialNotShare')">
+                      <b-button variant="info" :disabled="!canUploadTraitImage" @click="uploadTraitImage(trait)"><IBiImage /></b-button>
+                    </span>
+                    <b-button variant="danger" v-if="canDeleteTraits" @click="deleteTrait(trait)"><IBiTrash /></b-button>
+                  </b-button-group>
                 </h4>
 
                 <b-form-group :label="$t('formLabelTraitName')" :description="$t('formDescriptionTraitName')" label-for="trait-name">
@@ -150,6 +158,7 @@
     <TraitImportExportGridScoreModal :traits="traitsToExport" ref="traitImportExportGridScoreModal" />
     <TraitImportExportGerminateModal :traits="traitsToExport" ref="traitImportExportGerminateModal" />
     <TraitImportExportTabularModal :traits="traitsToExport" ref="traitImportExportTabularModal" />
+    <UploadTraitImageModal :trait="selectedTrait" :trial="trial" v-if="trial && selectedTrait" @image-uploaded="imageUploaded" ref="uploadTraitImageModal" />
   </b-modal>
 </template>
 
@@ -157,6 +166,7 @@
 import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal.vue'
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
 import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
+import UploadTraitImageModal from '@/components/modals/UploadTraitImageModal.vue'
 import TrialLayoutCorners from '@/components/TrialLayoutCorners.vue'
 import MarkerSetup from '@/components/MarkerSetup.vue'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal.vue'
@@ -172,6 +182,7 @@ export default {
     TraitImportExportGerminateModal,
     TraitImportExportGridScoreModal,
     TraitImportExportTabularModal,
+    UploadTraitImageModal,
     LayoutFeedbackModal,
     MarkerSetup,
     TrialLayoutCorners,
@@ -207,7 +218,8 @@ export default {
       },
       layoutFeedback: null,
       trialGroups: [],
-      traitsToExport: null
+      traitsToExport: null,
+      selectedTrait: null
     }
   },
   props: {
@@ -232,6 +244,13 @@ export default {
         return [...set].sort((a, b) => a.localeCompare(b))
       } else {
         return []
+      }
+    },
+    canUploadTraitImage: function () {
+      if (this.trial) {
+        return this.isSharedTrial && this.trial.shareStatus === TRIAL_STATE_OWNER
+      } else {
+        return false
       }
     },
     canDeleteTraits: function () {
@@ -269,6 +288,14 @@ export default {
     }
   },
   methods: {
+    imageUploaded: function () {
+      this.selectedTrait.hasImage = true
+    },
+    uploadTraitImage: function (trait) {
+      this.selectedTrait = trait
+
+      this.$nextTick(() => this.$refs.uploadTraitImageModal.show())
+    },
     deleteTrait: function (trait) {
       emitter.emit('show-confirm', {
         title: 'modalTitleDeleteTrait',
@@ -337,6 +364,7 @@ export default {
       this.layoutFeedback = null
       this.tabIndex = 0
       this.traitsToExport = null
+      this.selectedTrait = null
       if (useTrial && this.trial) {
         this.trialName = this.trial.name
         this.trialDescription = this.trial.description

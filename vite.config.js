@@ -27,11 +27,28 @@ export default defineConfig({
       }
     }),
     VitePWA({
+      devOptions: {
+        enabled: false
+      },
       workbox: {
         cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,vue,txt,woff2}'],
-        navigateFallbackDenylist: [/^\/api\//],
-        maximumFileSizeToCacheInBytes: 30000000
+        navigateFallbackDenylist: [/^\/api\/settings/, /^\/api\/trial/],
+        maximumFileSizeToCacheInBytes: 30000000,
+        runtimeCaching: [{
+          handler: 'CacheFirst',
+          urlPattern: ({ url }) => url.pathname && url.pathname.includes('/api/trait/') && url.pathname.endsWith('/img'),
+          options: {
+            cacheName: 'trait-images',
+            expiration: {
+              maxEntries: 500,
+              maxAgeSeconds: 60 * 60 * 24 * 365
+            },
+            cacheableResponse: {
+              statuses: [0, 200]
+            }
+          }
+        }]
       },
       filename: 'service-worker.js',
       manifest: {

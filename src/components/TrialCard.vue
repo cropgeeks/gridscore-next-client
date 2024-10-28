@@ -19,15 +19,15 @@
       </b-button>
     </template>
     <TrialInformation :trial="trial" @on-share-clicked="$emit('showShareCodes')" />
-    <b-button v-if="selectable" :variant="selectedToEdit ? 'info' : 'secondary'" @click="selectedToEdit = !selectedToEdit">
-      <IBiCheckSquare v-if="selectedToEdit" /><IBiSquare v-else /> {{ selectedToEdit ? $t('buttonDeselect') : $t('buttonSelect') }}
-    </b-button>
     <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip.hover="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
       <IBiCalendarXFill />
     </b-button>
     <b-card-footer class="d-flex justify-content-between">
       <b-button @click="$emit('loadTrial')" variant="primary"><IBiJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>
-      <b-dropdown right v-if="showDropdown" :disabled="selectable">
+      <b-button v-if="selectable" :variant="selectedToEdit ? 'info' : 'secondary'" @click="selectedToEdit = !selectedToEdit">
+        <IBiCheckSquare v-if="selectedToEdit" /><IBiSquare v-else /> {{ selectedToEdit ? $t('buttonDeselect') : $t('buttonSelect') }}
+      </b-button>
+      <b-dropdown right v-else-if="showDropdown" :disabled="selectable">
         <template #button-content>
           <IBiGear />
         </template>

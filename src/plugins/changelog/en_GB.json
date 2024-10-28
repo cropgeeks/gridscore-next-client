@@ -552,6 +552,11 @@
     "items": [
       {
         "type": "new",
+        "title": "Trait reference images",
+        "text": "The trial owner can now add trait reference images to a shared trial after its creation. These allow data collectors to look at a visual reference that should help with the scoring of traits."
+      },
+      {
+        "type": "new",
         "title": "Trait deletion",
         "text": "It is now possible for trial owners to delete a trait even after the trial has been shared. This operation should be well considered as it has far-reaching consequences. Any data collected for this trait on any other device will be lost once they synchronize."
       },

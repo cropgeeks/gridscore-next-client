@@ -3,7 +3,8 @@ import { getId } from '@/plugins/id'
 import { coreStore } from '@/store'
 import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT } from '@/plugins/constants'
 import { trialLayoutToPlots } from './location'
-import { getColumnLabel, getRowLabel } from './misc'
+import { getColumnLabel, getRowLabel } from '@/plugins/misc'
+import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
 
 let store
 
@@ -284,6 +285,10 @@ const updateTrialProperties = async (localId, updates) => {
     const retainedTraitIds = new Set(updates.traits.map(t => t.id))
     const traitsToRemove = originalTraits.filter(t => !retainedTraitIds.has(t.id))
 
+    if (traitsToRemove && traitsToRemove.length > 0) {
+      clearTraitImageCache(trial, traitsToRemove.map(t => t.id))
+    }
+
     trial.name = updates.name
     trial.description = updates.description
     trial.socialShareConfig = updates.socialShareConfig
@@ -317,16 +322,16 @@ const updateTrialProperties = async (localId, updates) => {
       updates.traits.forEach(t => {
         const match = originalTraits.find(ot => ot.id === t.id)
 
-        // If either the name, the description or the group has changed, then store in the transaction.
-        if (match.name !== t.name || match.description !== t.description || JSON.stringify(match.socialShareConfig) !== JSON.stringify(t.socialShareConfig) || JSON.stringify(match.group) !== JSON.stringify(t.group)) {
+        // If either the name, the description, the group or whether it has an image or not has changed, then store in the transaction.
+        if (match.name !== t.name || match.description !== t.description || JSON.stringify(match.group) !== JSON.stringify(t.group) || match.hasImage !== t.hasImage) {
           const transMatch = transaction.traitChangeTransactions.find(tr => tr.id === t.id)
 
           if (transMatch) {
             // If there is an old transaction entry, update it
             transMatch.name = t.name
             transMatch.description = t.description
-            transMatch.socialShareConfig = t.socialShareConfig
             transMatch.group = t.group.name
+            transMatch.hasImage = t.hasImage
             transMatch.timestamp = new Date().toISOString()
           } else {
             // Else, add a new one
@@ -334,8 +339,8 @@ const updateTrialProperties = async (localId, updates) => {
               id: t.id,
               name: t.name,
               description: t.description,
-              socialShareConfig: t.socialShareConfig,
               group: t.group.name,
+              hasImage: t.hasImage,
               timestamp: new Date().toISOString()
             })
           }
@@ -732,6 +737,8 @@ const deleteTrial = async (localId) => {
   const trial = await getTrialById(localId)
 
   if (trial) {
+    clearTraitImageCache(trial, trial.traits.map(t => t.id))
+
     return db.delete('trials', localId)
       .then(() => {
         const range = IDBKeyRange.bound([localId, 0, 0], [localId, trial.layout.rows, trial.layout.columns])
@@ -773,6 +780,9 @@ const addTrial = async (trial) => {
     events: copy.events || [],
     people: copy.people || []
   })
+
+  // Make sure all cached images are updated
+  forceUpdateTraitImageCache(copy)
 
   return new Promise(resolve => {
     const tx = db.transaction('data', 'readwrite')

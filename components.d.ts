@@ -72,6 +72,7 @@ declare module 'vue' {
     ChangelogModal: typeof import('./src/components/modals/ChangelogModal.vue')['default']
     ColumnHeader: typeof import('./src/components/canvas/ColumnHeader.vue')['default']
     ConfirmModal: typeof import('./src/components/modals/ConfirmModal.vue')['default']
+    copy: typeof import('./src/components/modals/AddTraitsModal copy.vue')['default']
     DataCalendarHeatmapChart: typeof import('./src/components/charts/DataCalendarHeatmapChart.vue')['default']
     DataCanvas: typeof import('./src/components/canvas/DataCanvas.vue')['default']
     DataGridComponent: typeof import('./src/components/canvas/DataGridComponent.vue')['default']
@@ -186,6 +187,7 @@ declare module 'vue' {
     IBiHandIndex: typeof import('~icons/bi/hand-index')['default']
     IBiHouse: typeof import('~icons/bi/house')['default']
     IBiHr: typeof import('~icons/bi/hr')['default']
+    IBiImage: typeof import('~icons/bi/image')['default']
     IBiIncognito: typeof import('~icons/bi/incognito')['default']
     IBiInfoCircle: typeof import('~icons/bi/info-circle')['default']
     IBiInfoCircleFill: typeof import('~icons/bi/info-circle-fill')['default']
@@ -230,6 +232,7 @@ declare module 'vue' {
     IBiSegmentedNav: typeof import('~icons/bi/segmented-nav')['default']
     IBiShare: typeof import('~icons/bi/share')['default']
     IBiShareFill: typeof import('~icons/bi/share-fill')['default']
+    IBiShuffle: typeof import('~icons/bi/shuffle')['default']
     IBiSignpostSplitFill: typeof import('~icons/bi/signpost-split-fill')['default']
     IBiSignStop: typeof import('~icons/bi/sign-stop')['default']
     IBiSlashCircle: typeof import('~icons/bi/slash-circle')['default']
@@ -314,6 +317,7 @@ declare module 'vue' {
     TrialShareTypeIcon: typeof import('./src/components/icons/TrialShareTypeIcon.vue')['default']
     TrialSynchronizationModal: typeof import('./src/components/modals/TrialSynchronizationModal.vue')['default']
     TrialTraitTimeframeModal: typeof import('./src/components/modals/TrialTraitTimeframeModal.vue')['default']
+    UploadTraitImageModal: typeof import('./src/components/modals/UploadTraitImageModal.vue')['default']
     VScroll: typeof import('./src/components/canvas/VScroll.vue')['default']
   }
   export interface ComponentCustomProperties {

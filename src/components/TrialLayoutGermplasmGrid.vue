@@ -10,6 +10,7 @@
             <b-dropdown-item @click="$refs.germplasmInput.show()"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="$refs.repInput.show()"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="$refs.fieldbookInput.show()"><IBiFileEarmarkSpreadsheet /> {{ $t('dropdownImportFieldHub') }}</b-dropdown-item>
+            <b-dropdown-item @click="fillRandom" v-if="isDevelopment"><IBiShuffle /> {{ $t('dropdownImportRandom') }}</b-dropdown-item>
           </b-dropdown>
         </b-col>
         <b-col cols=12 md=6>
@@ -44,7 +45,7 @@
 import TabbedInputToGridModal from '@/components/modals/TabbedInputToGridModal.vue'
 import FielDBookInputModal from '@/components/modals/FielDBookInputModal.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
-import { getColumnIndex, getColumnLabel, getRowLabel } from '@/plugins/misc'
+import { getColumnLabel, getRandomGivenName, getRowLabel } from '@/plugins/misc'
 
 export default {
   components: {
@@ -74,6 +75,11 @@ export default {
       checkName: null
     }
   },
+  computed: {
+    isDevelopment: function () {
+      return import.meta.env.DEV
+    }
+  },
   watch: {
     layout: {
       deep: true,
@@ -96,6 +102,45 @@ export default {
     }
   },
   methods: {
+    fillRandom: function () {
+      const ids = new Map()
+      for (let row = 0; row < this.layout.rows; row++) {
+        for (let column = 0; column < this.layout.columns; column++) {
+          const tableRep = document.querySelector(`#rep-${row}-${column}`).value
+          const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
+          const tableControl = document.querySelector(`#control-${row}-${column}`).checked
+
+          if (!this.germplasmMap[`${row}|${column}`]) {
+            this.germplasmMap[`${row}|${column}`] = {
+              germplasm: null,
+              rep: null,
+              control: false,
+              brapiId: null
+            }
+          }
+
+          const random = getRandomGivenName()
+          let rep = 1
+
+          if (ids.has(random)) {
+            rep = ids.get(random) + 1
+            ids.set(random, rep)
+          } else {
+            ids.set(random, 1)
+          }
+
+          this.germplasmMap[`${row}|${column}`].germplasm = random
+          document.querySelector(`#germplasm-${row}-${column}`).value = random
+          document.querySelector(`#rep-${row}-${column}`).value = rep
+          // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
+          this.germplasmMap[`${row}|${column}`].rep = rep || tableRep
+          this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
+          this.germplasmMap[`${row}|${column}`].control = tableControl
+        }
+      }
+
+      this.$emit('data-changed', this.germplasmMap)
+    },
     markChecks: function () {
       if (!this.checkName || this.checkName.length < 1) {
         return

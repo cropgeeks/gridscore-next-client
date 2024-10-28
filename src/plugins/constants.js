@@ -1,4 +1,4 @@
-const gridScoreVersion = '3.1.1'
+const gridScoreVersion = '3.2.0'
 
 const NAVIGATION_MODE_DRAG = 'DRAG'
 const NAVIGATION_MODE_JUMP = 'JUMP'

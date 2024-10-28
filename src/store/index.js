@@ -3,6 +3,7 @@ import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DI
 import { getTrialById } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'
+import { ensureTraitImagesCached } from '@/plugins/traitcache'
 
 let name = import.meta.env.VUE_APP_INSTANCE_NAME
 
@@ -114,6 +115,8 @@ export const coreStore = defineStore('core', {
       if (newSelectedTrial) {
         getTrialById(newSelectedTrial)
           .then(trial => {
+            ensureTraitImagesCached(trial)
+
             if (trial.brapiConfig) {
               this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(trial.brapiConfig)))
             } else {

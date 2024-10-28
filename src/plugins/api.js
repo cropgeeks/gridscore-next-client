@@ -62,6 +62,96 @@ const axiosCall = ({ baseUrl = null, url = null, remoteToken = null, params = nu
   })
 }
 
+/**
+ * Sends an axios REST request to the server with the given parameter configuration
+ * @param {String} baseUrl The base URL of this request
+ * @param {String} url The remote URL (relative) to send the request to
+ * @param {String} remoteToken (Optional) Token to be provided for remote authentication
+ * @param {Object} formData (Optional) Request payload in the form of a Javascript object
+ * @param {String} method (Optional) REST method (default: `'get'`)
+ * @param {Boolean} ignoreErrors (Optional) Should any API errors be ignored rather than showing UI feedback? (default: `false`)
+ * @param {Boolean} checkRemote (Optional) Should the remote endpoint be checked to see if it has a matching version? If they don't match, the returned Promise will be rejected (default: `true`)
+ * @returns Promise
+ */
+const axiosForm = ({ baseUrl = null, url = null, remoteToken = null, formData = null, method = 'get', ignoreErrors = false, checkRemote = true }) => {
+  return new Promise((resolve, reject) => {
+    if (baseUrl && checkRemote) {
+      axiosCall({ baseUrl: baseUrl, url: 'settings/version', checkRemote: false })
+        .then(version => {
+          if (version !== gridScoreVersion) {
+            emitter.emit('api-error', 'Incompatible remote server version. Please update your client to match the server version.')
+            reject(new Error('Incompatible remote server version. Please update your client to match the server version.'))
+          } else {
+            internalAxiosForm(baseUrl, url, remoteToken, method, formData, ignoreErrors, resolve, reject)
+          }
+        })
+        .catch(() => {
+          // If the request fails, attempt to go ahead with it anyway.
+          internalAxiosForm(baseUrl, url, remoteToken, method, formData, ignoreErrors, resolve, reject)
+        })
+    } else {
+      internalAxiosForm(baseUrl, url, remoteToken, method, formData, ignoreErrors, resolve, reject)
+    }
+  })
+}
+
+const internalAxiosForm = (baseUrl, url, remoteToken, method, formData, ignoreErrors, resolve, reject) => {
+  const config = {
+    baseURL: baseUrl || getStore().storeServerUrl,
+    url,
+    data: formData,
+    method,
+    crossDomain: true,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+
+  if ((remoteToken !== undefined) && (remoteToken !== null) && (remoteToken !== '')) {
+    config.withCredentials = true
+    config.headers.Authorization = `Bearer ${remoteToken}`
+  }
+
+  axios.default(config).then(data => {
+    if (data && data.data) {
+      resolve(data.data)
+    } else {
+      resolve(null)
+    }
+  }).catch(error => {
+    emitter.emit('show-loading', false)
+    if (!ignoreErrors) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (acceptableStatusCodes.includes(error.response.status)) {
+          const err = new Error('API error')
+          err.status = error.response.status
+          reject(err)
+          return
+        } else {
+          // Handle the error here, then reject
+          emitter.emit('api-error', error.response)
+        }
+      } else if (error.message) {
+        emitter.emit('api-error', error.message)
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        // Handle the error here, then reject
+        emitter.emit('api-error', error.request)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        // Handle the error here, then reject
+        emitter.emit('api-error', error.message)
+      }
+    }
+
+    reject(new Error('API error', { cause: error }))
+  })
+}
+
 const internalAxiosCall = (baseUrl, url, remoteToken, method, requestParams, requestData, ignoreErrors, resolve, reject) => {
   const config = {
     baseURL: baseUrl || getStore().storeServerUrl,
@@ -253,6 +343,10 @@ const checkTrialArchiveExists = (remoteConfig, shareCode) => {
   return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}/export/archive/exists`, method: 'get' })
 }
 
+const postTraitImage = (remoteConfig, shareCode, traitId, formData) => {
+  return axiosForm({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trait/${shareCode}/${traitId}/img`, method: 'post', formData: formData })
+}
+
 export {
   axiosCall,
   getServerSettings,
@@ -265,5 +359,6 @@ export {
   exportToGerminate,
   exportToShapefile,
   extendTrialPeriod,
-  checkTrialArchiveExists
+  checkTrialArchiveExists,
+  postTraitImage
 }

@@ -354,7 +354,7 @@ export default {
             orientation: window.innerWidth < 768 ? 'h' : 'v'
           }
         } else if (this.selectedTrait.dataType === 'date') {
-          traces[0].colorbar = traces[0].colorbar = {
+          traces[0].colorbar = {
             title: {
               text: this.$t('widgetChartLegendDaysSinceFirstRecording'),
               side: 'right',

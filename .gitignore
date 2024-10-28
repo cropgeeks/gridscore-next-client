@@ -11,6 +11,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+dev-dist
 coverage
 *.local
 
@@ -32,3 +33,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+vite.config.js.timestamp*

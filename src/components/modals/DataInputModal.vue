@@ -727,4 +727,7 @@ export default {
 .popover-unset-width {
   max-width: 100%;
 }
+#data-input-modal .modal-dialog-scrollable .modal-content {
+  height: 100%;
+}
 </style>

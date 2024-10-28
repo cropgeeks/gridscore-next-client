@@ -17,6 +17,20 @@
           <b-badge class="mx-1 trait-set-size" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
             <IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $n(trait.setSize || 1) }}
           </b-badge>
+          <BPopover
+            v-if="trait.hasImage && priorityShareCode && serverUrl"
+            custom-class="trait-image"
+            @shown="addLightbox"
+            :click="true"
+            :close-on-hide="true"
+          >
+            <b-img @click="$refs.traitImageModal.show()" fluid-grow :src="`${serverUrl}trait/${priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
+            <template #target>
+              <b-badge class="mx-1" variant="light">
+                <IBiImage />
+              </b-badge>
+            </template>
+          </BPopover>
         </span>
       </span>
       <b-button-group>
@@ -43,6 +57,16 @@
     </b-form-group>
 
     <TraitDataHistoryModal @data-changed="$emit('data-changed')" :editable="editable" :cell="{ row: cell.row, column: cell.column, displayName: cell.displayName }" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
+
+    <b-modal
+      v-if="trait.hasImage"
+      ref="traitImageModal"
+      :fullscreen="true"
+      hide-footer
+      hide-header
+      no-fade>
+      <b-img fluid-grow class="fullscreen-image" @click="$refs.traitImageModal.hide()" :src="`${serverUrl}trait/${priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
+    </b-modal>
   </section>
 </template>
 
@@ -55,7 +79,7 @@ import TraitInput from '@/components/TraitInput.vue'
 import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
 
 import { getTraitTypeText } from '@/plugins/misc'
-import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
+import { CANVAS_SHAPE_SQUARE, TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
 
 export default {
   components: {
@@ -93,8 +117,32 @@ export default {
     ...mapStores(coreStore),
     ...mapState(coreStore, [
       'storeCanvasShape',
-      'storeShowFullTraitDescription'
+      'storeShowFullTraitDescription',
+      'storeServerUrl'
     ]),
+    serverUrl: function () {
+      if (this.trial) {
+        let baseUrl = this.trial.remoteUrl || this.storeServerUrl
+
+        if (!baseUrl.endsWith('/')) {
+          baseUrl += '/'
+        }
+        if (!baseUrl.endsWith('api/')) {
+          baseUrl += 'api/'
+        }
+
+        return baseUrl
+      } else {
+        return null
+      }
+    },
+    priorityShareCode: function () {
+      if (this.trial && this.trial.shareStatus !== TRIAL_STATE_NOT_SHARED) {
+        return this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode || this.trial.shareCodes.viewerCode
+      } else {
+        return null
+      }
+    },
     hasHistoricData: function () {
       // Check if there's at least one measurement for the trait id
       return this.cell && this.trait && this.cell.measurements && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0
@@ -218,5 +266,26 @@ export default {
   -webkit-line-clamp: 1;
   overflow: hidden;
   max-width: 100%;
+}
+.fullscreen-image {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+</style>
+
+<style>
+.trait-image {
+  max-width: 100vw;
+  max-height: 100vh;
+  height: auto;
+}
+
+@media (min-width: 992px) {
+  .trait-image {
+    max-width: 50vw;
+    max-height: 50vh;
+    height: auto;
+  }
 }
 </style>

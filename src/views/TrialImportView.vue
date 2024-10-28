@@ -53,7 +53,7 @@
           </div>
           <b-form-group :label="$t('formLabelTrialImportCode')" :description="$t('formDescriptionTrialImportCode')" label-for="code">
             <b-input-group>
-              <b-form-input lazy trim v-model.trim.lazy="shareCode" autofocus @keyup.enter="checkCode" />
+              <b-form-input trim v-model.trim="shareCode" autofocus @keyup.enter="checkCode" />
               <template #append>
                 <b-button @click="showCamera = !showCamera">
                   <IBiQrCodeScan /> {{ $t('buttonScanQR') }}
