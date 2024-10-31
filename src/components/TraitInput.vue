@@ -106,7 +106,7 @@
       </b-button>
     </template>
     <template #append v-else-if="trait.dataType === 'range'">
-      <span :class="(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></span>
+      <span :class="`range-wrapper px-3 ${(value !== undefined && value !== null) ? 'bg-warning' : 'bg-secondary'}`"><span class="range-value">{{ (value !== undefined && value !== null) ? value : 'N/A' }}</span></span>
       <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
     </template>
 
@@ -427,8 +427,14 @@ input.number-input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.range-wrapper {
+  display: grid;
+  min-width: 3ch;
+}
+
 .range-value {
   min-width: 3ch;
   text-align: center;
+  align-self: center;
 }
 </style>
