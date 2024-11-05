@@ -41,6 +41,7 @@ import { coreStore } from '@/store'
 import { mapState, mapStores } from 'pinia'
 
 import emitter from 'tiny-emitter/instance'
+import { markRaw } from 'vue'
 
 export default {
   name: 'HomeView',
@@ -48,10 +49,10 @@ export default {
     return {
       widgets: [{
         id: 'banners',
-        component: HomeBanners
+        component: markRaw(HomeBanners)
       }, {
         id: 'trials',
-        component: TrialSelector
+        component: markRaw(TrialSelector)
       }]
     }
   },

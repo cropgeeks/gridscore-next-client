@@ -40,6 +40,7 @@ const i18n = createI18n({
   messages,
   legacy: false,
   globalInjection: true,
+  warnHtmlMessage: false,
   numberFormats: {
     'en-GB': {},
     'de-DE': {},

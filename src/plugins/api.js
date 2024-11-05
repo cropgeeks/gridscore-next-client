@@ -302,7 +302,17 @@ const postCheckUpdate = () => {
 
         return Promise.all(remoteCalls)
       })
-      .then(result => resolve(result.flat()))
+      .then(result => {
+        const mapped = {}
+
+        result.forEach(arr => {
+          Object.keys(arr).forEach(k => {
+            mapped[k] = arr[k]
+          })
+        })
+
+        resolve(mapped)
+      })
   })
 }
 
