@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import { nextTick } from 'vue'
 
 import deDE from '@/plugins/i18n/de_DE.json'
 import enGB from '@/plugins/i18n/en_GB.json'
@@ -49,44 +50,38 @@ const i18n = createI18n({
   }
 })
 
-const loadedLanguages = ['en-GB']
+function setI18nLanguage (locale) {
+  i18n.global.locale.value = locale
 
-function setI18nLanguage (lang) {
-  i18n.locale = lang
-
-  let htmlTag = lang
-  const underscoreIndex = lang.indexOf('-')
+  let htmlTag = locale
+  const underscoreIndex = locale.indexOf('-')
   if (underscoreIndex !== -1) {
-    htmlTag = lang.substring(0, underscoreIndex)
+    htmlTag = locale.substring(0, underscoreIndex)
   }
   document.querySelector('html').setAttribute('lang', htmlTag)
 
-  const match = locales.find(l => l.locale === lang)
+  const match = locales.find(l => l.locale === locale)
 
   if (match) {
     document.querySelector('html').setAttribute('dir', match.direction)
   }
-
-  return lang
 }
 
-const loadLanguageAsync = (lang) => {
-  // If the same language
-  if (i18n.locale === lang) {
-    return Promise.resolve(setI18nLanguage(lang))
+const loadLanguageAsync = async (locale) => {
+  // If different language
+  if (i18n.global.locale.value !== locale) {
+    // load locale messages with dynamic import
+    const messages = await import(
+      /* webpackChunkName: "locale-[request]" */ `@/plugins/i18n/${locale.replace('-', '_')}.json`
+    )
+
+    setI18nLanguage(locale)
+
+    // set locale and locale message
+    i18n.global.setLocaleMessage(locale, messages.default)
   }
 
-  // If the language was already loaded
-  if (loadedLanguages.includes(lang)) {
-    return Promise.resolve(setI18nLanguage(lang))
-  }
-
-  // If the language hasn't been loaded yet
-  return import(/* webpackChunkName: "lang-[request]" */`@/plugins/i18n/${lang.replace('-', '_')}.json`).then(messages => {
-    i18n.global.setLocaleMessage(lang, messages.default)
-    loadedLanguages.push(lang)
-    return setI18nLanguage(lang)
-  })
+  return nextTick()
 }
 
 export {
