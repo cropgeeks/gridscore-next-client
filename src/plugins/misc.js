@@ -2,6 +2,7 @@ import { i18n } from '@/plugins/i18n'
 import { getId } from '@/plugins/id'
 import { trialLayoutToPlots } from '@/plugins/location'
 import { coreStore } from '@/store'
+import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
 
 import { saveAs } from 'file-saver'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
@@ -697,6 +698,31 @@ const getRandomGivenName = () => {
   return givenNames[Math.floor(Math.random() * givenNames.length)]
 }
 
+const getServerUrl = (trial) => {
+  if (trial) {
+    let baseUrl = trial.remoteUrl || getStore().storeServerUrl
+
+    if (!baseUrl.endsWith('/')) {
+      baseUrl += '/'
+    }
+    if (!baseUrl.endsWith('api/')) {
+      baseUrl += 'api/'
+    }
+
+    return baseUrl
+  } else {
+    return null
+  }
+}
+
+const getPriorityShareCode = (trial) => {
+  if (trial && trial.shareStatus !== TRIAL_STATE_NOT_SHARED) {
+    return trial.shareCodes.ownerCode || trial.shareCodes.editorCode || trial.shareCodes.viewerCode
+  } else {
+    return null
+  }
+}
+
 export {
   trialsDataToLongFormat,
   trialsDataToMatrix,
@@ -717,5 +743,7 @@ export {
   getColumnLabel,
   getRowIndex,
   getColumnIndex,
-  getRandomGivenName
+  getRandomGivenName,
+  getServerUrl,
+  getPriorityShareCode
 }

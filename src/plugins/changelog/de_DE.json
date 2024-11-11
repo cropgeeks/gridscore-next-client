@@ -584,6 +584,11 @@
         "type": "bugfix",
         "title": "Führende/anhängende Leerzeichen",
         "text": "Behebt einen Fehler bei dem führende oder angängende Leerzeichen in Eingabefeldern automatisch entfernt werden."
+      },
+      {
+        "type": "bugfix",
+        "title": "Sprachwechsler",
+        "text": "Behebt einen Fehler beim Wechseln der Sprache. GridScore behält jetzt wieder die ausgewählte Sprache zwischen Sitzungen."
       }
     ]
   }

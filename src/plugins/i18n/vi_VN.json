@@ -437,7 +437,7 @@
   "pageTrialSetupTitle": "Thiết lập thí nghiệm",
   "pageTrialSetupText": "Đây là nơi bạn tạo một bản thí nghiệm mới. Các phần bên dưới được sử dụng để cung cấp thông tin chung về thí nghiệm, chỉ định cách bố trí bao gồm nguồn gen/giống đã sử dụng, số hàng và cột, và cuối cùng là các đặc tính bạn muốn cho điểm cần phải được chỉ định.",
   "pageTrialLayoutDimensionsTitle": "Kích thước bố cục",
-  "pageTrialLayoutDimensionsText": "Sử dụng các trường đầu vào để chỉ định số hàng và số cột của bố cục thí nghiệm của bạn.",
+  "pageTrialLayoutDimensionsTextGrid": "Sử dụng các trường đầu vào để chỉ định số hàng và số cột của bố cục thí nghiệm của bạn.",
   "pageTrialLayoutDimensionsFielDHubNotice": "Nếu bạn đang nhập một thiết kế thí nghiệm từ FielDHub, vui lòng đảm bảo chọn 'từ dưới lên trên' cho thứ tự hàng và 'từ trái sang phải' cho thứ tự cột.",
   "pageTrialLayoutGermplasmTitle": "Thông tin về nguồn gen/giống/lần lặp",
   "pageTrialLayoutGermplasmText": "Sử dụng bảng dưới đây để nhập mã định danh nguồn gen/giống và thông tin đại diện tùy chọn cho từng ô. Bạn có thể sử dụng menu thả xuống phía trên bảng để nhập dữ liệu từ các công cụ khác như FielDHub hoặc Excel.",

@@ -95,11 +95,7 @@
               <b-col class="mb-3" cols=12 md=6 v-for="trait in traits" :key="`trait-section-${trait.id}`">
                 <h4 class="d-flex justify-content-between align-items-center">
                   <span :style="{ color: trait.color }">
-                    <TraitIcon :trait="trait" />
-                    <span class="mx-1">{{ trait.name }}</span>
-                    <b-badge class="mx-1" variant="light" v-if="trait.hasImage">
-                      <IBiImage />
-                    </b-badge>
+                    <TraitHeading :trait="trait" />
                   </span>
                   <b-button-group>
                     <span class="d-inline-block" tabindex="0" v-b-tooltip:hover="canUploadTraitImage ? '' : $t('tooltipTraitImageUploadTrialNotShare')">
@@ -170,7 +166,7 @@ import UploadTraitImageModal from '@/components/modals/UploadTraitImageModal.vue
 import TrialLayoutCorners from '@/components/TrialLayoutCorners.vue'
 import MarkerSetup from '@/components/MarkerSetup.vue'
 import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal.vue'
-import TraitIcon from '@/components/icons/TraitIcon.vue'
+import TraitHeading from '@/components/TraitHeading.vue'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { updateTrialProperties, getTrialGroups } from '@/plugins/idb'
 
@@ -186,7 +182,7 @@ export default {
     LayoutFeedbackModal,
     MarkerSetup,
     TrialLayoutCorners,
-    TraitIcon
+    TraitHeading
   },
   data: function () {
     return {

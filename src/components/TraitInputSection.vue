@@ -4,34 +4,14 @@
 
     <h4 class="d-flex justify-content-between align-items-center">
       <span class="d-flex align-items-center flex-wrap">
-        <span :style="{ color: trait.color }" class="trait-name">
-          <TraitIcon :trait="trait" />
-          <span class="mx-1">{{ trait.name }}</span>
-        </span>
-        <span>
-          <b-badge class="mx-1 trait-data-type" variant="light">{{ getTraitTypeText(trait, true) }}</b-badge>
-          <b-badge class="mx-1 trait-allow-repeats" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
-            <IBiRepeat v-if="trait.allowRepeats" />
-            <IBiRepeat1 v-else />
-          </b-badge>
-          <b-badge class="mx-1 trait-set-size" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
-            <IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $n(trait.setSize || 1) }}
-          </b-badge>
-          <BPopover
-            v-if="trait.hasImage && priorityShareCode && serverUrl"
-            custom-class="trait-image"
-            @shown="addLightbox"
-            :click="true"
-            :close-on-hide="true"
-          >
-            <b-img @click="$refs.traitImageModal.show()" fluid-grow :src="`${serverUrl}trait/${priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
-            <template #target>
-              <b-badge class="mx-1" variant="light">
-                <IBiImage />
-              </b-badge>
-            </template>
-          </BPopover>
-        </span>
+        <TraitHeading :trait="trait" :showDescription="false" />
+        <b-badge class="mx-1 trait-allow-repeats" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
+          <IBiRepeat v-if="trait.allowRepeats" />
+          <IBiRepeat1 v-else />
+        </b-badge>
+        <b-badge class="mx-1 trait-set-size" variant="light" v-b-tooltip="$t('tooltipTraitSetSize')">
+          <IBiSegmentedNav :style="{ transform: 'rotate(90deg)' }" /> {{ $n(trait.setSize || 1) }}
+        </b-badge>
       </span>
       <b-button-group>
         <b-button @click="showHistoryModal" v-b-tooltip="$t('tooltipViewTraitDataHistory')" :disabled="!hasHistoricData" class="trait-history"><IBiClockHistory /></b-button>
@@ -57,16 +37,6 @@
     </b-form-group>
 
     <TraitDataHistoryModal @data-changed="$emit('data-changed')" :editable="editable" :cell="{ row: cell.row, column: cell.column, displayName: cell.displayName }" :trial="trial" :trait="trait" :measurements="cellTraitMeasurements" ref="traitDataHistoryModal" v-if="hasHistoricData && cellTraitMeasurements" @hidden="cellTraitMeasurements = null" />
-
-    <b-modal
-      v-if="trait.hasImage"
-      ref="traitImageModal"
-      :fullscreen="true"
-      hide-footer
-      hide-header
-      no-fade>
-      <b-img fluid-grow class="fullscreen-image" @click="$refs.traitImageModal.hide()" :src="`${serverUrl}trait/${priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
-    </b-modal>
   </section>
 </template>
 
@@ -76,6 +46,7 @@ import { coreStore } from '@/store'
 
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 import TraitInput from '@/components/TraitInput.vue'
+import TraitHeading from '@/components/TraitHeading.vue'
 import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
 
 import { getTraitTypeText } from '@/plugins/misc'
@@ -120,29 +91,6 @@ export default {
       'storeShowFullTraitDescription',
       'storeServerUrl'
     ]),
-    serverUrl: function () {
-      if (this.trial) {
-        let baseUrl = this.trial.remoteUrl || this.storeServerUrl
-
-        if (!baseUrl.endsWith('/')) {
-          baseUrl += '/'
-        }
-        if (!baseUrl.endsWith('api/')) {
-          baseUrl += 'api/'
-        }
-
-        return baseUrl
-      } else {
-        return null
-      }
-    },
-    priorityShareCode: function () {
-      if (this.trial && this.trial.shareStatus !== TRIAL_STATE_NOT_SHARED) {
-        return this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode || this.trial.shareCodes.viewerCode
-      } else {
-        return null
-      }
-    },
     hasHistoricData: function () {
       // Check if there's at least one measurement for the trait id
       return this.cell && this.trait && this.cell.measurements && this.cell.measurements[this.trait.id] && this.cell.measurements[this.trait.id].length > 0

@@ -12,8 +12,6 @@
 
         <b-container>
           <TrialLayoutDimensionComponent :layout="layout" v-if="layout" ref="trialLayoutDimensionComponent" @layout-changed="updateLayout" />
-
-          <div class="border border-warning text-center my-3 p-2"><IBiExclamationTriangleFill class="text-warning" /> {{ $t('pageTrialLayoutDimensionsFielDHubNotice') }}</div>
         </b-container>
       </b-tab>
       <b-tab :disabled="!hasDimensions">

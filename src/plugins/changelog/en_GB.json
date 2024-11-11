@@ -584,6 +584,11 @@
         "type": "bugfix",
         "title": "Leading/trailing spaces",
         "text": "Fixed issues with the automatic removal of leading and trailing spaces in input fields."
+      },
+      {
+        "type": "bugfix",
+        "title": "Language switching",
+        "text": "Fixed persistence of language switching. GridScore will now remember your language selection between sessions again."
       }
     ]
   }
