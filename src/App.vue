@@ -21,11 +21,10 @@
             <template #button-content>
               <IBiEasel /> {{ $t('menuDataVisualization') }}
             </template>
-            <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-timeline' }"><IBiGraphUp /> {{ $t('menuVisualizationTimeline') }}</b-dropdown-item>
-            <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-heatmap' }"><IBiGridFill /> {{ $t('menuVisualizationHeatmap') }}</b-dropdown-item>
-            <!-- <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-scatter' }"><IBiDice3 flip-h /> {{ $t('menuVisualizationScatter') }}</b-dropdown-item> -->
-            <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-statistics' }"><IBiBarChartSteps /> {{ $t('menuVisualizationStatistics') }}</b-dropdown-item>
-            <b-dropdown-item :disabled="menuItemsDisabled" :to="{ name: 'visualization-map' }"><IBiPinMapFill /> {{ $t('menuVisualizationMap') }}</b-dropdown-item>
+            <b-dropdown-item :disabled="menuItemsDisabled" :active="$route.name === 'visualization-timeline'" :to="{ name: 'visualization-timeline' }"><IBiGraphUp /> {{ $t('menuVisualizationTimeline') }}</b-dropdown-item>
+            <b-dropdown-item :disabled="menuItemsDisabled" :active="$route.name === 'visualization-heatmap'" :to="{ name: 'visualization-heatmap' }"><IBiGridFill /> {{ $t('menuVisualizationHeatmap') }}</b-dropdown-item>
+            <b-dropdown-item :disabled="menuItemsDisabled" :active="$route.name === 'visualization-statistics'" :to="{ name: 'visualization-statistics' }"><IBiBarChartSteps /> {{ $t('menuVisualizationStatistics') }}</b-dropdown-item>
+            <b-dropdown-item :disabled="menuItemsDisabled" :active="$route.name === 'visualization-map'" :to="{ name: 'visualization-map' }"><IBiPinMapFill /> {{ $t('menuVisualizationMap') }}</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item :disabled="menuItemsDisabled" :active="$route.name === 'trial-export'" :to="{ name: 'trial-export' }"><IBiCloudDownload /> {{ $t('menuDataExport') }}</b-nav-item>
           <b-nav-item :active="$route.name === 'data-statistics'" :to="{ name: 'data-statistics' }"><IBiClipboardData /> {{ $t('menuDataStatistics') }}</b-nav-item>
@@ -36,16 +35,20 @@
         <b-navbar-nav class="ms-auto">
           <!-- Trial information INSIDE of the collapse for small screens -->
           <TrialInformationDropdown v-if="selectedTrial && showSelectedTrialMenuItem" :trial="selectedTrial" class="d-none d-xl-block" />
-          <b-nav-item href="#" @click.prevent="toggleDarkMode">
-            <IBiMoon v-if="storeDarkMode" />
-            <IBiSun v-else /> <span> {{ $t('menuToggleDarkMode') }}</span>
-          </b-nav-item>
+          <b-nav-item-dropdown right>
+            <template #button-content>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.3em" height="1.3em" fill="currentColor"><path d="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5M14.6,20.08L17.37,18.93L17.13,22.28L14.6,20.08M18.93,17.38L20.08,14.61L22.28,17.15L18.93,17.38M20.08,12.42L18.94,9.64L22.28,9.88L20.08,12.42M9.63,18.93L12.4,20.08L9.87,22.27L9.63,18.93Z" /></svg> <span> {{ $t('menuTheme') }}</span>
+            </template>
+            <b-dropdown-item :active="storeTheme === 'dark'" link-class="d-flex align-items-center" @click="setTheme('dark')"><IBiMoonStarsFill class="me-2" /> {{ $t('menuItemThemeDark') }} <IBiCheck class="ms-auto" v-if="storeTheme === 'dark'" /></b-dropdown-item>
+            <b-dropdown-item :active="storeTheme === 'light'" link-class="d-flex align-items-center" @click="setTheme('light')"><IBiSunFill class="me-2" /> {{ $t('menuItemThemeLight') }} <IBiCheck class="ms-auto" v-if="storeTheme === 'light'" /></b-dropdown-item>
+            <b-dropdown-item :active="storeTheme === 'system'" link-class="d-flex align-items-center" @click="setTheme('system')"><IBiCircleHalf class="me-2" /> {{ $t('menuItemThemeSystem') }} <IBiCheck class="ms-auto" v-if="storeTheme === 'system'" /></b-dropdown-item>
+          </b-nav-item-dropdown>
           <b-nav-item-dropdown right>
             <template #button-content>
               <IBiFlag /> <span> {{ $t('menuLocale') }}</span>
             </template>
-            <b-dropdown-item v-for="language in languages" :key="`locale-${language.locale}`" @click="onLocaleChanged(language)">
-              <span class="me-2">{{ language.icon }}</span> <span>{{ language.name }}</span>
+            <b-dropdown-item :active="storeLocale === language.locale" link-class="d-flex align-items-center" v-for="language in languages" :key="`locale-${language.locale}`" @click="onLocaleChanged(language)">
+              <span class="me-2">{{ language.icon }}</span> <span>{{ language.name }}</span> <IBiCheck class="ms-auto" v-if="storeLocale === language.locale" />
             </b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item :to="{ name: 'about' }"><IBiInfoCircle /> {{ $t('menuAbout') }}</b-nav-item>
@@ -153,6 +156,8 @@ if (import.meta.env.VITE_BASE_URL) {
   baseUrl = import.meta.env.VITE_BASE_URL
 }
 
+let media = window.matchMedia('(prefers-color-scheme: dark)')
+
 const trialInfoPages = ['data-entry', 'guided-walk', 'trial-export', 'visualization-heatmap', 'visualization-timeline', 'visualization-statistics', 'visualization-map']
 
 export default {
@@ -191,6 +196,7 @@ export default {
     ...mapState(coreStore, [
       'storeLocale',
       'storeDarkMode',
+      'storeTheme',
       'storeSelectedTrial',
       'storePlausible',
       'storeUniqueClientId',
@@ -215,6 +221,9 @@ export default {
     },
     '$route.name': function (newValue) {
       this.setRouterClass(newValue)
+    },
+    storeTheme: function () {
+      this.onThemeChange()
     }
   },
   methods: {
@@ -293,6 +302,9 @@ export default {
     },
     onBrapiSettingsChanged: function (config) {
       emitter.emit('brapi-settings-changed', config)
+    },
+    setTheme: function (theme) {
+      this.coreStore.setTheme(theme)
     },
     toggleDarkMode: function () {
       emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: !this.storeDarkMode } })
@@ -409,12 +421,20 @@ export default {
       } else {
         this.$router.push({ name: 'about', query: { showChangelog: true } })
       }
+    },
+    onThemeChange: function () {
+      if (this.storeTheme === 'system' && media) {
+        this.coreStore.setDarkMode(media.matches ? true : false)
+        this.setDarkMode(media.matches ? true : false)
+      } else {
+        this.setDarkMode(this.storeDarkMode)
+      }
     }
   },
   mounted: function () {
     loadLanguageAsync(this.storeLocale.replace('_', '-'))
 
-    this.setDarkMode(this.storeDarkMode)
+    // this.setDarkMode(this.storeDarkMode)
     this.setRouterClass(this.$route.name)
 
     init()
@@ -488,6 +508,11 @@ export default {
     emitter.on('show-toast', this.showToast)
 
     this.updateSelectedTrial()
+
+    if (media) {
+      media.addEventListener('change', this.onThemeChange)
+    }
+    this.onThemeChange()
   },
   beforeUnmount: function () {
     emitter.off('trial-properties-changed', this.updateSelectedTrialData)
@@ -499,6 +524,10 @@ export default {
     emitter.off('show-brapi-settings', this.showBrapiSettings)
     emitter.off('show-loading', this.showLoading)
     emitter.off('show-toast', this.showToast)
+
+    if (media) {
+      media.removeEventListener('change', this.onThemeChange)
+    }
   },
   created: function () {
     // Listen for our custom event from the SW registration

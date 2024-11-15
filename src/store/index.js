@@ -17,7 +17,8 @@ export const coreStore = defineStore('core', {
     runCount: 0,
     serverUrl: null,
     locale: 'en-GB',
-    darkMode: false,
+    darkMode: null,
+    theme: 'system',
     hideCitationMessage: false,
     highlightControls: true,
     displayMarkerIndicators: true,
@@ -60,6 +61,7 @@ export const coreStore = defineStore('core', {
     storeLocale: (state) => (state.locale || 'en-GB').replace('_', '-'),
     storeCalendarLocale: (state) => (state.locale || 'en-GB').replace('_', '-'),
     storeDarkMode: (state) => state.darkMode,
+    storeTheme: (state) => state.theme || 'system',
     storeHideCitationMessage: (state) => state.hideCitationMessage,
     storeHighlightControls: (state) => state.highlightControls,
     storeDisplayMarkerIndicators: (state) => state.displayMarkerIndicators,
@@ -140,6 +142,13 @@ export const coreStore = defineStore('core', {
     },
     setDarkMode: function (newDarkMode) {
       this.darkMode = newDarkMode
+    },
+    setTheme: function (newTheme) {
+      this.theme = newTheme
+
+      if (newTheme !== 'system') {
+        this.setDarkMode(newTheme === 'dark')
+      }
     },
     setMapLayer: function (newMapLayer) {
       this.mapLayer = newMapLayer
