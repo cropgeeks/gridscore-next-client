@@ -215,21 +215,18 @@ const getServerSettings = () => {
 }
 
 const getServerVersion = (remoteConfig) => {
-  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.url || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: 'settings/version', method: 'get', ignoreErrors: true })
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: 'settings/version', method: 'get', ignoreErrors: true })
 }
 
 const shareTrial = async (remoteConfig, localId) => {
   const trial = await getTrialById(localId)
 
-  let remoteUrlWithApi = null
-  if (remoteConfig && remoteConfig.url) {
-    if (!remoteConfig.url.endsWith('/')) {
-      remoteConfig.url += '/'
+  if (remoteConfig) {
+    if (!remoteConfig.remoteUrl.endsWith('/')) {
+      remoteConfig.remoteUrl += '/'
     }
-
-    remoteUrlWithApi = remoteConfig.url
-    if (!remoteUrlWithApi.endsWith('api/')) {
-      remoteUrlWithApi += 'api/'
+    if (!remoteConfig.remoteUrl.endsWith('api/')) {
+      remoteConfig.remoteUrl += 'api/'
     }
   }
 
@@ -239,18 +236,18 @@ const shareTrial = async (remoteConfig, localId) => {
         const copy = JSON.parse(JSON.stringify(trial))
         copy.data = data
 
-        return axiosCall({ baseUrl: remoteUrlWithApi || ((trial && trial.remoteUrl) ? trial.remoteUrl : null), remoteToken: remoteConfig ? remoteConfig.token : null, url: 'trial/share', params: copy, method: 'post' })
+        return axiosCall({ baseUrl: (remoteConfig ? remoteConfig.remoteUrl : null) || trial.remoteUrl || null, remoteToken: (remoteConfig ? remoteConfig.token : null) || trial.token || null, url: 'trial/share', params: copy, method: 'post' })
       })
       .then(result => {
         if (result) {
           result.localId = localId
-          result.remoteUrl = remoteConfig ? (remoteConfig.url || null) : null
-          result.remoteToken = remoteConfig ? remoteConfig.token : null
+          result.remoteUrl = remoteConfig ? (remoteConfig.remoteUrl || null) : null
+          result.remoteToken = remoteConfig ? (remoteConfig.token || null) : null
           return new Promise((resolve, reject) => {
             updateTrial(localId, result)
-              .then(id => {
+              .then(() => {
                 resolve({
-                  id: id,
+                  id: localId,
                   trial: result
                 })
               })
@@ -277,17 +274,12 @@ const postCheckUpdate = () => {
           .forEach(t => {
             let remote = t.remoteUrl
 
-            if (remote) {
+            if (remote && !remote.endsWith('api/')) {
               remote += 'api/'
             }
 
             const config = remotes.get(remote || null)
-            let arr
-            if (!arr) {
-              arr = []
-            } else {
-              arr = config.list
-            }
+            const arr = config ? (config.list || []) : []
 
             arr.push(t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode)
 
@@ -317,7 +309,7 @@ const postCheckUpdate = () => {
 }
 
 const getTrialByCode = (remoteConfig, shareCode) => {
-  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.url || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}`, method: 'get' })
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || null) : null, remoteToken: remoteConfig ? remoteConfig.token : null, url: `trial/${shareCode}`, method: 'get' })
 }
 
 const getLegacyTrialByCode = (remoteUrl, shareCode) => {

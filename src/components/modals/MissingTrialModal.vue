@@ -67,7 +67,7 @@ export default {
 
       if (this.trial && this.trial.remoteUrl) {
         remoteConfig = {
-          url: this.trial.remoteUrl,
+          remoteUrl: this.trial.remoteUrl,
           token: this.trial.remoteToken || null
         }
       }

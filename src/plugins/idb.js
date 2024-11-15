@@ -330,7 +330,7 @@ const updateTrialProperties = async (localId, updates) => {
             // If there is an old transaction entry, update it
             transMatch.name = t.name
             transMatch.description = t.description
-            transMatch.group = t.group.name
+            transMatch.group = t.group ? t.group.name : null
             transMatch.hasImage = t.hasImage
             transMatch.timestamp = new Date().toISOString()
           } else {
@@ -339,7 +339,7 @@ const updateTrialProperties = async (localId, updates) => {
               id: t.id,
               name: t.name,
               description: t.description,
-              group: t.group.name,
+              group: t.group ? t.group.name : null,
               hasImage: t.hasImage,
               timestamp: new Date().toISOString()
             })

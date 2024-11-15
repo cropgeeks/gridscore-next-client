@@ -272,10 +272,10 @@ export default {
           }
         }
 
-        getTrialByCode({ url: remoteUrlWithApi || null, token: this.remoteToken }, this.shareCode)
+        getTrialByCode({ remoteUrl: remoteUrlWithApi || null, token: this.remoteToken }, this.shareCode)
           .then(result => {
             if (result) {
-              result.remoteUrl = this.remoteUrl
+              result.remoteUrl = remoteUrlWithApi
               result.remoteToken = this.remoteToken
             }
 

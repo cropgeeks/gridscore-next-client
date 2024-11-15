@@ -115,7 +115,7 @@ export default {
     getShareCodes: function () {
       this.error = null
       emitter.emit('show-loading', true)
-      shareTrial({ url: this.shareWithRemote ? this.remoteUrl : null, token: this.remoteToken }, this.trial.localId)
+      shareTrial({ remoteUrl: this.shareWithRemote ? this.remoteUrl : null, token: this.remoteToken }, this.trial.localId)
         .then(trial => {
           this.shareCodes = trial.shareCodes
           emitter.emit('plausible-event', { key: 'trial-shared' })
