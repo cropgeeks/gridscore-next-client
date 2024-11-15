@@ -298,6 +298,11 @@ export default {
             }
           }
 
+          if (remoteConfig) {
+            result.remoteUrl = remoteConfig.remoteUrl || null
+            result.remoteToken = remoteConfig.token || null
+          }
+
           result.localId = this.trial.localId
 
           return deleteTrial(this.trial.localId)
