@@ -31,7 +31,7 @@
             </b-col>
           </b-row>
 
-          <StyledQRCode class="mt-3" :baseUrl="trial.remoteUrl || null" :text="selectedShareCode" v-if="selectedShareCode" />
+          <StyledQRCode class="mt-3" :baseUrl="remoteUrlWithoutApi" :text="selectedShareCode" v-if="selectedShareCode" />
         </div>
         <div v-else>
           <p v-html="$t('modalTextTrialShare')" />
@@ -101,6 +101,13 @@ export default {
     }
   },
   computed: {
+    remoteUrlWithoutApi: function () {
+      if (this.trial && this.trial.remoteUrl) {
+        return this.trial.remoteUrl.replace('/api/', '/')
+      } else {
+        return null
+      }
+    },
     buttonDisabled: function () {
       const remoteUrlValid = this.remoteUrl !== undefined && this.remoteUrl !== null && this.remoteUrl !== ''
 
