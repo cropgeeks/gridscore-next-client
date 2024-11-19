@@ -221,7 +221,7 @@ const getServerVersion = (remoteConfig) => {
 const shareTrial = async (remoteConfig, localId) => {
   const trial = await getTrialById(localId)
 
-  if (remoteConfig) {
+  if (remoteConfig && remoteConfig.remoteUrl) {
     if (!remoteConfig.remoteUrl.endsWith('/')) {
       remoteConfig.remoteUrl += '/'
     }
