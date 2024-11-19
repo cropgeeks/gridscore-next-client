@@ -2,12 +2,12 @@
   <div>
     <b-row>
       <b-col cols=12 lg=6 class="mb-3">
-        <b-form @submit.prevent="addTrait">
+        <b-form @submit.prevent="addTrait(false)">
           <b-form-group :description="$t('formDescriptionTraitName')" label-for="trait-name" :state="formState.name">
             <template #label>
               <IBiTextarea /> {{ $t('formLabelTraitName') }}
             </template>
-            <b-form-input v-model.trim.lazy="newTrait.name" trim lazy id="trait-name" autofocus required :state="formState.name" ref="traitName" v-on:keyup.enter="newTrait.id ? updateTrait() : addTrait()" />
+            <b-form-input v-model.trim.lazy="newTrait.name" trim lazy id="trait-name" autofocus required :state="formState.name" ref="traitName" v-on:keyup.enter="newTrait.id ? updateTrait(false) : addTrait(false)" />
             <b-form-invalid-feedback>
               {{ $t('formFeedbackTraitNameInvalidOrDuplicate') }}
             </b-form-invalid-feedback>
@@ -116,8 +116,8 @@
           </b-collapse>
         </b-form>
 
-        <b-button v-if="newTrait.id" @click="updateTrait" variant="primary" :disabled="!newTrait.name"><IBiPencilSquare /> {{ $t('buttonUpdate') }}</b-button>
-        <b-button v-else @click="addTrait" variant="primary" :disabled="!newTrait.name"><IBiPlusSquareFill /> {{ $t('buttonAdd') }}</b-button>
+        <b-button v-if="newTrait.id" @click="updateTrait(false)" variant="primary" :disabled="!newTrait.name"><IBiPencilSquare /> {{ $t('buttonUpdate') }}</b-button>
+        <b-button v-else @click="addTrait(false)" variant="primary" :disabled="!newTrait.name"><IBiPlusSquareFill /> {{ $t('buttonAdd') }}</b-button>
       </b-col>
       <b-col cols=12 lg=6 class="mb-3">
         <div class="d-flex align-items-center justify-content-between">
@@ -519,7 +519,7 @@ export default {
 
       return copy
     },
-    checkTrait: function (checkForDuplicate) {
+    checkTrait: function (checkForDuplicate, ignoreCategoryWarning = false) {
       this.formValidated = true
 
       const hasDuplicate = checkForDuplicate ? this.traits.some(t => t.name === this.newTrait.name) : false
@@ -530,10 +530,35 @@ export default {
         this.formState.name = true
       }
 
-      if (this.newTrait.dataType === 'categorical' && (!this.newTrait.restrictions.categories || this.newTrait.restrictions.categories === '')) {
-        this.formState.categories = false
-      } else {
-        this.formState.categories = true
+      this.formState.categories = true
+
+      if (this.newTrait.dataType === 'categorical') {
+        if (!this.newTrait.restrictions.categories || this.newTrait.restrictions.categories === '') {
+          this.formState.categories = false
+        } else {
+          const categories = this.newTrait.restrictions.categories.split(/\r?\n/).filter(c => c !== undefined && c !== null && c !== '').map(c => c.trim())
+
+          if (categories.length < 2 && !ignoreCategoryWarning) {
+            this.formState.categories = false
+
+            emitter.emit('show-confirm', {
+              title: 'modalTitleCategoricalTraitPotentialWrongFormat',
+              message: 'modalTextCategoricalTraitPotentialWrongFormat',
+              okTitle: 'buttonYes',
+              cancelTitle: 'buttonNo',
+              okVariant: 'warning',
+              callback: (result) => {
+                if (result) {
+                  if (checkForDuplicate) {
+                    this.addTrait(true)
+                  } else {
+                    this.updateTrait(true)
+                  }
+                }
+              }
+            })
+          }
+        }
       }
 
       if (this.newTrait.dataType === 'range') {
@@ -557,8 +582,8 @@ export default {
 
       return !Object.values(this.formState).some(v => v === false)
     },
-    updateTrait: function () {
-      const valid = this.checkTrait(false)
+    updateTrait: function (ignoreCategoryWarning = false) {
+      const valid = this.checkTrait(false, ignoreCategoryWarning)
 
       if (!valid) {
         return
@@ -570,8 +595,8 @@ export default {
 
       this.reset()
     },
-    addTrait: function () {
-      const valid = this.checkTrait(true)
+    addTrait: function (ignoreCategoryWarning = false) {
+      const valid = this.checkTrait(true, ignoreCategoryWarning)
 
       if (!valid) {
         return
@@ -658,6 +683,7 @@ export default {
         callback: (result) => {
           if (result) {
             this.traits.splice(index, 1)
+            this.reset()
           }
         }
       })

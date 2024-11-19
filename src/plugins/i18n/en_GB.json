@@ -533,6 +533,8 @@
   "modalTextResetTraitValue": "Are you sure you want to reset the trait value? This will erase any value you entered/selected.",
   "modalTitleUploadTraitImage": "Upload trait reference image",
   "modalTextUploadTraitImage": "You can upload trait reference images to the GridScore server for a shared trial. These act as visual references to data collectors during the scoring process.",
+  "modalTitleCategoricalTraitPotentialWrongFormat": "Suspicious categories",
+  "modalTextCategoricalTraitPotentialWrongFormat": "It looks like you only specified one category option. Individual categories need to be specified one per row/line. If you have specified them as a comma-separated list please convert this to individual rows/lines.<br/><br/>Do you still want to add the trait as it currently is?",
   "pageAboutChangelog": "View Changelog Information",
   "pageAboutVersion": "Version {version}",
   "pageAboutGitHubLink": "The source code of GridScore is available on <a href='https://github.com/cropgeeks/gridscore-next-client/'>GitHub</a>.",

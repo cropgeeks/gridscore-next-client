@@ -524,6 +524,8 @@
   "modalTextResetTraitValue": "Sicher, dass der Merkmalswert zurückgesetzt werden. Dies entferne jegliche Werte die eingegeben/ausgewählt wurden.",
   "modalTitleUploadTraitImage": "Merkmals-Referenzbild hochladen",
   "modalTextUploadTraitImage": "Merkmals-Referenzbilder können für bereits geteilte Versuche zum GridScore Server hochgeladen werden. Diese agieren als visuelle Referenz für Datensammler beim bewerten von Daten.",
+  "modalTitleCategoricalTraitPotentialWrongFormat": "Verdächtige Kategorien",
+  "modalTextCategoricalTraitPotentialWrongFormat": "Es sieht so aus als wurde nur eine Kategorie angegeben. Jede Kategorie muss in einer eigenen Zeile angegeben werden. Falls Kategorien Komma-separiert angegeben wurden, bitte in einzelne Zeilen umwandeln.<br/><br/>Soll das Merkmal trotzdem so wie es aktuell definiert ist hinzugefügt werden?",
   "pageAboutChangelog": "Changelog-Information anzeigen",
   "pageAboutVersion": "Version {version}",
   "pageAboutDocumentationLink": "Eine detaillierte Anleitung für GridScore und wie man es benutzt ist auf der <a href='https://cropgeeks.github.io/gridscore-next-client'>Dokumentationsseite<a/> verfügbar.",
