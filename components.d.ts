@@ -205,6 +205,7 @@ declare module 'vue' {
     IBiMic: typeof import('~icons/bi/mic')['default']
     IBiMoon: typeof import('~icons/bi/moon')['default']
     IBiMoonStarsFill: typeof import('~icons/bi/moon-stars-fill')['default']
+    IBiMortarboardFill: typeof import('~icons/bi/mortarboard-fill')['default']
     IBiNewspaper: typeof import('~icons/bi/newspaper')['default']
     IBiNodePlus: typeof import('~icons/bi/node-plus')['default']
     IBiPencilSquare: typeof import('~icons/bi/pencil-square')['default']

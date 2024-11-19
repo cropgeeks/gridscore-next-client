@@ -537,6 +537,7 @@
   "pageAboutVersion": "Version {version}",
   "pageAboutGitHubLink": "The source code of GridScore is available on <a href='https://github.com/cropgeeks/gridscore-next-client/'>GitHub</a>.",
   "pageAboutDocumentationLink": "A detailed tutorial about how to get up and running with GridScore is available on the <a href='https://cropgeeks.github.io/gridscore-next-client'>documentation page<a/>.",
+  "pageAboutTrainingLink": "Training material for the use of GridScore is available on a <a href='https://cropgeeks.github.io/gridscore-next-training'>dedicated page<a/>.",
   "pageAboutParagraphOne": "GridScore is a field trial phenotyping app for trait data. It lets you keep track of what's happening in the field on a plot-level basis. This could be anything from plant emergence, flowering date, plant height, flower colour, etc.",
   "pageAboutParagraphTwo": "GridScore has been developed by <a href='https://www.hutton.ac.uk/staff/sebastian-raubach'>Sebastian Raubach</a>. Miriam Schreiber, Joanne Russel and Paul Shaw have been instrumental in testing GridScore. If you have any questions, suggestions or general feedback, please contact <a href='mailto:sebastian.raubach{'@'}hutton.ac.uk'>Sebastian</a>.",
   "pageAboutGridScoreFundersSubtitle": "Organisations supporting GridScore - past and present",
