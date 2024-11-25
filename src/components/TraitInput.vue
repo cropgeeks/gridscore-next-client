@@ -203,11 +203,13 @@ export default {
   },
   methods: {
     setGps: function (latitude, longitude) {
-      this.value = `${latitude};${longitude}`
+      if (isFinite(latitude) && isFinite(longitude)) {
+        this.value = `${latitude};${longitude}`
 
-      emitter.emit('tts', this.$t('ttsCurrentLocation'))
+        emitter.emit('tts', this.$t('ttsCurrentLocation'))
 
-      this.$emit('traverse')
+        this.$emit('traverse')
+      }
     },
     getValue: function () {
       if (this.value === undefined || this.value === null || this.value === '' || (this.trait.dataType === 'range' && !this.rangeChanged)) {
