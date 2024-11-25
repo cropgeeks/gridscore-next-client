@@ -555,6 +555,8 @@
   "pageLoadExampleMeasurementSetDescription": "Ein Versuch der die Aufzeichnung von 3-er Sätzen an Daten für ein Beet und Merkmal hervorhebt.",
   "pageLoadExampleCowName": "Kuh-Versuch",
   "pageLoadExampleCowDescription": "Wir arbeiten nicht nur mit Pflanzen, man kann Daten aufzeichnen für prinzipiell alles, sogar Kühe!",
+  "pageLoadExampleTrainingName": "Trainings-Versuch",
+  "pageLoadExampleTrainingDescription": "Ein Versuch der mit dem <a href='https://cropgeeks.github.io/gridscore-next-training/session-3.html#create-a-new-trial'>GridScore Trainingsmaterial</a> übereinstimmt.",
   "pageLoadExampleStatsTraits": "Merkmale",
   "pageLoadExampleStatsRows": "Zeilen",
   "pageLoadExampleStatsColumns": "Spalten",

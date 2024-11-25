@@ -148,7 +148,6 @@ export default {
       this.map.scrollWheelZoom.disable()
       this.map.on('focus', () => this.map.scrollWheelZoom.enable())
       this.map.on('blur', () => this.map.scrollWheelZoom.disable())
-      this.map.on('click', e => console.log(e.latlng))
     },
     update: async function () {
       if (this.layerGroup) {

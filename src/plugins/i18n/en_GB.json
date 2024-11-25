@@ -564,6 +564,8 @@
   "pageLoadExampleMeasurementSetDescription": "A trial highlighting the set measurement feature where 3 measurements are taken per plot and trait each time.",
   "pageLoadExampleCowName": "Cow trial",
   "pageLoadExampleCowDescription": "We don't just do plants, you can record data on basically anything, even cows!",
+  "pageLoadExampleTrainingName": "Training trial",
+  "pageLoadExampleTrainingDescription": "A trial matching the <a href='https://cropgeeks.github.io/gridscore-next-training/session-3.html#create-a-new-trial'>GridScore Training</a> material setup.",
   "pageLoadExampleStatsTraits": "Traits",
   "pageLoadExampleStatsRows": "Rows",
   "pageLoadExampleStatsColumns": "Column",

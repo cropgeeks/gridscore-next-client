@@ -112,6 +112,7 @@ export default {
   },
   data: function () {
     return {
+      CANVAS_SHAPE_SQUARE,
       CELL_CATEGORY_CONTROL,
       trial: null,
       trialData: null,

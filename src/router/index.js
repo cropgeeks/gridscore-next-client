@@ -76,7 +76,14 @@ const router = createRouter({
       name: 'germplasm-performance',
       component: () => import('@/views/GermplasmPerformanceView.vue')
     }
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition || (from && to && from.path === to.path)) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
 
 router.afterEach((to, from) => {
