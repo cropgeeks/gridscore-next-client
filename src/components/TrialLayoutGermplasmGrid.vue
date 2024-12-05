@@ -302,7 +302,7 @@ export default {
           rep.className = 'grid-input'
           rep.placeholder = 'Rep'
           if (dataCell) {
-            rep.value = dataCell.rep
+            rep.value = dataCell.rep || ''
           } else {
             rep.value = ''
           }

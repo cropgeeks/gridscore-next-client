@@ -541,7 +541,10 @@ export default {
               this.traits.forEach(t => {
                 if (this.trialToCopy && this.copyData && sameDimensions) {
                   const toCopy = this.trialToCopy.data[k]
-                  c.measurements[t.id] = JSON.parse(JSON.stringify(toCopy.measurements[t.id] || []))
+
+                  if (toCopy) {
+                    c.measurements[t.id] = JSON.parse(JSON.stringify(toCopy.measurements[t.id] || []))
+                  }
                 } else {
                   c.measurements[t.id] = []
                 }
