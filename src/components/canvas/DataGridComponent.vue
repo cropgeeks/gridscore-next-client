@@ -1,6 +1,6 @@
 <template>
   <div class="page-grid" ref="overallWrapper" v-if="trial && trialData">
-    <div />
+    <div @click="clearMarkedRowsCols" />
     <div class="column-headers force-ltr" ref="columnHeader" id="data-canvas-header" :style="{ gridTemplateColumns: `repeat(${columns.length}, ${cellWidth}px)` }">
       <div v-for="column in columns" :class="{
         cell: true,
@@ -279,6 +279,14 @@ export default {
     }
   },
   methods: {
+    clearMarkedRowsCols: function () {
+      this.columns.forEach(c => {
+        c.marked = false
+      })
+      this.rows.forEach(r => {
+        r.marked = false
+      })
+    },
     moveInDirection: function (direction) {
       const w = this.$refs.wrapper
       switch (direction) {

@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 
+import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
@@ -15,6 +16,19 @@ export default defineConfig({
     Components({
       resolvers: [BootstrapVueNextResolver(), IconsResolve()],
       dts: true
+    }),
+    AutoImport({
+      imports: [
+        'vue',
+        {
+          'vue-router/auto': ['useRoute', 'useRouter'],
+        }
+      ],
+      dts: 'src/auto-imports.d.ts',
+      eslintrc: {
+        enabled: true
+      },
+      vueTemplate: true
     }),
     Icons({
       compiler: 'vue3',
@@ -93,6 +107,16 @@ export default defineConfig({
       '~bootstrap': fileURLToPath(new URL('node_modules/bootstrap', import.meta.url)),
       '~bootswatch': fileURLToPath(new URL('node_modules/bootswatch', import.meta.url)),
       '~bootstrap-vue-next': fileURLToPath(new URL('node_modules/bootstrap-vue-next', import.meta.url))
-    }
+    },
+    extensions: [
+      '.js',
+      '.json',
+      '.geojson',
+      '.jsx',
+      '.mjs',
+      '.ts',
+      '.tsx',
+      '.vue',
+    ]
   }
 })

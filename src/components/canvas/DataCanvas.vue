@@ -1,6 +1,6 @@
 <template>
   <div ref="canvasWrapper" class="grid" v-if="trial">
-    <div class="corner" />
+    <div class="corner" @click="clearMarkedRowsCols" />
     <ColumnHeader :dimensions="dimensions"
                   :trial="trial"
                   :x="origin.x"
@@ -105,6 +105,10 @@ export default {
     }
   },
   methods: {
+    clearMarkedRowsCols: function () {
+      this.markedColumns = Array.from(Array(this.trial.layout.columns).keys()).map(() => false)
+      this.markedRows = Array.from(Array(this.trial.layout.rows).keys()).map(() => false)
+    },
     setOrigin: function (newOrigin) {
       this.origin = {
         x: newOrigin.x,

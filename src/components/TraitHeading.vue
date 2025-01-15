@@ -5,13 +5,13 @@
     <b-badge class="mx-1" variant="light">{{ traitTypeText }}</b-badge>
     <IBiCardText class="text-muted mx-1" v-b-tooltip="trait.description" v-if="showDescription && trait.description" />
     <BPopover
-      v-if="trait.hasImage && traitImageConfig.priorityShareCode && traitImageConfig.serverUrl"
+      v-if="trait.imageUrl || (trait.hasImage && traitImageConfig.priorityShareCode && traitImageConfig.serverUrl)"
       custom-class="trait-image"
       :click="true"
       :close-on-hide="true"
       ref="traitImagePopover"
     >
-      <b-img @click="$refs.traitImageModal.show()" fluid-grow :src="`${traitImageConfig.serverUrl}trait/${traitImageConfig.priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
+      <b-img @click="$refs.traitImageModal.show()" fluid-grow :src="trait.imageUrl || `${traitImageConfig.serverUrl}trait/${traitImageConfig.priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
       <template #target>
         <b-badge class="mx-1" variant="light">
           <IBiImage />
@@ -27,7 +27,7 @@
       hide-header
       no-fade
       @show="$refs.traitImagePopover.hide()">
-      <b-img fluid-grow class="fullscreen-image" @click="$refs.traitImageModal.hide()" :src="`${traitImageConfig.serverUrl}trait/${traitImageConfig.priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
+      <b-img fluid-grow class="fullscreen-image" @click="$refs.traitImageModal.hide()" :src="trait.imageUrl || `${traitImageConfig.serverUrl}trait/${traitImageConfig.priorityShareCode}/${trait.id}/img`" crossorigin="anonymous" />
     </b-modal>
   </span>
 </template>

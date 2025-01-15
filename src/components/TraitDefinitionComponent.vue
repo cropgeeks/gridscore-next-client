@@ -401,6 +401,27 @@ export default {
             }
           }
 
+          let imageUrl = null
+
+          if (t.trait && t.trait.externalReferences) {
+            const possible = t.trait.externalReferences.filter(e => {
+              if (e.referenceId) {
+                try {
+                  new URL(e.referenceId)
+                  return true
+                } catch (e) {
+                  return false
+                }
+              } else {
+                return false
+              }
+            }).map(e => e.referenceId)
+
+            if (possible.length > 0) {
+              imageUrl = possible[0]
+            }
+          }
+
           this.traits.push({
             id: getId(),
             brapiId: t.observationVariableDbId,
@@ -410,8 +431,10 @@ export default {
             allowRepeats: false,
             setSize: 1,
             restrictions: Object.keys(restrictions).length < 1 ? null : restrictions,
-            group: null,
-            timeframe: null
+            group: (t.trait && t.trait.traitClass) ? t.trait.traitClass : null,
+            timeframe: null,
+            hasImage: imageUrl !== null,
+            imageUrl: imageUrl
           })
         })
       }

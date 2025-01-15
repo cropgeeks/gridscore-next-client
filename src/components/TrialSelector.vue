@@ -4,7 +4,7 @@
       <span>{{ $t('widgetTrialSelectorTitle') }}</span>
       <div>
         <b-button-group class="me-2">
-          <b-dropdown class="d-flex" size="sm" variant="secondary" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" v-if="multiSelectEnabled && selectedTrialsToEdit && selectedTrialsToEdit.length > 0">
+          <b-dropdown class="d-flex" size="sm" :variant="selectedTrialsToEdit.length > 0 ? 'info' : 'secondary'" v-b-tooltip="$t('tooltipTrialSelectorMultiSelect')" v-if="multiSelectEnabled && selectedTrialsToEdit && selectedTrialsToEdit.length > 0">
             <template #button-content>
               <IBiCheck2Square /> {{ selectedTrialsToEdit.length }}
             </template>

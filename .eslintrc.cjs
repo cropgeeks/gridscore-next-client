@@ -6,16 +6,9 @@ module.exports = {
   },
   extends: [
     'plugin:vue/vue3-essential',
+    '@vue/eslint-config-typescript',
     '@vue/standard'
   ],
-  parserOptions: {
-    ecmaVersion: 13,
-    sourceType: 'module',
-    parser: '@babel/eslint-parser',
-    ecmaFeatures: {
-      module: true
-    }
-  },
   rules: {
     'vue/multi-word-component-names': 'off'
   }

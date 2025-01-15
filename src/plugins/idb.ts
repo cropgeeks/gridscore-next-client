@@ -1,14 +1,29 @@
-import { openDB } from 'idb'
+import { IDBPDatabase, openDB } from 'idb'
 import { getId } from '@/plugins/id'
 import { coreStore } from '@/store'
 import { TRAIT_TIMEFRAME_TYPE_ENFORCE, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER, TRIAL_STATE_VIEWER, TRIAL_STATE_NOT_SHARED, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT } from '@/plugins/constants'
 import { trialLayoutToPlots } from './location'
 import { getColumnLabel, getRowLabel } from '@/plugins/misc'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
+import { CellPlus, Geolocation, TraitPlus, TrialPlus } from '@/plugins/types/client'
+import { BrapiConfig, Comment, Corners, Event, EventType, Group, Markers, Measurement, Person, ShareCodes, SocialShareConfig, Trait, TraitMeasurement, Transaction, Trial } from '@/plugins/types/gridscore'
 
-let store
+export interface TrialModification {
+  name: string
+  description?: string
+  socialShareConfig: SocialShareConfig
+  group: Group
+  markers: Markers[]
+  corners: Corners
+  traits: Trait[]
+}
 
-let db
+export interface DataModification {
+  [index: string]: TraitMeasurement[]
+}
+
+let store: any | undefined
+let db: IDBPDatabase | undefined = undefined
 
 const getStore = () => {
   if (!store) {
@@ -18,7 +33,7 @@ const getStore = () => {
 }
 
 const getDb = async () => {
-  return new Promise((resolve, reject) => {
+  return new Promise<IDBPDatabase>((resolve, reject) => {
     if (db) {
       return resolve(db)
     } else {
@@ -110,7 +125,7 @@ const getTrialGroups = async () => {
   const trials = await db.getAll('trials')
 
   if (trials) {
-    const groups = new Set()
+    const groups: Set<string> = new Set()
 
     trials.forEach(t => {
       if (t.group) {
@@ -118,7 +133,7 @@ const getTrialGroups = async () => {
       }
     })
 
-    return [...groups].sort((a, b) => a - b)
+    return [...groups].sort((a, b) => a.localeCompare(b))
   } else {
     return []
   }
@@ -140,7 +155,7 @@ const getTrials = async () => {
             }
 
             if (trial.traits) {
-              trial.traits.forEach((t, i) => {
+              trial.traits.forEach((t: TraitPlus, i: number) => {
                 t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
                 t.progress = 0
                 t.editable = true
@@ -198,7 +213,7 @@ const getTrials = async () => {
 
   return Promise.all(trials.map(t => {
     return db.get('transactions', t.localId)
-      .then(transaction => {
+      .then((transaction: Transaction) => {
         t.transactionCount = 0
         if (transaction) {
           // Sum up all individual transaction types
@@ -226,7 +241,7 @@ const getTrials = async () => {
   }))
 }
 
-const updateTrialShareCodes = async (localId, shareCodes) => {
+const updateTrialShareCodes = async (localId: string, shareCodes: ShareCodes) => {
   const trial = await getTrialById(localId)
 
   if (trial) {
@@ -238,7 +253,7 @@ const updateTrialShareCodes = async (localId, shareCodes) => {
   }
 }
 
-const updateTrial = async (localId, updatedTrial) => {
+const updateTrial = async (localId: string, updatedTrial: TrialPlus) => {
   const trial = await getTrialById(localId)
 
   if (trial) {
@@ -258,7 +273,7 @@ const updateTrial = async (localId, updatedTrial) => {
     }
 
     if (updatedTrial.traits) {
-      updatedTrial.traits.forEach(t => {
+      updatedTrial.traits.forEach((t: TraitPlus) => {
         delete t.color
         delete t.editable
         delete t.progress
@@ -267,11 +282,11 @@ const updateTrial = async (localId, updatedTrial) => {
 
     return db.put('trials', updatedTrial)
   } else {
-    return new Promise(resolve => resolve())
+    return new Promise<void>(resolve => resolve())
   }
 }
 
-const updateTrialProperties = async (localId, updates) => {
+const updateTrialProperties = async (localId: string, updates: TrialModification) => {
   const trial = await getTrialById(localId)
 
   updates = JSON.parse(JSON.stringify(updates))
@@ -283,10 +298,10 @@ const updateTrialProperties = async (localId, updates) => {
     const originalTraits = JSON.parse(JSON.stringify(trial.traits))
 
     const retainedTraitIds = new Set(updates.traits.map(t => t.id))
-    const traitsToRemove = originalTraits.filter(t => !retainedTraitIds.has(t.id))
+    const traitsToRemove = originalTraits.filter((t: Trait) => !retainedTraitIds.has(t.id))
 
     if (traitsToRemove && traitsToRemove.length > 0) {
-      clearTraitImageCache(trial, traitsToRemove.map(t => t.id))
+      clearTraitImageCache(trial, traitsToRemove.map((t: Trait) => t.id))
     }
 
     trial.name = updates.name
@@ -298,13 +313,13 @@ const updateTrialProperties = async (localId, updates) => {
     trial.group = updates.group
 
     if (logTransactions(trial)) {
-      const transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
+      const transaction: Transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
       const copy = JSON.parse(JSON.stringify(updates))
       delete copy.traits
       transaction.trialEditTransaction = copy
 
       if (plotCorners) {
-        const mapping = {}
+        const mapping = {} as { [index: string]: Corners }
 
         for (let row = 0; row < trial.layout.rows; row++) {
           for (let column = 0; column < trial.layout.columns; column++) {
@@ -312,15 +327,17 @@ const updateTrialProperties = async (localId, updates) => {
           }
         }
 
-        transaction.trialEditTransaction.plotCorners = mapping
+        if (transaction.trialEditTransaction) {
+          transaction.trialEditTransaction.plotCorners = mapping
+        }
       }
 
       if (!transaction.traitChangeTransactions) {
         transaction.traitChangeTransactions = []
       }
 
-      updates.traits.forEach(t => {
-        const match = originalTraits.find(ot => ot.id === t.id)
+      updates.traits.forEach((t: Trait) => {
+        const match = originalTraits.find((ot: Trait) => ot.id === t.id)
 
         // If either the name, the description, the group or whether it has an image or not has changed, then store in the transaction.
         if (match.name !== t.name || match.description !== t.description || JSON.stringify(match.group) !== JSON.stringify(t.group) || match.hasImage !== t.hasImage) {
@@ -332,6 +349,7 @@ const updateTrialProperties = async (localId, updates) => {
             transMatch.description = t.description
             transMatch.group = t.group ? t.group.name : null
             transMatch.hasImage = t.hasImage
+            transMatch.imageUrl = t.imageUrl
             transMatch.timestamp = new Date().toISOString()
           } else {
             // Else, add a new one
@@ -341,6 +359,7 @@ const updateTrialProperties = async (localId, updates) => {
               description: t.description,
               group: t.group ? t.group.name : null,
               hasImage: t.hasImage,
+              imageUrl: t.imageUrl,
               timestamp: new Date().toISOString()
             })
           }
@@ -359,7 +378,7 @@ const updateTrialProperties = async (localId, updates) => {
       const cell = cursor.value
 
       if (cell) {
-        traitsToRemove.forEach(t => {
+        traitsToRemove.forEach((t: Trait) => {
           delete cell.measurements[t.id]
         })
 
@@ -378,11 +397,11 @@ const updateTrialProperties = async (localId, updates) => {
 
     return new Promise(resolve => resolve(trial))
   } else {
-    return new Promise(resolve => resolve())
+    return new Promise<void>(resolve => resolve())
   }
 }
 
-const updateTrialBrapiConfig = async (localId, brapiConfig) => {
+const updateTrialBrapiConfig = async (localId: string, brapiConfig: BrapiConfig) => {
   const trial = await getTrialById(localId)
 
   if (trial) {
@@ -407,11 +426,11 @@ const updateTrialBrapiConfig = async (localId, brapiConfig) => {
 
     return db.put('trials', trial)
   } else {
-    return new Promise(resolve => resolve())
+    return new Promise<void>(resolve => resolve())
   }
 }
 
-const getTrialValidPlots = async (trialId) => {
+const getTrialValidPlots = async (trialId: string) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -419,7 +438,7 @@ const getTrialValidPlots = async (trialId) => {
     const range = IDBKeyRange.bound([trialId, 0, 0], [trialId, trial.layout.rows, trial.layout.columns])
     return db.getAll('data', range)
       .then(grid => {
-        const result = []
+        const result: string[] = []
         if (grid) {
           grid.forEach(c => {
             result.push(`${c.row}|${c.column}`)
@@ -432,7 +451,7 @@ const getTrialValidPlots = async (trialId) => {
   }
 }
 
-const getTrialById = async (localId) => {
+const getTrialById = async (localId: string) => {
   const db = await getDb()
 
   const trial = await db.get('trials', localId)
@@ -445,7 +464,7 @@ const getTrialById = async (localId) => {
     }
 
     if (trial.traits) {
-      trial.traits.forEach((t, i) => {
+      trial.traits.forEach((t: TraitPlus, i: number) => {
         t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
         t.progress = 0
         t.editable = true
@@ -502,7 +521,7 @@ const getTrialById = async (localId) => {
 
   if (trial) {
     return db.get('transactions', trial.localId)
-      .then(transaction => {
+      .then((transaction: Transaction) => {
         trial.transactionCount = 0
         if (transaction) {
           // Sum up all individual transaction types
@@ -532,7 +551,7 @@ const getTrialById = async (localId) => {
   }
 }
 
-const getTransactionForTrial = async (localId) => {
+const getTransactionForTrial = async (localId: string) => {
   const db = await getDb()
 
   const trial = await getTrialById(localId)
@@ -544,12 +563,12 @@ const getTransactionForTrial = async (localId) => {
   }
 }
 
-const changeTrialsData = async (trialId, dataMapping, geolocation) => {
+const changeTrialsData = async (trialId: string, dataMapping: DataModification, geolocation: Geolocation) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
     const db = await getDb()
-    const transaction = logTransactions(trial) ? ((await db.get('transactions', trialId)) || getEmptyTransaction(trialId)) : null
+    const transaction: Transaction = logTransactions(trial) ? ((await db.get('transactions', trialId)) || getEmptyTransaction(trialId)) : null
 
     for (const [key, data] of Object.entries(dataMapping)) {
       const [row, column] = key.split('|').map(c => +c)
@@ -559,13 +578,13 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
       if (!cell.measurements) {
         cell.measurement = {}
 
-        trial.traits.forEach(t => {
+        trial.traits.forEach((t: Trait) => {
           cell.measurements[t.id] = []
         })
       }
 
       data.forEach(d => {
-        const trait = trial.traits.find(t => t.id === d.traitId)
+        const trait = trial.traits.find((t: Trait) => t.id === d.traitId)
 
         if (!cell.measurements[d.traitId]) {
           cell.measurements[d.traitId] = []
@@ -574,7 +593,7 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
         if (d.delete) {
           if (trait.allowRepeats) {
             // Remove any with the same timestamp
-            cell.measurements[d.traitId] = cell.measurements[d.traitId].filter(cm => cm.timestamp !== d.timestamp)
+            cell.measurements[d.traitId] = cell.measurements[d.traitId].filter((cm: Measurement) => cm.timestamp !== d.timestamp)
           } else {
             if (cell.measurements[d.traitId].length > 0) {
               // Remove any value that may exist
@@ -583,7 +602,7 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
           }
         } else {
           if (trait.allowRepeats) {
-            const match = cell.measurements[d.traitId].find(cm => cm.timestamp === d.timestamp)
+            const match = cell.measurements[d.traitId].find((cm: Measurement) => cm.timestamp === d.timestamp)
 
             if (match) {
               // Update the values
@@ -654,9 +673,9 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
       delete cell.displayColumn
 
       if (logTransactions(trial)) {
-        const traitMap = {}
+        const traitMap = {} as { [index: string]: Trait }
 
-        trial.traits.forEach(t => {
+        trial.traits.forEach((t: Trait) => {
           traitMap[t.id] = t
         })
 
@@ -669,6 +688,8 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
 
         if (centerTransaction) {
           transaction.plotGeographyChangeTransactions[key] = {
+            row: row,
+            column: column,
             center: centerTransaction
           }
         }
@@ -725,19 +746,19 @@ const changeTrialsData = async (trialId, dataMapping, geolocation) => {
       await db.put('data', cell)
     }
 
-    return new Promise(resolve => resolve())
+    return new Promise<void>(resolve => resolve())
   } else {
-    return new Promise(resolve => resolve())
+    return new Promise<void>(resolve => resolve())
   }
 }
 
-const deleteTrial = async (localId) => {
+const deleteTrial = async (localId: string) => {
   const db = await getDb()
 
   const trial = await getTrialById(localId)
 
   if (trial) {
-    clearTraitImageCache(trial, trial.traits.map(t => t.id))
+    clearTraitImageCache(trial, trial.traits.map((t: Trait) => t.id))
 
     return db.delete('trials', localId)
       .then(() => {
@@ -748,11 +769,11 @@ const deleteTrial = async (localId) => {
         return db.delete('transactions', localId)
       })
   } else {
-    return new Promise(resolve => resolve())
+    return new Promise<void>(resolve => resolve())
   }
 }
 
-const addTrial = async (trial) => {
+const addTrial = async (trial: TrialPlus) => {
   const db = await getDb()
 
   const id = trial.localId || getId()
@@ -787,9 +808,9 @@ const addTrial = async (trial) => {
   return new Promise(resolve => {
     const tx = db.transaction('data', 'readwrite')
 
-    const allData = []
+    const allData: CellPlus[] = []
 
-    Object.keys(trial.data).forEach(k => {
+    for (let k in trial.data) {
       const [row, column] = k.split('|').map(c => +c)
       let cell = trial.data[k]
 
@@ -816,7 +837,7 @@ const addTrial = async (trial) => {
         isMarked: cell.isMarked,
         categories: cell.categories || []
       })
-    })
+    }
 
     Promise.all(allData.map(cell => tx.store.add(cell)))
       .then(() => {
@@ -826,7 +847,7 @@ const addTrial = async (trial) => {
   })
 }
 
-const getCell = async (trialId, row, column) => {
+const getCell = async (trialId: string, row: number, column: number) => {
   const trial = await getTrialById(trialId)
 
   const db = await getDb()
@@ -849,7 +870,7 @@ const getCell = async (trialId, row, column) => {
     })
 }
 
-const getTrialData = async (trialId) => {
+const getTrialData = async (trialId: string) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -857,9 +878,9 @@ const getTrialData = async (trialId) => {
     const range = IDBKeyRange.bound([trialId, 0, 0], [trialId, trial.layout.rows, trial.layout.columns])
     return db.getAll('data', range)
       .then(grid => {
-        const result = {}
+        const result = {} as { [index: string]: CellPlus }
         if (grid) {
-          grid.forEach(c => {
+          grid.forEach((c: CellPlus) => {
             let displayName = c.germplasm
 
             if (c.rep) {
@@ -880,7 +901,7 @@ const getTrialData = async (trialId) => {
   }
 }
 
-const getEmptyTransaction = (trialId) => {
+const getEmptyTransaction = (trialId: string): Transaction => {
   return {
     trialId,
     plotCommentAddedTransactions: {},
@@ -895,6 +916,7 @@ const getEmptyTransaction = (trialId) => {
     trialPersonAddedTransactions: [],
     trialGermplasmAddedTransactions: [],
     trialTraitAddedTransactions: [],
+    trialTraitDeletedTransactions: [],
     traitChangeTransactions: [],
     trialEditTransaction: null,
     brapiIdChangeTransaction: {
@@ -907,21 +929,21 @@ const getEmptyTransaction = (trialId) => {
   }
 }
 
-const deleteTrialComment = async (trialId, comment) => {
+const deleteTrialComment = async (trialId: string, comment: Comment) => {
   const trial = await getTrialById(trialId)
 
   comment = JSON.parse(JSON.stringify(comment))
 
   if (trial) {
     const db = await getDb()
-    trial.comments = trial.comments.filter(c => c.timestamp !== comment.timestamp && c.content !== comment.content)
+    trial.comments = trial.comments.filter((c: Comment) => c.timestamp !== comment.timestamp && c.content !== comment.content)
     trial.updatedOn = new Date().toISOString()
     // Make sure there's no data stored in the `trials` table
 
     if (logTransactions(trial)) {
       const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-      const match = transaction.trialCommentAddedTransactions.findIndex(c => c.content === comment.content && c.timestamp === comment.timestamp)
+      const match = transaction.trialCommentAddedTransactions.findIndex((c: Comment) => c.content === comment.content && c.timestamp === comment.timestamp)
 
       if (match === -1) {
         // No match, add a new DELETE transaction
@@ -941,21 +963,21 @@ const deleteTrialComment = async (trialId, comment) => {
   }
 }
 
-const deleteTrialEvent = async (trialId, event) => {
+const deleteTrialEvent = async (trialId: string, event: Event) => {
   const trial = await getTrialById(trialId)
 
   event = JSON.parse(JSON.stringify(event))
 
   if (trial) {
     const db = await getDb()
-    trial.events = trial.events.filter(c => c.timestamp !== event.timestamp && c.content !== event.content)
+    trial.events = trial.events.filter((c: Event) => c.timestamp !== event.timestamp && c.content !== event.content)
     trial.updatedOn = new Date().toISOString()
     // Make sure there's no data stored in the `trials` table
 
     if (logTransactions(trial)) {
       const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
-      const match = transaction.trialEventAddedTransactions.findIndex(c => c.content === event.content && c.timestamp === event.timestamp && c.type === event.type && c.impact === event.impact)
+      const match = transaction.trialEventAddedTransactions.findIndex((c: Event) => c.content === event.content && c.timestamp === event.timestamp && c.type === event.type && c.impact === event.impact)
 
       if (match === -1) {
         // No match, add a new DELETE transaction
@@ -975,7 +997,7 @@ const deleteTrialEvent = async (trialId, event) => {
   }
 }
 
-const updateGermplasmBrapiIds = async (trialId, germplasmBrapiIds) => {
+const updateGermplasmBrapiIds = async (trialId: string, germplasmBrapiIds: { [index: string]: string }) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -1020,7 +1042,7 @@ const updateGermplasmBrapiIds = async (trialId, germplasmBrapiIds) => {
   }
 }
 
-const updateTraitBrapiIds = async (trialId, traitBrapiIds) => {
+const updateTraitBrapiIds = async (trialId: string, traitBrapiIds: { [index: string]: string }) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -1046,7 +1068,7 @@ const updateTraitBrapiIds = async (trialId, traitBrapiIds) => {
     }
 
     Object.entries(traitBrapiIds).forEach(([key, value]) => {
-      const match = trial.traits.find(t => t.id === key)
+      const match = trial.traits.find((t: Trait) => t.id === key)
 
       if (match) {
         match.brapiId = value
@@ -1057,7 +1079,7 @@ const updateTraitBrapiIds = async (trialId, traitBrapiIds) => {
   }
 }
 
-const addTrialGermplasm = async (trialId, germplasm) => {
+const addTrialGermplasm = async (trialId: string, germplasm: string[]) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -1081,13 +1103,13 @@ const addTrialGermplasm = async (trialId, germplasm) => {
         germplasm: g,
         rep: null,
         brapiId: null,
-        measurements: {},
+        measurements: {} as { [index: string]: Measurement[] },
         geography: {},
         comments: [],
         categories: []
       }
 
-      trial.traits.forEach(t => {
+      trial.traits.forEach((t: Trait) => {
         cell.measurements[t.id] = []
       })
 
@@ -1098,7 +1120,7 @@ const addTrialGermplasm = async (trialId, germplasm) => {
 
     await db.put('trials', trial)
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const tx = db.transaction('data', 'readwrite')
 
       Promise.all(newData.map(cell => tx.store.add(cell)))
@@ -1111,7 +1133,7 @@ const addTrialGermplasm = async (trialId, germplasm) => {
   }
 }
 
-const addTrialPeople = async (trialId, people) => {
+const addTrialPeople = async (trialId: string, people: Person[]) => {
   const trial = await getTrialById(trialId)
 
   people = JSON.parse(JSON.stringify(people))
@@ -1144,7 +1166,7 @@ const addTrialPeople = async (trialId, people) => {
   }
 }
 
-const addTrialTraits = async (trialId, traits) => {
+const addTrialTraits = async (trialId: string, traits: Trait[]) => {
   const trial = await getTrialById(trialId)
 
   traits = JSON.parse(JSON.stringify(traits))
@@ -1189,7 +1211,7 @@ const addTrialTraits = async (trialId, traits) => {
   }
 }
 
-const addTrialComment = async (trialId, commentContent) => {
+const addTrialComment = async (trialId: string, commentContent: string) => {
   const trial = await getTrialById(trialId)
 
   commentContent = JSON.parse(JSON.stringify(commentContent))
@@ -1222,7 +1244,7 @@ const addTrialComment = async (trialId, commentContent) => {
   }
 }
 
-const addTrialEvent = async (trialId, eventContent, eventType, eventImpact, eventDate) => {
+const addTrialEvent = async (trialId: string, eventContent: string, eventType: EventType, eventImpact: number, eventDate: Date) => {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -1255,7 +1277,7 @@ const addTrialEvent = async (trialId, eventContent, eventType, eventImpact, even
   }
 }
 
-const setPlotMarked = async (trialId, row, column, isMarked) => {
+const setPlotMarked = async (trialId: string, row: number, column: number, isMarked: boolean) => {
   const trial = await getTrialById(trialId)
   const cell = await getCell(trialId, row, column)
 
@@ -1286,12 +1308,12 @@ const setPlotMarked = async (trialId, row, column, isMarked) => {
   }
 }
 
-const deletePlotComment = async (trialId, row, column, comment) => {
+const deletePlotComment = async (trialId: string, row: number, column: number, comment: Comment) => {
   const cell = await getCell(trialId, row, column)
   const trial = await getTrialById(trialId)
 
   if (trial && cell) {
-    cell.comments = cell.comments.filter(c => c.timestamp !== comment.timestamp && c.content !== comment.content)
+    cell.comments = cell.comments.filter((c: Comment) => c.timestamp !== comment.timestamp && c.content !== comment.content)
     cell.updatedOn = new Date().toISOString()
     const db = await getDb()
 
@@ -1302,7 +1324,7 @@ const deletePlotComment = async (trialId, row, column, comment) => {
 
       if (tAdd) {
         // There are add transactions, so search them
-        const match = tAdd.findIndex(c => c.content === comment.content && c.timestamp === comment.timestamp)
+        const match = tAdd.findIndex((c: Comment) => c.content === comment.content && c.timestamp === comment.timestamp)
 
         if (match === -1) {
           // No match, add a new DELETE transaction
@@ -1337,7 +1359,7 @@ const deletePlotComment = async (trialId, row, column, comment) => {
   }
 }
 
-const addPlotComment = async (trialId, row, column, commentContent) => {
+const addPlotComment = async (trialId: string, row: number, column: number, commentContent: string) => {
   const cell = await getCell(trialId, row, column)
   const trial = await getTrialById(trialId)
 
@@ -1373,7 +1395,7 @@ const addPlotComment = async (trialId, row, column, commentContent) => {
   }
 }
 
-const logTransactions = (trial) => {
+const logTransactions = (trial: Trial) => {
   if (!trial || !trial.shareCodes || (Object.keys(trial.shareCodes).length < 1)) {
     return false
   } else {
