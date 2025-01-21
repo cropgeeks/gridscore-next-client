@@ -591,5 +591,31 @@
         "text": "Behebt einen Fehler beim Wechseln der Sprache. GridScore behält jetzt wieder die ausgewählte Sprache zwischen Sitzungen."
       }
     ]
+  },
+  {
+    "version": "3.3.0",
+    "date": "2025-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Neuer Beispiel-Datensatz",
+        "text": "Ein neuer Beispiel-Datensatz wurde passend zum Trainingsmaterial hinzugefügt um die Durchführung von Trainingsprogrammen zu erleichtern."
+      },
+      {
+        "type": "update",
+        "title": "Typescript-Unterstützung",
+        "text": "Initiale Unterstützung von Typescript zum Code wurde hinzugefügt. Dies sollte die Typsicherheit in der Zukunft verbessern."
+      },
+      {
+        "type": "bugfix",
+        "title": "Merkmalsauswahl",
+        "text": "Fehler behoben beim Auswählen von Merkmalen aus der Dropdown-Box."
+      },
+      {
+        "type": "bugfix",
+        "title": "Selbst-gehostete Versuche",
+        "text": "Fehler behoben bei der Konfiguration von selbst-gehosteten Versuchen."
+      }
+    ]
   }
 ]

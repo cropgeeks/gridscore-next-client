@@ -88,6 +88,7 @@ export default {
             const name = t.observationVariableName
             let type = ''
             let restrictions = ''
+            let traitGroup = ''
 
             if (t.scale) {
               switch (t.scale.dataType) {
@@ -116,6 +117,10 @@ export default {
                 type = `<span class="badge text-bg-primary ms-2">${type}</span>`
               }
 
+              if (t.trait && t.trait.traitClass) {
+                traitGroup = `<span class="badge text-bg-info ms-2">${t.trait.traitClass}</span>`
+              }
+
               if (t.scale.validValues) {
                 if (t.scale.validValues.minimumValue !== undefined && t.scale.validValues.minimumValue !== null) {
                   restrictions += `<span class="badge text-bg-secondary ms-2">&ge;${t.scale.validValues.minimumValue}</span>`
@@ -130,7 +135,7 @@ export default {
             }
 
             return {
-              html: `<span>${name}</span>${type}${restrictions}`,
+              html: `<span>${name}</span>${type}${traitGroup}${restrictions}`,
               value: t
             }
           })

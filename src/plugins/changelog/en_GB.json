@@ -591,5 +591,31 @@
         "text": "Fixed persistence of language switching. GridScore will now remember your language selection between sessions again."
       }
     ]
+  },
+  {
+    "version": "3.3.0",
+    "date": "2025-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "New example trial",
+        "text": "Added new example trial that matches the GridScore training material for easier use during any training sessions."
+      },
+      {
+        "type": "update",
+        "title": "Typescript support",
+        "text": "Added initial support for Typescript in GridScore codebase. This should hopefully improve type-safety going forwards."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trait dropdown",
+        "text": "Fixed an issue where toggling traits from the trait dropdown wasn't working reliably."
+      },
+      {
+        "type": "bugfix",
+        "title": "Remote trial",
+        "text": "Fixed issues with remote trial configuration."
+      }
+    ]
   }
 ]
