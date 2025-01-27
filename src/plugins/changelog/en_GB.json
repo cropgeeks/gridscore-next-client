@@ -602,6 +602,11 @@
         "text": "Added new example trial that matches the GridScore training material for easier use during any training sessions."
       },
       {
+        "type": "new",
+        "title": "Set size/timeseries support for BrAPI",
+        "text": "Added support for set sizes and timeseries flags for import via BrAPI as well as export to Germinate data templates."
+      },
+      {
         "type": "update",
         "title": "Typescript support",
         "text": "Added initial support for Typescript in GridScore codebase. This should hopefully improve type-safety going forwards."

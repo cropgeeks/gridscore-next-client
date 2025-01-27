@@ -602,6 +602,11 @@
         "text": "Ein neuer Beispiel-Datensatz wurde passend zum Trainingsmaterial hinzugefügt um die Durchführung von Trainingsprogrammen zu erleichtern."
       },
       {
+        "type": "new",
+        "title": "Satzgrößen-/Zeitreihenunterstützung für BrAPI",
+        "text": "Unterstützung für Satzgrößen und Zeitreihen Import mit BrAPI und Export in Germinate Datenvorlagen."
+      },
+      {
         "type": "update",
         "title": "Typescript-Unterstützung",
         "text": "Initiale Unterstützung von Typescript zum Code wurde hinzugefügt. Dies sollte die Typsicherheit in der Zukunft verbessern."
