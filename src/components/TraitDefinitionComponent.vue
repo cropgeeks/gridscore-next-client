@@ -193,7 +193,7 @@ import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal.vue
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
 import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
 import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal.vue'
-import { getTraitTypeText } from '@/plugins/misc'
+import { getTraitTypeText, isNumber } from '@/plugins/misc'
 import draggable from 'vuedraggable'
 import { getId } from '@/plugins/id'
 import { TRAIT_TIMEFRAME_TYPE_SUGGEST, TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
@@ -422,14 +422,29 @@ export default {
             }
           }
 
+          let setSize = 1
+          if (t.additionalData && t.additionalData.setSize && isNumber(t.additionalData.setSize, true)) {
+            setSize = +t.additionalData.setSize
+          }
+
+          let allowRepeats = false
+          if (t.additionalData && t.additionalData.isTimeseries === 'true') {
+            allowRepeats = true
+          }
+
+          let description = null
+          if (t.trait && t.trait.traitDescription) {
+            description = t.trait.traitDescription
+          }
+
           this.traits.push({
             id: getId(),
             brapiId: t.observationVariableDbId,
             name: t.observationVariableName,
-            description: null,
+            description: description,
             dataType: type,
-            allowRepeats: false,
-            setSize: 1,
+            allowRepeats: allowRepeats,
+            setSize: setSize,
             restrictions: Object.keys(restrictions).length < 1 ? null : restrictions,
             group: (t.trait && t.trait.traitClass) ? t.trait.traitClass : null,
             timeframe: null,

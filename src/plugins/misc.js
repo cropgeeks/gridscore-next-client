@@ -745,5 +745,6 @@ export {
   getColumnIndex,
   getRandomGivenName,
   getServerUrl,
-  getPriorityShareCode
+  getPriorityShareCode,
+  isNumber
 }
