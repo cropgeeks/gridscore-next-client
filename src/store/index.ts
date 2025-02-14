@@ -48,6 +48,9 @@ export const coreStore = defineStore('core', {
     trialListArrangement: TRIAL_LIST_GRID,
     hiddenTraits: [] as string[],
     showFullTraitDescription: true,
+    escapeBarcode: null as (string | null),
+    enterBarcode: null as (string | null),
+    autoSelectSearch: false,
     categoryCountInline: 4,
     mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
     plausible: {
@@ -81,6 +84,9 @@ export const coreStore = defineStore('core', {
     storeHomeWidgetOrder: (state): string[] => state.homeWidgetOrder,
     storePlotDisplayField: (state): string => state.plotDisplayField,
     storeSelectedTrialPerson: (state): string | null => state.selectedTrialPerson,
+    storeEscapeBarcode: (state): string | null => state.escapeBarcode,
+    storeEnterBarcode: (state): string | null => state.enterBarcode,
+    storeAutoSelectSearch: (state): boolean => state.autoSelectSearch,
     storeLargeButtonsForIntTraits: (state): boolean => state.largeButtonsForIntTraits,
     storeCanvasDensity: (state): string => state.canvasDensity,
     storeCanvasShape: (state): string => state.canvasShape,
@@ -109,8 +115,17 @@ export const coreStore = defineStore('core', {
     setHiddenTraits: function (newHiddenTraits: string[]) {
       this.hiddenTraits = newHiddenTraits
     },
-    setSelectedTrialPerson: function (newSelectedTrialPerson: string) {
+    setSelectedTrialPerson: function (newSelectedTrialPerson: string | null) {
       this.selectedTrialPerson = newSelectedTrialPerson
+    },
+    setEscapeBarcode: function (newEscapeBarcode: string | null) {
+      this.escapeBarcode = newEscapeBarcode
+    },
+    setEnterBarcode: function (newEnterBarcode: string | null) {
+      this.enterBarcode = newEnterBarcode
+    },
+    setAutoSelectSearch: function (newAutoSelectSearch: boolean) {
+      this.autoSelectSearch = newAutoSelectSearch
     },
     setSelectedTrial: function (newSelectedTrial: string) {
       /* Remember to reset everything here */

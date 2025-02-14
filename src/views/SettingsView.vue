@@ -68,6 +68,30 @@
                 {{ restrictInputToMarked ? $t('genericEnabled') : $t('genericDisabled') }}
               </b-form-checkbox>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsEnterBarcode')" :description="$t('formDescriptionSettingsEnterBarcode')" label-for="enter-barcode">
+              <b-input-group>
+                <template #prepend>
+                  <b-button @click="scanCode('enter')"><IBiQrCodeScan /></b-button>
+                </template>
+                <b-form-input lazy v-model.lazy="enterBarcode" id="enter-barcode" />
+              </b-input-group>
+            </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsEscapeBarcode')" :description="$t('formDescriptionSettingsEscapeBarcode')" label-for="escape-barcode">
+              <b-input-group>
+                <template #prepend>
+                  <b-button @click="scanCode('escape')"><IBiQrCodeScan /></b-button>
+                </template>
+                <b-form-input lazy v-model.lazy="escapeBarcode" id="escape-barcode" />
+              </b-input-group>
+            </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsAutoSelectSearch')" :description="$t('formDescriptionSettingsAutoSelectSearch')" label-for="autoSelectSearch">
+              <b-form-checkbox id="autoSelectSearch" v-model="autoSelectSearch" switch>
+                {{ autoSelectSearch ? $t('genericEnabled') : $t('genericDisabled') }}
+              </b-form-checkbox>
+            </b-form-group>
           </b-card>
         </b-col>
         <b-col cols=12 md=6>
@@ -197,6 +221,7 @@
       </b-row>
     </b-form>
 
+    <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="codeScanned" />
     <SettingsShareModal ref="settingsShareModal" @data-changed="reset" />
   </b-container>
 </template>
@@ -207,6 +232,7 @@ import { coreStore } from '@/store'
 import { locales, loadLanguageAsync } from '@/plugins/i18n'
 import { NAVIGATION_MODE_JUMP, NAVIGATION_MODE_DRAG, MAIN_DISPLAY_MODE_AUTO, MAIN_DISPLAY_MODE_CANVAS_ONLY, CANVAS_DENSITY_LOW, CANVAS_DENSITY_MEDIUM, CANVAS_DENSITY_HIGH, CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE, CANVAS_SIZE_SMALL, CANVAS_SIZE_MEDIUM, CANVAS_SIZE_LARGE, PLOT_DISPLAY_FIELD_DISPLAY_NAME, PLOT_DISPLAY_FIELD_GERMPLASM, PLOT_DISPLAY_FIELD_REP, PLOT_DISPLAY_FIELD_NOTHING } from '@/plugins/constants'
 import SettingsShareModal from '@/components/modals/SettingsShareModal.vue'
+import ScanQRCodeModal from '@/components/modals/ScanQRCodeModal.vue'
 import draggable from 'vuedraggable'
 import { categoricalColors } from '@/plugins/color'
 
@@ -215,6 +241,7 @@ import emitter from 'tiny-emitter/instance'
 export default {
   components: {
     SettingsShareModal,
+    ScanQRCodeModal,
     draggable
   },
   data: function () {
@@ -246,13 +273,17 @@ export default {
       gpsEnabled: true,
       voiceFeedbackEnabled: false,
       restrictInputToMarked: false,
+      enterBarcode: null,
+      escapeBarcode: null,
       navigationMode: null,
       traitColors: [],
       newColor: '#000000',
       mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
       showFullTraitDescription: true,
       largeButtonsForIntTraits: false,
-      categoricalColors
+      categoricalColors,
+      barcodeId: null,
+      autoSelectSearch: false
     }
   },
   computed: {
@@ -267,6 +298,8 @@ export default {
       'storeGpsEnabled',
       'storeVoiceFeedbackEnabled',
       'storeRestrictInputToMarked',
+      'storeEnterBarcode',
+      'storeEscapeBarcode',
       'storePlotDisplayField',
       'storeCanvasDensity',
       'storeCanvasShape',
@@ -277,7 +310,8 @@ export default {
       'storeShowFullTraitDescription',
       'storeLargeButtonsForIntTraits',
       'storeCategoryCountInline',
-      'storeMainDisplayMode'
+      'storeMainDisplayMode',
+      'storeAutoSelectSearch'
     ]),
     localeOptions: function () {
       return locales.map(l => {
@@ -358,9 +392,21 @@ export default {
       this.coreStore.setVoiceFeedbackEnabled(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { voiceFeedbackEnabled: newValue } })
     },
+    autoSelectSearch: function (newValue) {
+      this.coreStore.setAutoSelectSearch(newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { autoSelectSearch: newValue } })
+    },
     restrictInputToMarked: function (newValue) {
       this.coreStore.setRestrictInputToMarked(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { restrictInputToMarked: newValue } })
+    },
+    escapeBarcode: function (newValue) {
+      this.coreStore.setEscapeBarcode(newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { escapeBarcode: newValue } })
+    },
+    enterBarcode: function (newValue) {
+      this.coreStore.setEnterBarcode(newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { enterBarcode: newValue } })
     },
     navigationMode: function (newValue) {
       this.coreStore.setNavigationMode(newValue)
@@ -407,6 +453,19 @@ export default {
     }
   },
   methods: {
+    codeScanned: function (code) {
+      if (this.barcodeId === 'enter') {
+        this.enterBarcode = code
+      } else if (this.barcodeId = 'escape') {
+        this.escapeBarcode = code
+      }
+
+      this.barcodeId = null
+    },
+    scanCode: function (id) {
+      this.barcodeId = id
+      this.$refs.scanQrCodeModal.show()
+    },
     selectColorPreset: function (colors) {
       this.traitColors = colors.concat()
     },
@@ -448,6 +507,9 @@ export default {
       this.showFullTraitDescription = this.storeShowFullTraitDescription
       this.largeButtonsForIntTraits = this.storeLargeButtonsForIntTraits
       this.mainDisplayMode = this.storeMainDisplayMode || MAIN_DISPLAY_MODE_AUTO
+      this.escapeBarcode = this.storeEscapeBarcode
+      this.enterBarcode = this.storeEnterBarcode
+      this.autoSelectSearch = this.storeAutoSelectSearch
     }
   },
   mounted: function () {

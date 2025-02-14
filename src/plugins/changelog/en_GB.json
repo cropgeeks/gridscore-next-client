@@ -598,6 +598,11 @@
     "items": [
       {
         "type": "new",
+        "title": "2-plot scoring",
+        "text": "Guided walks have been expanded to allow scoring two plots at the same time while walking through the middle of two rows/columns."
+      },
+      {
+        "type": "new",
         "title": "New example trial",
         "text": "Added new example trial that matches the GridScore training material for easier use during any training sessions."
       },
@@ -605,6 +610,16 @@
         "type": "new",
         "title": "Set size/timeseries support for BrAPI",
         "text": "Added support for set sizes and timeseries flags for import via BrAPI as well as export to Germinate data templates."
+      },
+      {
+        "type": "new",
+        "title": "Chart SVG export",
+        "text": "Added support for exporting visualization charts as SVG graphics."
+      },
+      {
+        "type": "new",
+        "title": "More barcode support",
+        "text": "Added support for definining 'enter' and 'escape' barcodes which will either close and save the data input or close and discard the data input, respecively."
       },
       {
         "type": "update",

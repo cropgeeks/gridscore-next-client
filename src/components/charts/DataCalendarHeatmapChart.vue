@@ -1,6 +1,6 @@
 <template>
   <div ref="wrapper">
-    <div ref="chart" />
+    <div ref="chart" :id="elementId" />
   </div>
 </template>
 
@@ -21,6 +21,10 @@ export default {
     chartData: {
       type: Map,
       default: () => new Map()
+    },
+    elementId: {
+      type: String,
+      default: ''
     }
   },
   data: function () {
@@ -155,7 +159,8 @@ export default {
 
       const config = {
         responsive: true,
-        displaylogo: false
+        displaylogo: false,
+        modeBarButtonsToRemove: ['toImage']
       }
 
       Plotly.newPlot(this.$refs.chart, data, layout, config)

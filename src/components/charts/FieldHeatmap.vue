@@ -25,7 +25,10 @@
       </b-form>
 
       <!-- Heatmap element -->
-      <div ref="heatmapChart"/>
+      <template v-if="selectedTrait">
+        <DownloadableChart elementId="heatmap-chart-plot" :filename="filename" />
+        <div ref="heatmapChart" id="heatmap-chart" />
+      </template>
       <div class="border border-warning text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
     </div>
 
@@ -48,6 +51,7 @@ import emitter from 'tiny-emitter/instance'
 
 import Plotly from 'plotly.js/lib/core'
 import heatmap from 'plotly.js/lib/heatmap'
+import DownloadableChart from '@/components/charts/DownloadableChart.vue'
 
 // Only register the chart types we're actually using to reduce the final bundle size
 Plotly.register([
@@ -56,6 +60,7 @@ Plotly.register([
 
 export default {
   components: {
+    DownloadableChart,
     PlotDataSection
   },
   props: {
@@ -93,6 +98,14 @@ export default {
     safeTrialName: function () {
       if (this.trial) {
         return this.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+      } else {
+        return ''
+      }
+    },
+    filename: function () {
+      if (this.safeTrialName && this.selectedTrait) {
+        const traitName = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+        return `field-heatmap-${this.safeTrialName}-${traitName}-${toLocalDateString(new Date())}`
       } else {
         return ''
       }
@@ -415,13 +428,9 @@ export default {
           shapes
         }
 
-        const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
         Plotly.newPlot(this.$refs.heatmapChart, traces, layout, {
           responsive: true,
-          toImageButtonOptions: {
-            format: 'png',
-            filename: `field-heatmap-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`
-          },
+          modeBarButtonsToRemove: ['toImage'],
           displaylogo: false
         })
         this.$refs.heatmapChart.on('plotly_click', eventData => {

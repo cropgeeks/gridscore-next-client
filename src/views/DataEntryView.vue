@@ -11,7 +11,7 @@
         <template #prepend>
           <b-button @click="$refs.scanQrCodeModal.show()"><IBiQrCodeScan /></b-button>
         </template>
-        <b-form-input lazy v-model.lazy="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" id="germplasm-search" />
+        <b-form-input lazy v-model.lazy="searchTerm" @keyup.enter.exact.prevent="initSearch" type="search" id="germplasm-search" ref="germplasmSearch" />
         <template #append>
           <b-button @click="initSearch"><IBiSearch /></b-button>
         </template>
@@ -24,7 +24,7 @@
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
     <PlotCommentListModal :trial="trial" ref="plotCommentModal" />
-    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @data-changed="loadTrial" />
+    <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @data-changed="loadTrial" @hidden="selectSearch" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" v-if="searchMatches" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned" />
     <TrialPersonSelectModal :trial="trial" :shouldShow="showTrialPersonSelector || forcePersonSelector" @personSelected="setForcePersonSelector(false)" @addPersonClicked="addPerson" v-if="trial && (showTrialPersonSelector || forcePersonSelector)" />
@@ -73,7 +73,8 @@ export default {
       'storeNavigationMode',
       'storeVoiceFeedbackEnabled',
       'storeSelectedTrialPerson',
-      'storeMainDisplayMode'
+      'storeMainDisplayMode',
+      'storeAutoSelectSearch'
     ]),
     showCanvas: function () {
       if (this.storeMainDisplayMode === MAIN_DISPLAY_MODE_CANVAS_ONLY) {
@@ -198,6 +199,10 @@ export default {
       this.searchMatches = []
 
       const trimmed = this.searchTerm.trim()
+
+      if (trimmed.length < 1) {
+        return
+      }
 
       const matches = getGermplasmMatches(this.trial, trimmed)
 
@@ -338,6 +343,11 @@ export default {
           }
         }, null, options)
       }
+    },
+    selectSearch: function () {
+      if (this.storeAutoSelectSearch) {
+        this.$refs.germplasmSearch.focus()
+      }
     }
   },
   mounted: function () {
@@ -353,6 +363,7 @@ export default {
     emitter.on('plot-cache-changed', this.updateLocalCaches)
     emitter.on('trial-data-loaded', this.updateLocalCaches)
     emitter.on('tts', this.tts)
+    emitter.on('select-search', this.selectSearch)
 
     // this.fakeGpsMovement()
   },
@@ -361,6 +372,7 @@ export default {
     emitter.off('plot-cache-changed', this.updateLocalCaches)
     emitter.off('trial-data-loaded', this.updateLocalCaches)
     emitter.off('tts', this.tts)
+    emitter.off('select-search', this.selectSearch)
 
     if (this.geolocationWatchId && navigator.geolocation) {
       navigator.geolocation.clearWatch(this.geolocationWatchId)

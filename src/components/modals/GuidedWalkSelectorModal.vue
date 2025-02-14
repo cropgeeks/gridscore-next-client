@@ -3,7 +3,7 @@
            :ok-title="$t('buttonStart')"
            no-fade
            size="lg"
-           :ok-disabled="!selectedOrder"
+           :ok-disabled="!canContinue"
            @shown="guidedWalkVisible = true"
            @ok.prevent="onSubmit"
            @hidden="guidedWalkVisible = false"
@@ -41,13 +41,42 @@ export default {
       selectedOrder: null
     }
   },
+  computed: {
+    canContinue: function () {
+      if (!this.selectedOrder || !this.selectedOrder.order) {
+        return false
+      }
+
+      if (this.selectedOrder.scoreWidth > 1 && !this.selectedOrder.neighbor) {
+        return false
+      }
+
+      return true
+    }
+  },
   methods: {
     orderSelected: function (value) {
       this.selectedOrder = value
     },
     onSubmit: function () {
-      emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: this.selectedOrder } })
-      this.$router.push({ name: 'guided-walk', query: { row: this.cell.row, column: this.cell.column, guidedWalkName: this.selectedOrder } })
+      let x = this.cell.column
+      let y = this.cell.row
+
+      if (this.selectedOrder.neighbor) {
+        x = (x + this.selectedOrder.neighbor.value.x) / 2
+        y = (y + this.selectedOrder.neighbor.value.y) / 2
+      }
+
+      emitter.emit('plausible-event', { key: 'guided-walk-started', props: { order: this.selectedOrder.order, scoreWidth: this.selectedOrder.scoreWidth } })
+      this.$router.push({
+        name: 'guided-walk',
+        query: {
+          row: y,
+          column: x,
+          guidedWalkName: this.selectedOrder.order,
+          scoreWidth: this.selectedOrder.scoreWidth
+        }
+      })
     },
     /**
      * Shows and resets modal dialog

@@ -53,6 +53,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "~7.12.16",
     "@iconify-json/bi": "^1.1.23",
+    "@types/plotly.js": "^2.35.2",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",

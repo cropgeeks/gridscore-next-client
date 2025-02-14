@@ -45,7 +45,13 @@
             <p v-if="t.trait.description">{{ t.trait.description }}</p>
 
             <GpsTraitMap v-if="t.trait.dataType === 'gps'" :trait="t.trait" :trial="trial" :selectedGermplasm="selectedGermplasm" />
-            <div :ref="`trait-stats-chart-${t.trait.id}`" v-else />
+            <template v-else>
+              <DownloadableChart
+                :elementId="`trait-stats-chart-${t.trait.id}`"
+                :filename="`stats-${safeTrialName}-${t.trait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-${toLocalDateString(new Date())}`"
+              />
+              <div :ref="`trait-stats-chart-${t.trait.id}`" :id="`trait-stats-chart-${t.trait.id}`" />
+            </template>
 
             <div class="border border-warning text-center my-3 p-2" v-if="t.message">{{ $t(t.message) }}</div>
           </b-col>
@@ -69,6 +75,7 @@ import { hexToRgba, invertHex, toLocalDateString } from '@/plugins/misc'
 import PlotDataSection from '@/components/PlotDataSection.vue'
 import GpsTraitMap from '@/components/GpsTraitMap.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL } from '@/plugins/constants'
+import DownloadableChart from '@/components/charts/DownloadableChart.vue'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -88,7 +95,8 @@ export default {
   components: {
     TraitHeading,
     PlotDataSection,
-    GpsTraitMap
+    GpsTraitMap,
+    DownloadableChart
   },
   computed: {
     ...mapStores(coreStore),
@@ -168,6 +176,7 @@ export default {
     }
   },
   methods: {
+    toLocalDateString,
     clearSelectedGermplasm: function () {
       this.selectedGermplasm = []
       this.selectedGermplasmTemp = []
@@ -476,16 +485,9 @@ export default {
             layout.xaxis.title.text = trait.name
           }
 
-          const filename = trait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
           const config = {
             responsive: true,
-            modeBarButtonsToRemove: ['select2d', 'lasso2d'],
-            toImageButtonOptions: {
-              format: 'png',
-              filename: `stats-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`,
-              width: 1280,
-              height: 720
-            },
+            modeBarButtonsToRemove: ['select2d', 'lasso2d', 'toImage'],
             displaylogo: false
           }
 

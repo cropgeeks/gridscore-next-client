@@ -598,6 +598,11 @@
     "items": [
       {
         "type": "new",
+        "title": "2-Beet-Bewertung",
+        "text": "Gelenkte Abläufe wurden erweitert mit Abläufen in denen zwei Beete gleichzeitig bewertet werden während man zwischen zwei Reihen/Spalten entlang geht."
+      },
+      {
+        "type": "new",
         "title": "Neuer Beispiel-Datensatz",
         "text": "Ein neuer Beispiel-Datensatz wurde passend zum Trainingsmaterial hinzugefügt um die Durchführung von Trainingsprogrammen zu erleichtern."
       },
@@ -605,6 +610,16 @@
         "type": "new",
         "title": "Satzgrößen-/Zeitreihenunterstützung für BrAPI",
         "text": "Unterstützung für Satzgrößen und Zeitreihen Import mit BrAPI und Export in Germinate Datenvorlagen."
+      },
+      {
+        "type": "new",
+        "title": "SVG Diagrammexport",
+        "text": "Unterstützung für den Export von Visualisierungsdiagrammen im SVG Format."
+      },
+      {
+        "type": "new",
+        "title": "Mehr Barcode-Unterstützung",
+        "text": "Unterstützung für 'enter' und 'escape' Barcodes hinzugefügt welche entweder die Dateneingabe schließen und speichern oder die Dateneingabe schließen und verwerfen."
       },
       {
         "type": "update",

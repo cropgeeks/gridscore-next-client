@@ -79,16 +79,28 @@
           </b-row>
           <b-row v-if="stats[trial.localId] && stats[trial.localId].measurements">
             <b-col cols=12 md=6 v-if="personBarData && personBarData[trial.localId] && Object.keys(personBarData[trial.localId]).length > 0">
-              <DataPersonBarChart :chartData="personBarData[trial.localId]" />
+              <DownloadableChart
+                :elementId="`person-bar-${trial.localId}`"
+                :filename="`person-bar-${safeTrialName(trial)}-${toLocalDateString(new Date())}`"
+              />
+              <DataPersonBarChart :elementId="`person-bar-${trial.localId}`" :chartData="personBarData[trial.localId]" />
             </b-col>
             <b-col cols=12 md=6 v-if="personLineData && personLineData[trial.localId] && Object.keys(personLineData[trial.localId]).length > 0">
-              <DataPersonLineChart :chartData="personLineData[trial.localId]" />
+              <DownloadableChart
+                :elementId="`person-line-${trial.localId}`"
+                :filename="`person-line-${safeTrialName(trial)}-${toLocalDateString(new Date())}`"
+              />
+              <DataPersonLineChart :elementId="`person-line-${trial.localId}`" :chartData="personLineData[trial.localId]" />
             </b-col>
             <b-col cols=12 md=6 v-if="chartData && chartData[trial.localId] && Object.keys(chartData[trial.localId]).length > 0">
               <h3>{{ $t('widgetTrialDataCalendarTitle') }}</h3>
               <div v-for="year in Object.keys(chartData[trial.localId])" :key="`trial-${trial.localId}-year-${year}`">
                 <h4>{{ year }}</h4>
-                <DataCalendarHeatmapChart :chartData="chartData[trial.localId][year]" />
+                <DownloadableChart
+                  :elementId="`calendar-heatmap-${trial.localId}-${year}`"
+                  :filename="`heatmap-${safeTrialName(trial)}-${year}-${toLocalDateString(new Date())}`"
+                />
+                <DataCalendarHeatmapChart :elementId="`calendar-heatmap-${trial.localId}-${year}`" :chartData="chartData[trial.localId][year]" />
               </div>
             </b-col>
             <b-col cols=12 md=6>
@@ -104,11 +116,11 @@
 
 <script>
 import DataCalendarHeatmapChart from '@/components/charts/DataCalendarHeatmapChart.vue'
+import DownloadableChart from '@/components/charts/DownloadableChart.vue'
 
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
 import { getTrialData, getTrials } from '@/plugins/idb'
-import { toLocalDateString } from '@/plugins/misc'
 import { convexHull, geodesicArea } from '@/plugins/location'
 
 import L from 'leaflet'
@@ -118,6 +130,7 @@ import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { categoricalColors } from '@/plugins/color'
+import { toLocalDateString } from '@/plugins/misc'
 
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
@@ -131,7 +144,8 @@ let plotInfo = {}
 
 export default {
   components: {
-    DataCalendarHeatmapChart
+    DataCalendarHeatmapChart,
+    DownloadableChart
   },
   data: function () {
     return {
@@ -459,6 +473,14 @@ export default {
     }
   },
   methods: {
+    toLocalDateString,
+    safeTrialName: function (trial) {
+      if (trial) {
+        return trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+      } else {
+        return ''
+      }
+    },
     updateThemeLayers: function () {
       if (this.themeLayers) {
         this.themeLayers.forEach(tl => tl.setUrl(`//services.arcgisonline.com/arcgis/rest/services/Canvas/${this.storeDarkMode ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'}/MapServer/tile/{z}/{y}/{x}`))

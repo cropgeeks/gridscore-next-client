@@ -1,24 +1,24 @@
 <template>
   <b-modal :cancel-title="$t(isGuidedWalk ? 'buttonPrevious' : 'buttonCancel')"
-           :ok-title="okTitle"
-           ok-variant="primary"
-           :cancel-variant="isGuidedWalk ? 'primary' : 'secondary'"
-           :cancel-disabled="cancelDisabled"
-           scrollable
-           no-close-on-backdrop
-           no-close-on-esc
-           @cancel.prevent="onCancel"
-           @ok.prevent="validate"
-           @hidden="reset"
-           @shown="shown"
-           id="data-input-modal"
-           no-fade
-           :modal-class="fullscreen ? 'modal-fullscreen' : null"
-           size="xl"
-           header-class="align-items-center"
-           ref="dataInputModal">
+          :ok-title="okTitle"
+          ok-variant="primary"
+          :cancel-variant="isGuidedWalk ? 'primary' : 'secondary'"
+          :cancel-disabled="cancelDisabled"
+          scrollable
+          no-close-on-backdrop
+          no-close-on-esc
+          @cancel.prevent="onCancel"
+          @ok.prevent="validate(1)"
+          @hidden="reset"
+          @shown="shown"
+          id="data-input-modal"
+          no-fade
+          :modal-class="fullscreen ? 'modal-fullscreen' : null"
+          size="xl"
+          header-class="align-items-center"
+          ref="dataInputModal">
     <template v-slot:header>
-      <h5 class="modal-title text-truncate">{{ displayName }}</h5>
+      <h5 class="modal-title text-truncate"><span v-if="!isGuidedWalk || guidedWalk.scoreWidth === 1">{{ displayName }}</span></h5>
 
       <b-button-group id="data-entry-header" v-if="cell">
         <VueDatePicker v-model="recordingDate" :locale="storeLocale" :dark="storeDarkMode" :week-start="1" :disabled="!trial.editable" :enable-time-picker="false" clearable :action-row="{ showPreview: false, showNow: true }" class="btn btn-sm btn-secondary w-auto">
@@ -51,19 +51,23 @@
     <div v-if="trial && !trial.editable" class="modal-banner bg-warning text-dark text-center mb-3 p-2">
       {{ $t('modalTextDataInputReadOnly') }}
     </div>
-    <div v-if="cell && trial">
+    <div v-if="cell && trial" class="h-100 d-flex flex-column">
       <b-row v-if="guidedWalk" class="mb-3">
         <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.prev.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(guidedWalk.prev.displayColumn), row: $n(guidedWalk.prev.displayRow) })" v-if="guidedWalk.prev" />
+          <b-row class="h-100">
+            <b-col class="h-100" :cols="12 / guidedWalk.prevCells.length" v-for="prev in guidedWalk.prevCells" :key="`prev-cell-${prev.row}-${prev.column}`">
+              <b-card class="text-center h-100" title-tag="h5" :title="prev.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(prev.displayColumn), row: $n(prev.displayRow) })" />  
+            </b-col>
+          </b-row>
         </b-col>
         <b-col cols=4>
           <b-card class="text-center h-100">
             <b-card-title>
-              <IBiChevronDoubleRight :class="guidedWalk.prev ? null : 'text-muted'" /> <a href="#" @click.prevent><IBiGeoAltFill id="guided-walk-current" class="mx-2" /></a> <IBiChevronDoubleRight :class="guidedWalk.next ? null : 'text-muted'" />
+              <IBiChevronDoubleRight :class="guidedWalk.prevCells.length > 0 ? null : 'text-muted'" /> <a href="#" @click.prevent><IBiGeoAltFill id="guided-walk-current" class="mx-2" /></a> <IBiChevronDoubleRight :class="guidedWalk.nextCells.length > 0 ? null : 'text-muted'" />
             </b-card-title>
 
             <b-popover target="guided-walk-current" container="body" triggers="focus" placement="bottom" custom-class="popover-unset-width">
-              <TrialPreviewCanvas :trial="trial" :column="cell.column" :row="cell.row" />
+              <TrialPreviewCanvas :layout="trial.layout" :column="cell.column" :row="cell.row" :cells="guidedWalk.currentCells" :path="guidedWalk.order" />
             </b-popover>
 
             <b-card-subtitle>
@@ -71,43 +75,59 @@
             </b-card-subtitle>
           </b-card>
         </b-col>
-        <b-col cols=4>
-          <b-card class="text-center h-100" :title="guidedWalk.next.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(guidedWalk.next.displayColumn), row: $n(guidedWalk.next.displayRow) })" v-if="guidedWalk.next" />
+        <b-col cols=4 class="h-100">
+          <b-row class="h-100">
+            <b-col class="h-100" :cols="12 / guidedWalk.nextCells.length" v-for="next in guidedWalk.nextCells" :key="`next-cell-${next.row}-${next.column}`">
+              <b-card class="text-center h-100" title-tag="h5" :title="next.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(next.displayColumn), row: $n(next.displayRow) })" />  
+            </b-col>
+          </b-row>
         </b-col>
       </b-row>
-      <p>
-        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapGermplasm')"><IBiFlower1 /> {{ cell.germplasm }}</b-badge>
-        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapRep')" v-if="cell.rep"><IBiListOl /> {{ cell.rep }}</b-badge>
-        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapRow')"><IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /> {{ $n(cell.displayRow) }}</b-badge>
-        <b-badge class="me-2" v-b-tooltip="$t('tooltipChartHeatmapColumn')"><IBiLayoutThreeColumns /> {{ $n(cell.displayColumn) }}</b-badge>
-        <template v-if="cell && cell.categories">
-          <b-badge class="me-2" v-for="cat in cell.categories" :key="`cell-category-${cell.row}-${cell.column}-${cat}`" :variant="CELL_CATEGORIES[cat].variant">
-            <component :is="CELL_CATEGORIES[cat].icon" /> {{ $t(CELL_CATEGORIES[cat].title) }}
-          </b-badge>
-        </template>
-      </p>
-      <b-tabs no-fade v-model="traitGroupTabIndex" id="trait-group-tabs">
-        <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
-          :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
-          :title-link-class="(tabStates && tabStates[groupIndex] === false) ? 'text-white bg-danger' : null">
-          <template #title>
-            {{ group.name }} ({{ group.traits.length }})
 
-            <IBiCheck class="text-success" v-if="tabStates && tabStates[groupIndex] === true" />
-            <IBiX class="text-white" v-else-if="tabStates && tabStates[groupIndex] === false" />
-          </template>
+      <b-row class="flex-fill">
+        <b-col :cols="dataInputColumns.cols" :sm="dataInputColumns.sm" :md="dataInputColumns.md" :order="cellIndex">
+          <h4 v-if="isGuidedWalk && guidedWalk.scoreWidth > 1">{{ displayName }}</h4>
+          <p>
+            <CellInfoBadges :cell="cell" />
+          </p>
+          <b-tabs no-fade v-model="traitGroupTabIndex" id="trait-group-tabs">
+            <b-tab v-for="(group, groupIndex) in traitsByGroup" :key="`trait-group-tab-${groupIndex}`" @click="autofocusFirst"
+              :title-item-class="(tabStates && tabStates[groupIndex] === false) ? 'bg-danger' : null"
+              :title-link-class="(tabStates && tabStates[groupIndex] === false) ? 'text-white bg-danger' : null">
+              <template #title>
+                {{ group.name }} ({{ group.traits.length }})
 
-          <div class="mt-3 trait-group-tab-content">
-            <b-form @submit.prevent>
-              <TraitInputSection @data-changed="$emit('data-changed')" :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
-            </b-form>
-          </div>
-        </b-tab>
-      </b-tabs>
+                <IBiCheck class="text-success" v-if="tabStates && tabStates[groupIndex] === true" />
+                <IBiX class="text-white" v-else-if="tabStates && tabStates[groupIndex] === false" />
+              </template>
+
+              <div class="mt-3 trait-group-tab-content">
+                <b-form @submit.prevent>
+                  <TraitInputSection @data-changed="$emit('data-changed')" :trial="trial" :editable="trial.editable && trait.editable" :cell="cell" :trait="trait" v-for="trait in group.traits" :key="`trait-section-${trait.id}`" :ref="`trait-section-${trait.id}`" @traverse="onTraverse(trait)" @photo-clicked="onShowPhotoModal(trait)" />
+                </b-form>
+              </div>
+            </b-tab>
+          </b-tabs>
+        </b-col>
+        <b-col :cols="12" :sm="12 - dataInputColumns.sm" :md="12 - dataInputColumns.md" :order="1 - cellIndex" v-if="isGuidedWalk && guidedWalk.scoreWidth > 1" :class="cellIndex === 0 ? 'border-start' : 'border-end'">
+          <b-card v-if="guidedWalk.currentCells && guidedWalk.currentCells[1 - cellIndex]" :class="`h-100 ${storeDarkMode ? 'bg-dark' : 'bg-light'}`" no-body>
+            <b-card-body class="h-100 d-flex flex-column">
+              <b-card-title>{{ guidedWalk.currentCells[1 - cellIndex].displayName }}</b-card-title>
+              <b-card-text>
+                <CellInfoBadges :cell="guidedWalk.currentCells[1 - cellIndex]" />
+              </b-card-text>
+
+              <div class="d-flex align-items-center justify-content-center flex-fill">
+                <b-button class="stretched-link" @click="switchToCell"><IBiArrowLeftRight v-if="cellIndex === 0" /> {{ $t('buttonSwapGuidedWalkCells') }} <IBiArrowLeftRight v-if="cellIndex === 1" /></b-button>
+              </div>
+            </b-card-body>
+          </b-card>
+        </b-col>
+      </b-row>
 
       <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" v-if="showModal === 'comment'" />
       <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" v-if="showModal === 'image'" />
-      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" @change="onSelectGuidedWalk" v-if="showModal === 'guided-walk'" />
+      <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" v-if="showModal === 'guided-walk'" />
 
       <DataInputCloseModal ref="closeModal" @close="hide" @save="validate" v-if="showModal === 'close'" />
 
@@ -123,16 +143,16 @@ import PlotCommentModal from '@/components/modals/PlotCommentModal.vue'
 import GuidedWalkSelectorModal from '@/components/modals/GuidedWalkSelectorModal.vue'
 import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
 import TrialPreviewCanvas from '@/components/canvas/TrialPreviewCanvas.vue'
+import CellInfoBadges from '@/components/CellInfoBadges.vue'
 import Tour from '@/components/Tour.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { changeTrialsData, getCell, getTrialValidPlots, setPlotMarked } from '@/plugins/idb'
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
-import { guideOrderTypes } from '@/plugins/guidedwalk'
-import { CELL_CATEGORIES } from '@/plugins/constants'
 
 import emitter from 'tiny-emitter/instance'
+import { getSequence, methods } from '@/plugins/guidedwalkv2'
 
 export default {
   components: {
@@ -143,7 +163,8 @@ export default {
     DataInputCloseModal,
     Tour,
     TrialPreviewCanvas,
-    VueDatePicker
+    VueDatePicker,
+    CellInfoBadges
   },
   props: {
     trial: {
@@ -161,14 +182,15 @@ export default {
   },
   data: function () {
     return {
-      CELL_CATEGORIES,
       cell: null,
+      cellIndex: 0,
       traitGroupTabIndex: 0,
       selectedTrait: null,
       tabStates: null,
       guidedWalk: null,
       recordingDate: new Date(),
-      showModal: null
+      showModal: null,
+      charSequence: ''
     }
   },
   computed: {
@@ -179,7 +201,9 @@ export default {
       'storeCalendarLocale',
       'storeDarkMode',
       'storeSelectedTrialPerson',
-      'storeLocale'
+      'storeLocale',
+      'storeEnterBarcode',
+      'storeEscapeBarcode'
     ]),
     tourSteps: function () {
       return [{
@@ -275,6 +299,23 @@ export default {
         position: 'top'
       }]
     },
+    dataInputColumns: function () {
+      if (this.isGuidedWalk) {
+        if (this.guidedWalk && this.guidedWalk.scoreWidth > 1) {
+          return {
+            cols: 12,
+            sm: 9,
+            md: 10
+          }
+        }
+      }
+    
+      return {
+        cols: 12,
+        sm: 12,
+        md: 12
+      }
+    },
     okTitle: function () {
       if (this.isEditable) {
         if (this.isGuidedWalk) {
@@ -368,21 +409,35 @@ export default {
       if (this.guidedWalk) {
         const nextCoords = newValue < this.guidedWalk.order.length - 1 ? this.guidedWalk.order[newValue + 1] : null
         const prevCoords = newValue > 0 ? this.guidedWalk.order[newValue - 1] : null
-        if (nextCoords !== null) {
-          getCell(this.trial.localId, nextCoords.y, nextCoords.x)
-            .then(next => {
-              this.guidedWalk.next = next
+
+        this.guidedWalk.order[this.guidedWalk.index].cells.forEach((c, i) => {
+          getCell(this.trial.localId, c.y, c.x)
+            .then(cell => {
+              this.guidedWalk.currentCells[i] = cell
             })
+        })
+
+        if (nextCoords !== null) {
+          this.guidedWalk.nextCells = []
+          this.guidedWalk.order[newValue + 1].cells.forEach((c, i) => {
+            getCell(this.trial.localId, c.y, c.x)
+              .then(next => {
+                this.guidedWalk.nextCells[i] = next
+              })
+          })
         } else {
-          this.guidedWalk.next = null
+          this.guidedWalk.nextCells = []
         }
         if (prevCoords !== null) {
-          getCell(this.trial.localId, prevCoords.y, prevCoords.x)
-            .then(prev => {
-              this.guidedWalk.prev = prev
-            })
+          this.guidedWalk.prevCells = []
+          this.guidedWalk.order[newValue - 1].cells.forEach((c, i) => {
+            getCell(this.trial.localId, c.y, c.x)
+              .then(prev => {
+                this.guidedWalk.prevCells[i] = prev
+              })
+          })
         } else {
-          this.guidedWalk.prev = null
+          this.guidedWalk.prevCells = []
         }
       }
     },
@@ -412,22 +467,25 @@ export default {
     startTour: function () {
       this.$refs.dataInputTour.start()
     },
-    forceGuidedWalk: function (config) {
-      this.onSelectGuidedWalk(config.walkName)
-    },
-    onSelectGuidedWalk: function (typeName) {
-      const match = guideOrderTypes.find(g => g.name === typeName)
+    onSelectGuidedWalk: function (config) {
+      const match = methods.find(g => g.name === config.walkName)
 
       if (match) {
         getTrialValidPlots(this.trial.localId).then(validCells => {
-          const order = match.cellSequence({ x: this.cell.column, y: this.cell.row, direction: match.initialDirection }, this.trial.layout).filter(c => validCells.includes(`${c.y}|${c.x}`))
+          const order = getSequence(config.column, config.row, match.initialDirection, match, this.trial.layout, config.scoreWidth).steps.filter(c => {
+            return c.cells.some(cc => validCells.includes(`${cc.y}|${cc.x}`))
+          })
 
           this.guidedWalk = {
+            prevCells: null,
+            currentCells: order[0].cells.map(() => null),
+            nextCells: null,
+            scoreWidth: config.scoreWidth,
             order,
-            index: 0,
-            prev: null,
-            next: null
+            index: 0
           }
+
+          this.updateCell(order[0].cells[this.cellIndex].y, order[0].cells[this.cellIndex].x)
         })
       }
     },
@@ -465,8 +523,7 @@ export default {
     },
     onGuidedWalkClicked: function () {
       if (this.guidedWalk) {
-        this.showModal = 'confirm-guided-walk-stop'
-        this.$nextTick(() => this.$refs.guidedWalkModal.show())
+        this.onXClicked()
       } else {
         this.showModal = 'guided-walk'
         this.$nextTick(() => this.$refs.guidedWalkModal.show())
@@ -500,18 +557,33 @@ export default {
       })
     },
     onTraverse: function (currentTrait) {
-      const group = this.traitsByGroup.find(g => g.traits.map(t => t.id).includes(currentTrait.id))
+      const groupIndex = this.traitsByGroup.findIndex(g => g.traits.map(t => t.id).includes(currentTrait.id))
 
-      if (group) {
+      if (groupIndex !== -1) {
+        const group = this.traitsByGroup[groupIndex]
         const traitIndex = group.traits.findIndex(t => t.id === currentTrait.id)
 
         if (traitIndex !== -1) {
           if (traitIndex < group.traits.length - 1) {
             this.$refs[`trait-section-${group.traits[traitIndex + 1].id}`][0].handleTraverse(0)
             emitter.emit('tts', group.traits[traitIndex + 1].name, false)
-          } else if (this.traitsByGroup.length === 1) {
-            // This is the last trait in this tab/group and there's only one tab
-            this.validate()
+          } else {
+            // This is the last trait in this tab/group
+            if (groupIndex < this.traitsByGroup.length - 1) {
+              // If there are more tabs/groups, navigate to the next one
+              this.traitGroupTabIndex++
+
+              this.$nextTick(() => {
+                this.autofocusFirst()
+              })
+            } else {
+              if (this.isGuidedWalk && this.guidedWalk.scoreWidth > 1) {
+                // Do nothing!
+              } else {
+                // Else, we're done, just validate.
+                this.validate()
+              }
+            }
           }
         }
       }
@@ -564,12 +636,15 @@ export default {
     },
     onCancel: function () {
       if (this.isGuidedWalk) {
-        this.validate(false)
+        this.validate(-1)
       } else {
         this.hide()
       }
     },
-    validate: function (forward = true) {
+    switchToCell: function () {
+      this.validate(0)
+    },
+    validate: function (delta = 1) {
       if (!this.trial.editable) {
         this.hide()
       }
@@ -633,8 +708,6 @@ export default {
           }
         })
 
-        const delta = forward ? 1 : -1
-
         if (mapping.length > 0) {
           const payload = {}
           payload[`${this.cell.row}|${this.cell.column}`] = mapping
@@ -646,13 +719,20 @@ export default {
               const trialId = this.trial.localId
 
               if (this.isGuidedWalk) {
-                const index = this.guidedWalk.index + delta
-                if (index > -1 && index < this.guidedWalk.order.length) {
-                  this.guidedWalk.index = index
-                  const next = this.guidedWalk.order[this.guidedWalk.index]
-                  this.updateCell(next.y, next.x)
+                if (delta === 0) {
+                  this.cellIndex = 1 - this.cellIndex
+
+                  this.updateCell(this.guidedWalk.currentCells[this.cellIndex].row, this.guidedWalk.currentCells[this.cellIndex].column)
                 } else {
-                  this.hide()
+                  const index = this.guidedWalk.index + delta
+                  if (index > -1 && index < this.guidedWalk.order.length) {
+                    this.guidedWalk.index = index
+                    const next = this.guidedWalk.order[this.guidedWalk.index]
+                    this.updateCell(next.cells[0].y, next.cells[0].x)
+                    this.cellIndex = 0
+                  } else {
+                    this.hide()
+                  }
                 }
               } else {
                 this.hide()
@@ -665,13 +745,20 @@ export default {
             })
         } else {
           if (this.isGuidedWalk) {
-            const index = this.guidedWalk.index + delta
-            if (index > -1 && index < this.guidedWalk.order.length) {
-              this.guidedWalk.index = index
-              const next = this.guidedWalk.order[this.guidedWalk.index]
-              this.updateCell(next.y, next.x)
+            if (delta === 0) {
+              this.cellIndex = 1 - this.cellIndex
+
+              this.updateCell(this.guidedWalk.currentCells[this.cellIndex].row, this.guidedWalk.currentCells[this.cellIndex].column)
             } else {
-              this.hide()
+              const index = this.guidedWalk.index + delta
+              if (index > -1 && index < this.guidedWalk.order.length) {
+                this.guidedWalk.index = index
+                const next = this.guidedWalk.order[this.guidedWalk.index]
+                this.updateCell(next.cells[0].y, next.cells[0].x)
+                this.cellIndex = 0
+              } else {
+                this.hide()
+              }
             }
           } else {
             this.hide()
@@ -684,6 +771,7 @@ export default {
      */
     show: function () {
       this.$refs.dataInputModal.show()
+      document.addEventListener('keyup', this.keyUpListener)
     },
     /**
      * Hides the modal dialog
@@ -692,6 +780,7 @@ export default {
       this.reset()
       this.$nextTick(() => {
         this.$refs.dataInputModal.hide()
+        document.removeEventListener('keyup', this.keyUpListener)
         this.$emit('hidden')
       })
     },
@@ -699,17 +788,65 @@ export default {
       this.traitGroupTabIndex = 0
       this.cell = null
       this.guidedWalk = null
+
+      this.$emit('hidden')
+    },
+    keyUpListener: function (key) {
+      if (key && key.key && key.key.length === 1) {
+        this.charSequence += key.key
+        let keepGoing = false
+
+        if (this.storeEnterBarcode) {
+          if (this.storeEnterBarcode === this.charSequence) {
+            if (document.activeElement && document.activeElement.blur) {
+              document.activeElement.blur()
+            }
+
+            this.$nextTick(() => {
+              // TODO: Audio feedback
+              this.validate()
+              this.charSequence = ''
+
+              this.$nextTick(() => {
+                emitter.emit('select-search')
+              })
+            })
+          } else if (this.storeEnterBarcode.startsWith(this.charSequence)) {
+            keepGoing = true
+          }
+        }
+
+        if (this.storeEscapeBarcode) {
+          if (this.storeEscapeBarcode === this.charSequence) {
+            // TODO: Audio feedback
+            this.hide()
+            this.charSequence = ''
+
+            this.$nextTick(() => {
+              emitter.emit('select-search')
+            })
+          } else if (this.storeEscapeBarcode.startsWith(this.charSequence)) {
+            keepGoing = true
+          }
+        }
+
+        if (!keepGoing) {
+          this.charSequence = ''
+        }
+      } else {
+        this.charSequence = ''
+      }
     }
   },
   created: function () {
     emitter.on('plot-clicked', this.updateCell)
     emitter.on('plot-cache-changed', this.updateCellComments)
-    emitter.on('force-guided-walk', this.forceGuidedWalk)
+    emitter.on('force-guided-walk', this.onSelectGuidedWalk)
   },
   beforeUnmount: function () {
     emitter.off('plot-clicked', this.updateCell)
     emitter.off('plot-cache-changed', this.updateCellComments)
-    emitter.off('force-guided-walk', this.forceGuidedWalk)
+    emitter.off('force-guided-walk', this.onSelectGuidedWalk)
   }
 }
 </script>

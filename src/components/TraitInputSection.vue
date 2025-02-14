@@ -174,7 +174,9 @@ export default {
       if (index === this.trait.setSize) {
         this.$emit('traverse')
       } else {
-        this.$refs[`${this.trait.id}-${index + 1}`][0].focus()
+        this.$nextTick(() => {
+          this.$refs[`${this.trait.id}-${index + 1}`][0].focus()
+        })
       }
     },
     validate: function () {

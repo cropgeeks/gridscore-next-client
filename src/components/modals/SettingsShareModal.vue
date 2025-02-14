@@ -77,7 +77,10 @@ export default {
       'storeLargeButtonsForIntTraits',
       'storeCategoryCountInline',
       'storeMainDisplayMode',
-      'storePlotDisplayField'
+      'storePlotDisplayField',
+      'storeEnterBarcode',
+      'storeEscapeBarcode',
+      'storeAutoSelectSearch'
     ])
   },
   methods: {
@@ -186,6 +189,17 @@ export default {
         } else if (parsed.lb === 0) {
           this.coreStore.setLargeButtonsForIntTraits(false)
         }
+        if (parsed.enb) {
+          this.coreStore.setEnterBarcode(parsed.enb)
+        }
+        if (parsed.esb) {
+          this.coreStore.setEscapeBarcode(parsed.esb)
+        }
+        if (parsed.ass === 1) {
+          this.coreStore.setAutoSelectSearch(true)
+        } else if (parsed.ass === 0) {
+          this.coreSelect.setAutoSelectSearch(false)
+        }
 
         this.$emit('data-changed')
 
@@ -222,7 +236,10 @@ export default {
         tc: this.storeTraitColors.map(c => c.replace('#', '')).join(','),
         ft: this.storeShowFullTraitDescription ? 1 : 0,
         lb: this.storeLargeButtonsForIntTraits ? 1 : 0,
-        cc: this.storeCategoryCountInline
+        cc: this.storeCategoryCountInline,
+        enb: this.storeEnterBarcode,
+        esb: this.storeEscapeBarcode,
+        ass: this.storeAutoSelectSearch
       })
 
       emitter.emit('plausible-event', { key: 'settings-shared', props: { type: 'share' } })

@@ -23,6 +23,7 @@
                   :class="`number-input ${storeLargeButtonsForIntTraits ? 'text-center flex-even' : ''}`"
                   :state="formState"
                   @wheel="$event.target.blur()"
+                  @keydown="preventNonNumber"
                   type="number"
                   v-model="value"
                   :readonly="!editable"
@@ -37,6 +38,7 @@
                   class="number-input"
                   :state="formState"
                   @wheel="$event.target.blur()"
+                  @keydown="preventNonNumber"
                   type="number"
                   v-model="value"
                   :readonly="!editable"
@@ -202,6 +204,11 @@ export default {
     }
   },
   methods: {
+    preventNonNumber: function (evt) {
+      if (evt.keyCode === 69 || evt.keyCode === 101) {
+        evt.preventDefault()
+      }
+    },
     setGps: function (latitude, longitude) {
       if (isFinite(latitude) && isFinite(longitude)) {
         this.value = `${latitude};${longitude}`

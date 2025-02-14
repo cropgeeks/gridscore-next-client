@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>{{ $t('widgetDataPersonChartLineTitle') }}</h3>
-    <div ref="chart" v-if="chartData" />
+    <div ref="chart" v-if="chartData" :id="elementId" />
   </div>
 </template>
 
@@ -22,6 +22,10 @@ export default {
     chartData: {
       type: Object,
       default: () => null
+    },
+    elementId: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -82,7 +86,8 @@ export default {
 
       const config = {
         responsive: true,
-        displaylogo: false
+        displaylogo: false,
+        modeBarButtonsToRemove: ['toImage']
       }
 
       Plotly.newPlot(this.$refs.chart, data, layout, config)

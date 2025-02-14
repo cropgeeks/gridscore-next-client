@@ -4,7 +4,6 @@
                     :geolocation="geolocation"
                     :trial="trial"
                     @hidden="onHidden"
-                    @shown="forceGuidedWalk"
                     ref="dataInputModal"
                     v-if="trial" />
     <b-container v-else>
@@ -38,7 +37,8 @@ export default {
       trial: null,
       guidedWalkName: null,
       row: null,
-      column: null
+      column: null,
+      scoreWidth: 1
     }
   },
   watch: {
@@ -46,7 +46,8 @@ export default {
       this.loadTrial()
     },
     trial: function () {
-      this.$nextTick(() => emitter.emit('plot-clicked', this.row, this.column))
+      // this.$nextTick(() => emitter.emit('plot-clicked', this.row, this.column, true))
+      this.$nextTick(() => this.forceGuidedWalk())
     }
   },
   methods: {
@@ -54,7 +55,8 @@ export default {
       emitter.emit('force-guided-walk', {
         row: this.row,
         column: this.column,
-        walkName: this.guidedWalkName
+        walkName: this.guidedWalkName,
+        scoreWidth: this.scoreWidth
       })
     },
     onHidden: function () {
@@ -106,6 +108,9 @@ export default {
       }
       if (q.column !== undefined && q.column !== null && q.column !== '') {
         this.column = +q.column
+      }
+      if (q.scoreWidth !== undefined && q.scoreWidth !== null && q.scoreWidth !== '') {
+        this.scoreWidth = +q.scoreWidth
       }
     }
 

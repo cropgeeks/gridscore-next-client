@@ -24,7 +24,10 @@
     </b-form>
 
     <!-- Heatmap element -->
-    <div ref="heatmapRepCompareChart" />
+    <template v-if="selectedTrait">
+      <DownloadableChart elementId="heatmap-chart-rep" :filename="filename" />
+      <div ref="heatmapRepCompareChart" id="heatmap-chart-rep" />
+    </template>
     <div class="border border-warning text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
 
     <b-modal ref="plotModal" :title="$t('modalTitleVizPlotDataDetails')" ok-only :ok-title="$t('buttonClose')" v-if="selectedCell && selectedTrait">
@@ -41,6 +44,7 @@ import { invertHex, toLocalDateString } from '@/plugins/misc'
 import { categoricalColors, toCssNamedColors, validateColorName } from '@/plugins/color'
 import PlotDataSection from '@/components/PlotDataSection.vue'
 import { CELL_CATEGORY_CONTROL } from '@/plugins/constants'
+import DownloadableChart from '@/components/charts/DownloadableChart.vue'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -54,6 +58,7 @@ Plotly.register([
 
 export default {
   components: {
+    DownloadableChart,
     PlotDataSection
   },
   props: {
@@ -91,6 +96,14 @@ export default {
     safeTrialName: function () {
       if (this.trial) {
         return this.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+      } else {
+        return ''
+      }
+    },
+    filename: function () {
+      if (this.safeTrialName && this.selectedTrait) {
+        const traitName = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+        return `germplasm-rep-heatmap-${this.safeTrialName}-${traitName}-${toLocalDateString(new Date())}`
       } else {
         return ''
       }
@@ -435,10 +448,7 @@ export default {
         const filename = this.selectedTrait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
         Plotly.newPlot(this.$refs.heatmapRepCompareChart, traces, layout, {
           responsive: true,
-          toImageButtonOptions: {
-            format: 'png',
-            filename: `germplasm-heatmap-${this.safeTrialName}-${filename}-${toLocalDateString(new Date())}`
-          },
+          modeBarButtonsToRemove: ['toImage'],
           displaylogo: false
         })
 
