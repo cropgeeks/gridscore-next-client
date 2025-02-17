@@ -1,8 +1,8 @@
 <template>
   <span :style="{ color: trait.color }">
     <TraitIcon :trait="trait" />
-    <span class="mx-1">{{ trait.name }}</span>
-    <b-badge class="mx-1" variant="light">{{ traitTypeText }}</b-badge>
+    <span class="mx-1 trait-name">{{ trait.name }}</span>
+    <b-badge class="mx-1 trait-data-type" variant="light">{{ traitTypeText }}</b-badge>
     <IBiCardText class="text-muted mx-1" v-b-tooltip="trait.description" v-if="showDescription && trait.description" />
     <BPopover
       v-if="trait.imageUrl || (trait.hasImage && traitImageConfig.priorityShareCode && traitImageConfig.serverUrl)"

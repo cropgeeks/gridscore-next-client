@@ -133,9 +133,6 @@ export default {
     }
   },
   watch: {
-    searchTerm: function () {
-      this.$nextTick(() => this.initSearch())
-    },
     storeSelectedTrial: function () {
       this.loadTrial()
     },
@@ -199,10 +196,12 @@ export default {
       this.searchMatches = []
 
       const trimmed = this.searchTerm.trim()
-
+      
       if (trimmed.length < 1) {
         return
       }
+
+      this.searchTerm = ''
 
       const matches = getGermplasmMatches(this.trial, trimmed)
 
@@ -244,6 +243,8 @@ export default {
         this.updateLocalCaches()
 
         this.startGeoTracking()
+
+        this.$nextTick(() => this.selectSearch())
       })
     },
     updateLocalCaches: function () {
@@ -345,7 +346,7 @@ export default {
       }
     },
     selectSearch: function () {
-      if (this.storeAutoSelectSearch) {
+      if (this.storeAutoSelectSearch && this.$refs.germplasmSearch) {
         this.$refs.germplasmSearch.focus()
       }
     }
@@ -366,6 +367,8 @@ export default {
     emitter.on('select-search', this.selectSearch)
 
     // this.fakeGpsMovement()
+
+    this.selectSearch()
   },
   beforeUnmount: function () {
     emitter.off('trial-properties-changed', this.trialPropertiesChanged)

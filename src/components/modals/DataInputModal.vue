@@ -21,7 +21,7 @@
       <h5 class="modal-title text-truncate"><span v-if="!isGuidedWalk || guidedWalk.scoreWidth === 1">{{ displayName }}</span></h5>
 
       <b-button-group id="data-entry-header" v-if="cell">
-        <VueDatePicker v-model="recordingDate" :locale="storeLocale" :dark="storeDarkMode" :week-start="1" :disabled="!trial.editable" :enable-time-picker="false" clearable :action-row="{ showPreview: false, showNow: true }" class="btn btn-sm btn-secondary w-auto">
+        <VueDatePicker v-model="recordingDate" :locale="storeLocale" :dark="storeDarkMode" :week-start="1" :disabled="!trial.editable" :enable-time-picker="false" clearable :action-row="{ showPreview: false, showNow: true }" class="btn btn-sm btn-secondary w-auto" id="toolbar-button-pick-date">
           <template #trigger>
             <span><IBiCalendarEvent /> <span class="d-none d-xl-inline-block"> {{ $t('buttonPickRecordingDate') }}</span></span>
           </template>

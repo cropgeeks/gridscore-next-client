@@ -48,10 +48,13 @@ Sometimes you may be in a situation where someone has recorded some of the data 
 
 <img src="img/collection-guided-walk.png" style="max-width: 100%;" alt="Guided walk Snake">
 <img src="img/collection-guided-walk2.png" style="max-width: 100%;" alt="Guided walk Zig Zag">
+<img src="img/collection-guided-walk2.png" style="max-width: 100%;" alt="Guided walk Zig Zag 2 plots">
 
 Guided walks are a way for GridScore to guide you through the trial along one of eight pre-defined routes. This way you don't have to worry about selecting the correct next plot in the trial.
 
-To use this feature, select a starting plot from the main data view, then select the `Guided walk` button at the top. You will see the 8 different options of proceeding through the trial. Depending on the location of the starting plot, some options may be disabled as walking in that direction would directly finish the guided walk.
+To use this feature, select a starting plot from the main data view, then select the `Guided walk` button at the top. You'll now have to decide if you want to score a single plot at a time or two plots at a time while you're walking through the trial layout. Then you can select the type of traversal. A snake-like path will lead you along one row/column towards the end and then turn you back around so you can follow the next row/column. With the zig-zag option instead you'll be scoring all plots in the same direction as you traverse the trial row by row or column by column. This can be useful if you want to assess a plot with the same lighting conditions and sunlight angle.
+
+Within each traversal type, there are 8 different options of proceeding through the trial. Depending on the location of the starting plot, some options may be disabled as walking in that direction would directly finish the guided walk.
 
 <img src="img/collection-guided-walk-input.png" style="max-width: 100%;" alt="Guided walk data input">
 
