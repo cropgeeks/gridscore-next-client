@@ -277,6 +277,11 @@ export default {
       await writableStream.write(this.imageFile)
       // close the file and write the contents to disk.
       await writableStream.close()
+
+      this.$nextTick(() => {
+        this.$emit('image-saved', this.filename)
+        this.hide()
+      })
     },
     /**
      * Downloads the image as a file attachment
@@ -287,13 +292,13 @@ export default {
           this.downloadImageAsync()
         } else {
           saveAs(this.imageData, this.filename)
+
+          this.$nextTick(() => {
+            this.$emit('image-saved', this.filename)
+            this.hide()
+          })
         }
       }
-
-      this.$nextTick(() => {
-        this.$emit('image-saved', this.filename)
-        this.hide()
-      })
     },
     /**
      * Shows the modal dialog and resets it to its initial state
