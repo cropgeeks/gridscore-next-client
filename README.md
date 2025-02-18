@@ -8,10 +8,11 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/cropgeeks/gridscore-next-client?style=for-the-badge)
 ![GitHub last commit](https://img.shields.io/github/last-commit/cropgeeks/gridscore-next-client?style=for-the-badge&logo=git)
 
-![Docker Pulls](https://img.shields.io/docker/pulls/cropgeeks/gridscore-next?style=for-the-badge)
-[![Docker CI Tag](https://img.shields.io/github/actions/workflow/status/cropgeeks/gridscore-next-client/docker-ci-multi-arch.yml?label=Docker%20CI%20Push&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/cropgeeks/gridscore-next-client/docker-ci-multi-arch.yml)
+![Docker Pulls](https://img.shields.io/docker/pulls/cropgeeks/gridscore-next?style=for-the-badge&logo=docker)
+[![Docker CI Push](https://img.shields.io/github/actions/workflow/status/cropgeeks/gridscore-next-client/docker-ci-multi-arch.yml?label=GitHub%20Push%20Action&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/cropgeeks/gridscore-next-client/docker-ci-multi-arch.yml)
+[![Docker CI Tag](https://img.shields.io/github/actions/workflow/status/cropgeeks/gridscore-next-client/docker-ci-multi-arch-tag.yml?label=GitHub%20Tag%20Action&logo=github&style=for-the-badge)](https://img.shields.io/github/actions/workflow/status/cropgeeks/gridscore-next-client/docker-ci-multi-arch-tag.yml)
 
-[![DOI](https://zenodo.org/badge/270078734.svg?style=flat-square)](https://zenodo.org/badge/latestdoi/270078734)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.11501601-007ec6?style=for-the-badge)](https://doi.org/10.5281/zenodo.11501601)
 
 <img src="docs/img/readme.png" style="max-width: 100%;" alt="GridScore running on various devices">
 
