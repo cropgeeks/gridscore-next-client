@@ -20,7 +20,7 @@
     </template>
     <TrialInformation :trial="trial" @on-share-clicked="$emit('showShareCodes')" />
     <b-button @click="$emit('handleTrialExpiration')" v-if="trial.showExpiryWarning === true" variant="danger" v-b-tooltip.hover="$t('tooltipTrialSelectorTrialExpiryWarning', { date: new Date(trial.expiresOn).toLocaleDateString() })">
-      <IBiCalendarXFill />
+      <IBiCalendarXFill /> {{ $t('widgetTrialSelectorTrialExpiryWarning') }}
     </b-button>
     <b-card-footer class="d-flex justify-content-between">
       <b-button @click="$emit('loadTrial')" variant="primary"><IBiJournalArrowUp /> {{ $t('buttonLoadTrial') }}</b-button>

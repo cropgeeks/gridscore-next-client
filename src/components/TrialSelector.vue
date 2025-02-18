@@ -56,7 +56,7 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}`">
+        <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}-${trialGroup.hasRemoteUpdate}-${trialGroup.hasExpiryWarning}`">
           <template #title>
             <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
             <IBiCloudDownloadFill class="ms-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
@@ -280,6 +280,9 @@ export default {
           })
           .sort(this.sorting[this.sortOrder])
           .map(t => {
+            t.hasRemoteUpdate = false
+            t.showExpiryWarning = false
+
             if (t.shareCodes && this.trialUpdates) {
               const shareCode = t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
               const timestamp = this.trialUpdates[shareCode]
@@ -291,7 +294,7 @@ export default {
               }
 
               if (timestamp !== undefined && timestamp !== null && timestamp.showExpiryWarning !== undefined && timestamp.showExpiryWarning !== null) {
-                t.showExpiryWarning = timestamp.showExpiryWarning
+                t.showExpiryWarning = timestamp.showExpiryWarning || false
                 t.expiresOn = timestamp.expiresOn
               } else {
                 t.showExpiryWarning = false
@@ -303,13 +306,15 @@ export default {
 
         const result = {}
         result[UNCATEGORIZED_TRIALS] = {
-          trials: []
+          trials: [],
+          hasExpiryWarning: false
         }
 
         if (this.storeTrialListMode === TRIAL_LIST_TABBED) {
           this.trialGroups.forEach(tg => {
             result[tg] = {
-              trials: []
+              trials: [],
+              hasExpiryWarning: false
             }
           })
         }
