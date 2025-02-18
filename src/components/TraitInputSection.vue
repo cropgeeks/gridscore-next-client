@@ -4,7 +4,7 @@
 
     <h4 class="d-flex justify-content-between align-items-center">
       <span class="d-flex align-items-center flex-wrap">
-        <TraitHeading short :trait="trait" :showDescription="false" />
+        <TraitHeading short :hasData="hasHistoricData" :trait="trait" :showDescription="false" />
         <b-badge class="mx-1 trait-allow-repeats" variant="light" v-b-tooltip="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
           <IBiRepeat v-if="trait.allowRepeats" />
           <IBiRepeat1 v-else />
