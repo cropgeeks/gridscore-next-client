@@ -44,7 +44,7 @@
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
 
-import exifr from 'exifr/dist/lite.umd.js'
+// import exifr from 'exifr/dist/lite.umd.js'
 import { getColumnLabel, getRowLabel, toLocalDateTimeString, truncateAfterWords } from '@/plugins/misc'
 import { saveAs } from 'file-saver'
 
@@ -150,13 +150,13 @@ export default {
         this.selectedTraits = []
       }
     },
-    imageFile: async function (newValue) {
+    imageFile: function (newValue) {
       if (newValue) {
         // If there is a new image file, reset data
         this.imageGps = null
         this.imageDate = null
         // Convert to base64 for displaying
-        this.imageData = await this.toBase64(newValue)
+        this.imageData = URL.createObjectURL(newValue)
 
         if (newValue.lastModified) {
           // If there is a last modified date, use it
@@ -166,53 +166,53 @@ export default {
           this.imageDate = new Date()
         }
 
-        // Extract exif data
-        exifr.parse(newValue)
-          .then(exif => {
-            // Try and extract the exact date
-            if (exif.DateTimeOriginal) {
-              this.imageDate = exif.DateTimeOriginal
-            } else if (exif.CreateTime) {
-              this.imageDate = exif.CreateTime
-            }
-            // Get the georeference information
-            if (exif.latitude && exif.longitude) {
-              return new Promise(resolve => {
-                resolve({ lat: exif.latitude, lng: exif.longitude })
-              })
-            } else if (this.useGps) {
-              return new Promise(resolve => navigator.geolocation.getCurrentPosition(geolocation => {
-                if (geolocation && geolocation.coords) {
-                  resolve({ lat: geolocation.coords.latitude, lng: geolocation.coords.longitude })
-                } else {
-                  resolve(null)
-                }
-              }))
-            } else {
-              return new Promise(resolve => resolve(null))
-            }
-          })
-          .then(geolocation => {
-            if (geolocation) {
-              this.imageGps = {
-                latitude: geolocation.lat,
-                longitude: geolocation.lng
-              }
-            }
-          })
-          .catch(() => {
-            // No exif available
-            if (this.useGps) {
-              navigator.geolocation.getCurrentPosition(geolocation => {
-                if (geolocation && geolocation.coords) {
-                  this.imageGps = {
-                    latitude: geolocation.coords.latitude,
-                    longitude: geolocation.coords.longitude
-                  }
-                }
-              })
-            }
-          })
+        // // Extract exif data
+        // exifr.parse(newValue)
+        //   .then(exif => {
+        //     // Try and extract the exact date
+        //     if (exif.DateTimeOriginal) {
+        //       this.imageDate = exif.DateTimeOriginal
+        //     } else if (exif.CreateTime) {
+        //       this.imageDate = exif.CreateTime
+        //     }
+        //     // Get the georeference information
+        //     if (exif.latitude && exif.longitude) {
+        //       return new Promise(resolve => {
+        //         resolve({ lat: exif.latitude, lng: exif.longitude })
+        //       })
+        //     } else if (this.useGps) {
+        //       return new Promise(resolve => navigator.geolocation.getCurrentPosition(geolocation => {
+        //         if (geolocation && geolocation.coords) {
+        //           resolve({ lat: geolocation.coords.latitude, lng: geolocation.coords.longitude })
+        //         } else {
+        //           resolve(null)
+        //         }
+        //       }))
+        //     } else {
+        //       return new Promise(resolve => resolve(null))
+        //     }
+        //   })
+        //   .then(geolocation => {
+        //     if (geolocation) {
+        //       this.imageGps = {
+        //         latitude: geolocation.lat,
+        //         longitude: geolocation.lng
+        //       }
+        //     }
+        //   })
+        //   .catch(() => {
+        //     // No exif available
+        //     if (this.useGps) {
+        //       navigator.geolocation.getCurrentPosition(geolocation => {
+        //         if (geolocation && geolocation.coords) {
+        //           this.imageGps = {
+        //             latitude: geolocation.coords.latitude,
+        //             longitude: geolocation.coords.longitude
+        //           }
+        //         }
+        //       })
+        //     }
+        //   })
 
         emitter.emit('plausible-event', { key: 'data-input', props: { type: 'image' } })
       }
@@ -238,19 +238,6 @@ export default {
       } else {
         console.warn('Sharing not supported', shareData)
       }
-    },
-    /**
-     * Converts the user selected file into base64
-     * @param file The image file
-     */
-    toBase64: function (file) {
-      // Return a promise as we can't wait for this
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
-      })
     },
     /**
      * Returns the datetime string based on the given date
@@ -327,6 +314,10 @@ export default {
      * Hides the modal dialog
      */
     hide: function () {
+      if (this.imageData) {
+        URL.revokeObjectURL(this.imageData)
+      }
+
       this.imageFile = null
       this.imageData = null
       this.imageDate = null
