@@ -27,7 +27,7 @@
       <!-- Heatmap element -->
       <template v-if="selectedTrait">
         <DownloadableChart elementId="heatmap-chart-plot" :filename="filename" />
-        <div ref="heatmapChart" id="heatmap-chart" />
+        <div ref="heatmapChart" id="heatmap-chart-plot" />
       </template>
       <div class="border border-warning text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
     </div>
