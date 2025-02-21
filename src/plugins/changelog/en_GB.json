@@ -594,7 +594,7 @@
   },
   {
     "version": "3.3.0",
-    "date": "2025-XX-XX",
+    "date": "2025-02-21",
     "items": [
       {
         "type": "new",
@@ -635,6 +635,11 @@
         "type": "bugfix",
         "title": "Remote trial",
         "text": "Fixed issues with remote trial configuration."
+      },
+      {
+        "type": "bugfix",
+        "title": "Samsung image tagging",
+        "text": "Fixed issues with image tagging on specific Samsung devices. This was causing images with filenames like '(invalid)' to show up."
       }
     ]
   }

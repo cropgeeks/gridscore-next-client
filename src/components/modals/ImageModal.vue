@@ -44,7 +44,6 @@
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
 
-// import exifr from 'exifr/dist/lite.umd.js'
 import { getColumnLabel, getRowLabel, toLocalDateTimeString, truncateAfterWords } from '@/plugins/misc'
 import { saveAs } from 'file-saver'
 
@@ -165,54 +164,6 @@ export default {
           // Use current date as fallback as this is required for the filename
           this.imageDate = new Date()
         }
-
-        // // Extract exif data
-        // exifr.parse(newValue)
-        //   .then(exif => {
-        //     // Try and extract the exact date
-        //     if (exif.DateTimeOriginal) {
-        //       this.imageDate = exif.DateTimeOriginal
-        //     } else if (exif.CreateTime) {
-        //       this.imageDate = exif.CreateTime
-        //     }
-        //     // Get the georeference information
-        //     if (exif.latitude && exif.longitude) {
-        //       return new Promise(resolve => {
-        //         resolve({ lat: exif.latitude, lng: exif.longitude })
-        //       })
-        //     } else if (this.useGps) {
-        //       return new Promise(resolve => navigator.geolocation.getCurrentPosition(geolocation => {
-        //         if (geolocation && geolocation.coords) {
-        //           resolve({ lat: geolocation.coords.latitude, lng: geolocation.coords.longitude })
-        //         } else {
-        //           resolve(null)
-        //         }
-        //       }))
-        //     } else {
-        //       return new Promise(resolve => resolve(null))
-        //     }
-        //   })
-        //   .then(geolocation => {
-        //     if (geolocation) {
-        //       this.imageGps = {
-        //         latitude: geolocation.lat,
-        //         longitude: geolocation.lng
-        //       }
-        //     }
-        //   })
-        //   .catch(() => {
-        //     // No exif available
-        //     if (this.useGps) {
-        //       navigator.geolocation.getCurrentPosition(geolocation => {
-        //         if (geolocation && geolocation.coords) {
-        //           this.imageGps = {
-        //             latitude: geolocation.coords.latitude,
-        //             longitude: geolocation.coords.longitude
-        //           }
-        //         }
-        //       })
-        //     }
-        //   })
 
         emitter.emit('plausible-event', { key: 'data-input', props: { type: 'image' } })
       }

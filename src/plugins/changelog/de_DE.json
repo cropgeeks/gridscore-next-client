@@ -594,7 +594,7 @@
   },
   {
     "version": "3.3.0",
-    "date": "2025-XX-XX",
+    "date": "2025-02-21",
     "items": [
       {
         "type": "new",
@@ -635,6 +635,11 @@
         "type": "bugfix",
         "title": "Selbst-gehostete Versuche",
         "text": "Fehler behoben bei der Konfiguration von selbst-gehosteten Versuchen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Samsung Bild-Kennzeichnung",
+        "text": "Fehler behoben beim Kennzeichnen von Bildern auf bestimmten Samsung Geräten. Dies resultierte in Bild-Dateinamen wie '(invalid)'."
       }
     ]
   }
