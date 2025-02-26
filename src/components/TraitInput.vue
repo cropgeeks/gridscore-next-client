@@ -57,6 +57,7 @@
                   type="range"
                   v-model="value"
                   :readonly="!editable"
+                  :disabled="!editable"
                   @change="ttsAndSet"
                   :min="(trait.restrictions && trait.restrictions.min !== null && trait.restrictions.min !== undefined) ? trait.restrictions.min : 0"
                   :max="(trait.restrictions && trait.restrictions.max !== null && trait.restrictions.max !== undefined) ? trait.restrictions.max : 100"
