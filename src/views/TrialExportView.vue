@@ -31,6 +31,18 @@
                     {{ tabAggregate ? $t('genericYes') : $t('genericNo') }}
                   </b-form-checkbox>
                 </b-form-group>
+                <template v-if="!tabAggregate">
+                  <b-form-group :label="$t('formLabelExportTrialFormatTabLongIncludePeople')" :description="$t('formDescriptionExportTrialFormatTabLongIncludePeople')" label-for="includePeople">
+                    <b-form-checkbox id="includePeople" v-model="longIncludePeople" switch>
+                      {{ longIncludePeople ? $t('genericYes') : $t('genericNo') }}
+                    </b-form-checkbox>
+                  </b-form-group>
+                  <b-form-group :label="$t('formLabelExportTrialFormatTabLongUseTimestamps')" :description="$t('formDescriptionExportTrialFormatTabLongUseTimestamps')" label-for="useTimestamps">
+                    <b-form-checkbox id="useTimestamps" v-model="longUseTimestamps" switch>
+                      {{ longUseTimestamps ? $t('genericYes') : $t('genericNo') }}
+                    </b-form-checkbox>
+                  </b-form-group>
+                </template>
 
                 <b-button @click="exportDataTab('long')" variant="primary"><IBiFileEarmarkSpreadsheet /> {{ $t('buttonExport') }}</b-button>
               </b-card>
@@ -186,6 +198,8 @@ export default {
       },
       germinateAggregate: true,
       tabAggregate: true,
+      longIncludePeople: false,
+      longUseTimestamps: false,
       plotCommentCount: 0
     }
   },
@@ -215,6 +229,12 @@ export default {
       } else {
         return 0
       }
+    }
+  },
+  watch: {
+    tabAggregate: function () {
+      this.longIncludePeople = false
+      this.longUseTimestamps = false
     }
   },
   methods: {
@@ -390,7 +410,7 @@ export default {
       if (direction === 'wide') {
         result = trialsDataToMatrix(data, this.trial, this.tabAggregate)
       } else if (direction === 'long') {
-        result = trialsDataToLongFormat(data, this.trial, this.tabAggregate)
+        result = trialsDataToLongFormat(data, this.trial, this.tabAggregate, this.longIncludePeople, this.longUseTimestamps)
       }
 
       downloadText(result, `gridscore-data-${this.safeTrialName}.txt`)

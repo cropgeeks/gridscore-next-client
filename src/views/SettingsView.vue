@@ -11,11 +11,11 @@
               <b-form-select id="locale" :options="localeOptions" v-model="locale" />
             </b-form-group>
 
-            <b-form-group :label="$t('formLabelSettingsDarkMode')" :description="$t('formDescriptionSettingsDarkMode')" label-for="darkMode">
+            <!-- <b-form-group :label="$t('formLabelSettingsDarkMode')" :description="$t('formDescriptionSettingsDarkMode')" label-for="darkMode">
               <b-form-checkbox id="darkMode" v-model="darkMode" switch>
                 {{ darkMode ? $t('genericEnabled') : $t('genericDisabled') }}
               </b-form-checkbox>
-            </b-form-group>
+            </b-form-group> -->
 
             <b-form-group :label="$t('formLabelSettingsCitation')" :description="$t('formDescriptionSettingsCitation')" label-for="showCitation">
               <b-form-checkbox id="showCitation" v-model="hideCitationMessage" switch>
@@ -361,8 +361,8 @@ export default {
       })
     },
     darkMode: function (newValue) {
-      this.coreStore.setDarkMode(newValue)
-      emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: newValue } })
+      // this.coreStore.setDarkMode(newValue)
+      // emitter.emit('plausible-event', { key: 'settings-changed', props: { darkMode: newValue } })
     },
     hideCitationMessage: function (newValue) {
       this.coreStore.setHideCitationMessage(newValue)
@@ -483,7 +483,7 @@ export default {
     },
     reset: function () {
       this.locale = this.storeLocale
-      this.darkMode = this.storeDarkMode
+      // this.darkMode = this.storeDarkMode
       this.hideCitationMessage = this.storeHideCitationMessage
       this.highlightControls = this.storeHighlightControls
       this.displayMarkerIndicators = this.storeDisplayMarkerIndicators

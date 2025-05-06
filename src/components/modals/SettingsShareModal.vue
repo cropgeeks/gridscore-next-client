@@ -100,11 +100,11 @@ export default {
         if (parsed.hw) {
           this.coreStore.setHomeWidgetOrder(parsed.hw)
         }
-        if (parsed.dm === 1) {
-          this.coreStore.setDarkMode(true)
-        } else if (parsed.dm === 0) {
-          this.coreStore.setDarkMode(false)
-        }
+        // if (parsed.dm === 1) {
+        //   this.coreStore.setDarkMode(true)
+        // } else if (parsed.dm === 0) {
+        //   this.coreStore.setDarkMode(false)
+        // }
         if (parsed.mi === 1) {
           this.coreStore.setDisplayMarkerIndicators(true)
         } else if (parsed.mi === 0) {
@@ -225,7 +225,7 @@ export default {
         lc: this.storeLocale,
         hc: this.storeHideCitationMessage ? 1 : 0,
         hi: this.storeHighlightControls ? 1 : 0,
-        dm: this.storeDarkMode ? 1 : 0,
+        // dm: this.storeDarkMode ? 1 : 0,
         mi: this.storeDisplayMarkerIndicators ? 1 : 0,
         hw: this.storeHomeWidgetOrder.join(','),
         cw: this.storeDisplayMinCellWidth,

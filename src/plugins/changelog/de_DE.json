@@ -642,5 +642,21 @@
         "text": "Fehler behoben beim Kennzeichnen von Bildern auf bestimmten Samsung Geräten. Dies resultierte in Bild-Dateinamen wie '(invalid)'."
       }
     ]
+  },
+  {
+    "version": "3.4.0",
+    "date": "2025-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Langes Format Funktionalitäten",
+        "text": "Beim Exportieren von Daten in das lange Format ist es nun möglich Information über die Person einzuschließen welche die Daten gesammelt hat, sowie den tatsächlichen Zeitpunkt der Sammlung zu exportieren."
+      },
+      {
+        "type": "bugfix",
+        "title": "Langes Format Fehler",
+        "text": "Fehler behoben beim Exportieren in das lange Format wo Daten nicht korrekt exportiert wurden falls Aggregation aktiviert war."
+      }
+    ]
   }
 ]

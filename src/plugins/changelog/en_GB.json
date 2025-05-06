@@ -642,5 +642,21 @@
         "text": "Fixed issues with image tagging on specific Samsung devices. This was causing images with filenames like '(invalid)' to show up."
       }
     ]
+  },
+  {
+    "version": "3.4.0",
+    "date": "2025-XX-XX",
+    "items": [
+      {
+        "type": "new",
+        "title": "Long format features",
+        "text": "When exporting data in then long format, it is now possible to include the person who recorded the data as well as show the full timestamp of the recording event."
+      },
+      {
+        "type": "bugfix",
+        "title": "Long format error",
+        "text": "Fixed issues with export to long format where data wasn't exported correctly when aggregation was enabled."
+      }
+    ]
   }
 ]

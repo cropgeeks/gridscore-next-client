@@ -100,26 +100,29 @@ const padZerosTo = (str, length) => {
   return str
 }
 
-const toLocalDateString = (date = null) => {
+const toLocalDateString = (date = null, opts) => {
+  opts = Object.assign({}, { dateSeparator: '-' }, opts)
   const d = date === null ? new Date() : new Date(date)
   const month = padZerosTo('' + (d.getMonth() + 1), 2)
   const day = padZerosTo('' + d.getDate(), 2)
   const year = d.getFullYear()
 
-  return [year, month, day].join('-')
+  return [year, month, day].join(opts.dateSeparator)
 }
 
-const toLocalDateTimeString = (str) => {
-  const date = toLocalDateString(str)
+const toLocalDateTimeString = (str, opts) => {
+  opts = Object.assign({}, { dateSeparator: '-', timeSeparator: '-', overallSeparator: '_' }, opts)
+
+  const date = toLocalDateString(str, opts)
   const d = new Date(str)
 
   const hours = padZerosTo('' + d.getHours(), 2)
   const minutes = padZerosTo('' + d.getMinutes(), 2)
   const seconds = padZerosTo('' + d.getSeconds(), 2)
 
-  const time = [hours, minutes, seconds].join('-')
+  const time = [hours, minutes, seconds].join(opts.timeSeparator)
 
-  return date + '_' + time
+  return date + opts.overallSeparator + time
 }
 
 const migrateOldGridScoreTrial = (old) => {
@@ -395,7 +398,7 @@ const getNumberWithSuffix = (value, decimals = 2, k = 1000, separator = '') => {
   }
 }
 
-const trialsDataToLongFormat = (data, trial, aggregate = true) => {
+const trialsDataToLongFormat = (data, trial, aggregate = true, includePeople = false, useTimestamps = false) => {
   let result = 'Germplasm\tRep\tRow\tColumn\tDate\tLatitude\tLongitude\tTrait\tValue'
 
   if (aggregate) {
@@ -419,30 +422,36 @@ const trialsDataToLongFormat = (data, trial, aggregate = true) => {
             if (td) {
               const onDate = v.measurements[t.id].filter(dp => dp.timestamp.split('T')[0] === date).reduce((a, b) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
 
-              let values
-              if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range') {
-                values = `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
-              } else if (t.dataType === 'categorical') {
-                values = `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`
-              } else {
-                values = `\t${onDate[onDate.length - 1]}`
+              if (onDate.length > 0) {
+                let values
+                if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range') {
+                  values = `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
+                } else if (t.dataType === 'categorical') {
+                  values = `\t${t.restrictions.categories[onDate[onDate.length - 1]]}`
+                } else {
+                  values = `\t${onDate[onDate.length - 1]}`
+                }
+
+                result += `\n${germplasmMeta}\t${date}`
+
+                if (v.geography) {
+                  result += getLatLngAverage(v.geography)
+                } else {
+                  result += '\t\t'
+                }
+
+                result += `\t${t.name}\t${values}`
               }
-
-              result += `\n${germplasmMeta}\t${date}`
-
-              if (v.geography) {
-                result += getLatLngAverage(v.geography)
-              } else {
-                result += '\t\t'
-              }
-
-              result += `\t${t.name}\t${values}`
             }
           })
         })
       }
     })
   } else {
+    if (includePeople) {
+      result += '\tPerson'
+    }
+
     Object.values(data).forEach(v => {
       if (v.measurements) {
         const row = v.displayRow
@@ -460,7 +469,7 @@ const trialsDataToLongFormat = (data, trial, aggregate = true) => {
 
               if (values && values.length > 0) {
                 values.forEach(val => {
-                  result += `\n${germplasmMeta}\t${dp.timestamp.split('T')[0]}`
+                  result += `\n${germplasmMeta}\t${useTimestamps ? toLocalDateTimeString(dp.timestamp, { overallSeparator: ' ', dateSeparator: '-', timeSeparator: ':' }) : dp.timestamp.split('T')[0]}`
 
                   if (v.geography) {
                     result += getLatLngAverage(v.geography)
@@ -469,6 +478,13 @@ const trialsDataToLongFormat = (data, trial, aggregate = true) => {
                   }
 
                   result += `\t${t.name}\t${t.dataType === 'categorical' ? t.restrictions.categories[+val] : val}`
+
+                  if (includePeople && trial.people && trial.people.length > 0) {
+                    const person = trial.people.find(p => p.id === dp.personId)
+                    result += `\t${person ? person.name : ''}`
+                  } else {
+                    result += '\t'
+                  }
                 })
               }
             })
