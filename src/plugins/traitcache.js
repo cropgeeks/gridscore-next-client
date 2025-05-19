@@ -133,12 +133,14 @@ const clearTraitImageCache = async (trial, traitIds) => {
 
     for (const traitId of traitIds) {
       const trait = toCheck.find(t => t.id === traitId)
-      const url = trait.imageUrl || `${baseUrl}trait/${trial.shareCodes.ownerCode || trial.shareCodes.editorCode || trial.shareCodes.viewerCode}/${traitId}/img`
-      const match = await cache.match(url)
+      if (trait) {
+        const url = trait.imageUrl || `${baseUrl}trait/${trial.shareCodes.ownerCode || trial.shareCodes.editorCode || trial.shareCodes.viewerCode}/${traitId}/img`
+        const match = await cache.match(url)
 
-      if (match && match.ok) {
-        // Delete the cached image
-        await cache.delete(url)
+        if (match && match.ok) {
+          // Delete the cached image
+          await cache.delete(url)
+        }
       }
     }
   } catch (e) {

@@ -1,6 +1,8 @@
 FROM node:22.11-alpine3.20 AS builder
 
-LABEL maintainer="sebastian.raubach@hutton.ac.uk"
+LABEL org.opencontainers.image.authors="sebastian.raubach@hutton.ac.uk"
+LABEL org.opencontainers.image.url="https://ics.hutton.ac.uk/get-gridscore/"
+LABEL org.opencontainers.image.documentation="https://cropgeeks.github.io/gridscore-next-client"
 
 ARG BRANCH=master
 
@@ -33,7 +35,9 @@ RUN apk add --no-cache openjdk21 && \
 
 FROM tomcat:10.1-jdk21
 
-LABEL maintainer="sebastian.raubach@hutton.ac.uk"
+LABEL org.opencontainers.image.authors="sebastian.raubach@hutton.ac.uk"
+LABEL org.opencontainers.image.url="https://ics.hutton.ac.uk/get-gridscore/"
+LABEL org.opencontainers.image.documentation="https://cropgeeks.github.io/gridscore-next-client"
 
 RUN apt-get update && \
     apt-get --yes --force-yes install unzip zip && \

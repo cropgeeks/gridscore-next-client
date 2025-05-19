@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddGermplasmModal: typeof import('./src/components/modals/AddGermplasmModal.vue')['default']
     AddTraitsModal: typeof import('./src/components/modals/AddTraitsModal.vue')['default']
+    BAlert: typeof import('bootstrap-vue-next/components/BAlert')['BAlert']
     BarcodeScanner: typeof import('./src/components/BarcodeScanner.vue')['default']
     BAvatar: typeof import('bootstrap-vue-next/components/BAvatar')['BAvatar']
     BBadge: typeof import('bootstrap-vue-next/components/BBadge')['BBadge']

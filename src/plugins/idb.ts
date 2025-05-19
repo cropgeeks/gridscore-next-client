@@ -301,7 +301,7 @@ const updateTrialProperties = async (localId: string, updates: TrialModification
     const traitsToRemove = originalTraits.filter((t: Trait) => !retainedTraitIds.has(t.id))
 
     if (traitsToRemove && traitsToRemove.length > 0) {
-      clearTraitImageCache(trial, traitsToRemove.map((t: Trait) => t.id))
+      clearTraitImageCache(JSON.parse(JSON.stringify(trial)), traitsToRemove.map((t: Trait) => t.id))
     }
 
     trial.name = updates.name
@@ -335,6 +335,10 @@ const updateTrialProperties = async (localId: string, updates: TrialModification
       if (!transaction.traitChangeTransactions) {
         transaction.traitChangeTransactions = []
       }
+
+      traitsToRemove.forEach((t: Trait) => {
+        transaction.trialTraitDeletedTransactions.push(t)
+      })
 
       updates.traits.forEach((t: Trait) => {
         const match = originalTraits.find((ot: Trait) => ot.id === t.id)

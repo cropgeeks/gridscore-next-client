@@ -92,7 +92,7 @@ export default {
               name: p.Name,
               description: p.Description,
               dataType: p['Data Type'],
-              allowRepeats: p['Allow repeats'] === '1',
+              allowRepeats: p['Allow repeats'] === '1' || p['Allow repeats'] === 1,
               setSize: p['Set size'] || 1,
               brapiId: p['BrAPI ID'],
               group: p['Group name']

@@ -656,6 +656,11 @@
         "type": "bugfix",
         "title": "Langes Format Fehler",
         "text": "Fehler behoben beim Exportieren in das lange Format wo Daten nicht korrekt exportiert wurden falls Aggregation aktiviert war."
+      },
+      {
+        "type": "bugfix",
+        "title": "Merkmalslöschungsfehler",
+        "text": "Fehler behoben der es Besitzern nicht erlaubte Merkmale zu löschen."
       }
     ]
   }

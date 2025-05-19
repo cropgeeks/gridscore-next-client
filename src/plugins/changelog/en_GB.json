@@ -656,6 +656,11 @@
         "type": "bugfix",
         "title": "Long format error",
         "text": "Fixed issues with export to long format where data wasn't exported correctly when aggregation was enabled."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trait deletion error",
+        "text": "Fixed issues where it wasn't possible for owners to delete a trait."
       }
     ]
   }

@@ -64,6 +64,12 @@
           </template>
           <b-progress variant="primary" striped animated :value="100" v-if="isLoading" height="4px" />
           <b-card-body :class="isLoading ? '' : 'mt-1'">
+            <b-alert variant="warning" v-model="trialGroup.hasRemoteUpdate"><IBiCloudDownloadFill class="me-2" />
+              {{ $t('widgetTrialSelectorWarningUpdates') }}
+            </b-alert>
+            <b-alert variant="danger" v-model="trialGroup.hasExpiryWarning"><IBiCalendarXFill class="me-2" />
+              {{ $t('widgetTrialSelectorWarningExpiry') }}
+            </b-alert>
             <template v-if="trialGroup.trials && trialGroup.trials.length > 0">
               <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
                 <TrialListGroupItem :trial="trial"
