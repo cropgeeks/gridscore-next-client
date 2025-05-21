@@ -185,6 +185,7 @@ export default {
 
       let germplasmCorrect = true
       const germplasmSet = new Set()
+      const barcodeSet = new Set()
       const repSet = new Set()
       Object.keys(this.germplasmMap).forEach(k => {
         const cell = this.germplasmMap[k]
@@ -217,11 +218,11 @@ export default {
           return
         }
 
-        const displayName = `${cell.germplasm}|${cell.rep}`
         if (cell.rep) {
           repSet.add(cell.rep)
         }
 
+        const displayName = `${cell.germplasm}|${cell.rep}`
         if (germplasmSet.has(displayName)) {
           feedback.push({
             type: 'warning',
@@ -232,6 +233,19 @@ export default {
           return
         } else {
           germplasmSet.add(displayName)
+        }
+
+        const barcode = cell.barcode
+        if (barcode) {
+          if (barcodeSet.has(barcode)) {
+            feedback.push({
+              type: 'danger',
+              message: this.$t('formFeedbackSetupDuplicateBarcode', { columnIndex: getColumnLabel(this.layout, column), rowIndex: getRowLabel(this.layout, row), germplasm: cell.germplasm, rep: cell.rep, barcode: barcode })
+            })
+            germplasmCorrect = false
+            return
+          }
+          barcodeSet.add(barcode)
         }
       })
 

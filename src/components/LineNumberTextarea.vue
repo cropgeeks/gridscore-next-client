@@ -1,7 +1,17 @@
 <template>
   <div class="d-flex flex-row border">
     <div ref="lineNumbers" class="container__lines border-end" />
-    <b-form-textarea :id="id" ref="textarea" wrap="off" class="container__textarea" :placeholder="placeholder" :state="state" :value="modelValue" :rows="15" @input="$emit('update:modelValue', $event.target.value)" />
+    <b-form-textarea
+      :id="id"
+      ref="textarea"
+      wrap="off"
+      class="container__textarea"
+      :placeholder="placeholder"
+      :state="state"
+      :value="modelValue"
+      :rows="15"
+      @keydown.tab.prevent="tabber($event)"
+      @input="$emit('update:modelValue', $event.target.value)" />
   </div>
 </template>
 
@@ -37,6 +47,18 @@ export default {
         'padding'
       ]
     }
+  },
+  methods: {
+    tabber: function (event) {
+      const text = this.modelValue
+      const originalSelectionStart = event.target.selectionStart
+      const textStart = text.slice(0, originalSelectionStart)
+      const textEnd = text.slice(originalSelectionStart)
+
+      this.$emit('update:modelValue', `${textStart}\t${textEnd}`)
+      event.target.value = this.input // required to make the cursor stay in place.
+      event.target.selectionEnd = event.target.selectionStart = originalSelectionStart + 1
+    },
   },
   mounted: function () {
     const textarea = this.$refs.textarea.$el

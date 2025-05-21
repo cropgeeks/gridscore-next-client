@@ -7,11 +7,20 @@
             <template #button-content>
               <IBiFileEarmarkPlus /> {{ $t('buttonImportLayoutData') }}
             </template>
-            <b-dropdown-item @click="$refs.germplasmInput.show()"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
-            <b-dropdown-item @click="$refs.repInput.show()"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="setTabInputConfig('germplasm')"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="setTabInputConfig('rep')"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="setTabInputConfig('friendlyName')"><IBiTable /> {{ $t('dropdownImportFriendlyNameGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="setTabInputConfig('barcode')"><IBiTable /> {{ $t('dropdownImportBarcodeGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="setTabInputConfig('pedigree')"><IBiTable /> {{ $t('dropdownImportPedigreeGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="$refs.fieldbookInput.show()"><IBiFileEarmarkSpreadsheet /> {{ $t('dropdownImportFieldHub') }}</b-dropdown-item>
             <b-dropdown-item @click="fillRandom" v-if="isDevelopment"><IBiShuffle /> {{ $t('dropdownImportRandom') }}</b-dropdown-item>
           </b-dropdown>
+
+          <b-card class="mt-3" title="Show input fields">
+            <b-form-checkbox v-model="showFriendlyName" switch>{{ $t('formCheckboxSetupShowFriendlyName') }}</b-form-checkbox>
+            <b-form-checkbox v-model="showBarcode" switch>{{ $t('formCheckboxSetupShowBarcode') }}</b-form-checkbox>
+            <b-form-checkbox v-model="showPedigree" switch>{{ $t('formCheckboxSetupShowPedigree') }}</b-form-checkbox>
+          </b-card>
         </b-col>
         <b-col cols=12 md=6>
           <b-form-group :label="$t('formLabelSetupGermplasmGridMarkCheck')" label-for="check">
@@ -35,8 +44,7 @@
       <table ref="germplasmTable" class="table table-striped table-bordered grid-table" ></table>
     </div>
 
-    <TabbedInputToGridModal ref="germplasmInput" label="formLabelSetupGermplasmNames" placeholder="formPlaceholderSetupGermplasmNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @data-changed="updateTableGermplasm" />
-    <TabbedInputToGridModal ref="repInput" label="formLabelSetupRepNames" placeholder="formPlaceholderSetupRepNames" formFeedbackRowCount="formFeedbackDataGridImportInvalidRowCount" formFeedbackColumnCount="formFeedbackDataGridImportInvalidColumnCount" @data-changed="updateTableRep" />
+    <TabbedInputToGridModal ref="tabInput" :label="selectedTabInputConfig.label" :placeholder="selectedTabInputConfig.placeholder" :formFeedbackRowCount="selectedTabInputConfig.rowCount" :formFeedbackColumnCount="selectedTabInputConfig.columnCount" @data-changed="selectedTabInputConfig.callback" v-if="selectedTabInputConfig" />
     <FielDBookInputModal ref="fieldbookInput" :layout="layout" @data-changed="updateTableFieldbook" />
   </div>
 </template>
@@ -72,7 +80,48 @@ export default {
   data: function () {
     return {
       germplasmMap: {},
-      checkName: null
+      checkName: null,
+      showBarcode: false,
+      showFriendlyName: false,
+      showPedigree: false,
+      tabInputConfigs: {
+        germplasm: {
+          label: 'formLabelSetupGermplasmNames',
+          placeholder: 'formPlaceholderSetupGermplasmNames',
+          rowCount: 'formFeedbackDataGridImportInvalidRowCount',
+          columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
+          callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'germplasm')
+        },
+        rep: {
+          label: 'formLabelSetupRepNames',
+          placeholder: 'formPlaceholderSetupRepNames',
+          rowCount: 'formFeedbackDataGridImportInvalidRowCount',
+          columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
+          callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'rep')
+        },
+        friendlyName: {
+          label: 'formLabelSetupFriendlyNames',
+          placeholder: 'formPlaceholderSetupFriendlyNames',
+          rowCount: 'formFeedbackDataGridImportInvalidRowCount',
+          columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
+          callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'friendlyName')
+        },
+        barcode: {
+          label: 'formLabelSetupBarcodeNames',
+          placeholder: 'formPlaceholderSetupBarcodeNames',
+          rowCount: 'formFeedbackDataGridImportInvalidRowCount',
+          columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
+          callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'barcode')
+        },
+        pedigree: {
+          label: 'formLabelSetupPedigreeNames',
+          placeholder: 'formPlaceholderSetupPedigreeNames',
+          rowCount: 'formFeedbackDataGridImportInvalidRowCount',
+          columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
+          callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'pedigree')
+        }
+      },
+      selectedTabInputConfig: null
     }
   },
   computed: {
@@ -99,9 +148,23 @@ export default {
           this.germplasmMap = {}
         }
       }
+    },
+    showBarcode: function () {
+      this.toggleFieldVisibility()
+    },
+    showPedigree: function () {
+      this.toggleFieldVisibility()
+    },
+    showFriendlyName: function () {
+      this.toggleFieldVisibility()
     }
   },
   methods: {
+    setTabInputConfig: function (name) {
+      this.selectedTabInputConfig = this.tabInputConfigs[name]
+
+      nextTick(() => this.$refs.tabInput.show())
+    },
     fillRandom: function () {
       const ids = new Map()
       for (let row = 0; row < this.layout.rows; row++) {
@@ -141,6 +204,17 @@ export default {
 
       this.$emit('data-changed', this.germplasmMap)
     },
+    toggleFieldVisibility: function () {
+      document.querySelectorAll('.input-barcode').forEach(i => {
+        i.className = `input-barcode grid-input ${this.showBarcode ? '' : 'd-none'}`
+      })
+      document.querySelectorAll('.input-pedigree').forEach(i => {
+        i.className = `input-pedigree grid-input ${this.showPedigree ? '' : 'd-none'}`
+      })
+      document.querySelectorAll('.input-friendlyName').forEach(i => {
+        i.className = `input-friendlyName grid-input ${this.showFriendlyName ? '' : 'd-none'}`
+      })
+    },
     markChecks: function () {
       if (!this.checkName || this.checkName.length < 1) {
         return
@@ -171,37 +245,14 @@ export default {
 
       this.$nextTick(() => this.resetTable())
     },
-    updateTableGermplasm: function (parsedGrid) {
-      for (let row = 0; row < this.layout.rows; row++) {
-        for (let column = 0; column < this.layout.columns; column++) {
-          const tableRep = document.querySelector(`#rep-${row}-${column}`).value
-          const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
-          const tableControl = document.querySelector(`#control-${row}-${column}`).checked
-
-          if (!this.germplasmMap[`${row}|${column}`]) {
-            this.germplasmMap[`${row}|${column}`] = {
-              germplasm: null,
-              rep: null,
-              control: false,
-              brapiId: null
-            }
-          }
-
-          this.germplasmMap[`${row}|${column}`].germplasm = parsedGrid[row][column]
-          document.querySelector(`#germplasm-${row}-${column}`).value = parsedGrid[row][column]
-          // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
-          this.germplasmMap[`${row}|${column}`].rep = tableRep
-          this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
-          this.germplasmMap[`${row}|${column}`].control = tableControl
-        }
-      }
-
-      this.$emit('data-changed', this.germplasmMap)
-    },
-    updateTableRep: function (parsedGrid) {
+    updateTableFields: function (parsedGrid, fieldName) {
       for (let row = 0; row < this.layout.rows; row++) {
         for (let column = 0; column < this.layout.columns; column++) {
           const tableGermplasm = document.querySelector(`#germplasm-${row}-${column}`).value
+          const tableRep = document.querySelector(`#rep-${row}-${column}`).value
+          const tableFriendlyName = document.querySelector(`#friendlyName-${row}-${column}`).value
+          const tableBarcode = document.querySelector(`#barcode-${row}-${column}`).value
+          const tablePedigree = document.querySelector(`#pedigree-${row}-${column}`).value
           const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
           const tableControl = document.querySelector(`#control-${row}-${column}`).checked
 
@@ -209,17 +260,25 @@ export default {
             this.germplasmMap[`${row}|${column}`] = {
               germplasm: null,
               rep: null,
+              friendlyName: null,
+              barcode: null,
+              pedigree: null,
               control: false,
               brapiId: null
             }
           }
 
-          // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
           this.germplasmMap[`${row}|${column}`].germplasm = tableGermplasm
+          this.germplasmMap[`${row}|${column}`].rep = tableRep
+          this.germplasmMap[`${row}|${column}`].friendlyName = tableFriendlyName
+          this.germplasmMap[`${row}|${column}`].barcode = tableBarcode
+          this.germplasmMap[`${row}|${column}`].pedigree = tablePedigree
           this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
-          this.germplasmMap[`${row}|${column}`].rep = parsedGrid[row][column]
           this.germplasmMap[`${row}|${column}`].control = tableControl
-          document.querySelector(`#rep-${row}-${column}`).value = parsedGrid[row][column]
+
+          // Now update with new value
+          this.germplasmMap[`${row}|${column}`][fieldName] = parsedGrid[row][column]
+          document.querySelector(`#${fieldName}-${row}-${column}`).value = parsedGrid[row][column]
         }
       }
 
@@ -242,8 +301,7 @@ export default {
         }
       }
 
-      this.$refs.germplasmInput.reset()
-      this.$refs.repInput.reset()
+      this.selectedTabInputConfig = null
     },
     createElement: function (parent, type) {
       const element = document.createElement(type)
@@ -306,6 +364,36 @@ export default {
           } else {
             rep.value = ''
           }
+          // Friendly name input
+          const friendlyName = this.createElement(cell, 'input')
+          friendlyName.id = `friendlyName-${row}-${column}`
+          friendlyName.className = `input-friendlyName grid-input ${this.showFriendlyName ? '' : 'd-none'}`
+          friendlyName.placeholder = 'Friendly name'
+          if (dataCell) {
+            friendlyName.value = dataCell.friendlyName || ''
+          } else {
+            friendlyName.value = ''
+          }
+          // Barcode input
+          const barcode = this.createElement(cell, 'input')
+          barcode.id = `barcode-${row}-${column}`
+          barcode.className = `input-barcode grid-input ${this.showBarcode ? '' : 'd-none'}`
+          barcode.placeholder = 'Barcode'
+          if (dataCell) {
+            barcode.value = dataCell.barcode || ''
+          } else {
+            barcode.value = ''
+          }
+          // Barcode input
+          const pedigree = this.createElement(cell, 'input')
+          pedigree.id = `pedigree-${row}-${column}`
+          pedigree.className = `input-pedigree grid-input ${this.showPedigree ? '' : 'd-none'}`
+          pedigree.placeholder = 'Pedigree'
+          if (dataCell) {
+            pedigree.value = dataCell.pedigree || ''
+          } else {
+            pedigree.value = ''
+          }
           // BrapiId input
           const brapiId = this.createElement(cell, 'input')
           brapiId.id = `brapiId-${row}-${column}`
@@ -340,15 +428,21 @@ export default {
       const tempMap = {}
       for (let row = 0; row < this.layout.rows; row++) {
         for (let column = 0; column < this.layout.columns; column++) {
-          const germplasm = document.querySelector(`#germplasm-${row}-${column}`).value
-          const rep = document.querySelector(`#rep-${row}-${column}`).value
+          const germplasm = document.querySelector(`#germplasm-${row}-${column}`).value.trim()
+          const rep = document.querySelector(`#rep-${row}-${column}`).value.trim()
+          const friendlyName = document.querySelector(`#friendlyName-${row}-${column}`).value.trim()
+          const barcode = document.querySelector(`#barcode-${row}-${column}`).value.trim()
+          const pedigree = document.querySelector(`#pedigree-${row}-${column}`).value.trim()
           const control = document.querySelector(`#control-${row}-${column}`).checked
           const brapiId = document.querySelector(`#brapiId-${row}-${column}`).value
 
           if (germplasm !== '' || rep !== '') {
             tempMap[`${row}|${column}`] = {
-              germplasm: germplasm === '' ? null : germplasm.trim(),
-              rep: rep === '' ? null : rep.trim(),
+              germplasm: germplasm === '' ? null : germplasm, 
+              rep: rep === '' ? null : rep,
+              friendlyName: friendlyName === '' ? null : friendlyName,
+              barcode: barcode === '' ? null : barcode,
+              pedigree: pedigree === '' ? null : pedigree,
               control,
               brapiId: brapiId === '' ? null : brapiId
             }
@@ -391,13 +485,7 @@ export default {
   background-clip: padding-box;
   border: 1px solid #ced4da;
 }
-.grid-table td .grid-input:nth-child(2) {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom: 0;
-}
-.grid-table td .grid-input:nth-child(3) {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.grid-table td :not(.grid-input:first-of-type) {
+  border-top: 0;
 }
 </style>

@@ -95,7 +95,7 @@
               <b-col class="mb-3" cols=12 md=6 v-for="trait in traits" :key="`trait-section-${trait.id}`">
                 <h4 class="d-flex justify-content-between align-items-center">
                   <span :style="{ color: trait.color }">
-                    <TraitHeading :trait="trait" />
+                    <TraitHeading hasData :trait="trait" />
                   </span>
                   <b-button-group>
                     <span class="d-inline-block" tabindex="0" v-b-tooltip:hover="canUploadTraitImage ? '' : $t('tooltipTraitImageUploadTrialNotShare')">

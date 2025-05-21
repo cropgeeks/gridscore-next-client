@@ -28,7 +28,7 @@
               <h5 class="mb-1"><IBiTags /> {{ $t('transactionTypeTraitsAdded') }}</h5>
 
               <p class="mb-1">
-                <TraitHeading :trait="trait" v-for="trait in transaction.trialTraitAddedTransactions" :key="`trait-${trait.id}`" />
+                <TraitHeading hasData :trait="trait" v-for="trait in transaction.trialTraitAddedTransactions" :key="`trait-${trait.id}`" />
               </p>
             </b-list-group-item>
 
@@ -71,6 +71,15 @@
               <h5 class="mb-1">
                 <IconBrapi /> {{ $t('transactionTypeBrapiConfigChanged') }}
               </h5>
+            </b-list-group-item>
+
+            <!-- PLOT DETAILS CHANGED -->
+            <b-list-group-item v-if="transaction.plotDetailsChangeTransaction && Object.keys(transaction.plotDetailsChangeTransaction).length > 0">
+              <h5 class="mb-1"><IBiJournalAlbum /> {{ $t('transactionTypePlotDetailsChanged') }}</h5>
+
+              <p class="mb-1">
+                {{ $t('transactionTypePlotDetailsChangedCount', Object.keys(transaction.plotDetailsChangeTransaction).length) }}
+              </p>
             </b-list-group-item>
 
             <!-- GERMPLASM ADDED -->

@@ -2,13 +2,13 @@
   <div v-if="cell && traits && traits.length > 0">
     <h4>{{ cell.displayName }}</h4>
 
+    <CellInfoBadges :cell="cell" />
+
     <p v-if="cell && cell.categories">
       <b-badge v-for="cat in cell.categories" :key="`cell-category-${cell.row}-${cell.column}-${cat}`" :variant="CELL_CATEGORIES[cat].variant">
         <component :is="CELL_CATEGORIES[cat].icon" /> {{ $t(CELL_CATEGORIES[cat].title) }}
       </b-badge>
     </p>
-
-    <p class="text-muted">{{ $t('pageVisualizationMapPlotInfo', { row: rowIndex, column: columnIndex }) }}</p>
 
     <div v-if="cell.measurements">
       <section v-for="trait in traits" :key="`trait-section-${trait.id}`" class="mt-3">
@@ -39,10 +39,12 @@ import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 import { CELL_CATEGORIES, CELL_CATEGORY_CONTROL } from '@/plugins/constants'
+import CellInfoBadges from '@/components/CellInfoBadges.vue'
 
 export default {
   components: {
-    TraitIcon
+    TraitIcon,
+    CellInfoBadges
   },
   props: {
     trial: {

@@ -6,7 +6,7 @@ import { trialLayoutToPlots } from './location'
 import { getColumnLabel, getRowLabel } from '@/plugins/misc'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
 import { CellPlus, Geolocation, TraitPlus, TrialPlus } from '@/plugins/types/client'
-import { BrapiConfig, Comment, Corners, Event, EventType, Group, Markers, Measurement, Person, ShareCodes, SocialShareConfig, Trait, TraitMeasurement, Transaction, Trial } from '@/plugins/types/gridscore'
+import { BrapiConfig, Comment, Corners, Event, EventType, Group, Markers, Measurement, Person, PlotDetailContent, ShareCodes, SocialShareConfig, Trait, TraitMeasurement, Transaction, Trial } from '@/plugins/types/gridscore'
 
 export interface TrialModification {
   name: string
@@ -20,6 +20,10 @@ export interface TrialModification {
 
 export interface DataModification {
   [index: string]: TraitMeasurement[]
+}
+
+export interface PlotModification {
+  [index: string]: PlotDetailContent
 }
 
 let store: any | undefined
@@ -37,7 +41,7 @@ const getDb = async () => {
     if (db) {
       return resolve(db)
     } else {
-      openDB('gridscore-next-' + window.location.pathname, 7, {
+      openDB('gridscore-next-' + window.location.pathname, 8, {
         upgrade: function (db, oldVersion, newVersion, transaction) {
           let trials
           let data
@@ -93,6 +97,12 @@ const getDb = async () => {
           if (oldVersion < 7) {
             trials = transaction.objectStore('trials')
             trials.createIndex('remoteToken', 'remoteToken', { unique: false })
+          }
+          if (oldVersion < 8) {
+            data = transaction.objectStore('trials')
+            data.createIndex('friendlyName', 'friendlyName', { unique: false })
+            data.createIndex('pedigree', 'pedigree', { unique: false })
+            data.createIndex('barcode', 'barcode', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -221,6 +231,7 @@ const getTrials = async () => {
           t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
           t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
           t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
+          t.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
           t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
           t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
           t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
@@ -533,6 +544,7 @@ const getTrialById = async (localId: string) => {
           trial.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
           trial.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
           trial.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
+          trial.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
           trial.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
           trial.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
           trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
@@ -564,6 +576,58 @@ const getTransactionForTrial = async (localId: string) => {
     return db.get('transactions', localId)
   } else {
     return new Promise(resolve => resolve(null))
+  }
+}
+
+const updatePlotMetadata = async (trialId: string, plotMetadata: PlotModification) => {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+    const transaction: Transaction = logTransactions(trial) ? ((await db.get('transactions', trialId)) || getEmptyTransaction(trialId)) : null
+
+    for (const [key, data] of Object.entries(plotMetadata)) {
+      const [row, column] = key.split('|').map(c => +c)
+
+      const cell = await getCell(trialId, row, column)
+      // Remove this as it was only added temporarily
+      delete cell.displayName
+      delete cell.displayRow
+      delete cell.displayColumn
+
+      if (data.friendlyName === 'DELETE') {
+        delete cell.friendlyName
+      } else if (data.friendlyName !== null && data.friendlyName !== '') {
+        cell.friendlyName = data.friendlyName
+      }
+      if (data.barcode === 'DELETE') {
+        delete cell.barcode
+      } else if (data.barcode !== null && data.barcode !== '') {
+        cell.barcode = data.barcode
+      }
+      if (data.pedigree === 'DELETE') {
+        delete cell.pedigree
+      } else if (data.pedigree !== null && data.pedigree !== '') {
+        cell.pedigree = data.pedigree
+      }
+
+      if (logTransactions(trial)) {
+        // Set the transaction details to use whatever the current new state of the plot is.
+        transaction.plotDetailsChangeTransaction[key] = {
+          row: data.row,
+          column: data.column,
+          friendlyName: cell.friendlyName,
+          barcode: cell.barcode,
+          pedigree: cell.pedigree
+        }
+      }
+
+      await db.put('data', cell)
+    }
+
+    if (transaction) {
+      await db.put('transactions', transaction)
+    }
   }
 }
 
@@ -743,11 +807,11 @@ const changeTrialsData = async (trialId: string, dataMapping: DataModification, 
         }
       }
 
-      if (transaction) {
-        await db.put('transactions', transaction)
-      }
-
       await db.put('data', cell)
+    }
+
+    if (transaction) {
+      await db.put('transactions', transaction)
     }
 
     return new Promise<void>(resolve => resolve())
@@ -834,6 +898,9 @@ const addTrial = async (trial: TrialPlus) => {
         column,
         germplasm: cell.germplasm,
         rep: cell.rep,
+        friendlyName: cell.friendlyName,
+        barcode: cell.barcode,
+        pedigree: cell.pedigree,
         brapiId: cell.brapiId,
         measurements: cell.measurements,
         geography: cell.geography,
@@ -913,6 +980,7 @@ const getEmptyTransaction = (trialId: string): Transaction => {
     plotMarkedTransactions: {},
     plotTraitDataChangeTransactions: {},
     plotGeographyChangeTransactions: {},
+    plotDetailsChangeTransaction: {},
     trialCommentAddedTransactions: [],
     trialCommentDeletedTransactions: [],
     trialEventAddedTransactions: [],
@@ -1435,5 +1503,6 @@ export {
   getTrialValidPlots,
   addTrialGermplasm,
   updateTraitBrapiIds,
-  updateGermplasmBrapiIds
+  updateGermplasmBrapiIds,
+  updatePlotMetadata
 }

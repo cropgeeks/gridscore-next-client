@@ -71,6 +71,7 @@
           <b-dropdown-item @click="$emit('addPerson')" v-if="trial.editable"><IBiPersonPlus /> {{ $t('buttonAddPerson') }}</b-dropdown-item>
           <b-dropdown-item @click="$emit('addGermplasm')" v-if="trial.editable && trial.layout.columns === 1"><IBiNodePlus :style="{ transform: 'rotate(90deg)' }" /> {{ $t('buttonAddGermplasm') }}</b-dropdown-item>
           <b-dropdown-item @click="$emit('importData')" v-if="trial.editable"><IBiFileEarmarkArrowUp /> {{ $t('buttonUploadData') }}</b-dropdown-item>
+          <b-dropdown-item @click="$emit('updatePlotMetadata')" v-if="trial.editable"><IBiJournalArrowUp /> {{ $t('buttonUpdateMetadata') }}</b-dropdown-item>
           <b-dropdown-divider />
           <b-dropdown-item variant="danger" @click="$emit('deleteTrial')"><IBiTrash /> {{ $t('buttonDelete') }}</b-dropdown-item>
         </b-dropdown>

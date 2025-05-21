@@ -39,7 +39,7 @@
         <b-row>
           <b-col cols=12 lg=6 v-for="(t, tIndex) in selectedTraits" :key="`trait-heading-${t.trait.id}`">
             <div class="d-flex flex-row justify-content-between align-items-center flex-wrap">
-              <h2><TraitHeading :short="true" :trait="t.trait" :traitIndex="t.index" /></h2>
+              <h2><TraitHeading hasData :short="true" :trait="t.trait" :traitIndex="t.index" /></h2>
               <b-form-checkbox v-if="t.trait.dataType !== 'gps'" switch v-model="chartInteractionEnabled[tIndex]" @input="toggleChartInteraction(tIndex)"> {{ $t(chartInteractionEnabled[tIndex] ? 'formCheckboxChartInteractEnabled' : 'formCheckboxChartInteractDisabled') }}</b-form-checkbox>
             </div>
             <p v-if="t.trait.description">{{ t.trait.description }}</p>
@@ -258,6 +258,9 @@ export default {
                         displayRow: cell.displayRow,
                         row: cell.row,
                         column: cell.column,
+                        pedigree: cell.pedigree,
+                        barcode: cell.barcode,
+                        friendlyName: cell.friendlyName,
                         setIndex,
                         value: v,
                         name: cell.displayName,
@@ -288,7 +291,7 @@ export default {
                   data.unshift({
                     x: dps.map(d => d.value),
                     text: dps.map(d => d.name),
-                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn })),
+                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn })),
                     ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                     name: k,
                     type: chartType,
@@ -305,7 +308,7 @@ export default {
                 data.push({
                   x: dps.map(d => d.value),
                   text: dps.map(d => d.name),
-                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => this.$t(CELL_CATEGORIES[c].title)).join(', ') })),
+                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => this.$t(CELL_CATEGORIES[c].title)).join(', ') })),
                   ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                   marker: {
                     color: this.storeHighlightControls ? dps.map(d => (d.categories && d.categories.includes(CELL_CATEGORY_CONTROL)) ? invertHex(trait.color) : trait.color) : trait.color

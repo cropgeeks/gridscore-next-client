@@ -1,6 +1,6 @@
 <template>
   <div :id="`scale-${id}`" v-if="trait && traitStats && germplasmStats">
-    <TraitHeading short :trait="trait" />
+    <TraitHeading hasData short :trait="trait" />
     <div class="d-flex my-2">
       <div :class="`d-flex scale-container align-items-center w-100 ${storeDarkMode ? 'bg-dark' : 'bg-light'}`">
         <div class="scale-marker" :style="{ backgroundColor: trait.color, marginLeft: `calc(${germplasmPercentage}% - 1px)` }" />

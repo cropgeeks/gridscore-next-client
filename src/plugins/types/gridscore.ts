@@ -70,6 +70,9 @@ export interface Layout {
 export interface Cell {
     brapiId: string;
     germplasm: string;
+    pedigree?: string;
+    friendlyName?: string;
+    barcode?: string;
     rep: string;
     isMarked: boolean;
     geography: Geography;
@@ -146,6 +149,12 @@ export interface PlotContent {
     column: number;
 }
 
+export interface PlotDetailContent extends PlotContent {
+    pedigree: string;
+    friendlyName: string;
+    barcode: string;
+}
+
 export interface MeasurementChange extends Measurement {
     delete?: boolean;
 }
@@ -206,6 +215,7 @@ export interface Transaction {
     plotMarkedTransactions: { [index: string]: boolean };
     plotTraitDataChangeTransactions: { [index: string]: TraitMeasurement[] };
     plotGeographyChangeTransactions: { [index: string]: PlotGeographyContent };
+    plotDetailsChangeTransaction: { [index: string]: PlotDetailContent };
     trialCommentAddedTransactions: TrialCommentContent[];
     trialCommentDeletedTransactions: TrialCommentContent[];
     trialEventAddedTransactions: TrialEventContent[];

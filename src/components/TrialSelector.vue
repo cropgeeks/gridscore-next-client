@@ -86,6 +86,7 @@
                                     @showTrialEdit="showTrialEdit(trial)"
                                     @addGermplasm="addGermplasm(trial)"
                                     @importData="importData(trial)"
+                                    @updatePlotMetadata="showPlotMetadataUpdate(trial)"
                                     @deleteTrial="deleteTrial(trial)"/>
               </b-list-group>
               <b-row v-else>
@@ -104,6 +105,7 @@
                             @showTrialEdit="showTrialEdit(trial)"
                             @addGermplasm="addGermplasm(trial)"
                             @importData="importData(trial)"
+                            @updatePlotMetadata="showPlotMetadataUpdate(trial)"
                             @deleteTrial="deleteTrial(trial)"/>
                 </b-col>
               </b-row>
@@ -125,6 +127,7 @@
     <AddGermplasmModal :trialId="selectedTrial.localId" ref="addGermplasmModal" v-if="selectedTrial && selectedTrial.editable && selectedTrial.layout.columns === 1 && modalToShow === 'add-germplasm'" />
     <TrialSynchronizationModal :trial="selectedTrial" ref="traitSyncModal" v-if="selectedTrial && (selectedTrial.transactionCount > 0 || selectedTrial.hasRemoteUpdate) && modalToShow === 'sync'" />
     <TrialDataImportModal :trial="selectedTrial" ref="trialDataImportModal" v-if="selectedTrial && modalToShow === 'import-data'" />
+    <PlotMetadataUpdateModal :trial="selectedTrial" ref="plotMetadataUpdateModal" v-if="selectedTrial && modalToShow === 'import-plot-metadata'" />
     <TrialModificationModal :trial="selectedTrial" ref="trialModificationModal" v-if="selectedTrial && modalToShow === 'edit-trial'" />
     <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial && modalToShow === 'trial-expiration'" />
   </div>
@@ -142,6 +145,7 @@ import TrialExpirationModal from '@/components/modals/TrialExpirationModal.vue'
 import TrialDataImportModal from '@/components/modals/TrialDataImportModal.vue'
 import AddGermplasmModal from '@/components/modals/AddGermplasmModal.vue'
 import TrialSynchronizationModal from '@/components/modals/TrialSynchronizationModal.vue'
+import PlotMetadataUpdateModal from '@/components/modals/PlotMetadataUpdateModal.vue'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER, TRIAL_LIST_ALL, TRIAL_LIST_TABBED, TRIAL_LIST_GRID, TRIAL_LIST_LIST } from '@/plugins/constants'
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
@@ -164,7 +168,8 @@ export default {
     AddGermplasmModal,
     TrialModificationModal,
     TrialExpirationModal,
-    EditPeopleModal
+    EditPeopleModal,
+    PlotMetadataUpdateModal
   },
   data: function () {
     return {
@@ -419,6 +424,12 @@ export default {
       this.modalToShow = 'edit-trial'
 
       this.$nextTick(() => this.$refs.trialModificationModal.show())
+    },
+    showPlotMetadataUpdate: function (trial) {
+      this.selectedTrial = trial
+      this.modalToShow = 'import-plot-metadata'
+
+      this.$nextTick(() => this.$refs.plotMetadataUpdateModal.show())
     },
     duplicateTrial: function (trial) {
       this.$router.push({ name: 'trial-duplication', params: { trialId: trial.localId } })

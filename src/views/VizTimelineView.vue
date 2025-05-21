@@ -15,7 +15,7 @@
         <p>{{ $t('pageVisualizationRepeatTraitsText') }}</p>
 
         <div v-for="trait in repeatTraits" :key="`timeline-repeat-${trait.trait.id}`">
-          <h3><TraitHeading :trait="trait.trait" :traitIndex="trait.index" :short="true" /></h3>
+          <h3><TraitHeading hasData :trait="trait.trait" :traitIndex="trait.index" :short="true" /></h3>
           <MultiTraitTimeline :trial="trial" :trait="trait.trait" :traitIndex="trait.index" />
         </div>
       </section>

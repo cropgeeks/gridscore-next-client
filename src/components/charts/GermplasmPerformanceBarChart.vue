@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TraitHeading short :trait="trait" />
+    <TraitHeading hasData short :trait="trait" />
     <div ref="chart" v-if="trait && traitStats" />
   </div>
 </template>

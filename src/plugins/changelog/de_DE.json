@@ -649,8 +649,13 @@
     "items": [
       {
         "type": "new",
+        "title": "Zugehöriger Barcode, freundlicher Name und Stammbaum",
+        "text": "Während der Erstellung eines Versuchs können neben dem Identifikator des Keimplasmas und der Reps nun auch folgende Angaben definiert werden: a) Ein benutzerfreundlicher Name: Dieser wird anstelle des Keimplasmanamens in der gesamten Benutzeroberfläche angezeigt. b) Dedizierter Barcode: Anstelle des Keimplasma-Identifikators als Barcode kann nun ein eigener Barcode für jedes Beet angegeben werden. c) Stammbaum: Stammbauminformationen für jedes Beet können importiert werden."
+      },
+      {
+        "type": "new",
         "title": "Langes Format Funktionalitäten",
-        "text": "Beim Exportieren von Daten in das lange Format ist es nun möglich Information über die Person einzuschließen welche die Daten gesammelt hat, sowie den tatsächlichen Zeitpunkt der Sammlung zu exportieren."
+        "text": "Beim Exportieren von Daten in das lange Format ist es nun möglich Information über die Person einzuschließen welche die Daten gesammelt hat, sowie den tatsächlichen Zeitpunkt der Sammlung zu exportieren. Wir schließen jetzt auch die Satzposition mit ein."
       },
       {
         "type": "bugfix",

@@ -649,8 +649,13 @@
     "items": [
       {
         "type": "new",
+        "title": "Dedicated barcode, friendly name, pedigree",
+        "text": "During the creation of a trial, in addition to the germplasm identifier and the rep, you can now also define the following: a) a friendly name: this will be used instead of the germplasm name for display thoughout the interface. b) dedicated barcode: instead of using the germplasm identifier as the barcode, you can now specify dedicated barcodes for each plot. c) pedigree: Pedigree information for each plot can be imported."
+      },
+      {
+        "type": "new",
         "title": "Long format features",
-        "text": "When exporting data in then long format, it is now possible to include the person who recorded the data as well as show the full timestamp of the recording event."
+        "text": "When exporting data in then long format, it is now possible to include the person who recorded the data as well as show the full timestamp of the recording event. We now also include the set position."
       },
       {
         "type": "bugfix",

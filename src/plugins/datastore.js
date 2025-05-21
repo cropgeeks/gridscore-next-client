@@ -69,11 +69,13 @@ const getGermplasmMatches = (trial, searchTerm) => {
     const lower = searchTerm.toLowerCase()
 
     return Object.values(trialData).filter(c => {
-      return c.germplasm.toLowerCase() === lower || c.displayName.toLowerCase() === lower
+      return ((c.barcode !== undefined) && (c.barcode !== null) && (c.barcode.toLowerCase() === lower)) || (c.germplasm.toLowerCase() === lower) || (c.displayName.toLowerCase() === lower)
     }).map(c => {
       return {
         name: c.germplasm,
         rep: c.rep,
+        barcode: c.barcode,
+        pedigree: c.pedigree,
         displayName: c.displayName,
         row: c.row,
         column: c.column,

@@ -50,6 +50,21 @@
             <b-form-select id="rep" v-model="columnMapping.rep" :options="fileColumns" />
           </b-form-group>
         </b-col>
+        <b-col cols=12 md=6>
+          <b-form-group :label="$t('formLabelFielDBookFriendlyName')" :description="$t('formDescriptionFielDBookFriendlyName')" label-for="friendlyName">
+            <b-form-select id="friendlyName" v-model="columnMapping.friendlyName" :options="fileColumns" />
+          </b-form-group>
+        </b-col>
+        <b-col cols=12 md=6>
+          <b-form-group :label="$t('formLabelFielDBookBarcode')" :description="$t('formDescriptionFielDBookBarcode')" label-for="barcode">
+            <b-form-select id="barcode" v-model="columnMapping.barcode" :options="fileColumns" />
+          </b-form-group>
+        </b-col>
+        <b-col cols=12 md=6>
+          <b-form-group :label="$t('formLabelFielDBookPedigree')" :description="$t('formDescriptionFielDBookPedigree')" label-for="pedigree">
+            <b-form-select id="pedigree" v-model="columnMapping.pedigree" :options="fileColumns" />
+          </b-form-group>
+        </b-col>
       </b-row>
     </div>
   </b-modal>
@@ -88,7 +103,10 @@ export default {
         row: null,
         column: null,
         germplasm: null,
-        rep: null
+        rep: null,
+        friendlyName: null,
+        barcode: null,
+        pedigree: null
       }
     }
   },
@@ -117,7 +135,10 @@ export default {
         row: null,
         column: null,
         germplasm: null,
-        rep: null
+        rep: null,
+        friendlyName: null,
+        barcode: null,
+        pedigree: null
       }
 
       if (!this.input || this.input.length < 1) {
@@ -161,6 +182,18 @@ export default {
         if (this.parsedData.columns.includes('Germplasm')) {
           this.columnMapping.germplasm = 'Germplasm'
         }
+        if (this.parsedData.columns.includes('FriendlyName')) {
+          this.columnMapping.friendlyName = 'FriendlyName'
+        }
+        if (this.parsedData.columns.includes('Friendly name')) {
+          this.columnMapping.friendlyName = 'Friendly name'
+        }
+        if (this.parsedData.columns.includes('Barcode')) {
+          this.columnMapping.barcode = 'Barcode'
+        }
+        if (this.parsedData.columns.includes('Pedigree')) {
+          this.columnMapping.pedigree = 'Pedigree'
+        }
         // FielDHub specific naming
         if (this.parsedData.columns.includes('ROW')) {
           this.columnMapping.row = 'ROW'
@@ -199,6 +232,9 @@ export default {
         const column = r[this.columnMapping.column]
         const germplasm = r[this.columnMapping.germplasm]
         const rep = r[this.columnMapping.rep] || null
+        const friendlyName = r[this.columnMapping.friendlyName] || null
+        const barcode = r[this.columnMapping.barcode] || null
+        const pedigree = r[this.columnMapping.pedigree] || null
 
         if (!germplasm || germplasm === '') {
           this.formValidated = false
@@ -227,7 +263,10 @@ export default {
 
         mapping[`${rowIndex}|${columnIndex}`] = {
           germplasm,
-          rep
+          rep,
+          friendlyName,
+          barcode,
+          pedigree
         }
       }
 
@@ -259,7 +298,10 @@ export default {
         row: null,
         column: null,
         germplasm: null,
-        rep: null
+        rep: null,
+        friendlyName: null,
+        barcode: null,
+        pedigree: null
       }
     },
     /**
