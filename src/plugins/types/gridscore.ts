@@ -133,7 +133,7 @@ export interface Geography {
 }
 
 export interface Measurement {
-    personId: string;
+    personId?: string;
     timestamp: string;
     values: string[];
 }

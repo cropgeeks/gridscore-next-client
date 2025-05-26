@@ -928,7 +928,9 @@ const getCell = async (trialId: string, row: number, column: number) => {
       if (c) {
         let displayName = c.germplasm
 
-        if (c.rep) {
+        if (c.friendlyName) {
+          displayName = c.friendlyName
+        } else if (c.rep) {
           displayName += '-' + c.rep
         }
 
@@ -954,7 +956,9 @@ const getTrialData = async (trialId: string) => {
           grid.forEach((c: CellPlus) => {
             let displayName = c.germplasm
 
-            if (c.rep) {
+            if (c.friendlyName) {
+              displayName = c.friendlyName
+            } else if (c.rep) {
               displayName += '-' + c.rep
             }
 

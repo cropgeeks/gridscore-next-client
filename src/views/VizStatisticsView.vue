@@ -263,7 +263,7 @@ export default {
                         friendlyName: cell.friendlyName,
                         setIndex,
                         value: v,
-                        name: cell.displayName,
+                        name: cell.germplasm,
                         rep: cell.rep,
                         date: dateString,
                         timestamp: m.timestamp,
