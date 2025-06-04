@@ -17,7 +17,7 @@
                   :readonly="!editable"
                   @click.prevent
                   @focus.prevent
-                  @change="tts" />
+                  @blur="tts" />
     <!-- For int types, show a number input, apply restrictions -->
     <b-form-input :id="id"
                   v-else-if="trait.dataType === 'int'"
