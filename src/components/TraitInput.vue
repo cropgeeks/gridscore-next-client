@@ -15,6 +15,8 @@
                   type="date"
                   ref="input"
                   :readonly="!editable"
+                  @click.prevent
+                  @focus.prevent
                   @change="tts" />
     <!-- For int types, show a number input, apply restrictions -->
     <b-form-input :id="id"
