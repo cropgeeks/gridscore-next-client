@@ -203,7 +203,8 @@ export default {
       'storeSelectedTrialPerson',
       'storeLocale',
       'storeEnterBarcode',
-      'storeEscapeBarcode'
+      'storeEscapeBarcode',
+      'storeAutoProgressInputs'
     ]),
     tourSteps: function () {
       return [{
@@ -557,6 +558,10 @@ export default {
       })
     },
     onTraverse: function (currentTrait) {
+      if (this.storeAutoProgressInputs === false) {
+        return
+      }
+
       const groupIndex = this.traitsByGroup.findIndex(g => g.traits.map(t => t.id).includes(currentTrait.id))
 
       if (groupIndex !== -1) {

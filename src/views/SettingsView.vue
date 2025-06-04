@@ -92,6 +92,12 @@
                 {{ autoSelectSearch ? $t('genericEnabled') : $t('genericDisabled') }}
               </b-form-checkbox>
             </b-form-group>
+
+            <b-form-group :label="$t('formLabelSettingsAutoProgressInputs')" :description="$t('formDescriptionSettingsAutoProgressInputs')" label-for="autoProgressInputs">
+              <b-form-checkbox id="autoProgressInputs" v-model="autoProgressInputs" switch>
+                {{ autoProgressInputs ? $t('genericEnabled') : $t('genericDisabled') }}
+              </b-form-checkbox>
+            </b-form-group>
           </b-card>
         </b-col>
         <b-col cols=12 md=6>
@@ -283,7 +289,8 @@ export default {
       largeButtonsForIntTraits: false,
       categoricalColors,
       barcodeId: null,
-      autoSelectSearch: false
+      autoSelectSearch: false,
+      autoProgressInputs: false
     }
   },
   computed: {
@@ -311,7 +318,8 @@ export default {
       'storeLargeButtonsForIntTraits',
       'storeCategoryCountInline',
       'storeMainDisplayMode',
-      'storeAutoSelectSearch'
+      'storeAutoSelectSearch',
+      'storeAutoProgressInputs'
     ]),
     localeOptions: function () {
       return locales.map(l => {
@@ -395,6 +403,10 @@ export default {
     autoSelectSearch: function (newValue) {
       this.coreStore.setAutoSelectSearch(newValue)
       emitter.emit('plausible-event', { key: 'settings-changed', props: { autoSelectSearch: newValue } })
+    },
+    autoProgressInputs: function (newValue) {
+      this.coreStore.setAutoProgressInputs(newValue)
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { autoProgressInputs: newValue } })
     },
     restrictInputToMarked: function (newValue) {
       this.coreStore.setRestrictInputToMarked(newValue)
@@ -510,6 +522,7 @@ export default {
       this.escapeBarcode = this.storeEscapeBarcode
       this.enterBarcode = this.storeEnterBarcode
       this.autoSelectSearch = this.storeAutoSelectSearch
+      this.autoProgressInputs = this.storeAutoProgressInputs
     }
   },
   mounted: function () {

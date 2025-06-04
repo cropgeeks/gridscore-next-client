@@ -51,6 +51,7 @@ export const coreStore = defineStore('core', {
     escapeBarcode: null as (string | null),
     enterBarcode: null as (string | null),
     autoSelectSearch: false,
+    autoProgressInputs: true,
     categoryCountInline: 4,
     mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
     plausible: {
@@ -87,6 +88,7 @@ export const coreStore = defineStore('core', {
     storeEscapeBarcode: (state): string | null => state.escapeBarcode,
     storeEnterBarcode: (state): string | null => state.enterBarcode,
     storeAutoSelectSearch: (state): boolean => state.autoSelectSearch,
+    storeAutoProgressInputs: (state): boolean => state.autoProgressInputs,
     storeLargeButtonsForIntTraits: (state): boolean => state.largeButtonsForIntTraits,
     storeCanvasDensity: (state): string => state.canvasDensity,
     storeCanvasShape: (state): string => state.canvasShape,
@@ -126,6 +128,9 @@ export const coreStore = defineStore('core', {
     },
     setAutoSelectSearch: function (newAutoSelectSearch: boolean) {
       this.autoSelectSearch = newAutoSelectSearch
+    },
+    setAutoProgressInputs: function (newAutoProgressInputs: boolean) {
+      this.autoProgressInputs = newAutoProgressInputs
     },
     setSelectedTrial: function (newSelectedTrial: string) {
       /* Remember to reset everything here */

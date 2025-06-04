@@ -80,7 +80,8 @@ export default {
       'storePlotDisplayField',
       'storeEnterBarcode',
       'storeEscapeBarcode',
-      'storeAutoSelectSearch'
+      'storeAutoSelectSearch',
+      'storeAutoProgressInputs'
     ])
   },
   methods: {
@@ -200,6 +201,11 @@ export default {
         } else if (parsed.ass === 0) {
           this.coreSelect.setAutoSelectSearch(false)
         }
+        if (parsed.api === 1) {
+          this.coreStore.setAutoProgressInputs(true)
+        } else if (parsed.api === 0) {
+          this.coreSelect.setAutoProgressInputs(false)
+        }
 
         this.$emit('data-changed')
 
@@ -239,7 +245,8 @@ export default {
         cc: this.storeCategoryCountInline,
         enb: this.storeEnterBarcode,
         esb: this.storeEscapeBarcode,
-        ass: this.storeAutoSelectSearch
+        ass: this.storeAutoSelectSearch,
+        api: this.storeAutoProgressInputs
       })
 
       emitter.emit('plausible-event', { key: 'settings-shared', props: { type: 'share' } })
