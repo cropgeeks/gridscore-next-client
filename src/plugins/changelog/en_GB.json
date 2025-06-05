@@ -658,6 +658,11 @@
         "text": "When exporting data in then long format, it is now possible to include the person who recorded the data as well as show the full timestamp of the recording event. We now also include the set position."
       },
       {
+        "type": "new",
+        "title": "Disable auto-progression",
+        "text": "It is now possible to disable the automatic progression between trait inputs where the next input field (might be in the next trait group tab) is automatically selected once a value has been entered. This will help prevent automatic date selection for date traits on iOS devices."
+      },
+      {
         "type": "bugfix",
         "title": "Long format error",
         "text": "Fixed issues with export to long format where data wasn't exported correctly when aggregation was enabled."

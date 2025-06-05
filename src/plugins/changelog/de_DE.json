@@ -658,6 +658,11 @@
         "text": "Beim Exportieren von Daten in das lange Format ist es nun möglich Information über die Person einzuschließen welche die Daten gesammelt hat, sowie den tatsächlichen Zeitpunkt der Sammlung zu exportieren. Wir schließen jetzt auch die Satzposition mit ein."
       },
       {
+        "type": "new",
+        "title": "Deaktivierung von automatischer Progression",
+        "text": "Es ist jetzt möglich, die automatische Progression zwischen Merkmalseingaben zu deaktivieren, bei der das nächste Eingabefeld (möglicherweise im nächsten Merkmalsgruppen-Tab) automatisch ausgewählt wird, sobald ein Wert eingegeben wurde. Dies hilft, die automatische Datumsauswahl für Datumsmerkmale auf iOS-Geräten zu verhindern."
+      },
+      {
         "type": "bugfix",
         "title": "Langes Format Fehler",
         "text": "Fehler behoben beim Exportieren in das lange Format wo Daten nicht korrekt exportiert wurden falls Aggregation aktiviert war."
