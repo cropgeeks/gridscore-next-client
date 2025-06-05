@@ -649,8 +649,8 @@
     "items": [
       {
         "type": "new",
-        "title": "Zugehöriger Barcode, freundlicher Name und Stammbaum",
-        "text": "Während der Erstellung eines Versuchs können neben dem Identifikator des Keimplasmas und der Reps nun auch folgende Angaben definiert werden: a) Ein benutzerfreundlicher Name: Dieser wird anstelle des Keimplasmanamens in der gesamten Benutzeroberfläche angezeigt. b) Dedizierter Barcode: Anstelle des Keimplasma-Identifikators als Barcode kann nun ein eigener Barcode für jedes Beet angegeben werden. c) Stammbaum: Stammbauminformationen für jedes Beet können importiert werden."
+        "title": "Zugehöriger Barcode, freundlicher Name, Stammbaum und Behandlung",
+        "text": "Während der Erstellung eines Versuchs können neben dem Identifikator des Keimplasmas und der Reps nun auch folgende Angaben definiert werden: a) Ein benutzerfreundlicher Name: Dieser wird anstelle des Keimplasmanamens in der gesamten Benutzeroberfläche angezeigt. b) Dedizierter Barcode: Anstelle des Keimplasma-Identifikators als Barcode kann nun ein eigener Barcode für jedes Beet angegeben werden. c) Stammbaum: Stammbauminformationen für jedes Beet können importiert werden. d) Behandlung: Füge Informationen zur Behandlung einzelner Beete hinzu."
       },
       {
         "type": "new",

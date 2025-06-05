@@ -73,6 +73,7 @@ export interface Cell {
     pedigree?: string;
     friendlyName?: string;
     barcode?: string;
+    treatment?: string;
     rep: string;
     isMarked: boolean;
     geography: Geography;
@@ -150,9 +151,10 @@ export interface PlotContent {
 }
 
 export interface PlotDetailContent extends PlotContent {
-    pedigree: string;
-    friendlyName: string;
-    barcode: string;
+    pedigree?: string;
+    friendlyName?: string;
+    barcode?: string;
+    treatment?: string
 }
 
 export interface MeasurementChange extends Measurement {

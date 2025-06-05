@@ -51,6 +51,11 @@
           </b-form-group>
         </b-col>
         <b-col cols=12 md=6>
+          <b-form-group :label="$t('formLabelFielDBookTreatment')" :description="$t('formDescriptionFielDBookTreatment')" label-for="treatment">
+            <b-form-select id="treatment" v-model="columnMapping.treatment" :options="fileColumns" />
+          </b-form-group>
+        </b-col>
+        <b-col cols=12 md=6>
           <b-form-group :label="$t('formLabelFielDBookFriendlyName')" :description="$t('formDescriptionFielDBookFriendlyName')" label-for="friendlyName">
             <b-form-select id="friendlyName" v-model="columnMapping.friendlyName" :options="fileColumns" />
           </b-form-group>
@@ -106,7 +111,8 @@ export default {
         rep: null,
         friendlyName: null,
         barcode: null,
-        pedigree: null
+        pedigree: null,
+        treatment: null
       }
     }
   },
@@ -138,7 +144,8 @@ export default {
         rep: null,
         friendlyName: null,
         barcode: null,
-        pedigree: null
+        pedigree: null,
+        treatment: null
       }
 
       if (!this.input || this.input.length < 1) {
@@ -194,6 +201,9 @@ export default {
         if (this.parsedData.columns.includes('Pedigree')) {
           this.columnMapping.pedigree = 'Pedigree'
         }
+        if (this.parsedData.columns.includes('Treatment')) {
+          this.columnMapping.treatment = 'Treatment'
+        }
         // FielDHub specific naming
         if (this.parsedData.columns.includes('ROW')) {
           this.columnMapping.row = 'ROW'
@@ -235,6 +245,7 @@ export default {
         const friendlyName = r[this.columnMapping.friendlyName] || null
         const barcode = r[this.columnMapping.barcode] || null
         const pedigree = r[this.columnMapping.pedigree] || null
+        const treatment = r[this.columnMapping.treatment] || null
 
         if (!germplasm || germplasm === '') {
           this.formValidated = false
@@ -266,7 +277,8 @@ export default {
           rep,
           friendlyName,
           barcode,
-          pedigree
+          pedigree,
+          treatment
         }
       }
 
@@ -301,7 +313,8 @@ export default {
         rep: null,
         friendlyName: null,
         barcode: null,
-        pedigree: null
+        pedigree: null,
+        treatment: null
       }
     },
     /**

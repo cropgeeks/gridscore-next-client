@@ -5,6 +5,7 @@
            no-fade
            @hidden="$emit('hidden')"
            size="lg"
+           scrollable
            ref="plotMetadataUpdateModal">
     <div v-if="trial">
       <p v-html="$t('modalTextPlotMetadataUpdate')" />
@@ -43,7 +44,7 @@ export default {
       content: null,
       formState: null,
       inputFile: null,
-      requiredColumns: ['Germplasm', 'Rep', 'Row', 'Column', 'Friendly name', 'Barcode', 'Pedigree'],
+      requiredColumns: ['Germplasm', 'Rep', 'Row', 'Column', 'Treatment', 'Friendly name', 'Barcode', 'Pedigree'],
       errorMessage: null
     }
   },
@@ -122,11 +123,13 @@ export default {
 
         const friendlyName = (row['Friendly name'] || '').trim()
         const pedigree = (row.Pedigree || '').trim()
+        const treatment = (row.Treatment || '').trim()
         const barcode = (row.Barcode || '').trim()
 
         newData[`${cell.row}|${cell.column}`] = {
           friendlyName,
           pedigree,
+          treatment,
           barcode
         }
       }

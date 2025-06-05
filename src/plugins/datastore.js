@@ -76,6 +76,7 @@ const getGermplasmMatches = (trial, searchTerm) => {
         rep: c.rep,
         barcode: c.barcode,
         pedigree: c.pedigree,
+        treatment: c.treatment,
         displayName: c.displayName,
         row: c.row,
         column: c.column,

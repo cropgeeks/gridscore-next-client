@@ -649,8 +649,8 @@
     "items": [
       {
         "type": "new",
-        "title": "Dedicated barcode, friendly name, pedigree",
-        "text": "During the creation of a trial, in addition to the germplasm identifier and the rep, you can now also define the following: a) a friendly name: this will be used instead of the germplasm name for display thoughout the interface. b) dedicated barcode: instead of using the germplasm identifier as the barcode, you can now specify dedicated barcodes for each plot. c) pedigree: Pedigree information for each plot can be imported."
+        "title": "Dedicated barcode, friendly name, pedigree and treatment",
+        "text": "During the creation of a trial, in addition to the germplasm identifier and the rep, you can now also define the following: a) a friendly name: this will be used instead of the germplasm name for display thoughout the interface. b) dedicated barcode: instead of using the germplasm identifier as the barcode, you can now specify dedicated barcodes for each plot. c) pedigree: Pedigree information for each plot can be imported. d) treatment: Add information about potential treatment for this plot."
       },
       {
         "type": "new",

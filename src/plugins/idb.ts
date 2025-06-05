@@ -103,6 +103,7 @@ const getDb = async () => {
             data.createIndex('friendlyName', 'friendlyName', { unique: false })
             data.createIndex('pedigree', 'pedigree', { unique: false })
             data.createIndex('barcode', 'barcode', { unique: false })
+            data.createIndex('treatment', 'treatment', { unique: false })
           }
         }
       }).then(db => resolve(db))
@@ -610,6 +611,11 @@ const updatePlotMetadata = async (trialId: string, plotMetadata: PlotModificatio
       } else if (data.pedigree !== null && data.pedigree !== '') {
         cell.pedigree = data.pedigree
       }
+      if (data.treatment === 'DELETE') {
+        delete cell.treatment
+      } else if (data.treatment !== null && data.treatment !== '') {
+        cell.treatment = data.treatment
+      }
 
       if (logTransactions(trial)) {
         // Set the transaction details to use whatever the current new state of the plot is.
@@ -618,7 +624,8 @@ const updatePlotMetadata = async (trialId: string, plotMetadata: PlotModificatio
           column: data.column,
           friendlyName: cell.friendlyName,
           barcode: cell.barcode,
-          pedigree: cell.pedigree
+          pedigree: cell.pedigree,
+          treatment: cell.treatment
         }
       }
 
@@ -901,6 +908,7 @@ const addTrial = async (trial: TrialPlus) => {
         friendlyName: cell.friendlyName,
         barcode: cell.barcode,
         pedigree: cell.pedigree,
+        treatment: cell.treatment,
         brapiId: cell.brapiId,
         measurements: cell.measurements,
         geography: cell.geography,

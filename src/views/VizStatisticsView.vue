@@ -259,6 +259,7 @@ export default {
                         row: cell.row,
                         column: cell.column,
                         pedigree: cell.pedigree,
+                        treatment: cell.treatment,
                         barcode: cell.barcode,
                         friendlyName: cell.friendlyName,
                         setIndex,
@@ -291,7 +292,7 @@ export default {
                   data.unshift({
                     x: dps.map(d => d.value),
                     text: dps.map(d => d.name),
-                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn })),
+                    customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn })),
                     ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                     name: k,
                     type: chartType,
@@ -308,7 +309,7 @@ export default {
                 data.push({
                   x: dps.map(d => d.value),
                   text: dps.map(d => d.name),
-                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => this.$t(CELL_CATEGORIES[c].title)).join(', ') })),
+                  customdata: dps.map(d => this.$t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => this.$t(CELL_CATEGORIES[c].title)).join(', ') })),
                   ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                   marker: {
                     color: this.storeHighlightControls ? dps.map(d => (d.categories && d.categories.includes(CELL_CATEGORY_CONTROL)) ? invertHex(trait.color) : trait.color) : trait.color

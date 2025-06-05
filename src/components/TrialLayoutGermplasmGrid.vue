@@ -9,6 +9,7 @@
             </template>
             <b-dropdown-item @click="setTabInputConfig('germplasm')"><IBiTable /> {{ $t('dropdownImportGermplasmGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="setTabInputConfig('rep')"><IBiTable /> {{ $t('dropdownImportRepGrid') }}</b-dropdown-item>
+            <b-dropdown-item @click="setTabInputConfig('treatment')"><IBiTable /> {{ $t('dropdownImportTreatmentGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="setTabInputConfig('friendlyName')"><IBiTable /> {{ $t('dropdownImportFriendlyNameGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="setTabInputConfig('barcode')"><IBiTable /> {{ $t('dropdownImportBarcodeGrid') }}</b-dropdown-item>
             <b-dropdown-item @click="setTabInputConfig('pedigree')"><IBiTable /> {{ $t('dropdownImportPedigreeGrid') }}</b-dropdown-item>
@@ -17,6 +18,7 @@
           </b-dropdown>
 
           <b-card class="mt-3" title="Show input fields">
+            <b-form-checkbox v-model="showTreatment" switch>{{ $t('formCheckboxSetupShowTreatment') }}</b-form-checkbox>
             <b-form-checkbox v-model="showFriendlyName" switch>{{ $t('formCheckboxSetupShowFriendlyName') }}</b-form-checkbox>
             <b-form-checkbox v-model="showBarcode" switch>{{ $t('formCheckboxSetupShowBarcode') }}</b-form-checkbox>
             <b-form-checkbox v-model="showPedigree" switch>{{ $t('formCheckboxSetupShowPedigree') }}</b-form-checkbox>
@@ -84,6 +86,7 @@ export default {
       showBarcode: false,
       showFriendlyName: false,
       showPedigree: false,
+      showTreatment: false,
       tabInputConfigs: {
         germplasm: {
           label: 'formLabelSetupGermplasmNames',
@@ -119,6 +122,13 @@ export default {
           rowCount: 'formFeedbackDataGridImportInvalidRowCount',
           columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
           callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'pedigree')
+        },
+        treatment: {
+          label: 'formLabelSetupTreatmentNames',
+          placeholder: 'formPlaceholderSetupTreatmentNames',
+          rowCount: 'formFeedbackDataGridImportInvalidRowCount',
+          columnCount: 'formFeedbackDataGridImportInvalidColumnCount',
+          callback: (parsedGrid) => this.updateTableFields(parsedGrid, 'treatment')
         }
       },
       selectedTabInputConfig: null
@@ -153,6 +163,9 @@ export default {
       this.toggleFieldVisibility()
     },
     showPedigree: function () {
+      this.toggleFieldVisibility()
+    },
+    showTreatment: function () {
       this.toggleFieldVisibility()
     },
     showFriendlyName: function () {
@@ -211,6 +224,9 @@ export default {
       document.querySelectorAll('.input-pedigree').forEach(i => {
         i.className = `input-pedigree grid-input ${this.showPedigree ? '' : 'd-none'}`
       })
+      document.querySelectorAll('.input-treatment').forEach(i => {
+        i.className = `input-treatment grid-input ${this.showTreatment ? '' : 'd-none'}`
+      })
       document.querySelectorAll('.input-friendlyName').forEach(i => {
         i.className = `input-friendlyName grid-input ${this.showFriendlyName ? '' : 'd-none'}`
       })
@@ -253,6 +269,7 @@ export default {
           const tableFriendlyName = document.querySelector(`#friendlyName-${row}-${column}`).value
           const tableBarcode = document.querySelector(`#barcode-${row}-${column}`).value
           const tablePedigree = document.querySelector(`#pedigree-${row}-${column}`).value
+          const tableTreatment = document.querySelector(`#treatment-${row}-${column}`).value
           const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
           const tableControl = document.querySelector(`#control-${row}-${column}`).checked
 
@@ -263,6 +280,7 @@ export default {
               friendlyName: null,
               barcode: null,
               pedigree: null,
+              treatment: null,
               control: false,
               brapiId: null
             }
@@ -273,6 +291,7 @@ export default {
           this.germplasmMap[`${row}|${column}`].friendlyName = tableFriendlyName
           this.germplasmMap[`${row}|${column}`].barcode = tableBarcode
           this.germplasmMap[`${row}|${column}`].pedigree = tablePedigree
+          this.germplasmMap[`${row}|${column}`].treatment = tableTreatment
           this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
           this.germplasmMap[`${row}|${column}`].control = tableControl
 
@@ -364,6 +383,16 @@ export default {
           } else {
             rep.value = ''
           }
+          // Treatment input
+          const treatment = this.createElement(cell, 'input')
+          treatment.id = `treatment-${row}-${column}`
+          treatment.className = `input-treatment grid-input ${this.showTreatment ? '' : 'd-none'}`
+          treatment.placeholder = 'Treatment'
+          if (dataCell) {
+            treatment.value = dataCell.treatment || ''
+          } else {
+            treatment.value = ''
+          }
           // Friendly name input
           const friendlyName = this.createElement(cell, 'input')
           friendlyName.id = `friendlyName-${row}-${column}`
@@ -433,6 +462,7 @@ export default {
           const friendlyName = document.querySelector(`#friendlyName-${row}-${column}`).value.trim()
           const barcode = document.querySelector(`#barcode-${row}-${column}`).value.trim()
           const pedigree = document.querySelector(`#pedigree-${row}-${column}`).value.trim()
+          const treatment = document.querySelector(`#treatment-${row}-${column}`).value.trim()
           const control = document.querySelector(`#control-${row}-${column}`).checked
           const brapiId = document.querySelector(`#brapiId-${row}-${column}`).value
 
@@ -443,6 +473,7 @@ export default {
               friendlyName: friendlyName === '' ? null : friendlyName,
               barcode: barcode === '' ? null : barcode,
               pedigree: pedigree === '' ? null : pedigree,
+              treatment: treatment === '' ? null : treatment,
               control,
               brapiId: brapiId === '' ? null : brapiId
             }

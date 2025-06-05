@@ -5,6 +5,7 @@
            no-fade
            @hidden="$emit('hidden')"
            size="lg"
+           scrollable
            ref="trialDataUploadModal">
     <div v-if="trial">
       <p v-html="$t('modalTextTrialDataUpload')" />
