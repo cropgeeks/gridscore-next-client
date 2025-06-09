@@ -179,43 +179,61 @@ export default {
       nextTick(() => this.$refs.tabInput.show())
     },
     fillRandom: function () {
-      const ids = new Map()
-      for (let row = 0; row < this.layout.rows; row++) {
-        for (let column = 0; column < this.layout.columns; column++) {
-          const tableRep = document.querySelector(`#rep-${row}-${column}`).value
-          const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
-          const tableControl = document.querySelector(`#control-${row}-${column}`).checked
+      this.showBarcode = true
+      this.showFriendlyName = true
+      this.showPedigree = true
+      this.showTreatment = true
 
-          if (!this.germplasmMap[`${row}|${column}`]) {
-            this.germplasmMap[`${row}|${column}`] = {
-              germplasm: null,
-              rep: null,
-              control: false,
-              brapiId: null
+      nextTick(() => {
+        const ids = new Map()
+        for (let row = 0; row < this.layout.rows; row++) {
+          for (let column = 0; column < this.layout.columns; column++) {
+            const tableRep = document.querySelector(`#rep-${row}-${column}`).value
+            const tableBrapiId = document.querySelector(`#brapiId-${row}-${column}`).value
+            const tableControl = document.querySelector(`#control-${row}-${column}`).checked
+
+            if (!this.germplasmMap[`${row}|${column}`]) {
+              this.germplasmMap[`${row}|${column}`] = {
+                germplasm: null,
+                rep: null,
+                friendlyName: null,
+                treatment: null,
+                pedigree: null,
+                barcode: null,
+                control: false,
+                brapiId: null
+              }
             }
+
+            const random = getRandomGivenName()
+            let rep = 1
+
+            if (ids.has(random)) {
+              rep = ids.get(random) + 1
+              ids.set(random, rep)
+            } else {
+              ids.set(random, 1)
+            }
+
+            const displayRow = getRowLabel(this.layout, row)
+            const displayColumn = getColumnLabel(this.layout, column)
+
+            this.germplasmMap[`${row}|${column}`].germplasm = `GS-${displayRow}|${displayColumn}`
+            document.querySelector(`#germplasm-${row}-${column}`).value = `GS-${displayRow}|${displayColumn}`
+            document.querySelector(`#rep-${row}-${column}`).value = rep
+            document.querySelector(`#friendlyName-${row}-${column}`).value = random
+            document.querySelector(`#pedigree-${row}-${column}`).value = `${getRandomGivenName()} x ${getRandomGivenName()}`
+            document.querySelector(`#barcode-${row}-${column}`).value = `b-${displayRow}|${displayColumn}`
+            document.querySelector(`#treatment-${row}-${column}`).value = row < Math.ceil(this.layout.rows / 2) ? 'Untreated' : 'High nitrogen'
+            // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
+            this.germplasmMap[`${row}|${column}`].rep = rep || tableRep
+            this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
+            this.germplasmMap[`${row}|${column}`].control = tableControl
           }
-
-          const random = getRandomGivenName()
-          let rep = 1
-
-          if (ids.has(random)) {
-            rep = ids.get(random) + 1
-            ids.set(random, rep)
-          } else {
-            ids.set(random, 1)
-          }
-
-          this.germplasmMap[`${row}|${column}`].germplasm = random
-          document.querySelector(`#germplasm-${row}-${column}`).value = random
-          document.querySelector(`#rep-${row}-${column}`).value = rep
-          // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
-          this.germplasmMap[`${row}|${column}`].rep = rep || tableRep
-          this.germplasmMap[`${row}|${column}`].brapiId = tableBrapiId
-          this.germplasmMap[`${row}|${column}`].control = tableControl
         }
-      }
 
-      this.$emit('data-changed', this.germplasmMap)
+        this.$emit('data-changed', this.germplasmMap)
+      })
     },
     toggleFieldVisibility: function () {
       document.querySelectorAll('.input-barcode').forEach(i => {

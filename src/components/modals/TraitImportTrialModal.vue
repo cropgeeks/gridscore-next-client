@@ -17,13 +17,13 @@
 
     <b-list-group>
       <b-list-group-item v-for="(group, index) in traitsByGroup" :key="`trait-group-${group.name}-${index}`">
-        <b-form-checkbox :checked="group.allMarked" @change="updateSelectedTraits(group)">{{ group.name || $t('toolbarTraitGroupGeneric') }}</b-form-checkbox>
+        <b-form-checkbox v-model="group.allMarked" @update:model-value="updateSelectedTraits(group)">{{ group.name || $t('toolbarTraitGroupGeneric') }}</b-form-checkbox>
 
-        <b-form-checkbox :checked="trait.selected"
+        <b-form-checkbox v-model="trait.selected"
                          v-for="trait in group.traits"
                          class="ms-3"
                          :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
-                         @change="toggleTraitSelection(trait)">
+                         @update:model-value="toggleTraitSelection(trait)">
           <span :style="{ color: trait.selected ? trait.color : 'lightgray' }"><TraitIcon class="ms-2" :trait="trait" /> {{ trait.name }}</span>
         </b-form-checkbox>
       </b-list-group-item>
@@ -43,18 +43,16 @@ export default {
     return {
       trials: [],
       selectedTrial: null,
-      selectedTraits: []
+      selectedTraits: [],
+      traitsByGroup: {}
     }
   },
-  computed: {
-    canContinue: function () {
-      return this.selectedTrial && this.selectedTraits && this.selectedTraits.length > 0
-    },
-    traitsByGroup: function () {
-      if (this.selectedTrial && this.selectedTrial.traits) {
+  watch: {
+    selectedTrial: function (newValue) {
+      if (newValue && newValue.traits) {
         const result = {}
 
-        this.selectedTrial.traits.forEach(t => {
+        newValue.traits.forEach(t => {
           const group = t.group ? t.group.name : this.$t('dropdownOptionTraitNoGroup')
           const traitDef = {
             id: t.id,
@@ -74,16 +72,23 @@ export default {
           result[group] = groupTraits
         })
 
-        return Object.keys(result).map(k => {
+        const mapped = Object.keys(result).map(k => {
           return {
             name: k,
             traits: result[k],
             allMarked: result[k].every(t => t.selected)
           }
         })
+
+        this.traitsByGroup = mapped
       } else {
-        return []
+        this.traitsByGroup = []
       }
+    }
+  },
+  computed: {
+    canContinue: function () {
+      return this.selectedTrial && this.selectedTraits && this.selectedTraits.length > 0
     },
     trialOptions: function () {
       if (this.trials) {
@@ -123,6 +128,9 @@ export default {
 
       const distinct = new Set(this.selectedTraits)
 
+      const group = this.traitsByGroup[Object.keys(this.traitsByGroup).find(k => this.traitsByGroup[k].traits.some(t => t.id === trait.id))]
+      group.allMarked = group.traits.every(t => t.selected)
+
       if (isHide) {
         distinct.add(trait.id)
       } else {
@@ -132,14 +140,16 @@ export default {
       this.selectedTraits = [...distinct]
     },
     updateSelectedTraits: function (group) {
-      const isHide = group.allMarked
+      const isHide = group.allMarked === false
 
       const distinct = new Set(this.selectedTraits)
 
       group.traits.forEach(t => {
         if (isHide) {
+          t.selected = false
           distinct.delete(t.id)
         } else {
+          t.selected = true
           distinct.add(t.id)
         }
       })

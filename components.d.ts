@@ -168,6 +168,7 @@ declare module 'vue' {
     IBiDiamondHalf: typeof import('~icons/bi/diamond-half')['default']
     IBiDot: typeof import('~icons/bi/dot')['default']
     IBiDownload: typeof import('~icons/bi/download')['default']
+    IBiDropletHalf: typeof import('~icons/bi/droplet-half')['default']
     IBiEasel: typeof import('~icons/bi/easel')['default']
     IBiExclamationTriangle: typeof import('~icons/bi/exclamation-triangle')['default']
     IBiExclamationTriangleFill: typeof import('~icons/bi/exclamation-triangle-fill')['default']
