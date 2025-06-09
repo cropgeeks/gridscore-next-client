@@ -995,6 +995,7 @@
   "widgetTrialDataStatsDayRange": "{count} days trial length",
   "widgetTrialDataStatsActiveDays": "{count} active days",
   "widgetTrialSelectorWarningUpdates": "Some of the trials in this tab have pending remote updates.",
+  "widgetTrialSelectorWarningUpdatesLocal": "Some of the trials in this tab have pending local updates.",
   "widgetTrialSelectorWarningExpiry": "Some of the trials in this tab are about to expire on the server.",
   "widgetPlotCommentGermplasm": "Germplasm: {germplasm}",
   "widgetPlotCommentRep": "Rep: {rep}",

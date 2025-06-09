@@ -59,6 +59,7 @@
         <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}-${trialGroup.hasRemoteUpdate}-${trialGroup.hasExpiryWarning}`">
           <template #title>
             <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
+            <IBiCloudUploadFill class="ms-2 text-info" v-if="trialGroup.hasLocalUpdate" />
             <IBiCloudDownloadFill class="ms-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
             <IBiCalendarXFill class="ms-2 text-danger" v-if="trialGroup.hasExpiryWarning" />
           </template>
@@ -66,6 +67,9 @@
           <b-card-body :class="isLoading ? '' : 'mt-1'">
             <b-alert variant="warning" v-model="trialGroup.hasRemoteUpdate"><IBiCloudDownloadFill class="me-2" />
               {{ $t('widgetTrialSelectorWarningUpdates') }}
+            </b-alert>
+            <b-alert variant="info" v-model="trialGroup.hasLocalUpdate"><IBiCloudUploadFill class="me-2" />
+              {{ $t('widgetTrialSelectorWarningUpdatesLocal') }}
             </b-alert>
             <b-alert variant="danger" v-model="trialGroup.hasExpiryWarning"><IBiCalendarXFill class="me-2" />
               {{ $t('widgetTrialSelectorWarningExpiry') }}
@@ -242,7 +246,8 @@ export default {
         value: 'name'
       }, {
         text: this.$t('formSelectOptionTrialSortLocalRemove'),
-        value: 'localVsRemote'
+        value: 'localVsRemote',
+        disabled: this.hasRemoteTrials === false
       }]
     },
     hasRemoteTrials: function () {
@@ -293,6 +298,7 @@ export default {
           .map(t => {
             t.hasRemoteUpdate = false
             t.showExpiryWarning = false
+            t.hasLocalUpdate = t.shareCodes && t.transactionCount > 0
 
             if (t.shareCodes && this.trialUpdates) {
               const shareCode = t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
@@ -346,6 +352,7 @@ export default {
 
           result[group].trials.push(t)
           result[group].hasRemoteUpdate ||= t.hasRemoteUpdate
+          result[group].hasLocalUpdate ||= t.hasLocalUpdate
           result[group].hasExpiryWarning ||= t.showExpiryWarning
         })
 
@@ -361,6 +368,7 @@ export default {
         result[UNCATEGORIZED_TRIALS] = {
           trials: [],
           hasRemoteUpdate: false,
+          hasLocalUpdate: false,
           hasExpiryWarning: false
         }
         return result

@@ -986,6 +986,7 @@
   "widgetTrialDataStatsDayRange": "{count} Tage Versuchslänge",
   "widgetTrialDataStatsActiveDays": "{count} aktive Tage",
   "widgetTrialSelectorWarningUpdates": "Manche der Versuche in diesem Tab haben rechnerferne Updates.",
+  "widgetTrialSelectorWarningUpdatesLocal": "Manche der Versuche in diesem Tab haben lokale Updates.",
   "widgetTrialSelectorWarningExpiry": "Manche der Versuche in diesem Tab sind kurz davor auf dem Server abzulaufen.",
   "widgetPlotCommentGermplasm": "Keimplasma: {germplasm}",
   "widgetPlotCommentRep": "Rep: {rep}",
