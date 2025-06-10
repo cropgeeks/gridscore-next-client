@@ -51,6 +51,34 @@
         </b-tab>
         <b-tab>
           <template #title>
+            <IBiGrid /> {{ $t('pageExportTabTitleLayout') }}
+          </template>
+
+          <p class="mt-3" v-html="$t('pageExportTrialFormatLayout')" />
+
+          <b-card class="mb-3" :title="$t('pageExportTrialFormatLayoutTrialCardTitle')" :subtitle="$t('pageExportTrialFormatLayoutTrialCardSubtitle')">
+            <b-row class="text-center">
+              <b-col class="mb-3">
+                <h5 class="mb-0"><IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /></h5>
+                <span>{{ $t('widgetTrialSelectorRows', trial.layout.rows) }}</span>
+              </b-col>
+              <b-col class="mb-3">
+                <h5 class="mb-0"><IBiLayoutThreeColumns /></h5>
+                <span>{{ $t('widgetTrialSelectorColumns', trial.layout.columns) }}</span>
+              </b-col>
+              <b-col class="mb-3">
+                <h5 class="mb-0"><IBiFlower1 /></h5>
+                <span>{{ $t('widgetTrialSelectorGermplasm', Object.keys(trialData || {}).length) }}</span>
+              </b-col>
+            </b-row>
+
+            <b-button @click="exportTrialLayout" variant="primary">
+              <IBiGrid /> {{ $t('buttonExport') }}
+            </b-button>
+          </b-card>
+        </b-tab>
+        <b-tab>
+          <template #title>
             <IBiTags /> {{ $t('pageExportTabTitleTraits') }}
           </template>
 
@@ -374,6 +402,23 @@ export default {
           return 'text'
         default:
           return type
+      }
+    },
+    exportTrialLayout: function () {
+      if (this.trial.layout && this.trialData) {
+        let result = 'Germplasm\tRep\tRow\tColumn\tTreatment\tBarcode\tFriendly name'
+
+        for (let row = 0; row < this.trial.layout.rows; row++) {
+          for (let column = 0; column < this.trial.layout.columns; column++) {
+            const c = this.trialData[`${row}|${column}`]
+
+            if (c) {
+              result += `\n${c.germplasm}\t${c.rep || ''}\t${c.displayRow}\t${c.displayColumn}\t${c.treatment || ''}\t${c.barcode || ''}\t${c.friendlyName || ''}`
+            }
+          }
+        }
+
+        downloadText(result, `gridscore-layout-${this.safeTrialName}.txt`)
       }
     },
     exportTraitsGerminate: function () {

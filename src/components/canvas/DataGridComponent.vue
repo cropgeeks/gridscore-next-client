@@ -420,6 +420,15 @@ export default {
 
       if (!this.trialData) {
         // TODO
+      } else {
+        Object.values(this.trialData).forEach(c => {
+          c.latestDates = {}
+          Object.keys(c.measurements).forEach(t => {
+            if (c.measurements[t] && c.measurements[t].length > 0) {
+              c.latestDates[t] = new Date(c.measurements[t][c.measurements[t].length - 1].timestamp).toISOString().split('T')[0]
+            }
+          })
+        })
       }
 
       this.$nextTick(() => this.updateDimensions())

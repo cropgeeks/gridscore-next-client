@@ -5,6 +5,7 @@
            @hidden="$emit('hidden')"
            size="lg"
            no-fade
+           scrollable
            ref="traitDataHistoryModal">
     <div v-if="trial && localMeasurements && trait && cell">
       <p>{{ $t('modalTextTraitDataHistory') }}</p>
