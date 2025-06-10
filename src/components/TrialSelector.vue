@@ -56,23 +56,23 @@
 
     <b-card no-body>
       <b-tabs card v-model="tabIndex">
-        <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}-${trialGroup.hasRemoteUpdate}-${trialGroup.hasExpiryWarning}`">
+        <b-tab lazy no-body v-for="(trialGroup, group) in sortedTrials" :key="`tab-${group}-${trialGroup.remoteUpdateCount}-${trialGroup.expiryWarningCount}-${trialGroup.localUpdateCount}-${(trialGroup.trials || []).length}`">
           <template #title>
             <span>{{ group === UNCATEGORIZED_TRIALS ? $t(trialListMode === TRIAL_LIST_ALL ? 'tabTitleAllTrials' : 'tabTitleUncategorizedTrials', { count: $n((trialGroup.trials || []).length) }) : `${group} (${$n((trialGroup.trials || []).length)})` }}</span>
-            <IBiCloudUploadFill class="ms-2 text-info" v-if="trialGroup.hasLocalUpdate" />
-            <IBiCloudDownloadFill class="ms-2 text-warning" v-if="trialGroup.hasRemoteUpdate" />
-            <IBiCalendarXFill class="ms-2 text-danger" v-if="trialGroup.hasExpiryWarning" />
+            <IBiCloudUploadFill class="ms-2 text-info" v-if="trialGroup.localUpdateCount > 0" />
+            <IBiCloudDownloadFill class="ms-2 text-warning" v-if="trialGroup.remoteUpdateCount > 0" />
+            <IBiCalendarXFill class="ms-2 text-danger" v-if="trialGroup.expiryWarningCount > 0" />
           </template>
           <b-progress variant="primary" striped animated :value="100" v-if="isLoading" height="4px" />
           <b-card-body :class="isLoading ? '' : 'mt-1'">
-            <b-alert variant="warning" v-model="trialGroup.hasRemoteUpdate"><IBiCloudDownloadFill class="me-2" />
-              {{ $t('widgetTrialSelectorWarningUpdates') }}
+            <b-alert variant="warning" :model-value="trialGroup.remoteUpdateCount > 0"><IBiCloudDownloadFill class="me-2" />
+              {{ $t('widgetTrialSelectorWarningUpdates', { count: trialGroup.$attrsremoteUpdateCount }) }}
             </b-alert>
-            <b-alert variant="info" v-model="trialGroup.hasLocalUpdate"><IBiCloudUploadFill class="me-2" />
-              {{ $t('widgetTrialSelectorWarningUpdatesLocal') }}
+            <b-alert variant="info" :model-value="trialGroup.localUpdateCount > 0"><IBiCloudUploadFill class="me-2" />
+              {{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: trialGroup.$attrslocalUpdateCount }) }}
             </b-alert>
-            <b-alert variant="danger" v-model="trialGroup.hasExpiryWarning"><IBiCalendarXFill class="me-2" />
-              {{ $t('widgetTrialSelectorWarningExpiry') }}
+            <b-alert variant="danger" :model-value="trialGroup.expiryWarningCount > 0"><IBiCalendarXFill class="me-2" />
+              {{ $t('widgetTrialSelectorWarningExpiry', { count: trialGroup.$attrsexpiryWarningCount }) }}
             </b-alert>
             <template v-if="trialGroup.trials && trialGroup.trials.length > 0">
               <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
@@ -324,14 +324,18 @@ export default {
         const result = {}
         result[UNCATEGORIZED_TRIALS] = {
           trials: [],
-          hasExpiryWarning: false
+          expiryWarningCount: 0,
+          remoteUpdateCount: 0,
+          localUpdateCount: 0
         }
 
         if (this.storeTrialListMode === TRIAL_LIST_TABBED) {
           this.trialGroups.forEach(tg => {
             result[tg] = {
               trials: [],
-              hasExpiryWarning: false
+              expiryWarningCount: 0,
+              remoteUpdateCount: 0,
+              localUpdateCount: 0
             }
           })
         }
@@ -351,9 +355,9 @@ export default {
           }
 
           result[group].trials.push(t)
-          result[group].hasRemoteUpdate ||= t.hasRemoteUpdate
-          result[group].hasLocalUpdate ||= t.hasLocalUpdate
-          result[group].hasExpiryWarning ||= t.showExpiryWarning
+          result[group].remoteUpdateCount += t.hasRemoteUpdate ? 1 : 0
+          result[group].localUpdateCount += t.hasLocalUpdate ? 1 : 0
+          result[group].expiryWarningCount += t.showExpiryWarning ? 1 : 0
         })
 
         Object.keys(result).forEach(k => {
@@ -367,9 +371,9 @@ export default {
         const result = {}
         result[UNCATEGORIZED_TRIALS] = {
           trials: [],
-          hasRemoteUpdate: false,
-          hasLocalUpdate: false,
-          hasExpiryWarning: false
+          remoteUpdateCount: 0,
+          localUpdateCount: 0,
+          expiryWarningCount: 0
         }
         return result
       }
