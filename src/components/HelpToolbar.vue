@@ -2,6 +2,7 @@
   <div id="help-toolbar" class="position-absolute w-100">
     <b-button-toolbar v-if="expanded" class="bg-dark d-flex flex-column flex-sm-row justify-content-between">
       <b-button-group class="flex-wrap">
+        <b-button variant="dark" @click="install" v-if="showInstall"><IBiBoxArrowDown /> Install GridScore</b-button>
         <b-button variant="dark" href="mailto:sebastian.raubach@hutton.ac.uk?subject=GridScore"><IBiPersonRaisedHand /> Help</b-button>
         <b-button variant="dark" href="https://cropgeeks.github.io/gridscore-next-client" target="_blank"><IBiInfoCircleFill /> Documentation</b-button>
       </b-button-group>
@@ -18,7 +19,35 @@
 </template>
 
 <script lang="ts" setup>
+import emitter from 'tiny-emitter/instance'
+
 const expanded = ref<boolean>(false)
+const showInstall = ref<boolean>(false)
+
+let deferredPrompt: any
+
+async function install () {
+  if (deferredPrompt) {
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+
+    emitter.emit('plausible-event', { key: 'installation', props: { userChoice: outcome } })
+
+    deferredPrompt = undefined
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault()
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e
+
+    expanded.value = true
+    showInstall.value = true
+  })
+})
 </script>
 
 <style>

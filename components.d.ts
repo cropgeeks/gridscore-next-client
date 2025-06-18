@@ -115,6 +115,7 @@ declare module 'vue' {
     IBiBookmarkStar: typeof import('~icons/bi/bookmark-star')['default']
     IBiBorderStyle: typeof import('~icons/bi/border-style')['default']
     IBiBoundingBoxCircles: typeof import('~icons/bi/bounding-box-circles')['default']
+    IBiBoxArrowDown: typeof import('~icons/bi/box-arrow-down')['default']
     IBiBoxArrowDownRight: typeof import('~icons/bi/box-arrow-down-right')['default']
     IBiBoxArrowInUpRight: typeof import('~icons/bi/box-arrow-in-up-right')['default']
     IBiCalendar3: typeof import('~icons/bi/calendar3')['default']

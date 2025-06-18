@@ -553,11 +553,6 @@ export default {
     }
   },
   created: function () {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      // Optionally, send analytics event that PWA install promo was shown.
-      alert(`'beforeinstallprompt' event was fired.`)
-    })
-
     // Listen for our custom event from the SW registration
     document.addEventListener('swUpdated', this.updateAvailable, { once: true })
 
