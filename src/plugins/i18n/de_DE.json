@@ -418,6 +418,7 @@
   "formLabelSettingsAutoProgressInputs": "Automatische Auswahl nächster Eingabe",
   "formDescriptionSettingsAutoSelectSearch": "Falls aktiviert wird GridScore automatisch das Suchfeld auswählen nachdem die Dateneingabe erfolgt ist. Dies ist besonders nützlich für Dateneingabe per Barcodes.",
   "formDescriptionSettingsAutoProgressInputs": "Falls aktiviert wird GridScore automatisch die nächste Eingabe auswählen nachdem Daten eingegeben wurden.",
+  "formLabelTraitDropdownCutoffDate": "Merkmalsstichtag",
   "dropdownSettingsTraitColorPreset": "Farbvorauswahlen",
   "menuHome": "Home",
   "menuDataEntry": "Dateneingabe",

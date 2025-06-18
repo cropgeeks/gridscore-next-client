@@ -673,5 +673,16 @@
         "text": "Fehler behoben der es Besitzern nicht erlaubte Merkmale zu löschen."
       }
     ]
+  },
+  {
+    "version": "3.4.1",
+    "date": "2025-06-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Markmalsstichtag",
+        "text": "Beim Bewerten von Zeitachsenmerkmalen kann ein Stichtag während der Bewertung festgelegt werden, um die Hauptdatenanzeige so anzupassen, dass die Kreise/Quadrate nur gefüllt werden, wenn ein Wert <strong>nach</strong> dem Stichtag erfasst wurde. Dies erleichtert die Identifizierung von Beeten, die im aktuellen 'Durchlauf' noch bewertet werden müssen."
+      }
+    ]
   }
 ]

@@ -49,6 +49,10 @@ export default {
       type: Object,
       default: () => null
     },
+    traitCutoff: {
+      type: String,
+      default: null
+    },
     dimensions: {
       type: Object,
       default: () => null
@@ -276,6 +280,9 @@ export default {
           }
         }
       }
+    },
+    traitCutoff: function () {
+      this.update()
     }
   },
   methods: {
@@ -346,9 +353,9 @@ export default {
       } else {
         Object.values(this.trialData).forEach(c => {
           c.latestDates = {}
-          Object.keys(c.measurements).forEach(t => {
-            if (c.measurements[t] && c.measurements[t].length > 0) {
-              c.latestDates[t] = new Date(c.measurements[t][c.measurements[t].length - 1].timestamp).toISOString().split('T')[0]
+          this.trial.traits.forEach(t => {
+            if (t.allowRepeats && c.measurements[t.id] && c.measurements[t.id].length > 0) {
+              c.latestDates[t.id] = new Date(c.measurements[t.id][c.measurements[t.id].length - 1].timestamp).toISOString().split('T')[0]
             }
           })
         })
@@ -801,7 +808,8 @@ export default {
             fill = traitMeasurements.some(m => m.values && m.values.length > 0) ? 'filled' : 'empty'
           } else {
             // For all others, check if the last set of recorded values has the full `setSize`.
-            const matchingCount = traitMeasurements.filter(m => m.values && m.values.length === trait.original.setSize).length
+            // Also check trait cutoff point.
+            const matchingCount = traitMeasurements.filter(m => m.values && m.values.length === trait.original.setSize && (!this.traitCutoff || !cell.latestDates[trait.original.id] || cell.latestDates[trait.original.id] > this.traitCutoff)).length
             if (matchingCount > 0) {
               fill = 'semi'
             } else {

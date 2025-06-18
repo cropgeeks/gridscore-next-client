@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="mt-3 px-0" v-if="trial" ref="dataEntryView">
     <b-button-toolbar>
-      <TraitDropdown :traits="trial.traits" ref="traitDropdown" />
+      <TraitDropdown :traits="trial.traits" ref="traitDropdown" @trait-cutoff-changed="e => { traitCutoff = e }" />
       <JumpToDropdown :trial="trial" />
       <b-button :title="$t('toolbarPlotComments')" @click="$refs.plotCommentModal.show()"><IBiChatRightTextFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPlotComments') }}</span></b-button>
       <b-button :title="$t('toolbarPersonSelector')" @click="setForcePersonSelector(true)" v-if="trial.people && trial.people.length > 1"><IBiPersonLinesFill /> <span class="d-none d-lg-inline-block">{{ $t('toolbarPersonSelector') }}</span></b-button>
@@ -18,8 +18,8 @@
       </b-input-group>
     </b-button-toolbar>
 
-    <DataCanvas :geolocation="geolocation" v-if="showCanvas" />
-    <DataGridComponent :geolocation="geolocation" v-else />
+    <DataCanvas :geolocation="geolocation" :traitCutoff="traitCutoff" v-if="showCanvas" />
+    <DataGridComponent :geolocation="geolocation" :traitCutoff="traitCutoff" v-else />
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
@@ -177,7 +177,8 @@ export default {
       searchTerm: null,
       searchMatches: [],
       geolocation: null,
-      forcePersonSelector: false
+      forcePersonSelector: false,
+      traitCutoff: null
     }
   },
   methods: {

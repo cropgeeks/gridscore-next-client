@@ -4,6 +4,12 @@
       <IBiDiamondHalf :style="{ transform: 'rotate(45deg)' }" width="1.3em" height="1.3em" v-if="store.canvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
     <b-dropdown-form>
+      <b-form-group class="mb-0" :label="$t('formLabelTraitDropdownCutoffDate')" label-for="cutoff">
+        <b-input-group>
+          <b-form-input id="cutoff" type="date" v-model="traitCutoff" v-if="atLeastOneMultiTrait" />
+          <b-button variant="danger" v-if="traitCutoff" @click="traitCutoff = undefined"><IBiSlashCircle /></b-button>
+        </b-input-group>
+      </b-form-group>
       <b-button-group class="w-100">
         <b-button @click="toggleVisibilityAll(true)"><IBiSquareFill v-if="store.canvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleFill v-else /> {{ $t('buttonSelectAll') }}</b-button>
         <b-button @click="toggleVisibilityAll(false)"><IBiSquare v-if="store.canvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircle v-else /> {{ $t('buttonSelectNone') }}</b-button>
@@ -62,8 +68,28 @@ const props = defineProps<{
   traits: TraitPlus[]
 }>()
 
+const emit = defineEmits(['trait-cutoff-changed'])
+
 // Refs
 const dropdown = ref()
+const traitCutoff = ref<string>()
+
+// Watch
+watch(traitCutoff, async newValue => {
+  if (newValue) {
+    emit('trait-cutoff-changed', newValue)
+  } else {
+    emit('trait-cutoff-changed', undefined)
+  }
+})
+
+const atLeastOneMultiTrait: ComputedRef<boolean> = computed(() => {
+  if (props.traits) {
+    return props.traits.filter(t => t.allowRepeats).length > 0
+  } else {
+    return false
+  }
+})
 
 // Computed
 const traitsByGroup: ComputedRef<TraitGroup[]> = computed(() => {

@@ -18,7 +18,7 @@
       <dl class="row mb-0">
         <template v-for="(item, index) in version.items" :key="`changelog-${version.version}-${index}`">
           <dt class="col-md-4 d-flex align-items-start"><b-badge class="my-1 me-2" :variant="badge[item.type].variant">{{ badge[item.type].text }}</b-badge> <span>{{ item.title }}</span></dt>
-          <dd class="col-md-8">{{ item.text }}</dd>
+          <dd class="col-md-8" v-html="item.text" />
         </template>
       </dl>
     </b-card>

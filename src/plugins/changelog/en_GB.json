@@ -673,5 +673,16 @@
         "text": "Fixed issues where it wasn't possible for owners to delete a trait."
       }
     ]
+  },
+  {
+    "version": "3.4.1",
+    "date": "2025-06-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Trait cutoff date",
+        "text": "When scoring timeline traits a cutoff date can be set while scoring to adjust the main data display in such a way that the circles/squares are only filled if a value has been recorded <strong>after</strong> the cutoff date. This makes it easier to identify plots that still need to be scored in the current 'run'."
+      }
+    ]
   }
 ]

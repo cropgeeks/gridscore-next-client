@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="d-flex flex-column ">
-    <b-navbar toggleable="xl" variant="dark" v-b-color-mode="'dark'" >
+    <b-navbar toggleable="xl" variant="dark" v-b-color-mode="'dark'" class="border border-left-0 border-top-0 border-right-0 border-primary" >
       <b-navbar-brand :to="{ name: 'home' }" class="d-flex align-items-center">
         <img src="/img/gridscore-next.svg" height="40px" class="d-inline-block align-top me-3" alt="GridScore">
         {{ $t('appTitle') }}
@@ -57,6 +57,8 @@
     </b-navbar>
 
     <div class="d-flex flex-column flex-fill">
+      <HelpToolbar />
+
       <router-view id="router-view" />
 
       <footer :class="`mt-auto py-3 border-top ${storeDarkMode ? 'bg-dark border-dark' : 'bg-light border-light'}`" v-if="$route.name !== 'data-entry'">
@@ -132,6 +134,7 @@ import TrialInformationDropdown from '@/components/dropdowns/TrialInformationDro
 import BrapiModal from '@/components/modals/BrapiModal.vue'
 import ChangelogModal from '@/components/modals/ChangelogModal.vue'
 import MissingTrialModal from '@/components/modals/MissingTrialModal.vue'
+import HelpToolbar from '@/components/HelpToolbar.vue'
 import TrialCommentModal from '@/components/modals/TrialCommentModal.vue'
 import TrialShareCodeModal from '@/components/modals/TrialShareCodeModal.vue'
 import TrialEventModal from '@/components/modals/TrialEventModal.vue'
@@ -170,7 +173,8 @@ export default {
     TrialCommentModal,
     TrialEventModal,
     TrialShareCodeModal,
-    ConfirmModal
+    ConfirmModal,
+    HelpToolbar
   },
   data: function () {
     return {
@@ -330,7 +334,25 @@ export default {
 
         this.plausible.enableAutoPageviews()
 
-        this.plausibleEvent({ key: 'app-load', props: { version: this.gridScoreVersion } })
+        let pwaMode = null
+        try {
+          if (document.referrer.startsWith('android-app://'))
+            pwaMode = 'twa'
+          if (window.matchMedia('(display-mode: browser)').matches)
+            pwaMode = 'browser'
+          if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone)
+            pwaMode = 'standalone'
+          if (window.matchMedia('(display-mode: minimal-ui)').matches)
+            pwaMode = 'minimal-ui'
+          if (window.matchMedia('(display-mode: fullscreen)').matches)
+            pwaMode = 'fullscreen'
+          if (window.matchMedia('(display-mode: window-controls-overlay)').matches)
+            pwaMode = 'window-controls-overlay'
+        } catch (e) {
+          console.error(e)
+        }
+
+        this.plausibleEvent({ key: 'app-load', props: { version: this.gridScoreVersion, pwaMode: pwaMode || 'N/A' } })
       }
     },
     plausibleEvent: function (data) {
@@ -531,6 +553,17 @@ export default {
     }
   },
   created: function () {
+    let deferredPrompt
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault()
+      // Stash the event so it can be triggered later.
+      deferredPrompt = e
+      // Optionally, send analytics event that PWA install promo was shown.
+      alert(`'beforeinstallprompt' event was fired.`)
+    })
+
     // Listen for our custom event from the SW registration
     document.addEventListener('swUpdated', this.updateAvailable, { once: true })
 
