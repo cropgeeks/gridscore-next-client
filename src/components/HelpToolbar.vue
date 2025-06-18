@@ -2,7 +2,7 @@
   <div id="help-toolbar" class="position-absolute w-100">
     <b-button-toolbar v-if="expanded" class="bg-dark d-flex flex-column flex-sm-row justify-content-between">
       <b-button-group class="flex-wrap">
-        <b-button variant="dark" @click="install" v-if="showInstall"><IBiBoxArrowDown /> Install GridScore</b-button>
+        <b-button variant="primary" @click="install" v-if="showInstall"><IBiBoxArrowDown /> Install GridScore</b-button>
         <b-button variant="dark" href="mailto:sebastian.raubach@hutton.ac.uk?subject=GridScore"><IBiPersonRaisedHand /> Help</b-button>
         <b-button variant="dark" href="https://cropgeeks.github.io/gridscore-next-client" target="_blank"><IBiInfoCircleFill /> Documentation</b-button>
       </b-button-group>
