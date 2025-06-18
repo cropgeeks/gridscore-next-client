@@ -53,6 +53,7 @@ export const coreStore = defineStore('core', {
     autoSelectSearch: false,
     autoProgressInputs: true,
     categoryCountInline: 4,
+    toolbarHiddenAfterInstallShown: false,
     mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
     plausible: {
       plausibleDomain: null,
@@ -105,7 +106,8 @@ export const coreStore = defineStore('core', {
     storeChangelogVersionNumber: (state): string | null => state.changelogVersionNumber,
     storeDeviceConfig: (state): any => state.deviceConfig,
     storeShowFullTraitDescription: (state): boolean => state.showFullTraitDescription,
-    storeCategoryCountInline: (state): number => state.categoryCountInline
+    storeCategoryCountInline: (state): number => state.categoryCountInline,
+    storeToolbarHiddenAfterInstallShown: (state): boolean => state.toolbarHiddenAfterInstallShown,
   },
   actions: {
     setUniqueClientId: function (newUniqueClientId: string) {
@@ -261,6 +263,9 @@ export const coreStore = defineStore('core', {
     },
     setCategoryCountInline: function (newCategoryCountInline: number) {
       this.categoryCountInline = newCategoryCountInline
+    },
+    setToolbarHiddenAfterInstallShown: function (newToolbarHiddenAfterInstallShown: boolean) {
+      this.toolbarHiddenAfterInstallShown = newToolbarHiddenAfterInstallShown
     }
   },
   persist: {

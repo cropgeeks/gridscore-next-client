@@ -20,11 +20,20 @@
 
 <script lang="ts" setup>
 import emitter from 'tiny-emitter/instance'
+import { coreStore } from '@/store'
+
+const store = coreStore()
 
 const expanded = ref<boolean>(false)
 const showInstall = ref<boolean>(false)
 
 let deferredPrompt: any
+
+watch(expanded, async newValue => {
+  if (newValue === false && showInstall.value) {
+    store.setToolbarHiddenAfterInstallShown(true)
+  }
+})
 
 async function install () {
   if (deferredPrompt) {
@@ -33,6 +42,7 @@ async function install () {
 
     emitter.emit('plausible-event', { key: 'installation', props: { userChoice: outcome } })
 
+    showInstall.value = false
     deferredPrompt = undefined
   }
 }
@@ -44,7 +54,9 @@ onMounted(() => {
     // Stash the event so it can be triggered later.
     deferredPrompt = e
 
-    expanded.value = true
+    if (!store.toolbarHiddenAfterInstallShown) {
+      expanded.value = true
+    }
     showInstall.value = true
   })
 })
