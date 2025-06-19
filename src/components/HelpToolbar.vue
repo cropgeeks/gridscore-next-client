@@ -1,6 +1,6 @@
 <template>
   <div id="help-toolbar" :class="`position-absolute w-100 ${expanded ? '' : 'hidden'}`">
-    <b-button-toolbar class="bg-dark d-flex flex-column flex-sm-row justify-content-between">
+    <b-button-toolbar class="bg-dark flex-column flex-sm-row justify-content-between">
       <b-button-group class="flex-wrap">
         <b-button variant="primary" @click="install" v-if="showInstall"><IBiBoxArrowDown /> <span>{{ $t('widgetHelpToolbarInstall') }}</span></b-button>
         <b-button variant="dark" @click="installHelpModal.show()" v-else-if="!isInstalledAndroid"><IBiBoxArrowDown /> <span>{{ $t('widgetHelpToolbarInstall') }}</span></b-button>
@@ -83,8 +83,8 @@ onMounted(() => {
 </script>
 
 <style>
-#help-toolbar .btn-toolbar,
-#help-toolbar .btn-toolbar .btn {
+#help-toolbar .btn-toolbar {
+  box-sizing: content-box;
   border-bottom: 1px solid var(--bs-primary);
 }
 
@@ -98,11 +98,6 @@ onMounted(() => {
 }
 #help-toolbar.hidden .btn-toolbar .btn span {
   display: none;
-}
-#help-toolbar .btn-toolbar,
-#help-toolbar .btn-toolbar .btn {
-  transition: height .35s ease, padding .35s ease, margin .35s ease;
-  height: 39px;
 }
 
 #help-toolbar {
