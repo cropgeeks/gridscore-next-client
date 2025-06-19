@@ -1,20 +1,31 @@
 <template>
-  <div id="help-toolbar" class="position-absolute w-100">
-    <b-button-toolbar v-if="expanded" class="bg-dark d-flex flex-column flex-sm-row justify-content-between">
+  <div id="help-toolbar" :class="`position-absolute w-100 ${expanded ? '' : 'hidden'}`">
+    <b-button-toolbar class="bg-dark d-flex flex-column flex-sm-row justify-content-between">
       <b-button-group class="flex-wrap">
-        <b-button variant="primary" @click="install" v-if="showInstall"><IBiBoxArrowDown /> Install GridScore</b-button>
-        <b-button variant="dark" href="mailto:sebastian.raubach@hutton.ac.uk?subject=GridScore"><IBiPersonRaisedHand /> Help</b-button>
-        <b-button variant="dark" href="https://cropgeeks.github.io/gridscore-next-client" target="_blank"><IBiInfoCircleFill /> Documentation</b-button>
+        <b-button variant="primary" @click="install" v-if="showInstall"><IBiBoxArrowDown /> <span>{{ $t('widgetHelpToolbarInstall') }}</span></b-button>
+        <b-button variant="dark" @click="installHelpModal.show()" v-else-if="!isInstalledAndroid"><IBiBoxArrowDown /> <span>{{ $t('widgetHelpToolbarInstall') }}</span></b-button>
+        <b-button variant="dark" href="mailto:sebastian.raubach@hutton.ac.uk?subject=GridScore"><IBiPersonRaisedHand /> <span>{{ $t('widgetHelpToolbarSupport') }}</span></b-button>
+        <b-button variant="dark" href="https://cropgeeks.github.io/gridscore-next-client" target="_blank"><IBiInfoCircleFill /> <span>{{ $t('widgetHelpToolbarDocumentation') }}</span></b-button>
       </b-button-group>
       <b-button-group class="flex-wrap">
-        <b-button variant="dark" href="https://github.com/cropgeeks/gridscore-next-client/issues/new/choose"><IBiGithub /> Suggestions</b-button>
+        <b-button variant="dark" href="https://github.com/cropgeeks/gridscore-next-client/issues/new/choose" target="_blank"><IBiGithub /> <span>{{ $t('widgetHelpToolbarSuggestions') }}</span></b-button>
       </b-button-group>
     </b-button-toolbar>
 
-    <span id="toggle" class="bg-dark rounded-pill rounded-top-0" @click="expanded = !expanded">
-      <IBiChevronUp v-if="expanded" class="text-white" />
-      <IBiChevronDown v-else class="text-white" />
+    <span id="toggle" :class="`${expanded ? 'bg-primary' : 'bg-dark'} rounded-pill rounded-top-0`" @click="expanded = !expanded">
+      <IBiChevronDown class="text-white" />
     </span>
+
+    <b-modal
+      ref="installHelpModal"
+      :ok-title="$t('buttonClose')"
+      ok-only
+      :title="$t('widgetHelpToolbarInstall')">
+
+      <p>{{ $t('widgetHelpToolbarInstallInstructions') }}</p>
+
+      <b-button variant="primary" href="https://www.installpwa.com/from/gridscore.hutton.ac.uk" target="_blank">{{ $t('widgetHelpToolbarInstallInstructionsButton') }}</b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -22,8 +33,12 @@
 import emitter from 'tiny-emitter/instance'
 import { coreStore } from '@/store'
 
+// COMPOSITION
 const store = coreStore()
+const route = useRoute()
 
+// REFS
+const installHelpModal = ref()
 const expanded = ref<boolean>(false)
 const showInstall = ref<boolean>(false)
 
@@ -47,6 +62,11 @@ async function install () {
   }
 }
 
+const isInstalledAndroid: ComputedRef<boolean> = computed(() => {
+  // @ts-ignore
+  return document.referrer.startsWith('android-app://') || window.matchMedia('(display-mode: standalone)').matches || navigator.standalone
+})
+
 onMounted(() => {
   window.addEventListener('beforeinstallprompt', (e) => {
     // Prevent the mini-infobar from appearing on mobile
@@ -54,7 +74,7 @@ onMounted(() => {
     // Stash the event so it can be triggered later.
     deferredPrompt = e
 
-    if (!store.toolbarHiddenAfterInstallShown) {
+    if (!store.toolbarHiddenAfterInstallShown && route.name === 'home') {
       expanded.value = true
     }
     showInstall.value = true
@@ -63,11 +83,34 @@ onMounted(() => {
 </script>
 
 <style>
+#help-toolbar .btn-toolbar,
+#help-toolbar .btn-toolbar .btn {
+  border-bottom: 1px solid var(--bs-primary);
+}
+
+#help-toolbar.hidden .btn-toolbar,
+#help-toolbar.hidden .btn-toolbar .btn,
+#help-toolbar.hidden .btn-toolbar .btn * {
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+#help-toolbar.hidden .btn-toolbar .btn span {
+  display: none;
+}
+#help-toolbar .btn-toolbar,
+#help-toolbar .btn-toolbar .btn {
+  transition: height .35s ease, padding .35s ease, margin .35s ease;
+  height: 39px;
+}
+
 #help-toolbar {
   z-index: 100;
 }
 
 #help-toolbar #toggle {
+  z-index: -1;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -80,5 +123,14 @@ onMounted(() => {
 
 #help-toolbar #toggle:hover {
   cursor: pointer;
+}
+
+#help-toolbar.hidden #toggle svg {
+  transform: rotate(0);
+}
+
+#help-toolbar #toggle svg {
+  transform: rotate(180deg);
+  transition: transform .35s ease;
 }
 </style>
