@@ -125,7 +125,7 @@
         </b-col>
       </b-row>
 
-      <PlotCommentModal :editable="trial.editable" :cell="cell" ref="commentModal" v-if="showModal === 'comment'" />
+      <PlotCommentModal :editable="trial.editable" :cell="cell" @comments-changed="$emit('data-changed')" ref="commentModal" v-if="showModal === 'comment'" />
       <ImageModal :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="selectedTrait ? selectedTrait.id : null" ref="imageModal" v-if="showModal === 'image'" />
       <GuidedWalkSelectorModal :cell="cell" :trialLayout="trial.layout" ref="guidedWalkModal" v-if="showModal === 'guided-walk'" />
 

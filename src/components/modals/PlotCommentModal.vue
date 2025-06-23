@@ -103,10 +103,15 @@ export default {
       this.newCommentContent = newValue
     },
     deleteComment: function (comment) {
+      if (isProxy(comment)) {
+        comment = toRaw(comment)
+      }
+
       deletePlotComment(this.cell.trialId, this.cell.row, this.cell.column, comment)
         .then(() => {
           emitter.emit('plot-comments-changed', this.cell.row, this.cell.column, this.cell.trialId)
           emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'deleted' } })
+          this.$emit('comments-changed')
         })
     },
     createComment: function () {
@@ -117,6 +122,7 @@ export default {
           this.commentFormVisible = false
           emitter.emit('plot-comments-changed', this.cell.row, this.cell.column, this.cell.trialId)
           emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'added' } })
+          this.$emit('comments-changed')
         })
     }
   }

@@ -1430,7 +1430,7 @@ const deletePlotComment = async (trialId: string, row: number, column: number, c
         transaction.plotCommentDeletedTransactions[`${row}|${column}`].push(comment)
       }
 
-      if (transaction.plotCommentAddedTransactions[`${row}|${column}`].length < 1) {
+      if (transaction.plotCommentAddedTransactions[`${row}|${column}`] && transaction.plotCommentAddedTransactions[`${row}|${column}`].length < 1) {
         delete transaction.plotCommentAddedTransactions[`${row}|${column}`]
       }
 

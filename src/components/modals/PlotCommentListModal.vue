@@ -220,6 +220,10 @@ export default {
       this.$nextTick(() => this.$refs.plotCommentsModal.hide())
     },
     deleteComment: function (comment) {
+      if (isProxy(comment)) {
+        comment = toRaw(comment)
+      }
+
       this.allComments = this.allComments.filter(c => c.row !== comment.row || c.column !== comment.column || c.comment.timestamp !== comment.comment.timestamp)
       // Make sure to jump back a page when we hit the threshold
       if ((this.page - 1) * this.perPage >= this.allComments.length) {
@@ -230,6 +234,7 @@ export default {
         .then(() => {
           emitter.emit('plot-comments-changed', comment.row, comment.column, comment.trialId)
           emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'deleted' } })
+          this.$emit('comments-changed')
         })
     }
   }

@@ -23,7 +23,7 @@
 
     <DataViewJumpControl v-if="storeNavigationMode === NAVIGATION_MODE_JUMP" />
 
-    <PlotCommentListModal :trial="trial" ref="plotCommentModal" />
+    <PlotCommentListModal :trial="trial" ref="plotCommentModal" @comments-changed="loadTrial" />
     <DataInputModal :geolocation="geolocation" :trial="trial" ref="dataInputModal" @data-changed="loadTrial" @hidden="selectSearch" />
     <SearchMatchModal :searchMatches="searchMatches" ref="searchMatchModal" v-if="searchMatches" />
     <ScanQRCodeModal ref="scanQrCodeModal" @code-scanned="searchCodeScanned" />
