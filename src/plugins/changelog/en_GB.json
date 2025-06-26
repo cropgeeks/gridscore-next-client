@@ -682,6 +682,16 @@
         "type": "new",
         "title": "Trait cutoff date",
         "text": "When scoring timeline traits a cutoff date can be set while scoring to adjust the main data display in such a way that the circles/squares are only filled if a value has been recorded <strong>after</strong> the cutoff date. This makes it easier to identify plots that still need to be scored in the current 'run'."
+      },
+      {
+        "type": "new",
+        "title": "Discard local changes",
+        "text": "In some cases it might be necessary to delete any local changes that have been made since a trial was last synchronised (due to input error or similar). This can now be done from the synchronisation screen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Comment deletion",
+        "text": "Fixed issues with comment deletion on shared trials. Previously it was not possible to delete plot comments due to a bug."
       }
     ]
   }

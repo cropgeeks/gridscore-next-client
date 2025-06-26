@@ -54,7 +54,8 @@ export default {
   computed: {
     ...mapStores(coreStore),
     ...mapState(coreStore, [
-      'storeSelectedTrial'
+      'storeSelectedTrial',
+      'storeLocale'
     ]),
     numericTraits: function () {
       if (this.trial && this.trial.traits) {
@@ -121,7 +122,7 @@ export default {
       })
 
       Object.values(nonNumericTraitStats).forEach(v => {
-        v.values = [...v.values].sort((a, b) => a.localeCompare(b))
+        v.values = [...v.values].sort((a, b) => a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
       })
 
       this.nonNumericTraitStats = nonNumericTraitStats

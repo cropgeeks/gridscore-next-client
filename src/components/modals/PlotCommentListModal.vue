@@ -102,7 +102,8 @@ export default {
   computed: {
     ...mapStores(coreStore),
     ...mapState(coreStore, [
-      'storeSelectedTrial'
+      'storeSelectedTrial',
+      'storeLocale'
     ]),
     orderByOptions: function () {
       return [{
@@ -136,7 +137,7 @@ export default {
               result = a.comment.timestamp.localeCompare(b.comment.timestamp)
               break
             case 'germplasm':
-              result = a.germplasm.localeCompare(b.germplasm)
+              result = a.germplasm.localeCompare(b.germplasm, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' })
               break
             case 'row':
               result = a.displayRow - b.displayRow

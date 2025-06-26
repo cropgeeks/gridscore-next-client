@@ -682,6 +682,16 @@
         "type": "new",
         "title": "Markmalsstichtag",
         "text": "Beim Bewerten von Zeitachsenmerkmalen kann ein Stichtag während der Bewertung festgelegt werden, um die Hauptdatenanzeige so anzupassen, dass die Kreise/Quadrate nur gefüllt werden, wenn ein Wert <strong>nach</strong> dem Stichtag erfasst wurde. Dies erleichtert die Identifizierung von Beeten, die im aktuellen 'Durchlauf' noch bewertet werden müssen."
+      },
+      {
+        "type": "new",
+        "title": "Lokale Änderungen verwerfen",
+        "text": "In einigen Fällen kann es notwendig sein, alle lokalen Änderungen zu löschen, die seit der letzten Synchronisierung eines Versuchs vorgenommen wurden (aufgrund von Eingabefehlern oder Ähnlichem). Dies kann jetzt über den Synchronisierungsbildschirm erfolgen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Löschen von Kommentaren",
+        "text": "Probleme beim Löschen von Kommentaren bei geteilten Versuchen behoben. Zuvor war es aufgrund eines Fehlers nicht möglich, Plot-Kommentare zu löschen."
       }
     ]
   }

@@ -159,6 +159,7 @@
 </template>
 
 <script>
+import { mapState, mapStores } from 'pinia'
 import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal.vue'
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
 import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
@@ -169,6 +170,7 @@ import LayoutFeedbackModal from '@/components/modals/LayoutFeedbackModal.vue'
 import TraitHeading from '@/components/TraitHeading.vue'
 import { isGeographyValid, isGeographyAllNull } from '@/plugins/location'
 import { updateTrialProperties, getTrialGroups } from '@/plugins/idb'
+import { coreStore } from '@/store'
 
 import emitter from 'tiny-emitter/instance'
 import { TRIAL_STATE_NOT_SHARED, TRIAL_STATE_OWNER } from '@/plugins/constants'
@@ -225,6 +227,10 @@ export default {
     }
   },
   computed: {
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
+      'storeLocale'
+    ]),
     traitGroups: function () {
       const set = new Set()
 
@@ -237,7 +243,7 @@ export default {
       }
 
       if (set.size > 0) {
-        return [...set].sort((a, b) => a.localeCompare(b))
+        return [...set].sort((a, b) => a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
       } else {
         return []
       }

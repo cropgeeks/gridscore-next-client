@@ -487,8 +487,8 @@ export default {
           })
         })
 
-        this.reps = [...reps].sort((a, b) => a ? a.localeCompare(b) : -1)
-        this.allGermplasm = [...Object.keys(germplasmMap)].sort((a, b) => a.localeCompare(b))
+        this.reps = [...reps].sort((a, b) => a ? a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }) : -1)
+        this.allGermplasm = [...Object.keys(germplasmMap)].sort((a, b) => a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
         this.germplasmMap = germplasmMap
 
         let hasActualReps = Object.values(germplasmMap).filter(m => {

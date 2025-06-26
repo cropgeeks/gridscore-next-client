@@ -31,12 +31,15 @@
         </b-row>
       </b-card-body>
     </b-card>
+
+    <!-- <PatternLock :correctPattern="[7, 5, 4, 2, 6, 8]" style="max-width: 400px;" /> -->
   </b-container>
 </template>
 
 <script>
 import HomeBanners from '@/components/HomeBanners.vue'
 import TrialSelector from '@/components/TrialSelector.vue'
+// import PatternLock from '@/components/canvas/PatternLock.vue'
 import { coreStore } from '@/store'
 import { mapState, mapStores } from 'pinia'
 
@@ -58,6 +61,7 @@ export default {
   },
   components: {
     HomeBanners,
+    // PatternLock,
     TrialSelector
   },
   computed: {

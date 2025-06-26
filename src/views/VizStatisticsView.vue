@@ -188,7 +188,7 @@ export default {
       const set = new Set()
       this.selectedGermplasm.forEach(g => set.add(g))
       this.selectedGermplasmTemp.forEach(g => set.add(g))
-      this.selectedGermplasm = [...set].sort((a, b) => a.localeCompare(b))
+      this.selectedGermplasm = [...set].sort((a, b) => a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
       this.selectedGermplasmTemp = []
     },
     updateTraits: function () {

@@ -200,14 +200,14 @@ export default {
       modalToShow: null,
       sorting: {
         latestUpdate: (a, b) => this.sortDescending ? (new Date(b.updatedOn) - new Date(a.updatedOn)) : (new Date(a.updatedOn) - new Date(b.updatedOn)),
-        name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name),
+        name: (a, b) => this.sortDescending ? b.name.localeCompare(a.name, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }) : a.name.localeCompare(b.name, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }),
         localVsRemote: (a, b) => {
           let result = 0
           const aExists = a.remoteUrl !== undefined && a.remoteUrl !== null
           const bExists = b.remoteUrl !== undefined && b.remoteUrl !== null
 
           if ((!aExists && !bExists) || (aExists && bExists)) {
-            result = a.name.localeCompare(b.name)
+            result = a.name.localeCompare(b.name, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' })
           } else if (!aExists) {
             result = 1
           } else if (!bExists) {
@@ -226,6 +226,7 @@ export default {
   computed: {
     ...mapStores(coreStore),
     ...mapState(coreStore, [
+      'storeLocale',
       'storeSelectedTrial',
       'storeTrialListMode',
       'storeTrialListArrangement'

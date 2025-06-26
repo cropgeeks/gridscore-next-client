@@ -165,6 +165,7 @@ export default {
     ...mapState(coreStore, [
       'storeDarkMode',
       'storeMapLayer',
+      'storeLocale',
       'storeTraitColors',
       'storeSelectedTrial'
     ]),
@@ -222,7 +223,7 @@ export default {
           })
         })
 
-        result.sort((a, b) => a.text.localeCompare(b.text))
+        result.sort((a, b) => a.text.localeCompare(b.text, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
 
         return result
       } else {
@@ -427,7 +428,7 @@ export default {
           })
         }
 
-        const days = [...tempStats[trial.localId].activeDays].sort((a, b) => a.localeCompare(b))
+        const days = [...tempStats[trial.localId].activeDays].sort((a, b) => a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
 
         let daySpan = 0
 
@@ -639,7 +640,7 @@ export default {
     getTrials()
       .then(result => {
         if (result) {
-          result.sort((a, b) => a.name.localeCompare(b.name))
+          result.sort((a, b) => a.name.localeCompare(b.name, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
           this.trials = result
 
           if (this.storeSelectedTrial) {

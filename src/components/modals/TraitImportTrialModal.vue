@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { coreStore } from '@/store'
+import { mapState, mapStores } from 'pinia'
 import { getTrials } from '@/plugins/idb'
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 
@@ -87,6 +89,10 @@ export default {
     }
   },
   computed: {
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
+      'storeLocale'
+    ]),
     canContinue: function () {
       return this.selectedTrial && this.selectedTraits && this.selectedTraits.length > 0
     },
@@ -176,7 +182,7 @@ export default {
 
       getTrials()
         .then(trials => {
-          this.trials = (trials || []).sort((a, b) => a.name.localeCompare(b.name))
+          this.trials = (trials || []).sort((a, b) => a.name.localeCompare(b.name, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
         })
     }
   }

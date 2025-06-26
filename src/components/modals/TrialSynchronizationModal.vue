@@ -190,6 +190,8 @@
               </p>
             </b-list-group-item>
           </b-list-group>
+
+          <b-button v-if="trial.transactionCount > 0" variant="danger" @click="deleteLocalChanges"><IBiTrashFill /> {{ $t('buttonDeleteLocalChanges') }}</b-button>
         </div>
         <div v-else>
           <p v-html="$t('modalTextTrialSynchronizationNoData')" :class="trial.hasRemoteUpdate ? null : 'text-warning'" />
@@ -236,6 +238,51 @@ export default {
     ...mapStores(coreStore)
   },
   methods: {
+    deleteLocalChanges: function () {
+      emitter.emit('show-confirm', {
+        title: 'modalTitleDeleteLocalChanges',
+        message: 'modalTextDeleteLocalChanges',
+        okTitle: 'buttonYes',
+        cancelTitle: 'buttonNo',
+        okVariant: 'danger',
+        callback: (result) => {
+          if (result) {
+            let remoteConfig = null
+
+            if (this.trial && this.trial.remoteUrl) {
+              remoteConfig = {
+                remoteUrl: this.trial.remoteUrl,
+                token: this.trial.remoteToken || null
+              }
+            }
+
+            getTrialByCode(remoteConfig, this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode || this.trial.shareCodes.viewerCode)
+              .then(result => {
+                return deleteTrial(this.trial.localId)
+                  .then(() => {
+                    return addTrial(result)
+                  })
+                  .then(localId => {
+                    this.coreStore.setSelectedTrial(localId)
+                    emitter.emit('trials-updated')
+                    emitter.emit('show-loading', false)
+                    emitter.emit('plausible-event', { key: 'trial-synchronized', props: { count: this.trial.transactionCount } })
+                  })
+                  .finally(() => {
+                    emitter.emit('show-loading', false)
+                  })
+              })
+              .catch(error => {
+                if (error.status === 404) {
+                  this.serverError = this.$t('apiErrorTrialNotFound')
+                } else {
+                  this.serverError = this.$t('modalTextApiError', { error: JSON.stringify(error, Object.getOwnPropertyNames(error)) })
+                }
+              })
+          }
+        }
+      })
+    },
     askToSynchronize: function () {
       if (!this.trial.shareCodes.ownerCode && !this.trial.shareCodes.editorCode) {
         emitter.emit('show-loading', true)

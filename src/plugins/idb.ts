@@ -144,7 +144,7 @@ const getTrialGroups = async () => {
       }
     })
 
-    return [...groups].sort((a, b) => a.localeCompare(b))
+    return [...groups].sort((a, b) => a.localeCompare(b, getStore().storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
   } else {
     return []
   }

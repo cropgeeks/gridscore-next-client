@@ -188,6 +188,7 @@
 </template>
 
 <script>
+import { mapState, mapStores } from 'pinia'
 import TraitImportExportGridScoreModal from '@/components/modals/TraitImportExportGridScoreModal.vue'
 import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal.vue'
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
@@ -197,6 +198,7 @@ import { getTraitTypeText, isNumber } from '@/plugins/misc'
 import draggable from 'vuedraggable'
 import { getId } from '@/plugins/id'
 import { TRAIT_TIMEFRAME_TYPE_SUGGEST, TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
+import { coreStore } from '@/store'
 
 import emitter from 'tiny-emitter/instance'
 
@@ -276,6 +278,10 @@ export default {
     }
   },
   computed: {
+    ...mapStores(coreStore),
+    ...mapState(coreStore, [
+      'storeLocale',
+    ]),
     timeframeCollapseVisible: function () {
       return this.newTrait.timeframe !== null
     },
@@ -301,7 +307,7 @@ export default {
       })
 
       if (set.size > 0) {
-        return [...set].sort((a, b) => a.localeCompare(b))
+        return [...set].sort((a, b) => a.localeCompare(b, this.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
       } else {
         return []
       }
