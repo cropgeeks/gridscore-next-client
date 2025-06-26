@@ -689,6 +689,11 @@
         "text": "In some cases it might be necessary to delete any local changes that have been made since a trial was last synchronised (due to input error or similar). This can now be done from the synchronisation screen."
       },
       {
+        "type": "new",
+        "title": "Better onboarding",
+        "text": "A new help toolbar has been added below the main navigation that will contain links to help pages. When GridScore isn't installed properly, a button with information on how to install GridScore will be shown."
+      },
+      {
         "type": "bugfix",
         "title": "Comment deletion",
         "text": "Fixed issues with comment deletion on shared trials. Previously it was not possible to delete plot comments due to a bug."
