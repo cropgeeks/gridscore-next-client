@@ -676,7 +676,7 @@
   },
   {
     "version": "3.4.1",
-    "date": "2025-06-xx",
+    "date": "2025-06-26",
     "items": [
       {
         "type": "new",
@@ -687,6 +687,11 @@
         "type": "new",
         "title": "Lokale Änderungen verwerfen",
         "text": "In einigen Fällen kann es notwendig sein, alle lokalen Änderungen zu löschen, die seit der letzten Synchronisierung eines Versuchs vorgenommen wurden (aufgrund von Eingabefehlern oder Ähnlichem). Dies kann jetzt über den Synchronisierungsbildschirm erfolgen."
+      },
+      {
+        "type": "new",
+        "title": "Besseres Onboarding",
+        "text": "Eine neue Hilfe-Symbolleiste wurde unterhalb der Hauptnavigation hinzugefügt, die Links zu Hilfeseiten enthält. Wenn GridScore nicht richtig installiert ist, wird ein Button mit Informationen zur Installation von GridScore angezeigt."
       },
       {
         "type": "bugfix",
