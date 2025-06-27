@@ -809,7 +809,7 @@ export default {
           } else {
             // For all others, check if the last set of recorded values has the full `setSize`.
             // Also check trait cutoff point.
-            const matchingCount = traitMeasurements.filter(m => m.values && m.values.length === trait.original.setSize && (!this.traitCutoff || !cell.latestDates[trait.original.id] || cell.latestDates[trait.original.id] > this.traitCutoff)).length
+            const matchingCount = traitMeasurements.filter(m => m.values && m.values.length === trait.original.setSize && (!this.traitCutoff || !cell.latestDates || !cell.latestDates[trait.original.id] || cell.latestDates[trait.original.id] > this.traitCutoff)).length
             if (matchingCount > 0) {
               fill = 'semi'
             } else {

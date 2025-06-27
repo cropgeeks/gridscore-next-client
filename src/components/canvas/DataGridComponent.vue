@@ -64,7 +64,7 @@
                 <IBiCheckSquareFill class="grid-icon check" v-if="storeHighlightControls && cell && cell.categories && cell.categories.includes(CELL_CATEGORY_CONTROL)" />
                 <div class="cell-text my-1">{{ cell[storePlotDisplayField] }}</div>
                 <template v-for="trait in visibleTraits">
-                  <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0 && (!cell.latestDates[trait.id] || !traitCutoff || (cell.latestDates[trait.id] > traitCutoff))">
+                  <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0 && (!traitCutoff || !cell.latestDates || !cell.latestDates[trait.id] || (cell.latestDates[trait.id] > traitCutoff))">
                     <template v-if="trait.allowRepeats">
                       <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-square-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-if="storeCanvasShape === CANVAS_SHAPE_SQUARE">
                         <path d="M 1,15 15,1 v 14 z m 15,1 V 0 H 0 v 16 z"/>
