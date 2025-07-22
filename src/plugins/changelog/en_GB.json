@@ -699,5 +699,16 @@
         "text": "Fixed issues with comment deletion on shared trials. Previously it was not possible to delete plot comments due to a bug."
       }
     ]
+  },
+  {
+    "version": "3.4.2",
+    "date": "2025-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Trait toggle display",
+        "text": "When traits are toggled (visibility changed) the main data display will now maintain its scroll position. This means that the plot/pot which was at the centre before will also be at the centre after toggling."
+      }
+    ]
   }
 ]

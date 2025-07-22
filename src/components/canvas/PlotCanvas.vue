@@ -309,7 +309,7 @@ export default {
 
       this.updateMarkers()
     },
-    update: function () {
+    update: function (scrollToRow, scrollToColumn) {
       if (!this.ctx) {
         return
       }
@@ -344,6 +344,12 @@ export default {
       }
 
       this.isDrawing = false
+
+      if (scrollToRow !== undefined && scrollToRow !== null && scrollToColumn !== undefined && scrollToColumn !== null) {
+        const x = scrollToColumn / this.trial.layout.columns * 100
+        const y = scrollToRow / this.trial.layout.rows * 100
+        this.scrollTo(x, y)
+      }
     },
     reset: async function () {
       this.trialData = getTrialDataCached()
@@ -474,6 +480,17 @@ export default {
         }
         this.drag.position = ev
         this.drag.startTime = Date.now()
+      }
+    },
+    getCenterPosition: function () {
+      const centerX = this.$refs.plotCanvas.offsetWidth / 2
+      const centerY = this.$refs.plotCanvas.offsetHeight / 2
+      const row = Math.floor((-this.origin.y + centerY) / this.dimensions.cellHeight)
+      const column = Math.floor((-this.origin.x + centerX) / this.dimensions.cellWidth)
+
+      return {
+        column,
+        row
       }
     },
     onMouseUp: function (e) {

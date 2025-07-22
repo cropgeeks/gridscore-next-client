@@ -699,5 +699,16 @@
         "text": "Probleme beim Löschen von Kommentaren bei geteilten Versuchen behoben. Zuvor war es aufgrund eines Fehlers nicht möglich, Plot-Kommentare zu löschen."
       }
     ]
+  },
+  {
+    "version": "3.4.2",
+    "date": "2025-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "Trait toggle display",
+        "text": "Beim Umschalten von Merkmalen (Änderung der Sichtbarkeit) wird die Scrollposition der Hauptdatenanzeige nun beibehalten. So bleibt das Beet/Topf, das vorher mittig war, auch nach dem Umschalten in der Mitte."
+      }
+    ]
   }
 ]

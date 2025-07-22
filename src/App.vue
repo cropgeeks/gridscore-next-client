@@ -56,7 +56,7 @@
       </b-collapse>
     </b-navbar>
 
-    <div class="d-flex flex-column flex-fill">
+    <div class="d-flex flex-column flex-fill position-relative">
       <HelpToolbar />
 
       <router-view id="router-view" />

@@ -43,7 +43,7 @@
         }" v-else />
       </template>
       <IBiCircleFill class="grid-icon position-absolute marker" v-for="(marker, mIndex) in markers" :key="`marker-${mIndex}`" :style="{ left: marker[0], top: marker[1] }" />
-      <div class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, ${cellHeight}px)` }">
+      <div ref="dataGrid" class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, ${cellHeight}px)` }">
         <template v-for="row in rows">
           <template v-for="column in columns" :key="`cell-${row.index}-${column.index}`">
             <!-- Temporary variable -->
@@ -127,7 +127,8 @@ export default {
       rows: [],
       gridProjection: null,
       markers: {},
-      showRestrictionToast: false
+      showRestrictionToast: false,
+      scrollToElementOnTraitToggle: null
     }
   },
   computed: {
@@ -280,6 +281,29 @@ export default {
   watch: {
     visibleTraits: function () {
       this.updateDimensions()
+      nextTick(() => {
+        if (this.scrollToElementOnTraitToggle) {
+          this.scrollToElementOnTraitToggle.scrollIntoView({ block: 'center' })
+        }
+      })
+    },
+    storeHiddenTraits: {
+      handler: function () {
+        const x = window.innerWidth / 2
+        const y = window.innerHeight / 2
+        
+        let element = document.elementFromPoint(x, y)
+
+        if (element) {
+          while (!element.classList.contains('cell') && element.tagName.toLowerCase() !== 'body') {
+            element = element.parentElement
+          }
+        }
+
+        // When traits are toggled, maintain the scroll position of the element currently in the center
+        this.scrollToElementOnTraitToggle = element 
+      },
+      flush: 'sync'
     }
   },
   methods: {

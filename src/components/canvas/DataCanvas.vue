@@ -105,6 +105,9 @@ export default {
       this.updateTrial()
     },
     storeHiddenTraits: function () {
+      if (this.$refs.plotCanvas) {
+        this.scrollToPosition = this.$refs.plotCanvas.getCenterPosition()
+      }
       this.reset()
     }
   },
@@ -169,7 +172,12 @@ export default {
     },
     update: function () {
       if (this.$refs.plotCanvas) {
-        this.$refs.plotCanvas.update()
+        if (this.scrollToPosition) {
+          this.$refs.plotCanvas.update(this.scrollToPosition.row, this.scrollToPosition.column)
+          this.scrollToPosition = null
+        } else {
+          this.$refs.plotCanvas.update()
+        }
       }
     },
     reset: function () {
