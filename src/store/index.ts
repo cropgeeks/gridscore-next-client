@@ -134,7 +134,7 @@ export const coreStore = defineStore('core', {
     setAutoProgressInputs: function (newAutoProgressInputs: boolean) {
       this.autoProgressInputs = newAutoProgressInputs
     },
-    setSelectedTrial: function (newSelectedTrial: string) {
+    setSelectedTrial: async function (newSelectedTrial: string) {
       /* Remember to reset everything here */
       const currentId = this.selectedTrial
       this.selectedTrial = newSelectedTrial
@@ -144,19 +144,16 @@ export const coreStore = defineStore('core', {
       }
 
       if (newSelectedTrial) {
-        getTrialById(newSelectedTrial)
-          .then(trial => {
-            ensureTraitImagesCached(trial)
-
-            if (trial.brapiConfig) {
-              this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(trial.brapiConfig)))
-            } else {
-              this.brapiConfig = {
-                url: null,
-                token: null
-              }
-            }
-          })
+        const trial = await getTrialById(newSelectedTrial)
+        ensureTraitImagesCached(trial)
+        if (trial.brapiConfig) {
+          this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(trial.brapiConfig)))
+        } else {
+          this.brapiConfig = {
+            url: null,
+            token: null
+          }
+        }
       } else {
         this.brapiConfig = {
           url: null,

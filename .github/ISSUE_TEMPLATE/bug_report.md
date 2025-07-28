@@ -26,13 +26,13 @@ If applicable, add screenshots to help explain your problem.
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
- - GridScore Version [e.g. 3.4.2]
+ - GridScore Version [e.g. 3.4.3]
 
 **Smartphone (please complete the following information):**
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
  - Browser [e.g. stock browser, safari]
- - GridScore Version [e.g. 3.4.2]
+ - GridScore Version [e.g. 3.4.3]
 
 **Additional context**
 Add any other context about the problem here.

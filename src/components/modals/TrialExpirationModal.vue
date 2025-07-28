@@ -49,7 +49,8 @@ export default {
   computed: {
     ...mapStores(coreStore),
     ...mapState(coreStore, [
-      'storeServerUrl'
+      'storeServerUrl',
+      'storeDarkMode'
     ]),
     shareCode: function () {
       if (this.trial && this.trial.shareCodes) {
@@ -67,7 +68,7 @@ export default {
   },
   methods: {
     getNewCaptcha: function () {
-      this.captchaUrl = `${this.storeServerUrl}trial/${this.shareCode}/captcha?ts=${new Date().getTime()}`
+      this.captchaUrl = `${this.storeServerUrl}trial/${this.shareCode}/captcha?ts=${new Date().getTime()}&darkMode=${this.storeDarkMode === true}`
     },
     sendCaptcha: function () {
       emitter.emit('show-loading', true)

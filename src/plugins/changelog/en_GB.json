@@ -710,5 +710,21 @@
         "text": "When traits are toggled (visibility changed) the main data display will now maintain its scroll position. This means that the plot/pot which was at the centre before will also be at the centre after toggling."
       }
     ]
+  },
+  {
+    "version": "3.4.3",
+    "date": "2025-07-28",
+    "items": [
+      {
+        "type": "update",
+        "title": "Dependency update",
+        "text": "This version includes a big update to our server dependencies. This should not affect the way GridScore operates for our users."
+      },
+      {
+        "type": "bugfix",
+        "title": "Main data display empty",
+        "text": "Fixed an issue where the main data display might appear empty on first load of a trial."
+      }
+    ]
   }
 ]

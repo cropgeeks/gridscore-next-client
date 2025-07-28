@@ -710,5 +710,21 @@
         "text": "Beim Umschalten von Merkmalen (Änderung der Sichtbarkeit) wird die Scrollposition der Hauptdatenanzeige nun beibehalten. So bleibt das Beet/Topf, das vorher mittig war, auch nach dem Umschalten in der Mitte."
       }
     ]
+  },
+  {
+    "version": "3.4.3",
+    "date": "2025-07-28",
+    "items": [
+      {
+        "type": "update",
+        "title": "Abhängigkeits-Update",
+        "text": "Diese Version beinhaltet ein großes Update der Server-Abhängigkeiten. Dies sollte die Funktionsweise von GridScore für unsere Nutzer nicht beeinträchtigen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Hauptdatenanzeige ist leer",
+        "text": "Es wurde ein Problem behoben, bei dem die Hauptdatenanzeige beim ersten Laden eines Versuchs möglicherweise leer erschien."
+      }
+    ]
   }
 ]
