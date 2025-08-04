@@ -49,6 +49,7 @@
             <!-- Temporary variable -->
             {{ (cell = trialData[`${row.index}|${column.index}`], null) }}
             <div
+              :ref="`cell-${row.index}-${column.index}`"
                @click="plotClicked(row.index, column.index)"
               :class="[{
                 'cell-empty': cell === undefined,
@@ -406,7 +407,7 @@ export default {
 
       if (cell) {
         // Emit an event to handle user selections
-        emitter.emit('plot-clicked', row, column)
+        emitter.emit('plot-clicked', row, column, false)
       }
     },
     loadTrial: function () {
@@ -551,6 +552,14 @@ export default {
       if (this.trial.localId === trialId) {
         this.trialData[`${row}|${column}`] = toRef(cell)
       }
+    },
+    onPlotClicked: function (row, column, scrollTo) {
+      if (scrollTo) {
+        const element = this.$refs[`cell-${row}-${column}`]
+        if (element && element.length > 0) {
+          element[0].scrollIntoView({ block: 'center' })
+        }
+      }
     }
   },
   mounted: function () {
@@ -562,6 +571,7 @@ export default {
     emitter.on('jump-to-corner', this.jumpToCorner)
     emitter.on('move-to-corner', this.moveInDirection)
     emitter.on('plot-cache-changed', this.updateCellCache)
+    emitter.on('plot-clicked', this.onPlotClicked)
     window.addEventListener('resize', this.updateDimensions)
   },
   beforeUnmount: function () {
@@ -569,6 +579,7 @@ export default {
     emitter.off('jump-to-corner', this.jumpToCorner)
     emitter.off('move-to-corner', this.moveInDirection)
     emitter.off('plot-cache-changed', this.updateCellCache)
+    emitter.off('plot-clicked', this.onPlotClicked)
     window.removeEventListener('resize', this.updateDimensions)
 
     if (this.scrollSynced && this.$refs.wrapper) {

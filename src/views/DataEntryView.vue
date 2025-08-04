@@ -207,7 +207,7 @@ export default {
       const matches = getGermplasmMatches(this.trial, trimmed)
 
       if (matches.length === 1) {
-        emitter.emit('plot-clicked', matches[0].row, matches[0].column)
+        emitter.emit('plot-clicked', matches[0].row, matches[0].column, true)
       } else if (matches.length < 1) {
         emitter.emit('show-confirm', {
           title: 'modalTitleGermplasmSearchNoMatchFound',

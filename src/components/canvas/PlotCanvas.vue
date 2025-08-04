@@ -519,7 +519,7 @@ export default {
 
           if (cell) {
             // Emit an event to handle user selections
-            emitter.emit('plot-clicked', row, column)
+            emitter.emit('plot-clicked', row, column, false)
           }
         }
       } else if (this.storeNavigationMode === NAVIGATION_MODE_DRAG && (e.type === 'touchend' || e.type === 'touchcancel')) {
@@ -973,6 +973,27 @@ export default {
       } else {
         this.update()
       }
+    },
+    onPlotClicked: function (row, column, scrollTo) {
+      if (scrollTo) {
+        // Calculate the number of cells currently visible on screen
+        const visibleCellsX = Math.floor(this.dimensions.canvasWidth / this.dimensions.cellWidth)
+        const visibleCellsY = Math.floor(this.dimensions.canvasHeight / this.dimensions.cellHeight)
+
+        // Calculate the distance from our cell to the top left corner of the window we want
+        const deltaX = (visibleCellsX - 1) / 2 * this.dimensions.cellWidth
+        const deltaY = (visibleCellsY - 1) / 2 * this.dimensions.cellHeight
+
+        // Calculate the position of the top left corner of the window we want
+        const x = column * this.dimensions.cellWidth - deltaX
+        const y = row * this.dimensions.cellHeight - deltaY
+
+        // Min-max normalize this into 0-100 (which is our scroll range)
+        const scrollX = Math.max(0, Math.min(100, x / (this.trial.layout.columns * this.dimensions.cellWidth - this.dimensions.canvasWidth) * 100))
+        const scrollY = Math.max(0, Math.min(100, y / (this.trial.layout.rows * this.dimensions.cellHeight - this.dimensions.canvasHeight) * 100))
+
+        this.scrollTo(scrollX, scrollY)
+      }
     }
   },
   mounted: function () {
@@ -980,12 +1001,14 @@ export default {
     emitter.on('move-to-corner', this.moveInDirection)
     emitter.on('trial-data-loaded', this.reset)
     emitter.on('plot-cache-changed', this.updateCellCache)
+    emitter.on('plot-clicked', this.onPlotClicked)
   },
   beforeUnmount: function () {
     emitter.off('jump-to-corner', this.jumpToCorner)
     emitter.off('move-to-corner', this.moveInDirection)
     emitter.off('trial-data-loaded', this.reset)
     emitter.off('plot-cache-changed', this.updateCellCache)
+    emitter.off('plot-clicked', this.onPlotClicked)
   }
 }
 </script>

@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     handleClick: function (match) {
-      emitter.emit('plot-clicked', match.row, match.column)
+      emitter.emit('plot-clicked', match.row, match.column, true)
       this.hide()
     },
     /**

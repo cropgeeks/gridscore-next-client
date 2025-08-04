@@ -156,7 +156,7 @@ export default {
           .then(() => {
             this.$nextTick(() => {
               emitter.emit('plot-data-changed', this.cell.row, this.cell.column, this.trial.localId)
-              emitter.emit('plot-clicked', this.cell.row, this.cell.column)
+              emitter.emit('plot-clicked', this.cell.row, this.cell.column, false)
               this.$emit('data-changed')
             })
             this.hide()
