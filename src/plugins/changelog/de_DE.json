@@ -726,5 +726,16 @@
         "text": "Es wurde ein Problem behoben, bei dem die Hauptdatenanzeige beim ersten Laden eines Versuchs möglicherweise leer erschien."
       }
     ]
+  },
+  {
+    "version": "3.4.4",
+    "date": "2025-xx-xx",
+    "items": [
+      {
+        "type": "update",
+        "title": "Zum Suchergebnis scrollen",
+        "text": "Bei der Suche nach einem Treffer über das Suchfeld scrollt GridScore nun die Hauptansicht, um das Suchergebnis sichtbar zu machen."
+      }
+    ]
   }
 ]

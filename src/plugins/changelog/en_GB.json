@@ -726,5 +726,16 @@
         "text": "Fixed an issue where the main data display might appear empty on first load of a trial."
       }
     ]
+  },
+  {
+    "version": "3.4.4",
+    "date": "2025-xx-xx",
+    "items": [
+      {
+        "type": "update",
+        "title": "Scroll to search result",
+        "text": "When searching for a match using the search box, GridScore will now scroll the main view to bring the search result into view."
+      }
+    ]
   }
 ]
