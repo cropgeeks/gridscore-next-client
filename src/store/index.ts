@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { CANVAS_DENSITY_MEDIUM, CANVAS_SHAPE_CIRCLE, CANVAS_SIZE_MEDIUM, MAIN_DISPLAY_MODE_AUTO, NAVIGATION_MODE_DRAG, PLOT_DISPLAY_FIELD_DISPLAY_NAME, TRIAL_LIST_ALL, TRIAL_LIST_GRID } from '@/plugins/constants'
 import { getTrialById } from '@/plugins/idb'
 
-import emitter from 'tiny-emitter/instance'
+// import emitter from 'tiny-emitter/instance'
 import { ensureTraitImagesCached } from '@/plugins/traitcache'
 import { BrapiConfig } from '@/plugins/types/gridscore'
 import { loadTrialData } from '@/plugins/datastore'
