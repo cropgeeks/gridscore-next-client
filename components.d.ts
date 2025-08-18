@@ -76,7 +76,6 @@ declare module 'vue' {
     ChangelogModal: typeof import('./src/components/modals/ChangelogModal.vue')['default']
     ColumnHeader: typeof import('./src/components/canvas/ColumnHeader.vue')['default']
     ConfirmModal: typeof import('./src/components/modals/ConfirmModal.vue')['default']
-    copy: typeof import('./src/components/modals/TrialDataImportModal copy.vue')['default']
     DataCalendarHeatmapChart: typeof import('./src/components/charts/DataCalendarHeatmapChart.vue')['default']
     DataCanvas: typeof import('./src/components/canvas/DataCanvas.vue')['default']
     DataGridComponent: typeof import('./src/components/canvas/DataGridComponent.vue')['default']
@@ -128,6 +127,7 @@ declare module 'vue' {
     IBiCalendarRangeFill: typeof import('~icons/bi/calendar-range-fill')['default']
     IBiCalendarXFill: typeof import('~icons/bi/calendar-x-fill')['default']
     IBiCameraFill: typeof import('~icons/bi/camera-fill')['default']
+    IBiCameraVideoFill: typeof import('~icons/bi/camera-video-fill')['default']
     IBiCardChecklist: typeof import('~icons/bi/card-checklist')['default']
     IBiCardList: typeof import('~icons/bi/card-list')['default']
     IBiCardText: typeof import('~icons/bi/card-text')['default']
@@ -347,6 +347,7 @@ declare module 'vue' {
     TrialSynchronizationModal: typeof import('./src/components/modals/TrialSynchronizationModal.vue')['default']
     TrialTraitTimeframeModal: typeof import('./src/components/modals/TrialTraitTimeframeModal.vue')['default']
     UploadTraitImageModal: typeof import('./src/components/modals/UploadTraitImageModal.vue')['default']
+    VideoModal: typeof import('./src/components/modals/VideoModal.vue')['default']
     VScroll: typeof import('./src/components/canvas/VScroll.vue')['default']
   }
   export interface ComponentCustomProperties {

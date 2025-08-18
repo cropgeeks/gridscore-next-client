@@ -2,19 +2,20 @@
   <b-modal :title="displayName"
            :ok-title="$t('buttonSave')"
            :cancel-title="$t('buttonCancel')"
-           @ok.prevent="downloadImage"
+           @ok.prevent="downloadMedia"
            @hidden="hide"
            no-fade
-           ref="imageModal"
-           content-class="image-modal">
+           ref="mediaModal"
+           content-class="media-modal">
     <div v-if="trial || trialName" :id="id">
-      <template v-if="imageData">
+      <template v-if="mediaData">
         <b-button v-if="canShare" class="mb-3" @click="share"><IBiShareFill /> {{ $t('buttonShareSocial') }}</b-button>
-        <!-- Preview the image -->
-        <b-img fluid rounded :src="imageData" class="image" />
+        <!-- Preview the media -->
+        <b-img fluid rounded :src="mediaData" class="image" v-if="mediaType === MEDIA_TYPE_IMAGE" />
+        <video class="video" controls ref="video" v-else />
       </template>
-      <!-- Input for selecting (or taking) the image -->
-      <b-form-file v-model="imageFile" id="image-tag-input" accept="image/*" capture class="file-selector" ref="imageInput" autofocus />
+      <!-- Input for selecting (or taking) the media -->
+      <b-form-file v-model="mediaFile" id="media-tag-input" :accept="mediaType" capture class="file-selector" ref="mediaInput" autofocus />
 
       <b-form-group class="mt-2" label-for="trait-selector" :label="$t('formLabelImageTagTraitSelector')">
         <b-form-select :options="traitOptions" multiple v-model="selectedTraits" id="trait-selector" />
@@ -28,12 +29,13 @@
         <b-form-input readonly :value="filename" id="filename-preview" />
       </b-form-group>
 
-      <!-- Show image date if available -->
-      <b-badge v-if="imageDate"><IBiCalendar3 /> {{ imageDate.toLocaleString() }}</b-badge><br/>
+      <!-- Show media date if available -->
+      <b-badge v-if="mediaDate"><IBiCalendar3 /> {{ mediaDate.toLocaleString() }}</b-badge><br/>
       <!-- Show a link to GeoHack website if geolocation is available. This is the resource Wikipedia uses and it link out to many other resources. -->
-      <b-badge target="_blank" rel="noopener noreferrer" :href="`https://geohack.toolforge.org/geohack.php?params=${imageGps.latitude};${imageGps.longitude}`" v-if="imageGps && imageGps.latitude && imageGps.longitude">📍 {{ imageGps.latitude.toFixed(4) }}; {{ imageGps.longitude.toFixed(4) }}</b-badge>
+      <b-badge target="_blank" rel="noopener noreferrer" :href="`https://geohack.toolforge.org/geohack.php?params=${mediaGps.latitude};${mediaGps.longitude}`" v-if="mediaGps && mediaGps.latitude && mediaGps.longitude">📍 {{ mediaGps.latitude.toFixed(4) }}; {{ mediaGps.longitude.toFixed(4) }}</b-badge>
 
-      <div v-if="imageData && isIOS" class="modal-banner bg-warning text-black text-center mt-3 mb-0 p-2">
+      <div v-if="mediaData && isIOS" class="modal-banner bg-warning text-black text-center mt-3 mb-0 p-2">
+        <!-- TODO: Check for video -->
         {{ $t('modalTextImageTaggingIOSWarning') }}
       </div>
     </div>
@@ -50,9 +52,14 @@ import { saveAs } from 'file-saver'
 import emitter from 'tiny-emitter/instance'
 import { getTrialCached } from '@/plugins/datastore'
 import { getId } from '@/plugins/id'
+import { MEDIA_TYPE_IMAGE, MEDIA_TYPE_VIDEO } from '@/plugins/constants'
 
 export default {
   props: {
+    mediaType: {
+      type: String,
+      default: MEDIA_TYPE_IMAGE
+    },
     trial: {
       type: Object,
       default: () => null
@@ -84,14 +91,15 @@ export default {
 
     return {
       id,
-      imageFile: null,
-      imageData: null,
-      imageDate: null,
-      imageGps: null,
+      mediaFile: null,
+      mediaData: null,
+      mediaDate: null,
+      mediaGps: null,
       supportsSaving: false,
       supportsGps: false,
       selectedTraits: [],
-      postfix: null
+      postfix: null,
+      MEDIA_TYPE_IMAGE
     }
   },
   computed: {
@@ -132,10 +140,10 @@ export default {
     },
     filename: function () {
       const trial = this.trial || getTrialCached()
-      if (trial && this.imageFile) {
+      if (trial && this.mediaFile) {
         const row = getRowLabel(trial.layout, this.row)
         const column = getColumnLabel(trial.layout, this.column)
-        return `${this.shortTrialName}_${this.getDateTime(this.imageDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => trial.traits.find(ot => ot.id === t).name).join('-')}${this.postfix ? ('_' + this.postfix) : ''}.${this.imageFile.name.split('.').pop()}`
+        return `${this.shortTrialName}_${this.getDateTime(this.mediaDate)}_${this.displayName}_${row}_${column}_${this.selectedTraits.map(t => trial.traits.find(ot => ot.id === t).name).join('-')}${this.postfix ? ('_' + this.postfix) : ''}.${this.mediaFile.name.split('.').pop()}`
       } else {
         return ''
       }
@@ -149,32 +157,48 @@ export default {
         this.selectedTraits = []
       }
     },
-    imageFile: function (newValue) {
+    mediaFile: function (newValue, oldValue) {
       if (newValue) {
-        // If there is a new image file, reset data
-        this.imageGps = null
-        this.imageDate = null
+        // If there is a new media file, reset data
+        this.mediaGps = null
+        this.mediaDate = null
+
+        if (oldValue) {
+          try {
+            URL.revokeObjectURL(oldValue)
+          } catch (e) {
+            // Do nothing here
+          }
+        }
+
         // Convert to base64 for displaying
-        this.imageData = URL.createObjectURL(newValue)
+        this.mediaData = URL.createObjectURL(newValue)
 
         if (newValue.lastModified) {
           // If there is a last modified date, use it
-          this.imageDate = new Date(newValue.lastModified)
+          this.mediaDate = new Date(newValue.lastModified)
         } else {
           // Use current date as fallback as this is required for the filename
-          this.imageDate = new Date()
+          this.mediaDate = new Date()
         }
 
-        emitter.emit('plausible-event', { key: 'data-input', props: { type: 'image' } })
+        emitter.emit('plausible-event', { key: 'data-input', props: { type: this.mediaType.split('/')[0] } })
+
+        this.$nextTick(() => {
+          if (this.mediaType === MEDIA_TYPE_VIDEO) {
+            this.$refs.video.src = this.mediaData
+            this.$refs.video.load()
+          }
+        })
       }
     }
   },
   methods: {
     share: async function () {
-      const files = [this.imageFile]
+      const files = [this.mediaFile]
       const shareData = {
         text: `${this.displayName} ${(this.trial.socialShareConfig ? this.trial.socialShareConfig.text : '') || '#GridScore'}`,
-        title: (this.trial.socialShareConfig ? this.trial.socialShareConfig.title : '') || 'GridScore image share',
+        title: (this.trial.socialShareConfig ? this.trial.socialShareConfig.title : '') || 'GridScore media share',
         // url: (this.trial.socialShareConfig ? this.trial.socialShareConfig.url : '') || 'https://gridscore.hutton.ac.uk',
         files
       }
@@ -197,42 +221,42 @@ export default {
     getDateTime: function (date) {
       return toLocalDateTimeString(date)
     },
-    downloadImageAsync: async function () {
+    downloadMediaAsync: async function () {
       // create a new handle
       const newHandle = await window.showSaveFilePicker({
         suggestedName: this.filename,
         excludeAcceptAllOption: true,
-        types: [{
-          description: 'Image file',
-          accept: {
-            'image/*': ['.jpg']
-          }
-        }]
+        // types: [{
+        //   description: 'Media file',
+        //   accept: {
+        //     'image/*': ['.jpg']
+        //   }
+        // }]
       })
       // create a FileSystemWritableFileStream to write to
       const writableStream = await newHandle.createWritable()
       // write our file
-      await writableStream.write(this.imageFile)
+      await writableStream.write(this.mediaFile)
       // close the file and write the contents to disk.
       await writableStream.close()
 
       this.$nextTick(() => {
-        this.$emit('image-saved', this.filename)
+        this.$emit('media-saved', this.filename)
         this.hide()
       })
     },
     /**
      * Downloads the image as a file attachment
      */
-    downloadImage: function () {
-      if (this.imageFile) {
+    downloadMedia: function () {
+      if (this.mediaFile) {
         if (this.supportsSaving) {
-          this.downloadImageAsync()
+          this.downloadMediaAsync()
         } else {
-          saveAs(this.imageData, this.filename)
+          saveAs(this.mediaData, this.filename)
 
           this.$nextTick(() => {
-            this.$emit('image-saved', this.filename)
+            this.$emit('media-saved', this.filename)
             this.hide()
           })
         }
@@ -253,11 +277,11 @@ export default {
       }
 
       this.$nextTick(() => {
-        this.$refs.imageModal.show()
+        this.$refs.mediaModal.show()
 
         this.$nextTick(() => {
           // Open up the capture/file selector initially
-          document.querySelector(`#${this.id} #image-tag-input`).click()
+          document.querySelector(`#${this.id} #media-tag-input`).click()
         })
       })
     },
@@ -265,21 +289,24 @@ export default {
      * Hides the modal dialog
      */
     hide: function () {
-      if (this.imageData) {
-        URL.revokeObjectURL(this.imageData)
+      if (this.mediaData) {
+        URL.revokeObjectURL(this.mediaData)
       }
 
-      this.imageFile = null
-      this.imageData = null
-      this.imageDate = null
-      this.imageGps = null
+      this.mediaFile = null
+      this.mediaData = null
+      this.mediaDate = null
+      this.mediaGps = null
       this.postfix = null
 
-      this.$nextTick(() => this.$refs.imageModal.hide())
+      this.$nextTick(() => this.$refs.mediaModal.hide())
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.video {
+  max-width: 100%;
+}
 </style>

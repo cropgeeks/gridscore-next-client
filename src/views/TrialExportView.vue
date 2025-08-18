@@ -399,6 +399,7 @@ export default {
           return 'numeric'
         case 'gps':
         case 'image':
+        case 'video':
           return 'text'
         default:
           return type

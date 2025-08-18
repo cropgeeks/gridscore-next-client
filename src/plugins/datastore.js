@@ -17,22 +17,18 @@ const getStore = () => {
   return store
 }
 
-const loadTrialData = () => {
-  if (getStore().storeSelectedTrial) {
-    getTrialById(getStore().storeSelectedTrial)
-      .then(t => {
-        trial = t
-        return getTrialData(getStore().storeSelectedTrial)
-      })
-      .then(td => {
-        trialData = td
+const loadTrialData = async () => {
+  const selectedTrial = getStore().storeSelectedTrial
+  if (selectedTrial) {
+    try {
+      trial = await getTrialById(selectedTrial)
+      trialData = await getTrialData(selectedTrial)
 
-        emitter.emit('trial-data-loaded')
-      })
-      .catch(() => {
-        trial = null
-        trialData = null
-      })
+      emitter.emit('trial-data-loaded')
+    } catch (err) {
+      trial = null
+      trialData = null
+    }
   } else {
     trial = null
     trialData = null
@@ -101,5 +97,6 @@ export {
   init,
   getTrialDataCached,
   getTrialCached,
-  getGermplasmMatches
+  getGermplasmMatches,
+  loadTrialData
 }

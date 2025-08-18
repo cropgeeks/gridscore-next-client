@@ -66,7 +66,7 @@ export default {
     },
     nonNumericTraits: function () {
       if (this.trial && this.trial.traits) {
-        return this.trial.traits.filter(t => t.dataType === 'text' || t.dataType === 'categorical' || t.dataType === 'gps' || t.dataType === 'image')
+        return this.trial.traits.filter(t => t.dataType === 'text' || t.dataType === 'categorical' || t.dataType === 'gps' || t.dataType === 'image' || t.dataType === 'video')
       } else {
         return []
       }

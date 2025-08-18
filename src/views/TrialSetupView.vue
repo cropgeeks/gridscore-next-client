@@ -399,7 +399,7 @@ export default {
     },
     textTraitCount: function () {
       if (this.traits) {
-        return this.traits.filter(t => t.dataType === 'text' || t.dataType === 'gps' || t.dataType === 'image').length
+        return this.traits.filter(t => t.dataType === 'text' || t.dataType === 'gps' || t.dataType === 'image' || t.dataType === 'video').length
       } else {
         return 0
       }

@@ -24,7 +24,16 @@
                 <template #label>
                   <IBiRulers /> {{ $t('formLabelTraitDataType') }}
                 </template>
-                <b-form-select :options="dataTypeOptions" required v-model="newTrait.dataType" id="trait-data-type" />
+
+                <b-dropdown class="d-grid gap-2 mb-2">
+                  <template #button-content>
+                    <component v-if="dataTypeOptions[newTrait.dataType].icon" :is="dataTypeOptions[newTrait.dataType].icon" /> {{ dataTypeOptions[newTrait.dataType].text }}
+                  </template>
+                  <b-dropdown-item v-for="(option, key) in dataTypeOptions" :key="`trait-option-${key}`" @click="newTrait.dataType = key">
+                    <component v-if="option.icon" :is="option.icon" />
+                    {{ option.text }}
+                  </b-dropdown-item>
+                </b-dropdown>
               </b-form-group>
             </b-col>
             <b-col cols=6>
@@ -194,7 +203,7 @@ import TraitImportTrialModal from '@/components/modals/TraitImportTrialModal.vue
 import TraitImportExportGerminateModal from '@/components/modals/TraitImportExportGerminateModal.vue'
 import TraitImportExportTabularModal from '@/components/modals/TraitImportExportTabularModal.vue'
 import BrapiTraitImportModal from '@/components/modals/BrapiTraitImportModal.vue'
-import { getTraitTypeText, isNumber } from '@/plugins/misc'
+import { getTraitTypeIcon, getTraitTypeText, isNumber } from '@/plugins/misc'
 import draggable from 'vuedraggable'
 import { getId } from '@/plugins/id'
 import { TRAIT_TIMEFRAME_TYPE_SUGGEST, TRAIT_TIMEFRAME_TYPE_ENFORCE } from '@/plugins/constants'
@@ -313,35 +322,49 @@ export default {
       }
     },
     dataTypeOptions: function () {
-      return [{
-        text: this.$t('traitTypeInt'),
-        value: 'int'
-      }, {
-        text: this.$t('traitTypeFloat'),
-        value: 'float'
-      }, {
-        text: this.$t('traitTypeRange'),
-        value: 'range'
-      }, {
-        text: this.$t('traitTypeCategorical'),
-        value: 'categorical'
-      }, {
-        text: this.$t('traitTypeBoolean'),
-        value: 'boolean'
-      }, {
-        text: this.$t('traitTypeDate'),
-        value: 'date'
-      }, {
-        text: this.$t('traitTypeGps'),
-        value: 'gps'
-      }, {
-        text: this.$t('traitTypeImage'),
-        value: 'image'
-      }, {
-        text: this.$t('traitTypeText'),
-        value: 'text'
-      }]
-    }
+      return {
+        int: {
+          text: this.$t('traitTypeInt'),
+          icon: getTraitTypeIcon('int'),
+        }, 
+        float: {
+          text: this.$t('traitTypeFloat'),
+          icon: getTraitTypeIcon('float'),
+        }, 
+        range: {
+          text: this.$t('traitTypeRange'),
+          icon: getTraitTypeIcon('range'),
+        }, 
+        categorical: {
+          text: this.$t('traitTypeCategorical'),
+          icon: getTraitTypeIcon('categorical'),
+        }, 
+        boolean: {
+          text: this.$t('traitTypeBoolean'),
+          icon: getTraitTypeIcon('boolean'),
+        }, 
+        date: {
+          text: this.$t('traitTypeDate'),
+          icon: getTraitTypeIcon('date'),
+        }, 
+        gps: {
+          text: this.$t('traitTypeGps'),
+          icon: getTraitTypeIcon('gps'),
+        }, 
+        image: {
+          text: this.$t('traitTypeImage'),
+          icon: getTraitTypeIcon('image')
+        }, 
+        video: {
+          text: this.$t('traitTypeVideo'),
+          icon: getTraitTypeIcon('video'),
+        }, 
+        text: {
+          text: this.$t('traitTypeText'),
+          icon: getTraitTypeIcon('text'),
+        }
+      }
+    },
   },
   methods: {
     getTraitTypeText,

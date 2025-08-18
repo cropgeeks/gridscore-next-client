@@ -460,7 +460,9 @@ export default {
       this.$nextTick(() => this.$refs.trialShareCodeModal.show())
     },
     loadTrial: async function (trial) {
-      await this.coreStore.setSelectedTrial(trial.localId)
+      if (trial.localId !== this.storeSelectedTrial) {
+        await this.coreStore.setSelectedTrial(trial.localId)
+      }
       this.$router.push({ name: 'data-entry' })
     },
     addPerson: function (trial) {

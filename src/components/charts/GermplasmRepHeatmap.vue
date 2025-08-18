@@ -285,7 +285,7 @@ export default {
                 dataPointCount++
                 rowIds.push(`${cell.row}|${cell.column}`)
 
-                if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text' || this.selectedTrait.dataType === 'gps' || this.selectedTrait.dataType === 'image') {
+                if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text' || this.selectedTrait.dataType === 'gps' || this.selectedTrait.dataType === 'image' || this.selectedTrait.dataType === 'video') {
                   rowData.push(new Date(finalValue.timestamp))
                   rowCustomdata.push(null)
                 } else if (this.selectedTrait.dataType === 'categorical') {
@@ -327,7 +327,7 @@ export default {
         }
 
         // Adjust date-based data to be "days since first recording" using the min date
-        if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text' || this.selectedTrait.dataType === 'gps' || this.selectedTrait.dataType === 'image') {
+        if (this.selectedTrait.dataType === 'date' || this.selectedTrait.dataType === 'text' || this.selectedTrait.dataType === 'gps' || this.selectedTrait.dataType === 'image' || this.selectedTrait.dataType === 'video') {
           for (let row = this.allGermplasm.length - 1; row >= 0; row--) {
             for (let column = 0; column < this.reps.length; column++) {
               z[row][column] = (z[row][column] - minDate) / (1000 * 60 * 60 * 24)

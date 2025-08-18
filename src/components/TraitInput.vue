@@ -85,10 +85,15 @@
                         :options="traitOptionsButtons" /> -->
     <b-form-input :id="id" v-else-if="trait.dataType === 'gps'" v-model="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
     <b-form-input :id="id" v-else-if="trait.dataType === 'image'" v-model="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
+    <b-form-input :id="id" v-else-if="trait.dataType === 'video'" v-model="value" :state="formState" ref="input" @change="tts" :readonly="true"/>
     <b-form-input :id="id" v-else v-model="value" :state="formState" ref="input" @change="tts" :readonly="!editable"/>
 
     <template #append v-if="trait.dataType === 'image'">
       <b-button v-b-tooltip="$t('tooltipDataEntryTakeImage')" variant="primary" @click="$refs.imageModal.show()" :disabled="!editable"><IBiCameraFill /></b-button>
+      <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
+    </template>
+    <template #append v-if="trait.dataType === 'video'">
+      <b-button v-b-tooltip="$t('tooltipDataEntryTakeVideo')" variant="primary" @click="$refs.imageModal.show()" :disabled="!editable"><IBiCameraVideoFill /></b-button>
       <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
     </template>
     <template #append v-else-if="trait.dataType === 'gps'">
@@ -113,7 +118,8 @@
       <b-button v-b-tooltip="$t('tooltipDataEntryReset')" variant="danger" @click="resetValue" :disabled="!editable"><IBiSlashCircle /></b-button>
     </template>
 
-    <ImageModal v-if="trait.dataType === 'image'" :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="trait.id" ref="imageModal" @image-saved="setImageFilename" />
+    <ImageModal v-if="trait.dataType === 'image'" :mediaType="MEDIA_TYPE_IMAGE" :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="trait.id" ref="imageModal" @media-saved="setImageFilename" />
+    <ImageModal v-if="trait.dataType === 'video'" :mediaType="MEDIA_TYPE_VIDEO" :row="cell.row" :column="cell.column" :trial="trial" :displayName="cell.displayName" :preferredTraitId="trait.id" ref="imageModal" @media-saved="setImageFilename" />
   </b-input-group>
 </template>
 
@@ -126,6 +132,7 @@ import { UseGeolocation } from '@vueuse/components'
 import emitter from 'tiny-emitter/instance'
 import { getTrialCached } from '@/plugins/datastore'
 import { useVibrate } from '@vueuse/core'
+import { MEDIA_TYPE_IMAGE, MEDIA_TYPE_VIDEO } from '@/plugins/constants'
 
 export default {
   components: {
@@ -162,7 +169,9 @@ export default {
       formState: null,
       dateInput: '',
       rangeChanged: false,
-      trial
+      trial,
+      MEDIA_TYPE_IMAGE,
+      MEDIA_TYPE_VIDEO
     }
   },
   watch: {

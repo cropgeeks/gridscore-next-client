@@ -4,6 +4,17 @@ import { trialLayoutToPlots } from '@/plugins/location'
 import { coreStore } from '@/store'
 import { TRIAL_STATE_NOT_SHARED } from '@/plugins/constants'
 
+import INumber from '~icons/bi/123'
+import IDecimal from '~icons/bi/regex'
+import ISlider from '~icons/bi/sliders'
+import ICategory from '~icons/bi/list-ol'
+import IBoolean from '~icons/bi/check-square'
+import IDate from '~icons/bi/calendar-date'
+import IGps from '~icons/bi/geo-alt-fill'
+import IImage from '~icons/bi/camera-fill'
+import IVideo from '~icons/bi/camera-video-fill'
+import IText from '~icons/bi/textarea-t'
+
 import { saveAs } from 'file-saver'
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT, DISPLAY_ORDER_TOP_TO_BOTTOM } from '@/plugins/constants'
 
@@ -82,6 +93,39 @@ const getTraitTypeText = (trait, short = false) => {
       return t(short ? 'traitTypeShortGps' : 'traitTypeGps')
     case 'image':
       return t(short ? 'traitTypeShortImage' : 'traitTypeImage')
+    case 'video':
+      return t(short ? 'traitTypeShortVideo' : 'traitTypeVideo')
+    default:
+      return null
+  }
+}
+
+/**
+ * For the given trait, return the representative icon
+ * @param dataType The trait data type for which to return the icon
+ */
+const getTraitTypeIcon = dataType => {
+  switch (dataType) {
+    case 'date':
+      return IDate
+    case 'int':
+      return INumber
+    case 'float':
+      return IDecimal
+    case 'range':
+      return ISlider
+    case 'text':
+      return IText
+    case 'categorical':
+      return ICategory
+    case 'boolean':
+      return IBoolean
+    case 'gps':
+      return IGps
+    case 'image':
+      return IImage
+    case 'video':
+      return IVideo
     default:
       return null
   }
@@ -782,6 +826,7 @@ export {
   trialsDataToLongFormat,
   trialsDataToMatrix,
   getTraitTypeText,
+  getTraitTypeIcon,
   invertHex,
   hexToRgba,
   downloadText,

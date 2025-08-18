@@ -732,6 +732,11 @@
     "date": "2025-xx-xx",
     "items": [
       {
+        "type": "new",
+        "title": "Videomerkmalstyp",
+        "text": "Ähnlich wie bei einem Bildmerkmal kann ein Videomerkmal dazu verwendet werden, Videos mit der Kamera des Geräts aufzuzeichnen. Die resultierenden Dateien werden mit dem Keimplasma, der Rep usw. getaggt und der Dateiname wird als Merkmalswert gespeichert."
+      },
+      {
         "type": "update",
         "title": "Zum Suchergebnis scrollen",
         "text": "Bei der Suche nach einem Treffer über das Suchfeld scrollt GridScore nun die Hauptansicht, um das Suchergebnis sichtbar zu machen."

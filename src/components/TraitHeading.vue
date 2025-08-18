@@ -2,7 +2,7 @@
   <span :style="{ color: trait.color }">
     <TraitIcon :hasData="hasData" :trait="trait" />
     <span class="mx-1 trait-name">{{ trait.name }}</span>
-    <b-badge class="mx-1 trait-data-type" variant="light">{{ traitTypeText }}</b-badge>
+    <b-badge class="mx-1 trait-data-type" variant="light"><component v-if="traitTypeIcon" :is="traitTypeIcon" /> {{ traitTypeText }}</b-badge>
     <IBiCardText class="text-muted mx-1" v-b-tooltip="trait.description" v-if="showDescription && trait.description" />
     <BPopover
       v-if="trait.imageUrl || (trait.hasImage && traitImageConfig.priorityShareCode && traitImageConfig.serverUrl)"
@@ -35,7 +35,7 @@
 <script>
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 import { getTrialCached } from '@/plugins/datastore';
-import { getPriorityShareCode, getServerUrl, getTraitTypeText } from '@/plugins/misc'
+import { getPriorityShareCode, getServerUrl, getTraitTypeIcon, getTraitTypeText } from '@/plugins/misc'
 
 export default {
   components: {
@@ -77,6 +77,13 @@ export default {
     priorityShareCode: function () {
       if (this.trial && this.trial.shareStatus !== TRIAL_STATE_NOT_SHARED) {
         return this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode || this.trial.shareCodes.viewerCode
+      } else {
+        return null
+      }
+    },
+    traitTypeIcon: function () {
+      if (this.trait) {
+        return getTraitTypeIcon(this.trait.dataType)
       } else {
         return null
       }

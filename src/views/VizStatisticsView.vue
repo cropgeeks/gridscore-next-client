@@ -331,6 +331,7 @@ export default {
             }
             case 'gps':
             case 'image':
+            case 'video':
             case 'text':
             case 'categorical': {
               supportsClicking = false

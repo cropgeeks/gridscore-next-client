@@ -732,6 +732,11 @@
     "date": "2025-xx-xx",
     "items": [
       {
+        "type": "new",
+        "title": "Video trait type",
+        "text": "Similar to an image trait, a vidoe trait can be used to record videos with the device's camera. The resulting files will be tagged with the germplasm, rep, etc. and the filename will be stored as the trait value."
+      },
+      {
         "type": "update",
         "title": "Scroll to search result",
         "text": "When searching for a match using the search box, GridScore will now scroll the main view to bring the search result into view."

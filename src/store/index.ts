@@ -5,6 +5,7 @@ import { getTrialById } from '@/plugins/idb'
 import emitter from 'tiny-emitter/instance'
 import { ensureTraitImagesCached } from '@/plugins/traitcache'
 import { BrapiConfig } from '@/plugins/types/gridscore'
+import { loadTrialData } from '@/plugins/datastore'
 
 export interface PlausibleConfig {
   plausibleDomain: string | null
@@ -161,7 +162,8 @@ export const coreStore = defineStore('core', {
         }
       }
 
-      emitter.emit('trial-selected')
+      await loadTrialData()
+      // emitter.emit('trial-selected')
     },
     setMainDisplayMode: function (newMainDisplayMode: string) {
       this.mainDisplayMode = newMainDisplayMode
