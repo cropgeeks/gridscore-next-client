@@ -31,7 +31,7 @@
           <template v-slot:label>
             <IBiLayoutThreeColumns :style="{ transform: 'rotate(90deg)' }" /> <span>{{ $t('formLabelSetupRows') }}</span>
           </template>
-          <b-form-input :disabled="!editValuesAllowed" id="rows" type="number" :min="1" required autofocus lazy v-model.number.lazy="internal.rows" />
+          <b-form-input :disabled="!editValuesAllowed" id="rows" type="number" @keypress="isInteger($event)" @paste.prevent :min="1" required autofocus lazy v-model.number.lazy="internal.rows" />
         </b-form-group>
 
         <b-form-group :label="$t('formLabelSettingsRowOrder')" :description="$t('formDescriptionSettingsRowOrder')" label-for="rowOrder">
@@ -48,7 +48,7 @@
           <draggable :list="internal.rowLabels" :item-key="e => e" tag="div" handle=".drag-handle" class="d-flex flex-column">
             <template #item="{ element, index }">
               <b-badge class="border" :key="`row-label-${element}`">
-                <input v-if="editRowLabels" :style="{ width: (`${internal.rowLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy.trim="internal.rowLabels[index]" />
+                <input v-if="editRowLabels" :style="{ width: (`${internal.rowLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" @keypress="isInteger($event)" @paste.prevent v-model.number.lazy.trim="internal.rowLabels[index]" />
                 <span v-else>{{ element }}</span>
                 <IBiGripVertical class="drag-handle ms-2" />
               </b-badge>
@@ -63,7 +63,7 @@
             <template v-slot:label>
               <IBiLayoutThreeColumns /> <span>{{ $t('formLabelSetupColumns') }}</span>
             </template>
-            <b-form-input :disabled="!editValuesAllowed" id="columns" type="number" :min="1" required lazy v-model.number.lazy="internal.columns" />
+            <b-form-input :disabled="!editValuesAllowed" id="columns" type="number" @keypress="isInteger($event)" @paste.prevent :min="1" required lazy v-model.number.lazy="internal.columns" />
           </b-form-group>
 
           <b-form-group :label="$t('formLabelSettingsColumnOrder')" :description="$t('formDescriptionSettingsColumnOrder')" label-for="columnOrder">
@@ -80,7 +80,7 @@
             <draggable :list="internal.columnLabels" :item-key="e => e" tag="div" handle=".drag-handle" class="d-flex flex-row flex-wrap">
               <template #item="{ element, index }">
                 <b-badge class="flex-fill border" :key="`column-label-${element}`">
-                  <input v-if="editColumnLabels" :style="{ width: (`${internal.columnLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" v-model.number.lazy.trim="internal.columnLabels[index]" />
+                  <input v-if="editColumnLabels" :style="{ width: (`${internal.columnLabels[index]}`.length + 2) + 'em' }" class="form-control d-inline lh-1 p-1" required trim type="number" @keypress="isInteger($event)" @paste.prevent v-model.number.lazy.trim="internal.columnLabels[index]" />
                   <span v-else>{{ element }}</span>
                   <IBiGripVertical class="drag-handle ms-2" />
                 </b-badge>
@@ -99,7 +99,7 @@
 import { DISPLAY_ORDER_BOTTOM_TO_TOP, DISPLAY_ORDER_TOP_TO_BOTTOM, DISPLAY_ORDER_LEFT_TO_RIGHT, DISPLAY_ORDER_RIGHT_TO_LEFT } from '@/plugins/constants'
 import draggable from 'vuedraggable'
 
-import { getColumnLabel, getRowLabel } from '@/plugins/misc'
+import { getColumnLabel, getRowLabel, isInteger } from '@/plugins/misc'
 
 export default {
   props: {
@@ -161,6 +161,7 @@ export default {
     }
   },
   methods: {
+    isInteger,
     setLayoutType: function (type) {
       this.layoutType = type
 

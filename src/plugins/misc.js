@@ -131,6 +131,15 @@ const getTraitTypeIcon = dataType => {
   }
 }
 
+const isInteger = event => {
+  const charCode = (event.which) ? event.which : event.keyCode
+  if (charCode < 48 || charCode > 57) {
+    event.preventDefault()
+  } else {
+    return true
+  }
+}
+
 const downloadText = (text, filename) => {
   const blobby = new Blob([text], { type: 'text/plain;charset=utf-8' })
   saveAs(blobby, filename)
@@ -847,5 +856,6 @@ export {
   getServerUrl,
   getPriorityShareCode,
   isNumber,
-  downloadSvgsFromContainer
+  downloadSvgsFromContainer,
+  isInteger
 }

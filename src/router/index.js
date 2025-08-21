@@ -78,11 +78,15 @@ const router = createRouter({
     }
   ],
   scrollBehavior (to, from, savedPosition) {
-    if (savedPosition || (from && to && from.path === to.path)) {
-      return savedPosition
-    } else {
-      return { left: 0, top: 0 }
-    }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (savedPosition || (from && to && from.path === to.path)) {
+          resolve(savedPosition)
+        } else {
+          resolve({ left: 0, top: 0 })
+        }
+      }, 250)
+    })
   }
 })
 

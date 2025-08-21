@@ -486,6 +486,11 @@ export default {
     importTraits: function (newTraits) {
       newTraits.forEach(t => {
         t.id = getId()
+
+        if (t.group && t.group.name) {
+          t.group = t.group.name
+        }
+
         this.traits.push(t)
       })
     },
