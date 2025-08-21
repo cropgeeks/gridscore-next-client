@@ -424,10 +424,10 @@ export default {
     },
     exportTraitsGerminate: function () {
       if (this.trial.traits && this.trial.traits.length > 0) {
-        let text = 'Name\tShort Name\tDescription\tData Type\tUnit Name\tUnit Abbreviation\tUnit Descriptions\tTrait categories (comma separated)\tMin (only for numeric traits)\tMax (only for numeric traits)'
+        let text = 'Name\tShort Name\tDescription\tData Type\tUnit Name\tUnit Abbreviation\tUnit Descriptions\tTrait categories (comma separated)\tMin (only for numeric traits)\tMax (only for numeric traits)\tSet size\tIs timeseries'
 
         this.trial.traits.forEach(t => {
-          text += `\n${t.name}\t\t${t.description || ''}\t${this.toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`
+          text += `\n${t.name}\t\t${t.description || ''}\t${this.toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}`
         })
 
         downloadText(text, `germinate-traits-${this.safeTrialName}.txt`)

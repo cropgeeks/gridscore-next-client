@@ -38,28 +38,8 @@ export default {
     }
   },
   methods: {
-    areArraysEqualSets: function (a1, a2) {
-      const superSet = {}
-      for (const i of a1) {
-        const e = i + typeof i
-        superSet[e] = 1
-      }
-
-      for (const i of a2) {
-        const e = i + typeof i
-        if (!superSet[e]) {
-          return false
-        }
-        superSet[e] = 2
-      }
-
-      for (const e in superSet) {
-        if (superSet[e] === 1) {
-          return false
-        }
-      }
-
-      return true
+    hasAll: function (arr, expected) {
+      return expected.every(e => arr.includes(e))
     },
     loadInput: function () {
       this.dataValid = null
@@ -67,7 +47,7 @@ export default {
         try {
           const parsed = tsvParse(this.traitGerminate)
 
-          if (!parsed || !parsed.columns || !this.areArraysEqualSets(this.expectedColumns, parsed.columns)) {
+          if (!parsed || !parsed.columns || !this.hasAll(parsed.columns, this.expectedColumns)) {
             this.dataValid = false
             return
           }
@@ -76,7 +56,9 @@ export default {
             const trait = {
               name: p.Name,
               description: p.Description,
-              dataType: this.toGridScoreDataType(p['Data Type'])
+              dataType: this.toGridScoreDataType(p['Data Type']),
+              setSize: 1,
+              allowRepeats: false
             }
 
             if (p['Trait categories (comma separated)']) {
@@ -98,6 +80,14 @@ export default {
                 trait.restrictions = {}
               }
               trait.restrictions.max = +p['Max (only for numeric traits)']
+            }
+
+            if (p['Set size']) {
+              trait.setSize = +p['Set size']
+            }
+
+            if (p['Is timeseries']) {
+              trait.allowRepeats = p['Is timeseries'] === 'true'
             }
 
             return trait
@@ -151,7 +141,7 @@ export default {
         let text = this.expectedColumns.join('\t')
 
         this.traits.forEach(t => {
-          text += `\n${t.name}\t\t${t.description || ''}\t${this.toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`
+          text += `\n${t.name}\t\t${t.description || ''}\t${this.toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}`
         })
 
         this.traitGerminate = text

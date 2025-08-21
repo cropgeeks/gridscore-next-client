@@ -729,7 +729,7 @@
   },
   {
     "version": "3.4.4",
-    "date": "2025-xx-xx",
+    "date": "2025-08-21",
     "items": [
       {
         "type": "new",
@@ -740,6 +740,11 @@
         "type": "update",
         "title": "Zum Suchergebnis scrollen",
         "text": "Bei der Suche nach einem Treffer über das Suchfeld scrollt GridScore nun die Hauptansicht, um das Suchergebnis sichtbar zu machen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Beheben mehrerer Fehler",
+        "text": "Beheben von Fehlern mit Dezimalwerten in Zeilen-/Spaltenanzahlen und -beschriftungen sowie beim Import von Merkmalen aus dem JSON-Format, falls Gruppen definiert sind."
       }
     ]
   }

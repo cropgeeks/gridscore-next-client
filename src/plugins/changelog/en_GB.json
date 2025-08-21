@@ -729,7 +729,7 @@
   },
   {
     "version": "3.4.4",
-    "date": "2025-xx-xx",
+    "date": "2025-08-21",
     "items": [
       {
         "type": "new",
@@ -740,6 +740,11 @@
         "type": "update",
         "title": "Scroll to search result",
         "text": "When searching for a match using the search box, GridScore will now scroll the main view to bring the search result into view."
+      },
+      {
+        "type": "bugfix",
+        "title": "Fixed multiple bugs",
+        "text": "Fixed issues with decimal values in row/column counts and labels as well as import of traits from JSON format if groups are defined."
       }
     ]
   }
