@@ -215,7 +215,7 @@ export default {
   },
   methods: {
     preventNonNumber: function (evt) {
-      if (evt.keyCode === 69 || evt.keyCode === 101) {
+      if (evt.keyCode === 69) {
         evt.preventDefault()
       }
     },
