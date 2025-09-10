@@ -8,15 +8,15 @@
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
-        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: 1 })" label-for="bottom-left">
-          <!-- Bottom left corner -->
-          <GpsInput :currentPosition="corners.bottomLeft" @data-changed="corner => { corners.bottomLeft = corner }" id="bottom-left" />
-        </b-form-group>
-      </b-col>
-      <b-col cols=12 md=6>
         <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: columns })" label-for="top-right">
           <!-- Top right corner -->
           <GpsInput :currentPosition="corners.topRight" @data-changed="corner => { corners.topRight = corner }" id="top-right" />
+        </b-form-group>
+      </b-col>
+      <b-col cols=12 md=6>
+        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: 1 })" label-for="bottom-left">
+          <!-- Bottom left corner -->
+          <GpsInput :currentPosition="corners.bottomLeft" @data-changed="corner => { corners.bottomLeft = corner }" id="bottom-left" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>

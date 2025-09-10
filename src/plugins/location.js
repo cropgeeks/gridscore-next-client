@@ -37,10 +37,10 @@ const projectFromEuclidean = (target) => {
  */
 const trialLayoutToPlots = (corners, rows, cols) => {
   const gps = [
-    { y: corners.topLeft.lat, x: corners.topLeft.lng },
-    { y: corners.topRight.lat, x: corners.topRight.lng },
+    { y: corners.bottomLeft.lat, x: corners.bottomLeft.lng },
     { y: corners.bottomRight.lat, x: corners.bottomRight.lng },
-    { y: corners.bottomLeft.lat, x: corners.bottomLeft.lng }
+    { y: corners.topRight.lat, x: corners.topRight.lng },
+    { y: corners.topLeft.lat, x: corners.topLeft.lng }
   ]
 
   const perspTransform = fixPer(euclideanSpace, gps)

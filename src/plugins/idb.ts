@@ -331,7 +331,7 @@ const updateTrialProperties = async (localId: string, updates: TrialModification
       transaction.trialEditTransaction = copy
 
       if (plotCorners) {
-        const mapping = {} as { [index: string]: Corners }
+        const mapping: { [index: string]: Corners } = {}
 
         for (let row = 0; row < trial.layout.rows; row++) {
           for (let column = 0; column < trial.layout.columns; column++) {

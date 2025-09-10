@@ -217,6 +217,22 @@ export default {
     preventNonNumber: function (evt) {
       if (evt.keyCode === 69) {
         evt.preventDefault()
+      } else if (evt.keyCode === 110) {
+        // Comma/fullstop on keypad
+        evt.target.type = 'text'
+        const start = evt.target.selectionStart
+        const end = evt.target.selectionEnd
+        const oldValue = evt.target.value
+
+        const newValue = oldValue.slice(0, start) + '.' + oldValue.slice(end)
+        evt.target.value = newValue
+        this.value = newValue
+        
+        evt.target.selectionStart = start + 1
+        evt.target.selectionEnd = start + 1
+        evt.target.type = 'number'
+
+        evt.preventDefault()
       }
     },
     setGps: function (latitude, longitude) {
