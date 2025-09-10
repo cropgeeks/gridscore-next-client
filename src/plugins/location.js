@@ -75,7 +75,7 @@ const trialLayoutToPlots = (corners, rows, cols) => {
       })
     }
 
-    result.push(rowData)
+    result.unshift(rowData)
   }
 
   return result

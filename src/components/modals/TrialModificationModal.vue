@@ -455,6 +455,7 @@ export default {
           traits: finalTraits
         }).then(() => {
           emitter.emit('trials-updated')
+          emitter.emit('trial-selected')
           this.hide()
         })
       }
