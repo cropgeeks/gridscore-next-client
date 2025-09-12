@@ -66,5 +66,5 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: cropgeeks/gridscore-next-client
+          repository: cropgeeks/gridscore-next
           short-description: ${{ github.event.repository.description }}
