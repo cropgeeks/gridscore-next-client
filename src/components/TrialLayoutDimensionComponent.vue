@@ -175,7 +175,7 @@ export default {
       this.internal.rowOrder = order
       this.internal.rowLabels = this.internal.rowLabels.concat().reverse()
     },
-    toggleColummOrder: function (order) {
+    toggleColumnOrder: function (order) {
       this.internal.columnOrder = order
       this.internal.columnLabels = this.internal.columnLabels.concat().reverse()
     },

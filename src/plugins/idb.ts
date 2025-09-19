@@ -139,7 +139,7 @@ const getTrialGroups = async () => {
     const groups: Set<string> = new Set()
 
     trials.forEach(t => {
-      if (t.group) {
+      if (t.group && t.group.name) {
         groups.add(t.group.name)
       }
     })
