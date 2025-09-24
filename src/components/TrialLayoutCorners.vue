@@ -2,25 +2,25 @@
   <div>
     <b-row>
       <b-col cols=12 md=6>
-        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: 1 })" label-for="top-left">
+        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', cornerLabels.topLeft)" label-for="top-left">
           <!-- Top left corner -->
           <GpsInput :currentPosition="corners.topLeft" @data-changed="corner => { corners.topLeft = corner }" id="top-left" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
-        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: 1, column: columns })" label-for="top-right">
+        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', cornerLabels.topRight)" label-for="top-right">
           <!-- Top right corner -->
           <GpsInput :currentPosition="corners.topRight" @data-changed="corner => { corners.topRight = corner }" id="top-right" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
-        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: 1 })" label-for="bottom-left">
+        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomLeft)" label-for="bottom-left">
           <!-- Bottom left corner -->
           <GpsInput :currentPosition="corners.bottomLeft" @data-changed="corner => { corners.bottomLeft = corner }" id="bottom-left" />
         </b-form-group>
       </b-col>
       <b-col cols=12 md=6>
-        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', { row: rows, column: columns })" label-for="bottom-right">
+        <b-form-group :label="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomRight)" label-for="bottom-right">
           <!-- Bottom right corner -->
           <GpsInput :currentPosition="corners.bottomRight" @data-changed="corner => { corners.bottomRight = corner }" id="bottom-right" />
         </b-form-group>
@@ -34,16 +34,16 @@
         <p>{{ $t('formLabelFieldLayoutUseAsCorner') }}</p>
         <b-row>
           <b-col cols=6>
-            <b-button block class="mb-2" @click="setGps('topLeft')">{{ $t('formLabelFieldLayoutRowColumn', { row: 1, column: 1 }) }}</b-button>
+            <b-button block class="mb-2" @click="setGps('topLeft')">{{ $t('formLabelFieldLayoutRowColumn', cornerLabels.topLeft) }}</b-button>
           </b-col>
           <b-col cols=6>
-            <b-button block class="mb-2" @click="setGps('topRight')">{{ $t('formLabelFieldLayoutRowColumn', { row: 1, column: columns }) }}</b-button>
+            <b-button block class="mb-2" @click="setGps('topRight')">{{ $t('formLabelFieldLayoutRowColumn', cornerLabels.topRight) }}</b-button>
           </b-col>
           <b-col cols=6>
-            <b-button block class="mb-2" @click="setGps('bottomLeft')">{{ $t('formLabelFieldLayoutRowColumn', { row: rows, column: 1 }) }}</b-button>
+            <b-button block class="mb-2" @click="setGps('bottomLeft')">{{ $t('formLabelFieldLayoutRowColumn', cornerLabels.bottomLeft) }}</b-button>
           </b-col>
           <b-col cols=6>
-            <b-button block class="mb-2" @click="setGps('bottomRight')">{{ $t('formLabelFieldLayoutRowColumn', { row: rows, column: columns }) }}</b-button>
+            <b-button block class="mb-2" @click="setGps('bottomRight')">{{ $t('formLabelFieldLayoutRowColumn', cornerLabels.bottomRight) }}</b-button>
           </b-col>
         </b-row>
       </div>
@@ -64,6 +64,7 @@ import { isGeographyValid, toGeoJson, isLocationValid, trialLayoutToPlots } from
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+import { getColumnLabel, getRowLabel } from '@/plugins/misc'
 
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
@@ -115,6 +116,26 @@ export default {
         return this.layout.columns
       } else {
         return 1
+      }
+    },
+    cornerLabels: function () {
+      return {
+        topLeft: {
+          column: getColumnLabel(this.layout, 0),
+          row: getRowLabel(this.layout, 0),
+        },
+        topRight: {
+          column: getColumnLabel(this.layout, this.layout.columns - 1),
+          row: getRowLabel(this.layout, 0),
+        },
+        bottomLeft: {
+          column: getColumnLabel(this.layout, 0),
+          row: getRowLabel(this.layout, this.layout.rows - 1),
+        },
+        bottomRight: {
+          column: getColumnLabel(this.layout, this.layout.columns - 1),
+          row: getRowLabel(this.layout, this.layout.rows - 1),
+        },
       }
     }
   },
