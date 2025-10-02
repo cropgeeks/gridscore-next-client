@@ -66,13 +66,13 @@
           <b-progress variant="primary" striped animated :value="100" v-if="isLoading" height="4px" />
           <b-card-body :class="isLoading ? '' : 'mt-1'">
             <b-alert variant="warning" :model-value="trialGroup.remoteUpdateCount > 0"><IBiCloudDownloadFill class="me-2" />
-              {{ $t('widgetTrialSelectorWarningUpdates', { count: trialGroup.$attrsremoteUpdateCount }) }}
+              {{ $t('widgetTrialSelectorWarningUpdates', { count: trialGroup.remoteUpdateCount }) }}
             </b-alert>
             <b-alert variant="info" :model-value="trialGroup.localUpdateCount > 0"><IBiCloudUploadFill class="me-2" />
-              {{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: trialGroup.$attrslocalUpdateCount }) }}
+              {{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: trialGroup.localUpdateCount }) }}
             </b-alert>
             <b-alert variant="danger" :model-value="trialGroup.expiryWarningCount > 0"><IBiCalendarXFill class="me-2" />
-              {{ $t('widgetTrialSelectorWarningExpiry', { count: trialGroup.$attrsexpiryWarningCount }) }}
+              {{ $t('widgetTrialSelectorWarningExpiry', { count: trialGroup.expiryWarningCount }) }}
             </b-alert>
             <template v-if="trialGroup.trials && trialGroup.trials.length > 0">
               <b-list-group v-if="storeTrialListArrangement === TRIAL_LIST_LIST">
