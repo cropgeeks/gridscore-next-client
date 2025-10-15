@@ -217,7 +217,7 @@
       const payload: DataModification = {}
       payload[`${c.row}|${c.column}`] = newValues
 
-      changeTrialsData(compProps.trial.localId, payload, compProps.geolocation)
+      changeTrialsData(compProps.trial.localId || '', payload, compProps.geolocation)
         .then(() => {
           // Take copies for the emitter later
           const row = c.row

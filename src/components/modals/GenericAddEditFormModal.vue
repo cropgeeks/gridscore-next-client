@@ -143,7 +143,7 @@
     autofocus?: boolean
   }
 
-  export interface ModalProps {
+  export interface ModalProps<T> {
     title: string
     text?: string
     item: T
@@ -152,7 +152,7 @@
     okTitle?: string
   }
 
-  const compProps = withDefaults(defineProps<ModalProps>(), {
+  const compProps = withDefaults(defineProps<ModalProps<T>>(), {
     okTitle: 'buttonSave',
   })
 

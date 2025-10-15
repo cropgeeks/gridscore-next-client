@@ -218,7 +218,7 @@
             // The new code that was used is a higher permission grade than the local one, so just use them (auto-upgrade)
             localTrialMatch.value.shareCodes = JSON.parse(JSON.stringify(trial.value.shareCodes))
 
-            updateTrial(localTrialMatch.value.localId, toRaw(localTrialMatch.value))
+            updateTrial(localTrialMatch.value.localId || '', toRaw(localTrialMatch.value))
               .then(() => {
                 trial.value = undefined
                 infoMessage.value = t('modalTextTrialImportPermissionUpgrade', { local: localPermission, remote: remotePermissionType.value })

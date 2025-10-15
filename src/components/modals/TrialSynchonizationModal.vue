@@ -149,7 +149,7 @@
     trial.value = t
     serverError.value = undefined
 
-    getTransactionForTrial(t.localId)
+    getTransactionForTrial(t.localId || '')
       .then(t => {
         transaction.value = t
       })

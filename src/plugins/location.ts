@@ -58,10 +58,10 @@ function projectFromEuclidean (target: XY[]) {
 function trialLayoutToPlots (corners: Corners, rows: number, cols: number) {
   // @ts-ignore
   const gps: XY[] = [
-    { y: corners.bottomLeft.lat, x: corners.bottomLeft.lng },
-    { y: corners.bottomRight.lat, x: corners.bottomRight.lng },
-    { y: corners.topRight.lat, x: corners.topRight.lng },
-    { y: corners.topLeft.lat, x: corners.topLeft.lng },
+    { y: corners.bottomLeft.lat || 0, x: corners.bottomLeft.lng || 0 },
+    { y: corners.bottomRight.lat || 0, x: corners.bottomRight.lng || 0 },
+    { y: corners.topRight.lat || 0, x: corners.topRight.lng || 0 },
+    { y: corners.topLeft.lat || 0, x: corners.topLeft.lng || 0 },
   ]
 
   const perspTransform = calculateTransformation(euclideanSpace, gps)

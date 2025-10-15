@@ -69,7 +69,7 @@
   import { tsvParse, csvParse, autoType, type DSVParsedArray } from 'd3-dsv'
   import type { Layout } from '@/plugins/types/gridscore'
   import { getColumnIndex, getRowIndex } from '@/plugins/util'
-  import type { Grid } from '@/components/setup/GermplasmLayoutTable.vue'
+  import type { CellPlus } from '@/plugins/types/client'
 
   interface SelectOption {
     title: string
@@ -102,7 +102,7 @@
     dialog.value = false
   }
   function save () {
-    const mapping: Grid = {}
+    const mapping: { [index: string]: CellPlus } = {}
 
     if (!parsedData || !columnMapping.value.row || !columnMapping.value.column || !columnMapping.value.germplasm) {
       return
@@ -154,6 +154,10 @@
         barcode,
         pedigree,
         treatment,
+        isMarked: false,
+        measurements: {},
+        comments: [],
+        categories: [],
       }
     }
 

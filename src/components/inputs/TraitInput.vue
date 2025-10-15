@@ -51,6 +51,7 @@
           <span v-html="description" />
         </template>
         <template #append>
+          <!-- @vue-ignore -->
           <v-number-input
             v-model="model"
             density="compact"
@@ -91,21 +92,6 @@
         <span v-html="description" />
       </template>
     </v-text-field>
-    <!-- <v-date-input
-      v-else-if="trait.dataType === TraitDataType.date"
-      :label="label"
-      :readonly="trait.editable === false"
-      :messages="description ? ['f'] : undefined"
-      @keyup.enter="emit('traverse')"
-      clearable
-      ref="input"
-      :model-value="model ? date.toJsDate(model) : undefined"
-      @update:model-value="v => { model = v ? date.toISO(v) : undefined }"
-    >
-      <template #message v-if="description">
-        <span v-html="description" />
-      </template>
-    </v-date-input> -->
     <v-number-input
       :min="trait.restrictions?.min"
       :max="trait.restrictions?.max"
@@ -115,7 +101,8 @@
       :readonly="trait.editable === false"
       @keyup.enter="emit('traverse')"
       control-variant="split"
-      v-model="model"
+      :model-value="model !== undefined ? +model : undefined"
+      @update:model-value="v => model = v === undefined ? undefined : `${v}`"
       clearable
       ref="input"
       v-else-if="trait.dataType === TraitDataType.int"
@@ -134,7 +121,8 @@
       :readonly="trait.editable === false"
       @keyup.enter="emit('traverse')"
       control-variant="split"
-      v-model="model"
+      :model-value="model !== undefined ? +model : undefined"
+      @update:model-value="v => model = v === undefined ? undefined : `${v}`"
       clearable
       ref="input"
       v-else-if="trait.dataType === TraitDataType.float"

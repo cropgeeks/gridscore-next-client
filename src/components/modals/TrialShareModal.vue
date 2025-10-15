@@ -113,7 +113,7 @@
   function share () {
     error.value = undefined
     emitter.emit('show-loading', true)
-    shareTrial({ remoteUrl: shareWithRemote.value ? remoteUrl.value : undefined, token: remoteToken.value }, compProps.trial.localId)
+    shareTrial({ remoteUrl: shareWithRemote.value ? remoteUrl.value : undefined, token: remoteToken.value }, compProps.trial.localId || '')
       .then(trial => {
         if (trial) {
           shareCodes.value = trial.shareCodes

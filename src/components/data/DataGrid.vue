@@ -45,6 +45,7 @@
 
       <div ref="dataGrid" class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, ${cellHeight}px)` }">
         <template v-for="row in rows">
+          <!-- @vue-skip -->
           <template v-for="column in columns" :key="`cell-${row.index}-${column.index}`">
             <!-- Temporary variable -->
             {{ (cell = trialData[`${row.index}|${column.index}`], null) }}
