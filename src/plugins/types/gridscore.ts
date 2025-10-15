@@ -4,36 +4,37 @@
 
 export interface Trial {
     name: string;
-    description: string;
+    description?: string;
     traits: Trait[];
-    comments: Comment[];
-    events: Event[];
+    comments?: Comment[];
+    events?: Event[];
     people: Person[];
-    remoteUrl: string;
-    remoteToken: string;
+    remoteUrl?: string;
+    remoteToken?: string;
     layout: Layout;
     data: { [index: string]: Cell } | undefined;
-    brapiId: string;
-    brapiConfig: BrapiConfig;
-    socialShareConfig: SocialShareConfig;
-    updatedOn: string;
-    createdOn: string;
-    lastSyncedOn: string;
-    shareCodes: ShareCodes;
+    brapiId?: string;
+    brapiConfig?: BrapiConfig;
+    socialShareConfig?: SocialShareConfig;
+    updatedOn?: string;
+    createdOn?: string;
+    lastSyncedOn?: string;
+    shareCodes?: ShareCodes;
+    mediaFilenameFormat?: string[];
 }
 
 export interface Trait {
-    id: string;
-    brapiId: string;
+    id?: string;
+    brapiId?: string;
     name: string;
-    description: string;
-    dataType: string;
+    description?: string;
+    dataType: TraitDataType;
     allowRepeats: boolean;
     setSize: number;
-    group: Group;
-    restrictions: Restrictions;
-    timeframe: Timeframe;
-    hasImage: boolean;
+    group?: Group;
+    restrictions?: Restrictions;
+    timeframe?: Timeframe;
+    hasImage?: boolean;
     imageUrl?: string | undefined;
 }
 
@@ -50,17 +51,17 @@ export interface Event {
 }
 
 export interface Person {
-    id: string;
+    id?: string;
     name: string;
-    email: string;
+    email?: string;
     types: PersonType[];
 }
 
 export interface Layout {
     rows: number;
     columns: number;
-    corners: Corners;
-    markers: Markers;
+    corners?: Corners;
+    markers?: Markers;
     columnOrder: string;
     rowOrder: string;
     columnLabels: number[];
@@ -68,18 +69,19 @@ export interface Layout {
 }
 
 export interface Cell {
-    brapiId: string;
+    brapiId?: string;
     germplasm: string;
     pedigree?: string;
     friendlyName?: string;
     barcode?: string;
     treatment?: string;
-    rep: string;
+    rep?: string;
     isMarked: boolean;
-    geography: Geography;
+    geography?: Geography;
     measurements: { [index: string]: Measurement[] };
     comments: Comment[];
     categories: string[];
+    latestDates?: { [index: string]: string };
 }
 
 export interface BrapiConfig {
@@ -98,19 +100,27 @@ export interface ShareCodes {
     viewerCode: string;
 }
 
+export type TrialUpdateCheck = { [index: string]: TrialTimestamp }
+
+export interface TrialTimestamp {
+    updatedOn: string;
+    expiresOn: string;
+    showExpiryWarning: boolean;
+}
+
 export interface Group {
-    name: string;
+    name?: string;
 }
 
 export interface Restrictions {
-    min: number;
-    max: number;
-    categories: string[];
+    min?: number;
+    max?: number;
+    categories?: string[];
 }
 
 export interface Timeframe {
-    start: string;
-    end: string;
+    start?: string;
+    end?: string;
     type: TimeframeType;
 }
 
@@ -136,12 +146,12 @@ export interface Geography {
 export interface Measurement {
     personId?: string;
     timestamp: string;
-    values: string[];
+    values: (string | undefined)[];
 }
 
 export interface LatLng {
-    lat: number;
-    lng: number;
+    lat?: number;
+    lng?: number;
     valid?: boolean;
 }
 
@@ -189,7 +199,7 @@ export interface TrialEventContent {
 export interface TraitEditContent {
     id: string;
     name: string;
-    description: string;
+    description?: string;
     group?: string | null;
     hasImage: boolean;
     imageUrl?: string | undefined;
@@ -256,4 +266,28 @@ export const enum Anchor {
     topRight = 'topRight',
     bottomRight = 'bottomRight',
     bottomLeft = 'bottomLeft',
+}
+
+export const enum DisplayOrder {
+    TOP_TO_BOTTOM = 'TOP_TO_BOTTOM',
+	BOTTOM_TO_TOP = 'BOTTOM_TO_TOP',
+	LEFT_TO_RIGHT = 'LEFT_TO_RIGHT',
+	RIGHT_TO_LEFT = 'RIGHT_TO_LEFT',
+}
+
+export const enum CellCategory {
+    CONTROL = 'control'
+}
+
+export const enum TraitDataType {
+    int = 'int',
+    float = 'float',
+    range = 'range',
+    categorical = 'categorical',
+    boolean = 'boolean',
+    date = 'date',
+    gps = 'gps',
+    image = 'image',
+    video = 'video',
+    text = 'text',
 }

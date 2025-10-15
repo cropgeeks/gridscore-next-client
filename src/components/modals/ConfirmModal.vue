@@ -1,131 +1,76 @@
 <template>
-  <b-modal :title="$t(internalTitle)"
-           :ok-title="$t(internalOkTitle)"
-           :cancel-title="$t(internalCancelTitle)"
-           :ok-variant="internalOkVariant"
-           :cancel-variant="internalCancelVariant"
-           :ok-only="internalOkOnly"
-           scrollable
-           no-fade
-           @ok="emitOk"
-           :ok-disabled="internalNeedsConfirmation && !internalConfirmed"
-           @cancel="emitCancel"
-           :size="internalSize"
-           ref="confirmModal">
-    <div v-if="internalMessage" v-html="$t(internalMessage)" />
-
-    <b-form-checkbox v-if="internalNeedsConfirmation" v-model="internalConfirmed">{{ $t('modalConfirmMessageConfirm') }}</b-form-checkbox>
-  </b-modal>
+  <v-dialog v-model="dialog" :max-width="`min(90vw, ${internalWidth || 400}px)`">
+    <v-card>
+      <v-toolbar dark dense flat>
+        <v-toolbar-title class="white--text">{{ internalTitle }}</v-toolbar-title>
+      </v-toolbar>
+      <v-card-text>
+        <span v-html="internalMessage" v-show="!!internalMessage" />
+        <v-checkbox v-if="internalNeedsConfirmation" v-model="internalConfirmed" :label="$t('modalConfirmMessageConfirm')" />
+      </v-card-text>
+      <v-card-actions class="pt-0">
+        <v-spacer />
+        <v-btn color="grey" text @click="emitCancel" v-if="!internalOkOnly">{{ internalCancelTitle }}</v-btn>
+        <v-btn :disabled="internalNeedsConfirmation && !internalConfirmed" :color="internalOkVariant" text @click="emitOk">{{ internalOkTitle }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-import emitter from 'tiny-emitter/instance'
+<script lang="ts" setup>
+  import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
 
-export default {
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    message: {
-      type: String,
-      default: ''
-    },
-    okTitle: {
-      type: String,
-      default: 'buttonOk'
-    },
-    okOnly: {
-      type: Boolean,
-      default: false
-    },
-    cancelTitle: {
-      type: String,
-      default: 'buttonCancel'
-    },
-    cancelVariant: {
-      type: String,
-      default: 'secondary'
-    },
-    okVariant: {
-      type: String,
-      default: 'primary'
-    },
-    size: {
-      type: String,
-      default: 'md'
-    },
-    needsConfirmation: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data: function () {
-    return {
-      internalTitle: '',
-      internalMessage: '',
-      internalOkTitle: 'buttonOk',
-      internalCancelTitle: 'buttonCancel',
-      internalCancelVariant: 'secondary',
-      internalOkVariant: 'primary',
-      internalSize: 'md',
-      internalOkOnly: false,
-      internalNeedsConfirmation: false,
-      internalConfirmed: false
-    }
-  },
-  methods: {
-    show: function () {
-      this.internalTitle = this.title
-      this.internalMessage = this.message
-      this.internalOkTitle = this.okTitle
-      this.internalCancelTitle = this.cancelTitle
-      this.internalOkVariant = this.okVariant
-      this.internalCancelVariant = this.cancelVariant
-      this.internalSize = this.size
-      this.internalOkOnly = this.okOnly
-      this.internalNeedsConfirmation = this.needsConfirmation
-      this.callback = null
-      this.internalConfirmed = false
+  const { t } = useI18n()
 
-      this.$nextTick(() => this.$refs.confirmModal.show())
-    },
-    showInternal: function (params) {
-      this.internalTitle = params.title || ''
-      this.internalMessage = params.message || ''
-      this.internalOkTitle = params.okTitle || 'buttonOk'
-      this.internalCancelTitle = params.cancelTitle || 'buttonCancel'
-      this.internalOkVariant = params.okVariant || 'primary'
-      this.internalCancelVariant = params.cancelVariant || 'secondary'
-      this.internalSize = params.size || 'md'
-      this.internalOkOnly = params.okOnly || false
-      this.callback = params.callback
-      this.internalNeedsConfirmation = params.needsConfirmation || false
-      this.internalConfirmed = false
+  const dialog = ref(false)
+  const internalTitle = ref('')
+  const internalMessage = ref('')
+  const internalOkTitle = ref()
+  const internalCancelTitle = ref()
+  const internalCancelVariant = ref('secondary')
+  const internalOkVariant = ref('primary')
+  const internalOkOnly = ref(false)
+  const internalNeedsConfirmation = ref(false)
+  const internalConfirmed = ref(false)
+  const internalWidth = ref(400)
+  const callback = ref()
 
-      this.$nextTick(() => this.$refs.confirmModal.show())
-    },
-    hide: function () {
-      this.$nextTick(() => this.$refs.confirmModal.hide())
-    },
-    emitOk: function () {
-      if (this.callback) {
-        this.callback(true)
-      }
-    },
-    emitCancel: function () {
-      if (this.callback) {
-        this.callback(false)
-      }
-    }
-  },
-  mounted: function () {
-    emitter.on('show-confirm', this.showInternal)
-  },
-  beforeUnmount: function () {
-    emitter.off('show-confirm', this.showInternal)
+  function show (params: any) {
+    internalTitle.value = params.title || ''
+    internalMessage.value = params.message || ''
+    internalOkTitle.value = params.okTitle || t('buttonOk')
+    internalCancelTitle.value = params.cancelTitle || t('buttonCancel')
+    internalOkVariant.value = params.okVariant || 'primary'
+    internalCancelVariant.value = params.cancelVariant || 'secondary'
+    internalOkOnly.value = params.okOnly || false
+    callback.value = params.callback
+    internalNeedsConfirmation.value = params.needsConfirmation || false
+    internalConfirmed.value = false
+    internalWidth.value = params.width || 400
+
+    dialog.value = true
   }
-}
+
+  function hide () {
+    dialog.value = false
+  }
+
+  function emitOk () {
+    if (callback.value) {
+      callback.value(true)
+    }
+    hide()
+  }
+  function emitCancel () {
+    if (callback.value) {
+      callback.value(false)
+    }
+    hide()
+  }
+
+  onBeforeMount(() => emitter.on('show-confirm', show))
+  onBeforeUnmount(() => emitter.off('show-confirm', show))
 </script>
 
 <style>

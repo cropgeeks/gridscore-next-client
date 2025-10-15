@@ -1,0 +1,79 @@
+interface Color {
+  r: number
+  g: number
+  b: number
+}
+
+/**
+ * Converts a HEX value into an RGB object
+ * @param {String} hex The hex color
+ */
+function hexToRgb (hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return (result && result.length === 4) ? { r: Number.parseInt(result[1] || '', 16), g: Number.parseInt(result[2] || '', 16), b: Number.parseInt(result[3] || '', 16) } : undefined
+}
+
+function rgbToHex (c: Color) {
+  return `#${((1 << 24) + (c.r << 16) + (c.g << 8) + c.b).toString(16).slice(1)}`
+}
+
+function shadeColor (hex: string, percent: number) {
+  const rgb = hexToRgb(hex)
+
+  if (!rgb) {
+    return hex
+  }
+
+  let r = rgb.r * (100 + percent) / 100
+  let g = rgb.g * (100 + percent) / 100
+  let b = rgb.b * (100 + percent) / 100
+
+  r = Math.round(Math.min(r, 255))
+  g = Math.round(Math.min(g, 255))
+  b = Math.round(Math.min(b, 255))
+
+  return rgbToHex({ r, g, b })
+}
+
+const categoricalColors = {
+  GridScoreDefault: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
+  CBQuantPair12: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928'],
+  CBQuantSet19: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'],
+  CBQuantDark28: ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02', '#a6761d', '#666666'],
+  OkabeIto: ['#E69F00', '#56B4E9', '#009E73', '#F5C710', '#0072B2', '#D55E00', '#CC79A7', '#999999', '#000000'],
+  D3schemeCategory10: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
+  Hutton: ['#FF9E15', '#D6C200', '#799900', '#6AA2B8', '#00748C', '#CF009E', '#853175', '#C2002F', '#555559'],
+}
+
+const THEME_COLORS = ['#00a0f1', '#5ec418', '#910080', '#ff7c00', '#c5e000']
+
+function validateColorName (color: string) {
+  const style = new Option().style
+  style.color = color
+
+  // Check if the computed color is the same as the input color
+  return style.color === color
+}
+
+function toCssNamedColors (colors: string[]) {
+  const result: { [key: string]: string } = {}
+
+  colors.forEach(c => {
+    const shortened = c.toLowerCase().replace(/[^a-z]/g, '')
+    if (shortened.length > 0 && validateColorName(shortened)) {
+      result[c] = shortened
+    }
+  })
+
+  return result
+}
+
+export {
+  shadeColor,
+  hexToRgb,
+  rgbToHex,
+  validateColorName,
+  toCssNamedColors,
+  categoricalColors,
+  THEME_COLORS,
+}
