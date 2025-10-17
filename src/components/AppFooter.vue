@@ -22,10 +22,7 @@
         target="_blank"
         :title="item.title"
       >
-        <v-icon
-          :icon="item.icon"
-          :size="item.icon === '$vuetify' ? 24 : 16"
-        />
+        <v-icon :icon="item.icon" />
       </a>
     </div>
   </v-footer>

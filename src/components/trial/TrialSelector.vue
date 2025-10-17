@@ -183,7 +183,7 @@
   const selectedGroups = ref<number[]>([])
   const loading = ref(false)
   const sortField = ref('updatedOn')
-  const sortDescending = ref(false)
+  const sortDescending = ref(true)
   const trialDisplayMode = ref(store.storeTrialListArrangement)
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTrialModal = useTemplateRef('addTrialModal')
@@ -306,7 +306,7 @@
   async function loadTrial (trial: TrialPlus) {
     await store.setSelectedTrial(trial.localId)
 
-    router.push('/data-entry')
+    router.push('/collect/grid')
   }
 
   function deleteSelectedTrials () {

@@ -72,7 +72,16 @@
       >
         <v-list density="compact" nav>
           <v-list-item prepend-icon="mdi-home" :title="$t('menuHome')" to="/" />
-          <v-list-item prepend-icon="mdi-pencil-ruler" :title="$t('menuDataEntry')" to="/data-entry" :disabled="!selectedTrial" />
+
+          <v-list-group value="data-entry" :disabled="!selectedTrial">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props" link prepend-icon="mdi-pencil-ruler" :title="$t('menuDataEntry')" />
+            </template>
+
+            <v-list-item prepend-icon="mdi-grid" :title="$t('menuDataEntryGrid')" to="/collect/grid" />
+            <v-list-item prepend-icon="mdi-directions-fork" :title="$t('menuDataEntryGuidedWalk')" to="/collect/walk" />
+            <v-list-item prepend-icon="mdi-barcode-scan" :title="$t('menuDataEntryInput')" to="/collect/input" />
+          </v-list-group>
 
           <v-list-group value="visualization">
             <template #activator="{ props }">
@@ -92,7 +101,7 @@
       </div>
     </v-main>
 
-    <AppFooter v-if="route.path !== '/data-entry'" />
+    <AppFooter v-if="route.path !== '/collect/grid'" />
 
     <ConfirmModal />
     <ChangelogModal />
@@ -151,7 +160,7 @@
 
   const changelogVersionNumber = ref<string>()
 
-  const trialInfoPages = ref<string[]>(['/data-entry', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/guided-walk', '/trial-export'])
+  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/guided-walk', '/trial-export'])
 
   let plausible: any
   let wakeLock: WakeLockSentinel | undefined
@@ -397,5 +406,9 @@ ol:not([class]) li:not([class])
 
 .cursor-default {
   cursor: default;
+}
+
+.v-navigation-drawer--rail:not(.v-navigation-drawer--is-hovering) .v-list-group__items * {
+  display: none;
 }
 </style>

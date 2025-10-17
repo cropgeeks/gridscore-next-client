@@ -6,8 +6,7 @@ import type { BrapiConfig } from '@/plugins/types/gridscore'
 import { ensureTraitImagesCached } from '@/plugins/traitcache'
 import { loadTrialData } from '@/plugins/datastore'
 import { THEME_COLORS } from '@/plugins/color'
-import { useTheme } from 'vuetify'
-import { vuetify } from '@/plugins/vuetify'
+import { getVuetify } from '@/plugins/vuetify'
 
 export interface PlausibleConfig {
   plausibleDomain: string | undefined
@@ -23,6 +22,8 @@ if (!name) {
 
 export const coreStore = defineStore('core', {
   state: () => ({
+    rippleEnabled: true,
+    transitionsEnabled: 'yes' as 'yes' | 'no',
     themeColor: THEME_COLORS[0] as string,
     uniqueClientId: null as (string | null),
     runCount: 0,
@@ -73,6 +74,9 @@ export const coreStore = defineStore('core', {
     deviceConfig: null as any,
   }),
   getters: {
+    storePerformanceMode: (state): boolean => state.rippleEnabled === false && state.transitionsEnabled === 'no',
+    storeRippleEnabled: (state): boolean => state.rippleEnabled,
+    storeTransitionsEnabled: (state): 'yes' | 'no' => state.transitionsEnabled,
     storeThemeColor: (state): string => state.themeColor,
     storeUniqueClientId: (state): string | null => state.uniqueClientId,
     storeRunCount: (state): number => state.runCount,
@@ -118,11 +122,17 @@ export const coreStore = defineStore('core', {
     storeToolbarHiddenAfterInstallShown: (state): boolean => state.toolbarHiddenAfterInstallShown,
   },
   actions: {
+    setPerformanceMode (newPerformanceMode: boolean) {
+      this.rippleEnabled = newPerformanceMode === false
+      this.transitionsEnabled = newPerformanceMode === false ? 'yes' : 'no'
+    },
     setSystemTheme (newSystemTheme: string) {
       this.systemTheme = newSystemTheme
     },
     setThemeColor (newThemeColor: string) {
       this.themeColor = newThemeColor
+
+      const vuetify = getVuetify()
 
       if (vuetify.theme.themes.value.light) {
         vuetify.theme.themes.value.light.colors.primary = newThemeColor

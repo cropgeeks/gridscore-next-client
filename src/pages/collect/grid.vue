@@ -6,29 +6,13 @@
         <JumpToDropdown />
       </v-btn-group>
       <v-btn v-if="trial.transactionCount !== undefined && trial.transactionCount > 0" prepend-icon="mdi-cloud-upload" @click="synchronize" color="info" variant="tonal" :text="$t('toolbarSyncInfo', trial.transactionCount)" />
-      <v-autocomplete
+      <GermplasmAutocomplete
+        :trial="trial"
         v-model="searchMatch"
-        :items="trialGermplasm"
-        auto-select-first
-        item-value="artificialId"
-        item-title="displayName"
-        hide-details
-        return-object
         max-width="min(50vw, 250px)"
         density="compact"
-        clearable
-        :custom-filter="filterGermplasm"
-        prepend-inner-icon="mdi-magnify"
-      >
-        <template #item="{ props, item }">
-          <v-list-item
-            v-bind="props"
-            :title="item.raw.displayName || item.raw.germplasm"
-          >
-            <PlotInformation :cell="item.raw" />
-          </v-list-item>
-        </template>
-      </v-autocomplete>
+        ref="searchField"
+      />
     </v-toolbar>
 
     <DataCanvas :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" @click:plot="selectPlot" v-if="showCanvas" />
@@ -61,6 +45,7 @@
 
 <script setup lang="ts">
   import DataGrid from '@/components/data/DataGrid.vue'
+  import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
@@ -70,7 +55,6 @@
   import { coreStore } from '@/stores/app'
 
   import emitter from 'tiny-emitter/instance'
-  import type { FilterMatch, InternalItem } from 'vuetify'
 
   const store = coreStore()
 
@@ -113,19 +97,6 @@
 
       nextTick(() => selectSearch())
     })
-  }
-
-  function filterGermplasm (value: string, query: string, item?: InternalItem<CellPlus>): FilterMatch {
-    if (query && query.length > 0 && item && item.raw) {
-      const lower = query.toLowerCase()
-      const barcode = (item.raw.barcode || '').toLowerCase()
-      const displayName = (item.raw.displayName || '').toLowerCase()
-      const germplasm = (item.raw.germplasm || '').toLowerCase()
-
-      return barcode.includes(lower) || displayName.includes(lower) || germplasm.includes(lower)
-    } else {
-      return false
-    }
   }
 
   function updateLocalCaches () {

@@ -42,6 +42,14 @@
               <v-btn class="flex-grow-1" prepend-icon="mdi-weather-night" value="dark" :text="$t('menuItemThemeDark')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'dark'" /></template></v-btn>
               <v-btn class="flex-grow-1" prepend-icon="mdi-desktop-tower-monitor" value="system" :text="$t('menuItemThemeSystem')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'system'" /></template></v-btn>
             </v-btn-toggle>
+
+            <h4 class="mt-3">{{ $t('formLabelSettingsPerformanceMode') }}</h4>
+            <p>{{ $t('formDescriptionSettingsPerformanceMode') }}</p>
+
+            <v-btn-toggle mandatory v-model="performanceMode" variant="tonal" color="primary" class="d-flex">
+              <v-btn class="flex-grow-1" prepend-icon="mdi-leaf" :value="true" :text="$t('genericEnabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === true" /></template></v-btn>
+              <v-btn class="flex-grow-1" prepend-icon="mdi-battery-high" :value="false" :text="$t('genericDisabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === false" /></template></v-btn>
+            </v-btn-toggle>
           </template>
         </v-card>
 
@@ -173,6 +181,7 @@
 
   const store = coreStore()
 
+  const performanceMode = ref<boolean>(store.storePerformanceMode)
   const locale = ref<string>(store.storeLocale)
   const theme = ref<string>(store.storeTheme)
   const canvasShape = ref<CanvasShape>(store.storeCanvasShape)
@@ -222,6 +231,10 @@
   watch(gpsEnabled, async newValue => store.setGpsEnabled(newValue))
   watch(navigationMode, async newValue => store.setNavigationMode(newValue))
   watch(mainDisplayMode, async newValue => store.setMainDisplayMode(newValue))
+  watch(performanceMode, async newValue => {
+    store.setPerformanceMode(newValue)
+    window.location.reload()
+  })
 </script>
 
 <style scoped>

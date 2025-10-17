@@ -189,7 +189,7 @@
           }
         })
         .then(() => {
-          router.push('/data-entry')
+          router.push('/collect/grid')
         })
     }
   }

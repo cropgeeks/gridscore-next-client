@@ -20,7 +20,9 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/about': RouteRecordInfo<'/about', '/about', Record<never, never>, Record<never, never>>,
-    '/data-entry': RouteRecordInfo<'/data-entry', '/data-entry', Record<never, never>, Record<never, never>>,
+    '/collect/grid': RouteRecordInfo<'/collect/grid', '/collect/grid', Record<never, never>, Record<never, never>>,
+    '/collect/input': RouteRecordInfo<'/collect/input', '/collect/input', Record<never, never>, Record<never, never>>,
+    '/collect/walk': RouteRecordInfo<'/collect/walk', '/collect/walk', Record<never, never>, Record<never, never>>,
     '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>>,
     '/setup/': RouteRecordInfo<'/setup/', '/setup', Record<never, never>, Record<never, never>>,
     '/setup/[id]/clone': RouteRecordInfo<'/setup/[id]/clone', '/setup/:id/clone', { id: ParamValue<true> }, { id: ParamValue<false> }>,
@@ -50,8 +52,16 @@ declare module 'vue-router/auto-routes' {
       routes: '/about'
       views: never
     }
-    'src/pages/data-entry.vue': {
-      routes: '/data-entry'
+    'src/pages/collect/grid.vue': {
+      routes: '/collect/grid'
+      views: never
+    }
+    'src/pages/collect/input.vue': {
+      routes: '/collect/input'
+      views: never
+    }
+    'src/pages/collect/walk.vue': {
+      routes: '/collect/walk'
       views: never
     }
     'src/pages/settings.vue': {

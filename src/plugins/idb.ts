@@ -288,6 +288,27 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
   }
 }
 
+async function getTrialValidPlots (trialId: string): Promise<string[]> {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+    const range = IDBKeyRange.bound([trialId, 0, 0], [trialId, trial.layout.rows, trial.layout.columns])
+    return db.getAll('data', range)
+      .then(grid => {
+        const result: string[] = []
+        if (grid) {
+          grid.forEach(c => {
+            result.push(`${c.row}|${c.column}`)
+          })
+        }
+        return result
+      })
+  } else {
+    return new Promise(resolve => resolve([]))
+  }
+}
+
 async function addTrialTraits (trialId: string, traits: Trait[]) {
   const trial = await getTrialById(trialId)
 
@@ -970,5 +991,6 @@ export {
   deleteTrial,
   changeTrialsData,
   addTrialTraits,
+  getTrialValidPlots,
   getTransactionForTrial,
 }

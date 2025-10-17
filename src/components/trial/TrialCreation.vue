@@ -123,9 +123,9 @@
   import TrialLayout from '@/components/setup/TrialLayout.vue'
   import TrialTraits from '@/components/setup/TrialTraits.vue'
   import { getId } from '@/plugins/id'
-  import { trialLayoutToPlots } from '@/plugins/location'
+  import { isGeographyValid, trialLayoutToPlots } from '@/plugins/location'
   import { ShareStatus, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
-  import { CellCategory, DisplayOrder, TraitDataType, type Person, type Trial } from '@/plugins/types/gridscore'
+  import { DisplayOrder, TraitDataType, type Person } from '@/plugins/types/gridscore'
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
@@ -318,7 +318,7 @@
         emitter.emit('trial-selected')
 
         await store.setSelectedTrial(t.localId || '')
-        router.push('/data-entry')
+        router.push('/collect/grid')
       })
     } else {
       delete t.localId
@@ -326,7 +326,7 @@
 
       let plotCorners = undefined
 
-      if (t.layout.corners) {
+      if (t.layout.corners && isGeographyValid(t.layout.corners)) {
         plotCorners = trialLayoutToPlots(t.layout.corners, t.layout.rows, t.layout.columns)
       }
 
@@ -395,7 +395,7 @@
 
       addTrial(t).then(async trialId => {
         await store.setSelectedTrial(trialId)
-        router.push('/data-entry')
+        router.push('/collect/grid')
       })
     }
   }

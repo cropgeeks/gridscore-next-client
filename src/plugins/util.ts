@@ -3,6 +3,8 @@ import { autoType, tsvParse } from 'd3-dsv'
 
 import { i18n } from '@/plugins/vuetify'
 import { coreStore } from '@/stores/app'
+import type { FilterMatch, InternalItem } from 'vuetify'
+import type { CellPlus } from './types/client'
 
 const GERMINATE_EXPECTED_COLUMNS = ['Name', 'Short Name', 'Description', 'Data Type', 'Unit Name', 'Unit Abbreviation', 'Unit Descriptions', 'Trait categories (comma separated)', 'Min (only for numeric traits)', 'Max (only for numeric traits)']
 const TABULAR_EXPECTED_COLUMNS = ['Name', 'Description', 'Data Type', 'Allow repeats', 'Set size', 'Group name', 'Categories', 'Minimum', 'Maximum', 'Timeframe type', 'Timeframe start', 'Timeframe end', 'BrAPI ID']
@@ -396,10 +398,24 @@ function isValidDateString (dateString: string) {
   return d.toISOString().slice(0, 10) === dateString
 }
 
+function filterGermplasm (value: string, query: string, item?: InternalItem<CellPlus>): FilterMatch {
+  if (query && query.length > 0 && item && item.raw) {
+    const lower = query.toLowerCase()
+    const barcode = (item.raw.barcode || '').toLowerCase()
+    const displayName = (item.raw.displayName || '').toLowerCase()
+    const germplasm = (item.raw.germplasm || '').toLowerCase()
+
+    return barcode.includes(lower) || displayName.includes(lower) || germplasm.includes(lower)
+  } else {
+    return false
+  }
+}
+
 export {
   getRowLabel,
   getColumnLabel,
   getColumnIndex,
+  filterGermplasm,
   getRowIndex,
   jsonToTraits,
   traitsToGerminate,
