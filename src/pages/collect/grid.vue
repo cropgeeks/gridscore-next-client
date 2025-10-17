@@ -191,6 +191,19 @@
     nextTick(() => searchResultModal.value?.show())
   }
 
+  function tts (text: string, interruptPrev = true) {
+    if (textSynth) {
+      if (interruptPrev) {
+        textSynth.cancel()
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.rate = 1
+      // utterance.rate = 1.2
+      textSynth.speak(utterance)
+    }
+  }
+
   watch(searchMatch, async newValue => {
     if (newValue) {
       selectPlot(newValue.row || 0, newValue.column || 0)
@@ -212,6 +225,7 @@
     emitter.on('trial-data-loaded', updateLocalCaches)
     emitter.on('show-search-results', showSearchResults)
     emitter.on('plot-clicked', selectPlot)
+    emitter.on('tts', tts)
   })
 
   onBeforeUnmount(() => {
@@ -220,6 +234,7 @@
     emitter.off('trial-data-loaded', updateLocalCaches)
     emitter.off('show-search-results', showSearchResults)
     emitter.off('plot-clicked', selectPlot)
+    emitter.off('tts', tts)
   })
 </script>
 

@@ -72,6 +72,7 @@
       >
         <v-list density="compact" nav>
           <v-list-item prepend-icon="mdi-home" :title="$t('menuHome')" to="/" />
+          <v-list-item prepend-icon="mdi-notebook-plus" :title="$t('pageHomeCardTitleSetup')" to="/setup" />
 
           <v-list-group value="data-entry" :disabled="!selectedTrial">
             <template #activator="{ props }">

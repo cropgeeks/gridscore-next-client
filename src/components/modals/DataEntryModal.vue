@@ -514,6 +514,10 @@
   }
 
   function traverse (trait: TraitPlus, traitIndex: number, traits: TraitPlus[], setIndex: number) {
+    if (!store.storeAutoProgressInputs) {
+      return
+    }
+
     if (setIndex < trait.setSize) {
       // @ts-ignore
       refs.value[`${trait.id}`].focus(setIndex + 1)

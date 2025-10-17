@@ -74,6 +74,30 @@
               <v-btn class="flex-grow-1" prepend-icon="mdi-gesture-tap" :value="NavigationMode.DRAG" :text="$t('buttonNavModeDrag')"><template #append><v-icon icon="mdi-check" v-if="store.storeNavigationMode === NavigationMode.DRAG" /></template></v-btn>
               <v-btn class="flex-grow-1" prepend-icon="mdi-cursor-move" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon icon="mdi-check" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
             </v-btn-toggle>
+
+            <v-switch
+              :label="$t('formLabelSettingsVoiceFeedback')"
+              :hint="$t('formDescriptionSettingsVoiceFeedback')"
+              persistent-hint
+              color="primary"
+              v-model="voiceFeedbackEnabled"
+            />
+
+            <v-switch
+              :label="$t('formLabelSettingsAutoSelectSearch')"
+              :hint="$t('formDescriptionSettingsAutoSelectSearch')"
+              persistent-hint
+              color="primary"
+              v-model="autoSelectSearch"
+            />
+
+            <v-switch
+              :label="$t('formLabelSettingsAutoProgressInputs')"
+              :hint="$t('formDescriptionSettingsAutoProgressInputs')"
+              persistent-hint
+              color="primary"
+              v-model="autoProgressInputs"
+            />
           </template>
         </v-card>
       </v-col>
@@ -133,6 +157,77 @@
               </v-list>
             </v-menu>
 
+            <v-switch
+              :label="$t('formLabelSettingsHighlightControls')"
+              :hint="$t('formDescriptionSettingsHighlightControls')"
+              persistent-hint
+              color="primary"
+              v-model="highlightControls"
+            />
+
+            <v-switch
+              :label="$t('formLabelSettingsDisplayMarkerIndicators')"
+              :hint="$t('formDescriptionSettingsDisplayMarkerIndicators')"
+              persistent-hint
+              color="primary"
+              v-model="displayMarkerIndicators"
+            />
+
+            <v-switch
+              :label="$t('formLabelSettingsShowFullTraitDescription')"
+              :hint="$t('formDescriptionSettingsShowFullTraitDescription')"
+              persistent-hint
+              color="primary"
+              v-model="showFullTraitDescription"
+            />
+
+            <v-switch
+              :label="$t('formLabelSettingsLargeButtonsForIntTraits')"
+              :hint="$t('formDescriptionSettingsLargeButtonsForIntTraits')"
+              persistent-hint
+              color="primary"
+              v-model="largeButtonsForIntTraits"
+            />
+
+            <div class="text-subtitle-2 mt-3">{{ $t('formLabelSettingsMinCellWidth') }}</div>
+            <v-slider
+              v-model="displayMinCellWidth"
+              :hint="$t('formDescriptionSettingsMinCellWidth')"
+              persistent-hint
+              color="primary"
+              @wheel="$event.target.blur()"
+              thumb-label
+              :min="2"
+              :max="10"
+              :step="1"
+              ref="input"
+            >
+              <template #append>
+                <!-- @vue-ignore -->
+                <v-number-input
+                  v-model="displayMinCellWidth"
+                  density="compact"
+                  width="100"
+                  :min="2"
+                  :max="10"
+                  :step="1"
+                  autocomplete="off"
+                  control-variant="stacked"
+                  variant="outlined"
+                  hide-details
+                />
+              </template>
+            </v-slider>
+
+            <v-select
+              :label="$t('formLabelSettingsPlotDisplayField')"
+              :hint="$t('formDescriptionSettingsPlotDisplayField')"
+              persistent-hint
+              v-model="plotDisplayField"
+              class="mt-3"
+              :items="plotDisplayFieldOptions"
+            />
+
             <h4 class="mt-3">{{ $t('formLabelSettingsCanvasShape') }}</h4>
             <p>{{ $t('formDescriptionSettingsCanvasShape') }}</p>
 
@@ -175,11 +270,13 @@
 
 <script setup lang="ts">
   import { categoricalColors, THEME_COLORS } from '@/plugins/color'
-  import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode } from '@/plugins/types/client'
+  import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
+  import { useI18n } from 'vue-i18n'
 
   const store = coreStore()
+  const { t } = useI18n()
 
   const performanceMode = ref<boolean>(store.storePerformanceMode)
   const locale = ref<string>(store.storeLocale)
@@ -193,8 +290,33 @@
   const currentTraitIndex = ref<number>()
   const gpsEnabled = ref(store.storeGpsEnabled)
   const navigationMode = ref(store.storeNavigationMode)
+  const highlightControls = ref(store.storeHighlightControls)
+  const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)
+  const showFullTraitDescription = ref(store.storeShowFullTraitDescription)
+  const largeButtonsForIntTraits = ref(store.storeLargeButtonsForIntTraits)
+  const displayMinCellWidth = ref(store.storeDisplayMinCellWidth)
+  const plotDisplayField = ref(store.storePlotDisplayField)
+  const autoSelectSearch = ref(store.storeAutoSelectSearch)
+  const autoProgressInputs = ref(store.storeAutoProgressInputs)
+  const voiceFeedbackEnabled = ref(store.storeVoiceFeedbackEnabled)
 
   const isSquare = computed(() => store.storeCanvasShape === CanvasShape.SQUARE)
+
+  const plotDisplayFieldOptions = computed(() => {
+    return [{
+      value: PlotDisplayField.DISPLAY_NAME,
+      title: t('formSettingsOptionPlotDisplayFieldDisplayName'),
+    }, {
+      value: PlotDisplayField.GERMPLASM,
+      title: t('formSettingsOptionPlotDisplayFieldGermplasm'),
+    }, {
+      value: PlotDisplayField.REP,
+      title: t('formSettingsOptionPlotDisplayFieldRep'),
+    }, {
+      value: PlotDisplayField.NOTHING,
+      title: t('formSettingsOptionPlotDisplayFieldNothing'),
+    }]
+  })
 
   function deleteColor (index: number) {
     traitColors.value.splice(index, 1)
@@ -231,6 +353,15 @@
   watch(gpsEnabled, async newValue => store.setGpsEnabled(newValue))
   watch(navigationMode, async newValue => store.setNavigationMode(newValue))
   watch(mainDisplayMode, async newValue => store.setMainDisplayMode(newValue))
+  watch(highlightControls, async newValue => store.setHighlightControls(newValue))
+  watch(displayMarkerIndicators, async newValue => store.setDisplayMarkerIndicators(newValue))
+  watch(showFullTraitDescription, async newValue => store.setShowFullTraitDescription(newValue))
+  watch(largeButtonsForIntTraits, async newValue => store.setLargeButtonsForIntTraits(newValue))
+  watch(displayMinCellWidth, async newValue => store.setDisplayMinCellWidth(newValue))
+  watch(plotDisplayField, async newValue => store.setPlotDisplayField(newValue))
+  watch(autoSelectSearch, async newValue => store.setAutoSelectSearch(newValue))
+  watch(autoProgressInputs, async newValue => store.setAutoProgressInputs(newValue))
+  watch(voiceFeedbackEnabled, async newValue => store.setVoiceFeedbackEnabled(newValue))
   watch(performanceMode, async newValue => {
     store.setPerformanceMode(newValue)
     window.location.reload()

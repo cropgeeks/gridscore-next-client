@@ -7,7 +7,7 @@
     item-title="displayName"
     :label="$t('formLabelSearch')"
     hide-details
-    autofocus
+    :autofocus="store.storeAutoSelectSearch !== false"
     :density="density"
     return-object
     clearable
@@ -31,6 +31,9 @@
   import { getTrialDataCached, getTrialGermplasmCached } from '@/plugins/datastore'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { filterGermplasm } from '@/plugins/util'
+  import { coreStore } from '@/stores/app'
+
+  const store = coreStore()
 
   const searchMatch = defineModel<CellPlus>()
   const trialGermplasm = ref<CellPlus[]>([])
@@ -55,7 +58,9 @@
   }
 
   function focus () {
-    nextTick(() => searchField.value?.focus())
+    if (store.storeAutoSelectSearch) {
+      nextTick(() => searchField.value?.focus())
+    }
   }
 
   watch(() => compProps.trial, async () => {

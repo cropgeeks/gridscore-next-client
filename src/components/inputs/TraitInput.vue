@@ -9,6 +9,7 @@
       clearable
       v-model="model"
       ref="input"
+      @change="tts"
     >
       <template #message v-if="description">
         <span v-html="description" />
@@ -46,6 +47,7 @@
         :max="trait.restrictions?.max"
         :step="1"
         ref="input"
+        @end="tts"
       >
         <template #message v-if="description">
           <span v-html="description" />
@@ -104,6 +106,7 @@
       :model-value="model !== undefined ? +model : undefined"
       @update:model-value="v => model = v === undefined ? undefined : `${v}`"
       clearable
+      :class="store.storeLargeButtonsForIntTraits ? 'large-buttons' : undefined"
       ref="input"
       v-else-if="trait.dataType === TraitDataType.int"
     >
@@ -187,7 +190,10 @@
   import { coreStore } from '@/stores/app'
   import { UseGeolocation } from '@vueuse/components'
   import { useI18n } from 'vue-i18n'
-  // import { useDate } from 'vuetify'
+
+  import emitter from 'tiny-emitter/instance'
+
+  const nonTtsTraitTypes = new Set([TraitDataType.gps, TraitDataType.video, TraitDataType.image, TraitDataType.date, TraitDataType.text, TraitDataType.range])
 
   const { t } = useI18n()
 
@@ -297,6 +303,15 @@
     date.setDate(date.getDate() + delta)
 
     model.value = toLocalDateString(date)
+
+    const diffDays = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
+    if (diffDays > -14 && diffDays < 0) {
+      emitter.emit('tts', t('ttsDaysIn', Math.abs(diffDays)))
+    } else if (diffDays < 14) {
+      emitter.emit('tts', t('ttsDaysAgo', Math.abs(diffDays)))
+    } else {
+      emitter.emit('tts', toLocalDateString(current))
+    }
   }
 
   function setDate () {
@@ -341,13 +356,38 @@
     if (isFinite(latitude) && isFinite(longitude)) {
       model.value = `${latitude};${longitude}`
 
+      emitter.emit('tts', t('ttsCurrentLocation'))
+
       emit('traverse')
     } else {
       console.log(latitude, longitude)
     }
   }
 
+  function tts () {
+    // @ts-ignore
+    emitter.emit('tts', compProps.trait.dataType === TraitDataType.categorical ? compProps.trait.restrictions.categories[model.value] : model.value)
+  }
+
+  watch(model, async newValue => {
+    if (newValue !== undefined && newValue !== null && !nonTtsTraitTypes.has(compProps.trait.dataType)) {
+      tts ()
+    }
+  })
+
   defineExpose({
     focus,
   })
 </script>
+
+<style>
+.large-buttons .v-field__append-inner button,
+.large-buttons .v-field__prepend-inner button {
+  width: auto;
+}
+
+.large-buttons .v-field__append-inner button .v-btn__content i,
+.large-buttons .v-field__prepend-inner button .v-btn__content i {
+  --v-icon-size-multiplier: 3;
+}
+</style>
