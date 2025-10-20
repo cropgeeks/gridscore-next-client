@@ -4,9 +4,9 @@
       <IBiDiamondHalf :style="{ transform: 'rotate(45deg)' }" width="1.3em" height="1.3em" v-if="store.canvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
     <b-dropdown-form>
-      <b-form-group class="mb-0" :label="$t('formLabelTraitDropdownCutoffDate')" label-for="cutoff" :title="$t('formDescriptionTraitDropdownCutoffDate')">
+      <b-form-group class="mb-0" :label="$t('formLabelTraitDropdownCutoffDate')" label-for="cutoff" :title="$t('formDescriptionTraitDropdownCutoffDate')" v-if="atLeastOneMultiTrait">
         <b-input-group>
-          <b-form-input id="cutoff" type="date" v-model="traitCutoff" v-if="atLeastOneMultiTrait" />
+          <b-form-input id="cutoff" type="date" v-model="traitCutoff" />
           <b-button variant="danger" v-if="traitCutoff" @click="traitCutoff = undefined"><IBiSlashCircle /></b-button>
         </b-input-group>
       </b-form-group>

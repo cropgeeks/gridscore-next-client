@@ -460,7 +460,7 @@ export default {
         })
       }
 
-      this.$nextTick(() => this.updateDimensions())
+      nextTick(() => this.updateDimensions())
     },
     updateDimensions: function () {
       if (this.$refs.wrapper) {

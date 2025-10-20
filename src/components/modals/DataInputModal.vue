@@ -652,6 +652,7 @@ export default {
     validate: function (delta = 1) {
       if (!this.trial.editable) {
         this.hide()
+        return
       }
 
       const traitStates = []

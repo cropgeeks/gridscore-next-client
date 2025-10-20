@@ -1,7 +1,7 @@
 <template>
   <UseOnline v-slot="{ isOnline }">
     <b-modal :title="$t('modalTitleTrialSynchronization')"
-            :ok-title="$t('Synchronize')"
+            :ok-title="$t('buttonSynchronize')"
             :cancel-title="$t('buttonCancel')"
             @ok.prevent="askToSynchronize"
             :ok-disabled="isOnline === false"

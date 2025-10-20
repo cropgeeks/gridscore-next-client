@@ -25,6 +25,7 @@ export interface TrialPlus extends Trial {
   shareStatus?: ShareStatus
   transactionCount?: number
   group?: TrialGroup
+  expiresOn?: string
 }
 
 export interface CellPlus extends Cell {
