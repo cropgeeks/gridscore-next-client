@@ -288,10 +288,10 @@ function nextDownRightBack (current: Step, layout: Layout, scoreWidth: number): 
 
   if (result.y < layout.rows - 1) {
     result.y++
-  } else if (result.x - (scoreWidth / 2) > 0) {
-    result.x -= scoreWidth
+  } else if (result.x + (scoreWidth / 2) < layout.columns - 1) {
+    result.x += scoreWidth
     result.y = 0
-    result.tts = 'widgetGuideOrderBackRight'
+    result.tts = 'widgetGuideOrderBackLeft'
   } else {
     return undefined
   }
@@ -304,10 +304,10 @@ function nextDownLeftBack (current: Step, layout: Layout, scoreWidth: number): S
 
   if (result.y < layout.rows - 1) {
     result.y++
-  } else if (result.x + (scoreWidth / 2) < layout.columns - 1) {
-    result.x += scoreWidth
+  } else if (result.x - (scoreWidth / 2) > 0) {
+    result.x -= scoreWidth
     result.y = 0
-    result.tts = 'widgetGuideOrderBackLeft'
+    result.tts = 'widgetGuideOrderBackRight'
   } else {
     return undefined
   }

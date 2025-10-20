@@ -48,7 +48,7 @@
 
             <v-btn-toggle mandatory v-model="performanceMode" variant="tonal" color="primary" class="d-flex">
               <v-btn class="flex-grow-1" prepend-icon="mdi-leaf" :value="true" :text="$t('genericEnabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === true" /></template></v-btn>
-              <v-btn class="flex-grow-1" prepend-icon="mdi-battery-high" :value="false" :text="$t('genericDisabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === false" /></template></v-btn>
+              <v-btn class="flex-grow-1" prepend-icon="mdi-speedometer" :value="false" :text="$t('genericDisabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === false" /></template></v-btn>
             </v-btn-toggle>
           </template>
         </v-card>
@@ -89,6 +89,14 @@
               persistent-hint
               color="primary"
               v-model="autoSelectSearch"
+            />
+
+            <v-switch
+              :label="$t('formLabelSettingsAutoSelectFirstInput')"
+              :hint="$t('formDescriptionSettingsAutoSelectFirstInput')"
+              persistent-hint
+              color="primary"
+              v-model="autoSelectFirstInput"
             />
 
             <v-switch
@@ -297,6 +305,7 @@
   const displayMinCellWidth = ref(store.storeDisplayMinCellWidth)
   const plotDisplayField = ref(store.storePlotDisplayField)
   const autoSelectSearch = ref(store.storeAutoSelectSearch)
+  const autoSelectFirstInput = ref(store.storeAutoSelectFirstInput)
   const autoProgressInputs = ref(store.storeAutoProgressInputs)
   const voiceFeedbackEnabled = ref(store.storeVoiceFeedbackEnabled)
 
@@ -360,6 +369,7 @@
   watch(displayMinCellWidth, async newValue => store.setDisplayMinCellWidth(newValue))
   watch(plotDisplayField, async newValue => store.setPlotDisplayField(newValue))
   watch(autoSelectSearch, async newValue => store.setAutoSelectSearch(newValue))
+  watch(autoSelectFirstInput, async newValue => store.setAutoSelectFirstInput(newValue))
   watch(autoProgressInputs, async newValue => store.setAutoProgressInputs(newValue))
   watch(voiceFeedbackEnabled, async newValue => store.setVoiceFeedbackEnabled(newValue))
   watch(performanceMode, async newValue => {

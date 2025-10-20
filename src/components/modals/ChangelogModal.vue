@@ -32,7 +32,7 @@
                     :title="item.title"
                   >
                     <template #prepend>
-                      <v-avatar :color="badges[item.type]?.color">{{ badges[item.type]?.text }}</v-avatar>
+                      <v-avatar :color="badges[item.type]?.color" :icon="badges[item.type]?.icon" v-tooltip:top="badges[item.type]?.text" />
                     </template>
                     <template #subtitle>
                       <span class="text-wrap" v-html="item.text" />
@@ -86,6 +86,7 @@
   interface BadgeInfo {
     color: string
     text: string
+    icon: string
   }
 
   const store = coreStore()
@@ -112,9 +113,9 @@
 
   const badges: ComputedRef<{ [index: string]: BadgeInfo }> = computed(() => {
     return {
-      new: { color: 'success', text: t('changelogBadgeNew') },
-      update: { color: 'info', text: t('changelogBadgeUpdate') },
-      bugfix: { color: 'warning', text: t('changelogBadgeFix') },
+      new: { color: 'success', text: t('changelogBadgeNew'), icon: 'mdi-new-box' },
+      update: { color: 'info', text: t('changelogBadgeUpdate'), icon: 'mdi-chevron-triple-up' },
+      bugfix: { color: 'warning', text: t('changelogBadgeFix'), icon: 'mdi-bug-check' },
     }
   })
 

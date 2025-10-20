@@ -3,7 +3,8 @@
     <DataEntryModal
       :trial="trial"
       :geolocation="geolocation"
-      v-if="isConfigValid"
+      ref="dataEntryModal"
+      v-if="isValidConfig"
     />
     <v-container v-else>
       <h1 class="text-h4 mb-3">{{ $t('modalTitleGuidedWalk') }}</h1>
@@ -11,6 +12,8 @@
       <v-divider class="mb-3" />
 
       <p>{{ $t('modalTextGuidedWalk') }}</p>
+
+      <TraitDropdown :traits="trial.traits" />
 
       <GermplasmAutocomplete
         :trial="trial"
@@ -38,7 +41,8 @@
 <script setup lang="ts">
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'
   import GuideOrderSelector from '@/components/trial/GuideOrderSelector.vue'
-  import { getTrialById } from '@/plugins/idb'
+  import TraitDropdown from '@/components/trial/TraitDropdown.vue'
+  import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import emitter from 'tiny-emitter/instance'
@@ -53,6 +57,7 @@
   const row = ref<number>()
   const column = ref<number>()
   const scoreWidth = ref<1 | 2>(1)
+  const isValidConfig = ref(false)
 
   // Stuff for selection of guided walk
   const searchMatch = ref<CellPlus>()
@@ -64,7 +69,18 @@
     getTrialById(store.storeSelectedTrial || '').then(t => {
       trial.value = t
 
+      if (row.value !== undefined && column.value !== undefined) {
+        getCell(t.localId, row.value, column.value)
+          .then(cell => {
+            searchMatch.value = cell
+          })
+      }
+
       startGeoTracking()
+
+      if (isValidConfig.value) {
+        startGuidedWalk()
+      }
     })
   }
 
@@ -97,6 +113,10 @@
     column.value = x
     guidedWalkName.value = order.order
     scoreWidth.value = order.scoreWidth
+
+    isValidConfig.value = true
+
+    startGuidedWalk()
   }
 
   function tts (text: string, interruptPrev = true) {
@@ -112,9 +132,7 @@
     }
   }
 
-  const isConfigValid = computed(() => row.value !== undefined && column.value !== undefined && scoreWidth.value !== undefined)
-
-  watch(trial, async () => {
+  function startGuidedWalk () {
     nextTick(() => {
       emitter.emit('force-guided-walk', {
         row: row.value,
@@ -123,7 +141,7 @@
         scoreWidth: scoreWidth.value,
       })
     })
-  })
+  }
 
   onMounted(() => {
     const q = route.query
@@ -138,21 +156,21 @@
         column.value = +q.column
       }
       if (q.scoreWidth !== undefined && q.scoreWidth !== null && q.scoreWidth !== '') {
-        scoreWidth.value = +q.scoreWidth as (1 | 2)
+        scoreWidth.value = Math.max(2, Math.min(1, Math.round(+q.scoreWidth))) as (1 | 2)
       }
+
+      isValidConfig.value = row.value !== undefined && column.value !== undefined && scoreWidth.value !== undefined && guidedWalkName.value !== undefined && guidedWalkName.value.trim().length > 0
     }
 
     if (store.storeSelectedTrial) {
       loadTrial()
     }
 
-    if (isConfigValid.value) {
-      if (store.storeVoiceFeedbackEnabled && window.speechSynthesis) {
-        textSynth = window.speechSynthesis
-      }
-
-      emitter.on('tts', tts)
+    if (store.storeVoiceFeedbackEnabled && window.speechSynthesis) {
+      textSynth = window.speechSynthesis
     }
+
+    emitter.on('tts', tts)
   })
 
   onBeforeUnmount(() => {

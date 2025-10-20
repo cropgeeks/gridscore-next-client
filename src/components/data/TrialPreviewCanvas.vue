@@ -243,6 +243,8 @@
 
   watch(() => compProps.cells, async () => reset())
   watch(() => compProps.path, async () => reset())
+  watch(() => compProps.width, async () => reset())
+  watch(() => compProps.height, async () => reset())
 
   onMounted(() => reset())
 </script>

@@ -74,9 +74,9 @@
           <v-list-item prepend-icon="mdi-home" :title="$t('menuHome')" to="/" />
           <v-list-item prepend-icon="mdi-notebook-plus" :title="$t('pageHomeCardTitleSetup')" to="/setup" />
 
-          <v-list-group value="data-entry" :disabled="!selectedTrial">
+          <v-list-group value="data-entry">
             <template #activator="{ props }">
-              <v-list-item v-bind="props" link prepend-icon="mdi-pencil-ruler" :title="$t('menuDataEntry')" />
+              <v-list-item v-bind="props" :disabled="!selectedTrial" link prepend-icon="mdi-pencil-ruler" :title="$t('menuDataEntry')" />
             </template>
 
             <v-list-item prepend-icon="mdi-grid" :title="$t('menuDataEntryGrid')" to="/collect/grid" />
@@ -86,7 +86,7 @@
 
           <v-list-group value="visualization">
             <template #activator="{ props }">
-              <v-list-item v-bind="props" link prepend-icon="mdi-chart-waterfall" :title="$t('menuDataVisualization')" />
+              <v-list-item v-bind="props" :disabled="!selectedTrial" link prepend-icon="mdi-chart-waterfall" :title="$t('menuDataVisualization')" />
             </template>
 
             <v-list-item prepend-icon="mdi-map" :title="$t('menuVisualizationMap')" to="/visualization/map" />
@@ -126,6 +126,19 @@
     </v-overlay>
 
     <TrialSynchonizationModal />
+
+    <v-dialog
+      v-model="updateExists"
+      persistent
+      :max-width="`min(90vw, 400px)`"
+    >
+      <v-card :title="$t('modalTitleAppUpdateAvailable')" :text="$t('modalTextAppUpdateAvailable')">
+        <template #actions>
+          <v-btn :text="$t('buttonCancel')" variant="text" @click="updateExists = false" />
+          <v-btn :text="$t('buttonUpdate')" variant="tonal" color="primary" @click="refreshApp" />
+        </template>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -159,9 +172,13 @@
   const snackbarQueue = ref<SnackbarQueueMessage[]>([])
   const selectedTrial = ref<TrialPlus>()
 
+  // PWA update stuff
+  let registration: any
+  const updateExists = ref(false)
+
   const changelogVersionNumber = ref<string>()
 
-  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/guided-walk', '/trial-export'])
+  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/collect/walk', '/collect/input', '/trial-export'])
 
   let plausible: any
   let wakeLock: WakeLockSentinel | undefined
@@ -233,6 +250,23 @@
       } else {
         plausible.trackEvent(data.key)
       }
+    }
+  }
+
+  function updateAvailable (event: CustomEvent) {
+    plausibleEvent({ key: 'update-shown', props: { from: gridScoreVersion } })
+    console.log('swUpdated called', event.detail)
+    registration = event.detail
+    updateExists.value = true
+  }
+
+  function refreshApp () {
+    console.log('refreshApp')
+    updateExists.value = false
+
+    if (registration) {
+      plausibleEvent({ key: 'update-finished', props: { from: gridScoreVersion } })
+      registration()
     }
   }
 
@@ -357,6 +391,12 @@
     emitter.off('show-loading', showLoading)
     emitter.off('trial-data-loaded', loadTrialInfo)
     emitter.off('plausible-event', plausibleEvent)
+  })
+
+  onBeforeMount(() => {
+    // Listen for our custom event from the SW registration
+    // @ts-ignore
+    document.addEventListener('swUpdated', updateAvailable, { once: true })
   })
 </script>
 

@@ -57,6 +57,7 @@ export const coreStore = defineStore('core', {
     escapeBarcode: null as (string | null),
     enterBarcode: null as (string | null),
     autoSelectSearch: false,
+    autoSelectFirstInput: true,
     autoProgressInputs: true,
     categoryCountInline: 4,
     toolbarHiddenAfterInstallShown: false,
@@ -101,6 +102,7 @@ export const coreStore = defineStore('core', {
     storeEscapeBarcode: (state): string | null => state.escapeBarcode,
     storeEnterBarcode: (state): string | null => state.enterBarcode,
     storeAutoSelectSearch: (state): boolean => state.autoSelectSearch,
+    storeAutoSelectFirstInput: (state): boolean => state.autoSelectFirstInput,
     storeAutoProgressInputs: (state): boolean => state.autoProgressInputs,
     storeLargeButtonsForIntTraits: (state): boolean => state.largeButtonsForIntTraits,
     storeCanvasDensity: (state): CanvasDensity => state.canvasDensity,
@@ -161,6 +163,9 @@ export const coreStore = defineStore('core', {
     },
     setAutoSelectSearch (newAutoSelectSearch: boolean) {
       this.autoSelectSearch = newAutoSelectSearch
+    },
+    setAutoSelectFirstInput (newAutoSelectFirstInput: boolean) {
+      this.autoSelectFirstInput = newAutoSelectFirstInput
     },
     setAutoProgressInputs (newAutoProgressInputs: boolean) {
       this.autoProgressInputs = newAutoProgressInputs

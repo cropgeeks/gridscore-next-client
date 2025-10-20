@@ -151,6 +151,7 @@
   const stepperIndex = ref(1)
   const bottomSheetVisible = ref(false)
   const copyData = ref(false)
+  const setupCompleted = ref(false)
 
   const trialDetails = useTemplateRef('trialDetails')
   const trialLayout = useTemplateRef('trialLayout')
@@ -394,11 +395,32 @@
       })
 
       addTrial(t).then(async trialId => {
+        setupCompleted.value = true
+
         await store.setSelectedTrial(trialId)
-        router.push('/collect/grid')
+        nextTick(() => router.push('/collect/grid'))
       })
     }
   }
+
+  onBeforeRouteLeave((to, from, next) => {
+    if (!setupCompleted.value) {
+      emitter.emit('show-confirm', {
+        title: t('modalTitleLeaveSetup'),
+        message: t('modalTextLeaveSetup'),
+        okTitle: t('buttonYes'),
+        cancelTitle: t('buttonNo'),
+        okVariant: 'error',
+        callback: (result: boolean) => {
+          if (result) {
+            next()
+          }
+        },
+      })
+    } else {
+      next()
+    }
+  })
 
   onMounted(() => {
     if (compProps.source) {

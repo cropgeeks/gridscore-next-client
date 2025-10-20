@@ -56,9 +56,9 @@
       </v-col>
     </v-row>
 
-    <TrialSelector class="my-5" />
+    <TrialSelector class="mt-5" />
 
-    <v-card variant="tonal">
+    <v-card variant="tonal" class="mt-5">
       <div class="d-flex flex-wrap flex-sm-nowrap justify-center justify-sm-start">
         <v-icon color="primary" class="ma-5" size="80" icon="mdi-newspaper-variant-outline" />
         <div>

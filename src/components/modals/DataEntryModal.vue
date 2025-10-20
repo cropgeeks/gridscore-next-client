@@ -1,10 +1,11 @@
 <template>
   <v-dialog
     v-model="dialog"
-    transition="dialog-bottom-transition"
     persistent
     scrollable
     fullscreen
+    :transition="store.storePerformanceMode ? false : 'dialog-bottom-transition'"
+    @after-enter="autofocusFirst"
     v-if="cell"
   >
     <v-card>
@@ -15,6 +16,19 @@
         />
 
         <v-toolbar-title>{{ cell.displayName }}</v-toolbar-title>
+
+        <v-btn-group>
+          <ResponsiveButton
+            :text="$t('buttonStartGuidedWalk')"
+            prepend-icon="mdi-directions-fork"
+            variant="tonal"
+            size="small"
+            @click="onGuidedWalk"
+            v-if="!isGuidedWalk"
+          />
+        </v-btn-group>
+
+        <v-spacer />
 
         <v-toolbar-items>
           <ResponsiveButton
@@ -390,6 +404,21 @@
     }
   })
 
+  function onGuidedWalk () {
+    emitter.emit('show-confirm', {
+      title: t('modalTitleGuidedWalk'),
+      message: t('modalTextGuidedWalkQuestion'),
+      okTitle: t('buttonYes'),
+      cancelTitle: t('buttonNo'),
+      okVariant: 'success',
+      callback: (result: boolean) => {
+        if (result) {
+          router.push(`/collect/walk?row=${cell.value?.row}&column=${cell.value?.column}`)
+        }
+      },
+    })
+  }
+
   function confirmClose () {
     if (!compProps.trial.editable) {
       hide()
@@ -513,8 +542,8 @@
     }
   }
 
-  function traverse (trait: TraitPlus, traitIndex: number, traits: TraitPlus[], setIndex: number) {
-    if (!store.storeAutoProgressInputs) {
+  function traverse (trait: TraitPlus, traitIndex: number, traits: TraitPlus[], setIndex: number, force = false) {
+    if (!force && !store.storeAutoProgressInputs) {
       return
     }
 
@@ -569,6 +598,21 @@
     }
   }
 
+  function autofocusFirst () {
+    if (store.storeAutoSelectFirstInput && traitsByGroup.value && traitsByGroup.value.length > 0) {
+      nextTick(() => {
+        const traitGroup = traitsByGroup.value[0]
+        const trait = traitGroup?.traits[0]
+
+        console.log(traitGroup, trait)
+
+        if (traitGroup && trait) {
+          traverse(trait, -1, traitGroup.traits, 0, true)
+        }
+      })
+    }
+  }
+
   function show (row?: number, column?: number) {
     cellData.value = {}
 
@@ -581,6 +625,8 @@
         .then(c => {
           cell.value = c
           dialog.value = true
+
+          autofocusFirst()
         })
     } else {
       dialog.value = true

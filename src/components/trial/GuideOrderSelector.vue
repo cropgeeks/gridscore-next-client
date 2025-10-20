@@ -99,10 +99,12 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" lg="6" id="guided-walk-preview">
+      <v-col cols="12" :lg="neighborOptions.length > 0 ? 6 : 12" id="guided-walk-preview">
         <TrialPreviewCanvas :layout="layout" :column="column" :row="row" :cells="guidedWalkCells" :path="guidedWalkPath" :width="guidedWalkDimensions[0]" :height="(guidedWalkDimensions[1] || 200) * 0.5" v-if="guidedWalkPath" />
       </v-col>
     </v-row>
+
+    <v-btn color="primary" :disabled="!valid" variant="tonal" @click="emit('order-changed', { order: walkName, scoreWidth: scoreWidth, neighbor: neighbor })" :text="$t('buttonStart')" prepend-icon="mdi-account-arrow-right" />
   </div>
 </template>
 
@@ -146,11 +148,16 @@
   const walkName = defineModel<string>('walkName')
   const scoreWidth = defineModel<1 | 2>('scoreWidth')
   const neighbor = defineModel<Neighbor>('neighbor')
+  const guidedWalkDimensions = ref<number[]>([400, 400])
 
-  const guidedWalkDimensions: ComputedRef<number[]> = computed(() => {
-    const wrapper = document.getElementById('guided-walk-preview')
-
-    return [wrapper?.offsetWidth || 200, window.innerHeight || 200]
+  const valid = computed(() => {
+    if (scoreWidth.value === 1) {
+      return walkName.value !== undefined
+    } else if (scoreWidth.value === 2) {
+      return walkName.value !== undefined && neighbor.value !== undefined
+    } else {
+      return false
+    }
   })
 
   const precomputedOrders = computed(() => {
@@ -290,6 +297,14 @@
     return result
   })
 
+  function updateGuidedWalkDimensions () {
+    nextTick(() => {
+      const wrapper = document.getElementById('guided-walk-preview')
+
+      guidedWalkDimensions.value = [wrapper?.offsetWidth || 200, window.innerHeight || 200]
+    })
+  }
+
   watch(tabIndex, async () => {
     walkName.value = undefined
     neighbor.value = undefined
@@ -302,6 +317,10 @@
   watch(walkName, async () => {
     neighbor.value = undefined
   })
+
+  watch(neighborOptions, async () => updateGuidedWalkDimensions())
+
+  onMounted(() => updateGuidedWalkDimensions())
 
   const emit = defineEmits(['order-changed'])
 </script>

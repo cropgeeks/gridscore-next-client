@@ -84,9 +84,15 @@
         </v-chip>
       </v-chip-group>
 
-      <v-alert class="my-2" variant="tonal" color="warning" v-if="remoteUpdateCount > 0" icon="mdi-cloud-download" :text="$t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount })" />
-      <v-alert class="my-2" variant="tonal" color="info" v-if="localUpdateCount > 0" icon="mdi-cloud-upload" :text="$t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount })" />
-      <v-alert class="my-2" variant="tonal" color="error" v-if="expiryWarningCount > 0" icon="mdi-calendar-alert" :text="$t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount })" />
+      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? 'mdi-check' : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" prepend-icon="mdi-cloud-download" @click="filterWarning('remote')">
+        <template #title>{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</template>
+      </v-card>
+      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? 'mdi-check' : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" prepend-icon="mdi-cloud-upload" @click="filterWarning('local')">
+        <template #title>{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</template>
+      </v-card>
+      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? 'mdi-check' : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" prepend-icon="mdi-calendar-alert" @click="filterWarning('expiry')">
+        <template #title>{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</template>
+      </v-card>
     </v-card-text>
 
     <v-card-text>
@@ -188,6 +194,8 @@
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTrialModal = useTemplateRef('addTrialModal')
 
+  const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
+
   const editableSelectedTrials = computed(() => selectedTrials.value.filter(t => t.editable === true))
 
   watch(selectionEnabled, async () => {
@@ -219,11 +227,27 @@
     const selectedGroupsNames = new Set(selectedGroups.value.map(gi => trialGroups.value[gi]?.id))
     const hasUngrouped = selectedGroupsNames.has(UNCATEGORIZED_TRIALS)
     return (trials.value || []).filter(t => {
-      if (t.group && t.group.name) {
-        return selectedGroupsNames.has(t.group.name)
-      } else {
-        return hasUngrouped
+      let result = true
+      if (filterForWarning.value) {
+        switch (filterForWarning.value) {
+          case 'local':
+            result &&= (t.hasLocalUpdate || false)
+            break
+          case 'remote':
+            result &&= (t.hasRemoteUpdate || false)
+            break
+          case 'expiry':
+            result &&= (t.showExpiryWarning || false)
+            break
+        }
       }
+      if (t.group && t.group.name) {
+        result &&= selectedGroupsNames.has(t.group.name)
+      } else {
+        result &&= hasUngrouped
+      }
+
+      return result
     })
   })
 
@@ -275,6 +299,14 @@
       return []
     }
   })
+
+  function filterWarning (type: 'local' | 'remote' | 'expiry') {
+    if (filterForWarning.value === type) {
+      filterForWarning.value = undefined
+    } else {
+      filterForWarning.value = type
+    }
+  }
 
   function addTraitsToSelectedTrials (traits: TraitPlus[]) {
     let trials: TrialPlus[] = []
@@ -388,6 +420,7 @@
     selectedTrials.value = []
     // selectedTrial.value = undefined
     selectionEnabled.value = false
+    filterForWarning.value = undefined
 
     getTrials(true)
       .then(result => {
@@ -452,5 +485,11 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+}
+</style>
+
+<style scoped>
+.trial-filter:hover {
+  cursor: pointer;
 }
 </style>

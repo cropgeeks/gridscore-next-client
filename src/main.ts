@@ -16,6 +16,20 @@ import { createApp } from 'vue'
 // Styles
 import 'unfonts.css'
 
+import { registerSW } from 'virtual:pwa-register'
+
+const updateSW = registerSW({
+  onNeedRefresh () {
+    console.log('onNeedRefresh')
+    document.dispatchEvent(
+      new CustomEvent('swUpdated', { detail: updateSW }),
+    )
+  },
+  onOfflineReady () {
+    console.log('onOfflineReady')
+  },
+})
+
 const app = createApp(App)
 
 registerPlugins(app)
