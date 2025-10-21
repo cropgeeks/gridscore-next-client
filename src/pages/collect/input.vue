@@ -1,7 +1,5 @@
 <template>
   <v-container v-if="trial" class="data-entry">
-    <TraitDropdown :traits="trial.traits" />
-
     <GermplasmAutocomplete
       :trial="trial"
       class="mt-5"
@@ -16,7 +14,6 @@
 <script setup lang="ts">
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
-  import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'

@@ -7,7 +7,7 @@
     </v-list-item>
 
     <div v-if="cell.measurements">
-      <section v-for="(trait, traitIndex) in trial.traits" :key="`trait-section-${trait.id}`">
+      <section v-for="(trait, traitIndex) in traits" :key="`trait-section-${trait.id}`">
         <v-divider v-if="traitIndex > 0" />
 
         <TraitSection :trait="trait" :show-details="false" />
@@ -36,16 +36,25 @@
 </template>
 
 <script setup lang="ts">
-  import type { CellPlus, TrialPlus } from '@/plugins/types/client'
+  import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
 
   const compProps = defineProps<{
     cell: CellPlus
     trial: TrialPlus
+    trait?: TraitPlus
   }>()
 
   const { t } = useI18n()
+
+  const traits = computed(() => {
+    if (compProps.trait) {
+      return [compProps.trait]
+    } else {
+      return compProps.trial.traits
+    }
+  })
 
   function getDaysAgoIn (timestamp: string) {
     const diffDays = Math.floor((Date.now() - new Date(timestamp).getTime()) / (1000 * 60 * 60 * 24))

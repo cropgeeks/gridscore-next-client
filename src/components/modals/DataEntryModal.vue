@@ -18,6 +18,7 @@
         <v-toolbar-title>{{ cell.displayName }}</v-toolbar-title>
 
         <v-btn-group>
+          <TraitDropdown :traits="trial.traits" />
           <ResponsiveButton
             :text="$t('buttonStartGuidedWalk')"
             prepend-icon="mdi-directions-fork"
@@ -47,7 +48,7 @@
             :color="okConfig.color"
             :disabled="okConfig.disabled"
             variant="text"
-            @click="save"
+            @click="save()"
           />
         </v-toolbar-items>
       </v-toolbar>
@@ -173,6 +174,7 @@
   import { getSequence, methods, type Step } from '@/plugins/guidedwalk'
   import TrialPreviewCanvas from '@/components/data/TrialPreviewCanvas.vue'
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
+  import TraitDropdown from '@/components/trial/TraitDropdown.vue'
 
   interface TraitGroup {
     name: string

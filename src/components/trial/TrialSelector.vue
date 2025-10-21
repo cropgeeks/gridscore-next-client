@@ -85,13 +85,13 @@
       </v-chip-group>
 
       <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? 'mdi-check' : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" prepend-icon="mdi-cloud-download" @click="filterWarning('remote')">
-        <template #title>{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</template>
+        <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</span></template>
       </v-card>
       <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? 'mdi-check' : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" prepend-icon="mdi-cloud-upload" @click="filterWarning('local')">
-        <template #title>{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</template>
+        <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</span></template>
       </v-card>
       <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? 'mdi-check' : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" prepend-icon="mdi-calendar-alert" @click="filterWarning('expiry')">
-        <template #title>{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</template>
+        <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</span></template>
       </v-card>
     </v-card-text>
 

@@ -1,7 +1,12 @@
 <template>
   <v-menu v-model="menuShown" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn v-bind="props" variant="tonal" prepend-icon="mdi-circle-half-full" :text="$t('toolbarTraitVisibility')" />
+      <ResponsiveButton
+        v-bind="props"
+        variant="tonal"
+        prepend-icon="mdi-tag-multiple"
+        :text="$t('toolbarTraitVisibility')"
+      />
     </template>
 
     <v-list
@@ -72,6 +77,7 @@
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
   import { useDate } from 'vuetify'
+  import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
 
   const date = useDate()
   const store = coreStore()

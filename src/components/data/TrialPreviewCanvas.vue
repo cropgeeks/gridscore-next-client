@@ -22,15 +22,15 @@
     row: number
   }
 
-  const compProps = withDefaults(defineProps<TrialPreviewCanvasProps>(), {
-    width: 250,
-    height: 250,
-  })
+  const compProps = defineProps<TrialPreviewCanvasProps>()
 
   const store = coreStore()
   const theme = useTheme()
 
   const canvas = useTemplateRef('canvas')
+
+  const internalWidth = ref<number>(250)
+  const internalHeight = ref<number>(250)
 
   const fillStyleHighlight = computed(() => theme.current.value.colors.primary)
   const fillStyleDarkGray = computed(() => store.storeDarkMode ? '#2f2f2f' : '#d0d0d0')
@@ -74,12 +74,12 @@
     const canv = canvas.value
     if (compProps.layout && canv) {
       const scale = window.devicePixelRatio
-      canv.width = compProps.width * scale
-      canv.height = compProps.height * scale
+      canv.width = internalWidth.value * scale
+      canv.height = internalHeight.value * scale
 
       nextTick(() => {
-        canv.style.width = compProps.width + 'px'
-        canv.style.height = compProps.height + 'px'
+        canv.style.width = internalWidth.value + 'px'
+        canv.style.height = internalHeight.value + 'px'
 
         nextTick(() => {
           ctx = canv.getContext('2d')
@@ -97,14 +97,14 @@
       return
     }
 
-    ctx.clearRect(0, 0, compProps.width, compProps.height)
+    ctx.clearRect(0, 0, internalWidth.value, internalHeight.value)
 
-    let width = compProps.width / compProps.layout.columns
-    let height = compProps.height / compProps.layout.rows
+    let width = internalWidth.value / compProps.layout.columns
+    let height = internalHeight.value / compProps.layout.rows
     const factor = 0.1
     const gap = Math.ceil(Math.min(height * factor, width * factor))
-    width = (compProps.width - 2 * gap) / compProps.layout.columns
-    height = (compProps.height - 2 * gap) / compProps.layout.rows
+    width = (internalWidth.value - 2 * gap) / compProps.layout.columns
+    height = (internalHeight.value - 2 * gap) / compProps.layout.rows
 
     for (let y = 0; y < compProps.layout.rows; y++) {
       const yStart = y * height + gap
@@ -183,7 +183,7 @@
         if (i === compProps.path.length - 1) {
           ctx.stroke()
           // @ts-ignore
-          drawArrowhead(ctx, { x: (compProps.path[i - 1].x + 0.5) * width + offset, y: (compProps.path[i - 1].y + 0.5) * height + offset }, { x: (c.x + 0.5) * width + offset, y: (c.y + 0.5) * height + offset }, Math.min(height, width) / 1.5)
+          drawArrowhead(ctx, { x: (compProps.path[i - 1].x + 0.5) * width + offset, y: (compProps.path[i - 1].y + 0.5) * height + offset }, { x: (c.x + 0.5) * width + offset, y: (c.y + 0.5) * height + offset }, Math.min(50, height, width) / 1.5)
         }
       })
     }
@@ -243,8 +243,18 @@
 
   watch(() => compProps.cells, async () => reset())
   watch(() => compProps.path, async () => reset())
-  watch(() => compProps.width, async () => reset())
-  watch(() => compProps.height, async () => reset())
+  watch(() => compProps.width, async () => {
+    internalWidth.value = compProps.width || 250
+    reset()
+  })
+  watch(() => compProps.height, async () => {
+    internalHeight.value = compProps.height || 250
+    reset()
+  })
 
-  onMounted(() => reset())
+  onMounted(() => {
+    internalWidth.value = compProps.width || Math.min(600, Math.max(250, 0.5 * window.innerWidth))
+    internalHeight.value = compProps.height || Math.min(600, Math.max(250, 0.5 * window.innerHeight))
+    reset()
+  })
 </script>

@@ -4,6 +4,7 @@
       :trial="trial"
       :geolocation="geolocation"
       ref="dataEntryModal"
+      @hide="reset"
       v-if="isValidConfig"
     />
     <v-container v-else>
@@ -12,8 +13,6 @@
       <v-divider class="mb-3" />
 
       <p>{{ $t('modalTextGuidedWalk') }}</p>
-
-      <TraitDropdown :traits="trial.traits" />
 
       <GermplasmAutocomplete
         :trial="trial"
@@ -41,7 +40,6 @@
 <script setup lang="ts">
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'
   import GuideOrderSelector from '@/components/trial/GuideOrderSelector.vue'
-  import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
@@ -143,7 +141,13 @@
     })
   }
 
-  onMounted(() => {
+  function reset () {
+    guidedWalkName.value = undefined
+    row.value = undefined
+    column.value = undefined
+    scoreWidth.value = 1
+    searchMatch.value = undefined
+
     const q = route.query
     if (q) {
       if (q.guidedWalkName) {
@@ -165,6 +169,10 @@
     if (store.storeSelectedTrial) {
       loadTrial()
     }
+  }
+
+  onMounted(() => {
+    reset()
 
     if (store.storeVoiceFeedbackEnabled && window.speechSynthesis) {
       textSynth = window.speechSynthesis

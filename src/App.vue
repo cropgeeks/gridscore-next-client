@@ -89,6 +89,7 @@
               <v-list-item v-bind="props" :disabled="!selectedTrial" link prepend-icon="mdi-chart-waterfall" :title="$t('menuDataVisualization')" />
             </template>
 
+            <v-list-item prepend-icon="mdi-gradient-horizontal" :title="$t('menuVisualizationHeatmap')" to="/visualization/heatmap" />
             <v-list-item prepend-icon="mdi-map" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 

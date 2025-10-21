@@ -17,6 +17,11 @@ function rgbToHex (c: Color) {
   return `#${((1 << 24) + (c.r << 16) + (c.g << 8) + c.b).toString(16).slice(1)}`
 }
 
+function invertHex (hex: string) {
+  // @ts-ignore
+  return (Number(`0x1${hex.replace('#', '')}`) ^ 0xFFFFFF).toString(16).slice(1).toUpperCase()
+}
+
 function shadeColor (hex: string, percent: number) {
   const rgb = hexToRgb(hex)
 
@@ -55,10 +60,10 @@ function validateColorName (color: string) {
   return style.color === color
 }
 
-function toCssNamedColors (colors: string[]) {
+function toCssNamedColors (colors: (string | undefined)[]) {
   const result: { [key: string]: string } = {}
 
-  colors.forEach(c => {
+  colors.forEach((c = 'undefined') => {
     const shortened = c.toLowerCase().replace(/[^a-z]/g, '')
     if (shortened.length > 0 && validateColorName(shortened)) {
       result[c] = shortened
@@ -74,6 +79,7 @@ export {
   rgbToHex,
   validateColorName,
   toCssNamedColors,
+  invertHex,
   categoricalColors,
   THEME_COLORS,
 }

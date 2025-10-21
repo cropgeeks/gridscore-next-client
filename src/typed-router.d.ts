@@ -30,6 +30,7 @@ declare module 'vue-router/auto-routes' {
     '/trial/import/': RouteRecordInfo<'/trial/import/', '/trial/import', Record<never, never>, Record<never, never>>,
     '/trial/import/[id]': RouteRecordInfo<'/trial/import/[id]', '/trial/import/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/trial/import/example': RouteRecordInfo<'/trial/import/example', '/trial/import/example', Record<never, never>, Record<never, never>>,
+    '/visualization/heatmap': RouteRecordInfo<'/visualization/heatmap', '/visualization/heatmap', Record<never, never>, Record<never, never>>,
     '/visualization/map': RouteRecordInfo<'/visualization/map', '/visualization/map', Record<never, never>, Record<never, never>>,
   }
 
@@ -90,6 +91,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/trial/import/example.vue': {
       routes: '/trial/import/example'
+      views: never
+    }
+    'src/pages/visualization/heatmap.vue': {
+      routes: '/visualization/heatmap'
       views: never
     }
     'src/pages/visualization/map.vue': {
