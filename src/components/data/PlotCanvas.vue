@@ -11,7 +11,7 @@
   import OffscreenCanvas from '@/components/data/OffscreenCanvas.vue'
   import type { Dimensions } from '@/components/data/DataCanvas.vue'
   import { type CellPlus, type TrialPlus, type Geolocation, NavigationMode } from '@/plugins/types/client'
-  import { projectToEuclidean, type XY } from '@/plugins/location'
+  import { isGeographyValid, projectToEuclidean, type XY } from '@/plugins/location'
   import { coreStore } from '@/stores/app'
 
   import emitter from 'tiny-emitter/instance'
@@ -287,7 +287,27 @@
     }
 
     let count = 0
-    if (store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)) {
+
+    let isHighlighted = false
+
+    if (cell && store.storeHighlightConfig) {
+      switch (store.storeHighlightConfig.type) {
+        case 'controls':
+          isHighlighted = cell.categories && cell.categories.includes(CellCategory.CONTROL)
+          break
+        case 'reps':
+          isHighlighted = (store.storeHighlightConfig.reps || []).includes(cell.rep || '')
+          break
+        case 'treatments':
+          isHighlighted = (store.storeHighlightConfig.treatments || []).includes(cell.treatment || '')
+          break
+        case 'germplasm':
+          isHighlighted = (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
+          break
+      }
+    }
+
+    if (isHighlighted) {
       count = 5
       ccctx.fillStyle = fillStyleControl.value
     } else if ((compProps.markedRows && compProps.markedRows[row]) || (compProps.markedColumns && compProps.markedColumns[col])) {
@@ -730,6 +750,10 @@
   }
 
   function onMouseDown (e: any) {
+    if (e.button !== null && e.button !== undefined && e.button !== 0) {
+      return
+    }
+
     // Stop any fling motion
     if (flingInterval !== undefined) {
       clearInterval(flingInterval)
@@ -941,7 +965,7 @@
   }
 
   watch(() => compProps.trial, async newValue => {
-    if (newValue && newValue.layout && newValue.layout.corners) {
+    if (newValue && newValue.layout && newValue.layout.corners && isGeographyValid(newValue.layout.corners)) {
       const c = newValue.layout.corners
       gridProjection = projectToEuclidean([
         { x: c.topLeft.lng || 0, y: c.topLeft.lat || 0 },
@@ -972,6 +996,10 @@
       }
     }
   })
+
+  watch(() => store.storeHighlightConfig, () => {
+    update()
+  }, { deep: true })
 
   onMounted(() => {
     emitter.on('jump-to-corner', jumpToCorner)

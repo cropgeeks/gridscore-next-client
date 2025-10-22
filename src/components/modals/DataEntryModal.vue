@@ -606,8 +606,6 @@
         const traitGroup = traitsByGroup.value[0]
         const trait = traitGroup?.traits[0]
 
-        console.log(traitGroup, trait)
-
         if (traitGroup && trait) {
           traverse(trait, -1, traitGroup.traits, 0, true)
         }

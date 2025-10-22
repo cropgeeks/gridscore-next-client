@@ -4,6 +4,44 @@
       <v-btn-group density="compact">
         <TraitDropdown :traits="trial.traits" @trait-cutoff-changed="e => { traitCutoff = e }" />
         <JumpToDropdown />
+        <v-menu :close-on-content-click="false" v-if="canHighlight">
+          <template #activator="{ props }">
+            <ResponsiveButton
+              v-bind="props"
+              prepend-icon="mdi-marker"
+              variant="tonal"
+              :text="$t('toolbarPlotHighlight')"
+            />
+          </template>
+          <v-list density="compact" min-width="300" max-width="min(500px, 75vw)">
+            <v-list-item :title="$t('formLabelPlotHighlightNothing')" prepend-icon="mdi-marker-cancel" :append-icon="store.storeHighlightConfig.type === undefined ? 'mdi-check' : undefined" @click="setHighlight(undefined)" />
+            <v-list-item v-if="trialControls && trialControls.length > 0" :title="$t('formLabelPlotHighlightControls')" prepend-icon="mdi-checkbox-marked" :append-icon="store.storeHighlightConfig.type === 'controls' ? 'mdi-check' : undefined" @click="setHighlight('controls')" />
+            <v-list-item v-if="trialTreatments && trialTreatments.length > 0" prepend-icon="mdi-sprinkler-fire" :append-icon="store.storeHighlightConfig.type === 'treatments' ? 'mdi-check' : undefined">
+              <v-select
+                :label="$t('formLabelPlotHighlightTreatments')"
+                multiple
+                density="compact"
+                hide-details
+                chips
+                clearable
+                v-model="selectedTreatments"
+                :items="trialTreatments"
+              />
+            </v-list-item>
+            <v-list-item v-if="trialReps && trialReps.length > 0" prepend-icon="mdi-format-list-numbered" :append-icon="store.storeHighlightConfig.type === 'reps' ? 'mdi-check' : undefined">
+              <v-select
+                :label="$t('formLabelPlotHighlightReps')"
+                multiple
+                density="compact"
+                hide-details
+                chips
+                clearable
+                v-model="selectedReps"
+                :items="trialReps"
+              />
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-btn-group>
       <v-btn v-if="trial.transactionCount !== undefined && trial.transactionCount > 0" prepend-icon="mdi-cloud-upload" @click="synchronize" color="info" variant="tonal" :text="$t('toolbarSyncInfo', trial.transactionCount)" />
       <GermplasmAutocomplete
@@ -49,10 +87,12 @@
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
-  import { getTrialDataCached } from '@/plugins/datastore'
+  import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
+  import { getTrialControlsCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
-  import { MainDisplayMode, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
+  import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
+  import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
 
@@ -64,7 +104,15 @@
   const jumpMenuVisible = ref(false)
   const searchResults = ref<CellPlus[]>([])
   const searchMatch = ref<CellPlus>()
-  const trialGermplasm = ref<CellPlus[]>([])
+  const trialReps = ref<string[]>([])
+  const trialTreatments = ref<string[]>([])
+  const trialControls = ref<MiniCell[]>([])
+
+  // Highlighting stuff
+  const selectedReps = ref<string[]>([])
+  const selectedTreatments = ref<string[]>([])
+
+  const canHighlight = computed(() => trialControls.value.length > 0 || trialReps.value.length > 0 || trialTreatments.value.length > 0)
 
   // TODO: ADD!
   // @ts-ignore
@@ -105,42 +153,24 @@
     if (data && trial.value) {
       const total = Object.values(data).length
 
-      const allGermplasm: CellPlus[] = []
-
       Object.values(data).forEach(c => {
-        if (c) {
-          allGermplasm.push({
-            artificialId: `${c.row}|${c.column}`,
-            row: c.row || 0,
-            column: c.column || 0,
-            displayName: c.displayName,
-            rep: c.rep,
-            barcode: c.barcode,
-            germplasm: c.germplasm,
-            displayRow: c.displayRow,
-            displayColumn: c.displayColumn,
-            isMarked: c.isMarked,
-            measurements: {},
-            comments: [],
-            categories: c.categories,
+        if (c && c.measurements) {
+          trial.value?.traits.forEach(t => {
+            const id = t.id || ''
+            if (c.measurements[id] && c.measurements[id].length > 0) {
+              t.progress = t.progress ? (t.progress + 1) : 1
+            }
           })
-
-          if (c.measurements) {
-            trial.value?.traits.forEach(t => {
-              const id = t.id || ''
-              if (c.measurements[id] && c.measurements[id].length > 0) {
-                t.progress = t.progress ? (t.progress + 1) : 1
-              }
-            })
-          }
         }
       })
+
+      trialReps.value = getTrialRepsCached()
+      trialTreatments.value = getTrialTreatmentsCached()
+      trialControls.value = getTrialControlsCached()
 
       trial.value.traits.forEach(t => {
         t.progress = t.progress ? (100 * t.progress / total) : 0
       })
-
-      trialGermplasm.value = allGermplasm
     }
   }
 
@@ -204,10 +234,56 @@
     }
   }
 
+  function setHighlight (type: 'controls' | 'reps' | 'germplasm' | 'treatments' | undefined) {
+    ignoreReps(() => {
+      selectedReps.value = []
+    })
+    ignoreTreatment(() => {
+      selectedTreatments.value = []
+    })
+    store.setHighlightConfig({
+      type,
+    })
+  }
+
   watch(searchMatch, async newValue => {
     if (newValue) {
       selectPlot(newValue.row || 0, newValue.column || 0)
       searchMatch.value = undefined
+    }
+  })
+
+  const { ignoreUpdates: ignoreReps } = watchIgnorable(selectedReps, newValue => {
+    if (newValue && newValue.length > 0) {
+      ignoreTreatment(() => {
+        // Don't trigger treatment watcher
+        selectedTreatments.value = []
+      })
+      store.setHighlightConfig({
+        type: 'reps',
+        reps: newValue,
+      })
+    } else {
+      store.setHighlightConfig({
+        type: undefined,
+      })
+    }
+  })
+
+  const { ignoreUpdates: ignoreTreatment } = watchIgnorable(selectedTreatments, newValue => {
+    if (newValue && newValue.length > 0) {
+      ignoreReps(() => {
+        // Don't trigger rep watcher
+        selectedReps.value = []
+      })
+      store.setHighlightConfig({
+        type: 'treatments',
+        treatments: newValue,
+      })
+    } else {
+      store.setHighlightConfig({
+        type: undefined,
+      })
     }
   })
 

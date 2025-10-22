@@ -58,7 +58,7 @@
                 'cell-column': column.index % 2 === 0,
                 'cell-highlight': userPosition && userPosition.column === column.index && userPosition.row === row.index,
                 'cell-row': row.index % 2 === 0,
-                'cell-control': store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)
+                'cell-user-highlight': isHighlighted(cell)
               }, cellClass]"
             >
               <template v-if="cell">
@@ -282,6 +282,21 @@
       return []
     }
   })
+
+  function isHighlighted (cell: CellPlus) {
+    if (cell && store.storeHighlightConfig) {
+      switch (store.storeHighlightConfig.type) {
+        case 'controls':
+          return cell.categories && cell.categories.includes(CellCategory.CONTROL)
+        case 'reps':
+          return (store.storeHighlightConfig.reps || []).includes(cell.rep || '')
+        case 'treatments':
+          return (store.storeHighlightConfig.treatments || []).includes(cell.treatment || '')
+        case 'germplasm':
+          return (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
+      }
+    }
+  }
 
   function clearMarkedRowsCols () {
     columns.value.forEach(c => {
@@ -736,7 +751,7 @@
 .header-marked {
   background: #aebfd0;
 }
-.cell-control {
+.cell-user-highlight {
   background: #82ccdd !important;
 }
 .cell-highlight {
@@ -762,7 +777,7 @@
 .dark-mode .header-marked {
   background: #364a5e;
 }
-.dark-mode .cell-control {
+.dark-mode .cell-user-highlight {
   background: #0a3d62 !important;
 }
 .dark-mode .cell-highlight {

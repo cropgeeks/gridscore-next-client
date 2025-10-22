@@ -14,6 +14,13 @@ export interface PlausibleConfig {
   plausibleApiHost: string | undefined
 }
 
+export interface HighlightConfig {
+  type: 'controls' | 'reps' | 'germplasm' | 'treatments' | undefined
+  germplasm?: string
+  treatments?: string[]
+  reps?: string[]
+}
+
 let name = import.meta.env.VUE_APP_INSTANCE_NAME
 
 if (!name) {
@@ -34,6 +41,9 @@ export const coreStore = defineStore('core', {
     theme: 'system',
     hideCitationMessage: false,
     highlightControls: true,
+    highlightConfig: {
+      type: 'controls',
+    } as HighlightConfig,
     displayMarkerIndicators: true,
     displayMinCellWidth: 4,
     gpsEnabled: true,
@@ -89,6 +99,7 @@ export const coreStore = defineStore('core', {
     storeSystemTheme: (state): string => state.systemTheme || 'dark',
     storeHideCitationMessage: (state): boolean => state.hideCitationMessage,
     storeHighlightControls: (state): boolean => state.highlightControls,
+    storeHighlightConfig: (state): HighlightConfig => state.highlightConfig,
     storeDisplayMarkerIndicators: (state): boolean => state.displayMarkerIndicators,
     storeDisplayMinCellWidth: (state): number => state.displayMinCellWidth,
     storeGpsEnabled: (state): boolean => state.gpsEnabled,
@@ -224,6 +235,16 @@ export const coreStore = defineStore('core', {
     },
     setHighlightControls (newHighlightControls: boolean) {
       this.highlightControls = newHighlightControls
+    },
+    setHighlightConfig (newHighlightConfig: HighlightConfig) {
+      const final: HighlightConfig = Object.assign({
+        type: undefined,
+        reps: undefined,
+        treatments: undefined,
+        germplasm: undefined,
+      }, newHighlightConfig)
+
+      this.highlightConfig = final
     },
     setDisplayMarkerIndicators (newDisplayMarkerIndicators: boolean) {
       this.displayMarkerIndicators = newDisplayMarkerIndicators
