@@ -10,7 +10,7 @@ interface Color {
  */
 function hexToRgb (hex: string) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return (result && result.length === 4) ? { r: Number.parseInt(result[1] || '', 16), g: Number.parseInt(result[2] || '', 16), b: Number.parseInt(result[3] || '', 16) } : undefined
+  return (result && result.length === 4) ? { r: Number.parseInt(result[1] || '', 16), g: Number.parseInt(result[2] || '', 16), b: Number.parseInt(result[3] || '', 16) } : { r: 0, g: 0, b: 0 }
 }
 
 function rgbToHex (c: Color) {
@@ -20,6 +20,36 @@ function rgbToHex (c: Color) {
 function invertHex (hex: string) {
   // @ts-ignore
   return (Number(`0x1${hex.replace('#', '')}`) ^ 0xFFFFFF).toString(16).slice(1).toUpperCase()
+}
+
+function brighten (c: Color, factor: number): Color {
+  let r = c.r
+  let g = c.g
+  let b = c.b
+  const i = Math.round(1 / (1 - factor))
+  if (r === 0 && g === 0 && b === 0) {
+    return {
+      r: i,
+      g: i,
+      b: i,
+    }
+  }
+
+  if (r > 0 && r < i) {
+    r = i
+  }
+  if (g > 0 && g < i) {
+    g = i
+  }
+  if (b > 0 && b < i) {
+    b = i
+  }
+
+  return {
+    r: Math.min(255, Math.round(r / factor)),
+    g: Math.min(255, Math.round(g / factor)),
+    b: Math.min(255, Math.round(b / factor)),
+  }
 }
 
 function shadeColor (hex: string, percent: number) {
@@ -48,6 +78,8 @@ const categoricalColors = {
   OkabeIto: ['#E69F00', '#56B4E9', '#009E73', '#F5C710', '#0072B2', '#D55E00', '#CC79A7', '#999999', '#000000'],
   D3schemeCategory10: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
   Hutton: ['#FF9E15', '#D6C200', '#799900', '#6AA2B8', '#00748C', '#CF009E', '#853175', '#C2002F', '#555559'],
+  HighlightPastel: ['#A1C9F4', '#FFB482', '#8DE5A1', '#FF9F9B', '#D0BBFF', '#DEBB9B', '#FAB0E4', '#CFCFCF', '#FFFEA3', '#B9F2F0'],
+  HighlightDark: ['#001C7F', '#B1400D', '#12711C', '#8C0800', '#591E71', '#592F0D', '#A23582', '#3C3C3C', '#B8850A', '#006374'],
 }
 
 const THEME_COLORS = ['#00a0f1', '#5ec418', '#910080', '#ff7c00', '#c5e000']
@@ -80,6 +112,7 @@ export {
   validateColorName,
   toCssNamedColors,
   invertHex,
+  brighten,
   categoricalColors,
   THEME_COLORS,
 }

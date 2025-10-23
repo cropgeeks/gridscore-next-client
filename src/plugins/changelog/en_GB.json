@@ -747,5 +747,31 @@
         "text": "Fixed issues with decimal values in row/column counts and labels as well as import of traits from JSON format if groups are defined."
       }
     ]
+  },
+  {
+    "version": "4.0.0",
+    "date": "2025-xx-xx",
+    "items": [
+      {
+        "type": "new",
+        "title": "User interface rewrite",
+        "text": "This new version includes a big update to the user interface. We tried to improve the user experience of using GridScore while maintaining the familiarity with its functionality. Below are some highlights of new/changed features."
+      },
+      {
+        "type": "new",
+        "title": "Plot highlighting",
+        "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
+      },
+      {
+        "type": "new",
+        "title": "Image naming configuration",
+        "text": "During trial setup you can now change the set and order of parts used in image and video filenames."
+      },
+      {
+        "type": "update",
+        "title": "Dedicated guided walk and scan input page",
+        "text": "In addition to the main data display grid you can now use a dedicated guided walk page as well as a barcode-focussed input page to enter data more efficiently."
+      }
+    ]
   }
 ]

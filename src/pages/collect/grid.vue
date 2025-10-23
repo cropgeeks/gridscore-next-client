@@ -4,7 +4,7 @@
       <v-btn-group density="compact">
         <TraitDropdown :traits="trial.traits" @trait-cutoff-changed="e => { traitCutoff = e }" />
         <JumpToDropdown />
-        <v-menu :close-on-content-click="false" v-if="canHighlight">
+        <v-menu :close-on-content-click="false">
           <template #activator="{ props }">
             <ResponsiveButton
               v-bind="props"
@@ -13,7 +13,7 @@
               :text="$t('toolbarPlotHighlight')"
             />
           </template>
-          <v-list density="compact" min-width="300" max-width="min(500px, 75vw)">
+          <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
             <v-list-item :title="$t('formLabelPlotHighlightNothing')" prepend-icon="mdi-marker-cancel" :append-icon="store.storeHighlightConfig.type === undefined ? 'mdi-check' : undefined" @click="setHighlight(undefined)" />
             <v-list-item v-if="trialControls && trialControls.length > 0" :title="$t('formLabelPlotHighlightControls')" prepend-icon="mdi-checkbox-marked" :append-icon="store.storeHighlightConfig.type === 'controls' ? 'mdi-check' : undefined" @click="setHighlight('controls')" />
             <v-list-item v-if="trialTreatments && trialTreatments.length > 0" prepend-icon="mdi-sprinkler-fire" :append-icon="store.storeHighlightConfig.type === 'treatments' ? 'mdi-check' : undefined">
@@ -22,11 +22,14 @@
                 multiple
                 density="compact"
                 hide-details
-                chips
                 clearable
                 v-model="selectedTreatments"
                 :items="trialTreatments"
-              />
+              >
+                <template #selection="{ item, index }">
+                  <v-chip density="compact" :text="item.title" :color="highlightColors[index % highlightColors.length]" variant="flat" />
+                </template>
+              </v-select>
             </v-list-item>
             <v-list-item v-if="trialReps && trialReps.length > 0" prepend-icon="mdi-format-list-numbered" :append-icon="store.storeHighlightConfig.type === 'reps' ? 'mdi-check' : undefined">
               <v-select
@@ -34,10 +37,22 @@
                 multiple
                 density="compact"
                 hide-details
-                chips
                 clearable
                 v-model="selectedReps"
                 :items="trialReps"
+              >
+                <template #selection="{ item, index }">
+                  <v-chip density="compact" :text="item.title" :color="highlightColors[index % highlightColors.length]" variant="flat" />
+                </template>
+              </v-select>
+            </v-list-item>
+            <v-list-item prepend-icon="mdi-sprout" :append-icon="store.storeHighlightConfig.type === 'germplasm' ? 'mdi-check' : undefined">
+              <v-text-field
+                v-model="highlightSearch"
+                :label="$t('formLabelPlotHighlightName')"
+                density="compact"
+                hide-details
+                clearable
               />
             </v-list-item>
           </v-list>
@@ -88,6 +103,7 @@
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
   import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
+import { categoricalColors } from '@/plugins/color'
   import { getTrialControlsCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
@@ -111,8 +127,8 @@
   // Highlighting stuff
   const selectedReps = ref<string[]>([])
   const selectedTreatments = ref<string[]>([])
-
-  const canHighlight = computed(() => trialControls.value.length > 0 || trialReps.value.length > 0 || trialTreatments.value.length > 0)
+  const highlightSearch = ref<string>()
+  const highlightColors = computed(() => store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel)
 
   // TODO: ADD!
   // @ts-ignore
@@ -167,6 +183,18 @@
       trialReps.value = getTrialRepsCached()
       trialTreatments.value = getTrialTreatmentsCached()
       trialControls.value = getTrialControlsCached()
+
+      if (store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined) {
+        ignoreReps(() => {
+          selectedReps.value = store.storeHighlightConfig.reps || []
+        })
+        ignoreTreatment(() => {
+          selectedTreatments.value = store.storeHighlightConfig.treatments || []
+        })
+        ignoreSearch(() => {
+          highlightSearch.value = store.storeHighlightConfig.germplasm
+        })
+      }
 
       trial.value.traits.forEach(t => {
         t.progress = t.progress ? (100 * t.progress / total) : 0
@@ -241,6 +269,9 @@
     ignoreTreatment(() => {
       selectedTreatments.value = []
     })
+    ignoreSearch(() => {
+      highlightSearch.value = undefined
+    })
     store.setHighlightConfig({
       type,
     })
@@ -259,6 +290,10 @@
         // Don't trigger treatment watcher
         selectedTreatments.value = []
       })
+      ignoreSearch(() => {
+        // Don't trigger germplasm search watcher
+        highlightSearch.value = undefined
+      })
       store.setHighlightConfig({
         type: 'reps',
         reps: newValue,
@@ -276,9 +311,35 @@
         // Don't trigger rep watcher
         selectedReps.value = []
       })
+      ignoreSearch(() => {
+        // Don't trigger germplasm search watcher
+        highlightSearch.value = undefined
+      })
       store.setHighlightConfig({
         type: 'treatments',
         treatments: newValue,
+      })
+    } else {
+      store.setHighlightConfig({
+        type: undefined,
+      })
+    }
+  })
+
+  const { ignoreUpdates: ignoreSearch } = watchIgnorable(highlightSearch, newValue => {
+    if (newValue && newValue.trim().length > 0) {
+      ignoreReps(() => {
+        // Don't trigger rep watcher
+        selectedReps.value = []
+      })
+      ignoreTreatment(() => {
+        // Don't trigger treatment watcher
+        selectedTreatments.value = []
+      })
+
+      store.setHighlightConfig({
+        type: 'germplasm',
+        germplasm: newValue.trim().toLowerCase(),
       })
     } else {
       store.setHighlightConfig({

@@ -15,17 +15,9 @@
           <p>{{ $t('pageVisualizationFieldHeatmapText') }}</p>
 
           <div class="d-flex flex-wrap">
-            <v-autocomplete
+            <TraitSelect
               v-model="selectedTrait"
-              :items="trial.traits"
-              class="flex-grow-0"
-              return-object
-              autocomplete="off"
-              item-value="id"
-              item-title="name"
-              :label="$t('formLabelHeatmapTrait')"
-              :hint="$t('formDescriptionHeatmapTrait')"
-              persistent-hint
+              :traits="trial.traits"
             />
 
             <v-slider
@@ -44,7 +36,7 @@
             </v-slider>
           </div>
 
-          <div class="border border-error text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
+          <v-alert color="warning" :text="$t(message)" variant="tonal" icon="mdi-alert" class="my-5" v-if="message" />
         </v-card-text>
       </template>
 
@@ -82,6 +74,7 @@
   import { categoricalColors, invertHex, toCssNamedColors } from '@/plugins/color'
   import { useI18n } from 'vue-i18n'
   import type { DownloadBlob } from '@/plugins/file'
+  import TraitSelect from '@/components/trait/TraitSelect.vue'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([

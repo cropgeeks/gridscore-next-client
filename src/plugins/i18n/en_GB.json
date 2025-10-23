@@ -375,6 +375,7 @@
   "formLabelPlotHighlightControls": "Highlight controls",
   "formLabelPlotHighlightReps": "Highlight reps",
   "formLabelPlotHighlightTreatments": "Highlight treatments",
+  "formLabelPlotHighlightName": "Highlight by name",
   "formDescriptionPlotMetadataUpdateContent": "Use this text field to upload plot metadata into this trial.",
   "formPlaceholderPlotMetadataUpdateContent": "Germplasm\tRep\tRow\tColumn\tTreatment\tFriendly name\t\tBarcode\t\tPedigree\nJHI-123\t\t1\t\t\t\t\t\t\t\t\t\tHeris\t\t\t\tbc-123\t\t\tHE-4436/CE-431\nJHI-124\t\t1\t\t\t\t\t\t\t\t\t\tZenit\t\t\t\tbc-124\t\t\tUnion/Gerda\nJHI-125\t\t1\t\t\t\t\t\t\t\t\t\tBotnia\t\t\t\tbc-125\t\t\tSilja/Jo 1182",
   "formSelectCategory": "Select category",

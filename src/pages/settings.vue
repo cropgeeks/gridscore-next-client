@@ -166,14 +166,6 @@
             </v-menu>
 
             <v-switch
-              :label="$t('formLabelSettingsHighlightControls')"
-              :hint="$t('formDescriptionSettingsHighlightControls')"
-              persistent-hint
-              color="primary"
-              v-model="highlightControls"
-            />
-
-            <v-switch
               :label="$t('formLabelSettingsDisplayMarkerIndicators')"
               :hint="$t('formDescriptionSettingsDisplayMarkerIndicators')"
               persistent-hint
@@ -298,7 +290,6 @@
   const currentTraitIndex = ref<number>()
   const gpsEnabled = ref(store.storeGpsEnabled)
   const navigationMode = ref(store.storeNavigationMode)
-  const highlightControls = ref(store.storeHighlightControls)
   const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)
   const showFullTraitDescription = ref(store.storeShowFullTraitDescription)
   const largeButtonsForIntTraits = ref(store.storeLargeButtonsForIntTraits)
@@ -362,7 +353,6 @@
   watch(gpsEnabled, async newValue => store.setGpsEnabled(newValue))
   watch(navigationMode, async newValue => store.setNavigationMode(newValue))
   watch(mainDisplayMode, async newValue => store.setMainDisplayMode(newValue))
-  watch(highlightControls, async newValue => store.setHighlightControls(newValue))
   watch(displayMarkerIndicators, async newValue => store.setDisplayMarkerIndicators(newValue))
   watch(showFullTraitDescription, async newValue => store.setShowFullTraitDescription(newValue))
   watch(largeButtonsForIntTraits, async newValue => store.setLargeButtonsForIntTraits(newValue))

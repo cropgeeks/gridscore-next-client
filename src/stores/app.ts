@@ -186,6 +186,12 @@ export const coreStore = defineStore('core', {
       const currentId = this.selectedTrial
       this.selectedTrial = newSelectedTrial
       this.hiddenTraits = []
+      this.highlightConfig = {
+        type: undefined,
+        germplasm: undefined,
+        reps: undefined,
+        treatments: undefined,
+      }
       if (currentId !== newSelectedTrial) {
         this.selectedTrialPerson = undefined
       }

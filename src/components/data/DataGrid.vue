@@ -58,8 +58,8 @@
                 'cell-column': column.index % 2 === 0,
                 'cell-highlight': userPosition && userPosition.column === column.index && userPosition.row === row.index,
                 'cell-row': row.index % 2 === 0,
-                'cell-user-highlight': isHighlighted(cell)
               }, cellClass]"
+              :style="getStyle(cell)"
             >
               <template v-if="cell">
                 <v-icon icon="mdi-bookmark" class="grid-icon bookmark" v-if="cell.isMarked" />
@@ -103,6 +103,7 @@
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
   import emitter from 'tiny-emitter/instance'
+  import { categoricalColors } from '@/plugins/color'
 
   const { n } = useI18n()
   const store = coreStore()
@@ -145,6 +146,8 @@
   let timeout: number | undefined
   let scrollToElementOnTraitToggle: HTMLElement | undefined
   let gridProjection: ((x: number, y: number) => XY) | undefined
+
+  const highlightColors = computed(() => store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel)
 
   const userPosition = computed(() => {
     if (compProps.trial && compProps.geolocation && compProps.trial.layout.corners && gridProjection) {
@@ -283,18 +286,38 @@
     }
   })
 
-  function isHighlighted (cell: CellPlus) {
+  function getStyle (cell: CellPlus) {
     if (cell && store.storeHighlightConfig) {
+      let isHighlighted = false
+      let highlightColorIndex = 0
       switch (store.storeHighlightConfig.type) {
         case 'controls':
-          return cell.categories && cell.categories.includes(CellCategory.CONTROL)
-        case 'reps':
-          return (store.storeHighlightConfig.reps || []).includes(cell.rep || '')
-        case 'treatments':
-          return (store.storeHighlightConfig.treatments || []).includes(cell.treatment || '')
+          isHighlighted = cell.categories && cell.categories.includes(CellCategory.CONTROL)
+          break
+        case 'reps': {
+          const index = (store.storeHighlightConfig.reps || []).indexOf(cell.rep || '')
+          isHighlighted = index !== -1
+          highlightColorIndex = index % highlightColors.value.length
+          break
+        }
+        case 'treatments': {
+          const index = (store.storeHighlightConfig.treatments || []).indexOf(cell.treatment || '')
+          isHighlighted = index !== -1
+          highlightColorIndex = index % highlightColors.value.length
+          break
+        }
         case 'germplasm':
-          return (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
+          isHighlighted = (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
+          break
       }
+
+      if (isHighlighted) {
+        return {
+          backgroundColor: `${highlightColors.value[highlightColorIndex % highlightColors.value.length] || 'black'} !important`,
+        }
+      }
+    } else {
+      return undefined
     }
   }
 

@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+  import { categoricalColors } from '@/plugins/color'
   import { CanvasShape, type TraitPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
 
@@ -16,14 +17,21 @@
 
   const store = coreStore()
 
-  const fillStyleWhite = computed(() => store.storeDarkMode ? '#000000' : '#ffffff')
-  const fillStyleLightGray = computed(() => store.storeDarkMode ? '#0d0d0d' : '#f2f2f2')
-  const fillStyleDarkGray = computed(() => store.storeDarkMode ? '#1f1f1f' : '#e0e0e0')
-  const fillStyleMarked = computed(() => store.storeDarkMode ? '#415971' : '#c6d2de')
-  const fillStyleHighlight = computed(() => store.storeDarkMode ? '#1e1032' : '#e1efcd')
-  const fillStyleHiddenTrait = computed(() => store.storeDarkMode ? '#2c2c2c' : '#d3d3d3')
-  const fillStyleControl = computed(() => store.storeDarkMode ? '#0a3d62' : '#82ccdd')
+  const fillStyleWhite = computed(() => store.storeIsDarkMode ? '#000000' : '#ffffff')
+  const fillStyleLightGray = computed(() => store.storeIsDarkMode ? '#0d0d0d' : '#f2f2f2')
+  const fillStyleDarkGray = computed(() => store.storeIsDarkMode ? '#1f1f1f' : '#e0e0e0')
+  const fillStyleMarked = computed(() => store.storeIsDarkMode ? '#415971' : '#c6d2de')
+  const fillStyleHighlight = computed(() => store.storeIsDarkMode ? '#1e1032' : '#e1efcd')
+  const fillStyleHiddenTrait = computed(() => store.storeIsDarkMode ? '#2c2c2c' : '#d3d3d3')
+  const fillStyleControl = computed(() => store.storeIsDarkMode ? '#0a3d62' : '#82ccdd')
   const circleCount = computed(() => compProps.traits.length + 1)
+
+  const colors = computed(() => {
+    const cols = [fillStyleWhite.value, fillStyleLightGray.value, fillStyleDarkGray.value, fillStyleMarked.value, fillStyleHighlight.value]
+    const catCols = store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel
+    catCols.forEach(c => cols.push(c))
+    return cols
+  })
 
   watch(() => compProps.traits, async () => reset())
   watch(() => compProps.circleRadius, async () => reset())
@@ -32,7 +40,7 @@
   function reset () {
     const scale = window.devicePixelRatio
     const width = circleCount.value * compProps.circleRadius * 2 + circleCount.value + 1
-    const height = compProps.circleRadius * 40 + circleCount.value + 1
+    const height = compProps.circleRadius * (colors.value.length + 1) * 6 + circleCount.value + 1
     canvas.width = width * scale
     canvas.height = height * scale
 
@@ -61,29 +69,10 @@
 
     // Clear everything
     ccctx.clearRect(0, 0, circleCount.value * compProps.circleRadius * 2 + circleCount.value + 1, compProps.circleRadius * 12 + circleCount.value + 1)
-    // For each background colour
-    for (let b = 0; b < 6; b++) {
-      switch (b) {
-        case 0:
-          ccctx.fillStyle = fillStyleWhite.value
-          break
-        case 1:
-          ccctx.fillStyle = fillStyleLightGray.value
-          break
-        case 2:
-          ccctx.fillStyle = fillStyleDarkGray.value
-          break
-        case 3:
-          ccctx.fillStyle = fillStyleMarked.value
-          break
-        case 4:
-          ccctx.fillStyle = fillStyleHighlight.value
-          break
-        case 5:
-          ccctx.fillStyle = fillStyleControl.value
-          break
-      }
 
+    // For each background colour
+    colors.value.forEach((color, b) => {
+      ccctx.fillStyle = color
       // Calculate y position
       const y = b * (compProps.circleRadius * 6 + 1)
       // Fill background
@@ -153,7 +142,30 @@
       ccctx.beginPath()
       ccctx.arc(1 + compProps.circleRadius + (circleCount.value - 1) * (compProps.circleRadius * 2 + 1), 1 + y + compProps.circleRadius * 5, compProps.circleRadius - 0.5, (Math.PI / 180) * 90, (Math.PI / 180) * 270)
       ccctx.fill()
-    }
+    })
+
+    // for (let b = 0; b < 6; b++) {
+    //   switch (b) {
+    //     case 0:
+    //       ccctx.fillStyle = fillStyleWhite.value
+    //       break
+    //     case 1:
+    //       ccctx.fillStyle = fillStyleLightGray.value
+    //       break
+    //     case 2:
+    //       ccctx.fillStyle = fillStyleDarkGray.value
+    //       break
+    //     case 3:
+    //       ccctx.fillStyle = fillStyleMarked.value
+    //       break
+    //     case 4:
+    //       ccctx.fillStyle = fillStyleHighlight.value
+    //       break
+    //     case 5:
+    //       ccctx.fillStyle = fillStyleControl.value
+    //       break
+    //   }
+    // }
   }
 
   function copyToCanvas (traitIndex: number, type: 'filled' | 'empty' | 'semi', bgIndex: number, otherCtx: CanvasRenderingContext2D, targetX: number, targetY: number) {

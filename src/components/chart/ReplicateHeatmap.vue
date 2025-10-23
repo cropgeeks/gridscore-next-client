@@ -15,17 +15,9 @@
           <p>{{ $t('pageVisualizationGermplasmRepHeatmapText') }}</p>
 
           <div class="d-flex flex-wrap">
-            <v-autocomplete
+            <TraitSelect
               v-model="selectedTrait"
-              :items="trial.traits"
-              class="flex-grow-0"
-              return-object
-              autocomplete="off"
-              item-value="id"
-              item-title="name"
-              :label="$t('formLabelHeatmapTrait')"
-              :hint="$t('formDescriptionHeatmapTrait')"
-              persistent-hint
+              :traits="trial.traits"
             />
 
             <v-slider
@@ -44,7 +36,7 @@
             </v-slider>
           </div>
 
-          <div class="border border-error text-center my-3 p-2" v-if="message">{{ $t(message) }}</div>
+          <v-alert color="warning" :text="$t(message)" variant="tonal" icon="mdi-alert" class="my-5" v-if="message" />
         </v-card-text>
       </template>
 
@@ -82,6 +74,7 @@
   import { categoricalColors, invertHex, toCssNamedColors } from '@/plugins/color'
   import { useI18n } from 'vue-i18n'
   import type { DownloadBlob } from '@/plugins/file'
+  import TraitSelect from '@/components/trait/TraitSelect.vue'
 
   interface RepInfo {
     row: number
@@ -401,7 +394,7 @@
           tickmode: 'array' as const,
           tickvals: replicates.value.map((r, i) => i),
           ticktext: replicates.value.map(r => r || t('widgetChartNoRep')),
-          title: { text: t('widgetChartHeatmapAxisTitleCol'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+          title: { text: t('widgetChartHeatmapAxisTitleRep'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
           tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
           fixedrange: !interactive.value,
         },
@@ -412,7 +405,7 @@
           tickmode: 'array' as const,
           tickvals: Array.from(new Array(allGermplasm.value.length).keys()).map(i => allGermplasm.value.length - i),
           ticktext: allGermplasm.value,
-          title: { text: t('widgetChartHeatmapAxisTitleRow'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+          title: { text: t('widgetChartHeatmapAxisTitleGermplasm'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
           tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
           fixedrange: !interactive.value,
         },

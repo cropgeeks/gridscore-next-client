@@ -2,7 +2,11 @@
   <div v-if="model">
     <TraitSection
       :trait="trait"
-    />
+    >
+      <template #default>
+        <slot name="default" />
+      </template>
+    </TraitSection>
 
     <TraitInput
       v-model="model[`${setIndex}`]"
@@ -31,7 +35,6 @@
   const compProps = defineProps<{
     people?: Person[]
     trait: TraitPlus
-    traitIndex: number
     measurements: Measurement[] | undefined
   }>()
 

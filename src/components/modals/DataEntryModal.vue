@@ -123,12 +123,19 @@
                         v-model="cellData[trait.id || '']"
                         v-if="cellData[trait.id || '']"
                         :trait="trait"
-                        :trait-index="traitIndex"
                         :measurements="cell.measurements[trait.id || '']"
                         :people="trial.people"
                         @traverse="(setIndex: number) => traverse(trait, traitIndex, group.traits, setIndex)"
                         :ref="(el) => (refs[`${trait.id}`] = el)"
-                      />
+                      >
+                        <v-btn
+                          icon="mdi-history"
+                          size="small"
+                          class="mb-1"
+                          v-tooltip:top="$t('tooltipViewTraitDataHistory')"
+                          @click="showHistory(trait)"
+                        />
+                      </TraitInputSection>
                     </template>
                   </template>
                 </v-expansion-panel>
@@ -150,6 +157,15 @@
         </v-container>
       </v-card-text>
     </v-card>
+
+    <TraitDataHistoryModal
+      :trial="trial"
+      :trait="historyTrait"
+      :cell="cell"
+      :editable="trial.editable || false"
+      ref="traitDataHistoryModal"
+      v-if="historyTrait"
+    />
 
     <DataInputCloseModal
       ref="dataInputCloseModal"
@@ -175,6 +191,7 @@
   import TrialPreviewCanvas from '@/components/data/TrialPreviewCanvas.vue'
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
+  import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
 
   interface TraitGroup {
     name: string
@@ -198,12 +215,13 @@
     scoreWidth: number
   }
 
-  type CellData = { [key: string]: TraitData }
+  export type CellData = { [key: string]: TraitData }
   export type TraitData = { [key: string]: string }
 
   const emit = defineEmits(['data-changed', 'hide'])
 
   const dataInputCloseModal = useTemplateRef('dataInputCloseModal')
+  const traitDataHistoryModal = useTemplateRef('traitDataHistoryModal')
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -220,6 +238,8 @@
   const recordingDate = ref<Date>()
   const cellIndex = ref<number>(0)
   const guidedWalk = ref<GuidedWalk>()
+
+  const historyTrait = ref<TraitPlus>()
 
   const refs = ref<{ [index: string]: Element | ComponentPublicInstance | null }>({})
 
@@ -357,6 +377,12 @@
     } else {
       hide()
     }
+  }
+
+  function showHistory (trait: TraitPlus) {
+    historyTrait.value = trait
+
+    nextTick(() => traitDataHistoryModal.value?.show())
   }
 
   watch(traitsByGroup, async newValue => {

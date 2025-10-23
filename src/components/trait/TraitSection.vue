@@ -1,18 +1,21 @@
 <template>
-  <v-list-item v-if="trait" slim>
+  <v-list-item v-if="trait" slim class="px-1">
     <template #prepend>
       <v-icon icon="mdi-circle" :color="trait.color" size="x-large" />
     </template>
     <template #title>
-      <div class="d-flex flex-wrap align-center ga-2">
-        <span class="text-h6" :style="{ color: trait.color }">{{ trait.name }}</span>
-        <template v-if="showDetails">
-          <v-chip size="small" label :text="$t(dataTypeMap[trait.dataType]?.title || '')" :prepend-icon="dataTypeMap[trait.dataType]?.icon" />
-          <v-chip size="small" label v-tooltip:top="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
-            <v-icon :icon="trait.allowRepeats ? 'mdi-repeat' : 'mdi-repeat-off'" />
-          </v-chip>
-          <v-chip size="small" label v-tooltip:top="$t('tooltipTraitSetSize')" :text="$n(trait.setSize || 1)" prepend-icon="mdi-set-split" />
-        </template>
+      <div class="d-flex flex-wrap align-center justify-space-between ga-2">
+        <div class="d-flex flex-wrap align-center ga-2">
+          <span class="text-h6" :style="{ color: trait.color }">{{ trait.name }}</span>
+          <template v-if="showDetails">
+            <v-chip size="small" label :text="$t(dataTypeMap[trait.dataType]?.title || '')" :prepend-icon="dataTypeMap[trait.dataType]?.icon" />
+            <v-chip size="small" label v-tooltip:top="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
+              <v-icon :icon="trait.allowRepeats ? 'mdi-repeat' : 'mdi-repeat-off'" />
+            </v-chip>
+            <v-chip size="small" label v-tooltip:top="$t('tooltipTraitSetSize')" :text="$n(trait.setSize || 1)" prepend-icon="mdi-set-split" />
+          </template>
+        </div>
+        <slot name="default" />
       </div>
     </template>
     <template #subtitle v-if="showDetails && (trait.description || (trait.restrictions && (trait.restrictions.min !== undefined || trait.restrictions.max !== undefined)) || trait.timeframe)">

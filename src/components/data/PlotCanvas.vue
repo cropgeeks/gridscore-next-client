@@ -18,6 +18,7 @@
   import { CellCategory } from '@/plugins/types/gridscore'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTouchPosition } from '@/plugins/touchinput'
+  import { categoricalColors } from '@/plugins/color'
 
   interface DragConfig {
     active: boolean
@@ -78,14 +79,15 @@
   const plotCanvas = useTemplateRef('plotCanvas')
   const userCanvas = useTemplateRef('userCanvas')
 
-  const fillStyleWhite = computed(() => store.storeDarkMode ? '#000000' : '#ffffff')
-  const fillStyleLightGray = computed(() => store.storeDarkMode ? '#0d0d0d' : '#f2f2f2')
-  const fillStyleDarkGray = computed(() => store.storeDarkMode ? '#1f1f1f' : '#e0e0e0')
-  const fillStyleHighlight = computed(() => store.storeDarkMode ? '#833471' : '#A3CB38')
-  const fillStyleMarked = computed(() => store.storeDarkMode ? '#415971' : '#c6d2de')
-  const fillStyleHiddenTrait = computed(() => store.storeDarkMode ? '#2c2c2c' : '#d3d3d3')
-  const fillStyleText = computed(() => store.storeDarkMode ? '#ffffff' : '#000000')
-  const fillStyleControl = computed(() => store.storeDarkMode ? '#0a3d62' : '#82ccdd')
+  const fillStyleWhite = computed(() => store.storeIsDarkMode ? '#000000' : '#ffffff')
+  const fillStyleLightGray = computed(() => store.storeIsDarkMode ? '#0d0d0d' : '#f2f2f2')
+  const fillStyleDarkGray = computed(() => store.storeIsDarkMode ? '#1f1f1f' : '#e0e0e0')
+  const fillStyleHighlight = computed(() => store.storeIsDarkMode ? '#833471' : '#A3CB38')
+  const fillStyleMarked = computed(() => store.storeIsDarkMode ? '#415971' : '#c6d2de')
+  const fillStyleHiddenTrait = computed(() => store.storeIsDarkMode ? '#2c2c2c' : '#d3d3d3')
+  const fillStyleText = computed(() => store.storeIsDarkMode ? '#ffffff' : '#000000')
+  const fillStyleControl = computed(() => store.storeIsDarkMode ? '#0a3d62' : '#82ccdd')
+  const highlightColors = computed(() => store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel)
   const visibleTraits = computed(() => mappedTraits.value.filter(t => t.visible))
   const mappedTraits = computed(() => {
     if (!compProps.trial) {
@@ -289,18 +291,25 @@
     let count = 0
 
     let isHighlighted = false
+    let highlightColorIndex = 0
 
     if (cell && store.storeHighlightConfig) {
       switch (store.storeHighlightConfig.type) {
         case 'controls':
           isHighlighted = cell.categories && cell.categories.includes(CellCategory.CONTROL)
           break
-        case 'reps':
-          isHighlighted = (store.storeHighlightConfig.reps || []).includes(cell.rep || '')
+        case 'reps': {
+          const index = (store.storeHighlightConfig.reps || []).indexOf(cell.rep || '')
+          isHighlighted = index !== -1
+          highlightColorIndex = index % highlightColors.value.length
           break
-        case 'treatments':
-          isHighlighted = (store.storeHighlightConfig.treatments || []).includes(cell.treatment || '')
+        }
+        case 'treatments': {
+          const index = (store.storeHighlightConfig.treatments || []).indexOf(cell.treatment || '')
+          isHighlighted = index !== -1
+          highlightColorIndex = index % highlightColors.value.length
           break
+        }
         case 'germplasm':
           isHighlighted = (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
           break
@@ -308,8 +317,8 @@
     }
 
     if (isHighlighted) {
-      count = 5
-      ccctx.fillStyle = fillStyleControl.value
+      count = 5 + highlightColorIndex
+      ccctx.fillStyle = highlightColors.value[highlightColorIndex % highlightColors.value.length] || 'black'
     } else if ((compProps.markedRows && compProps.markedRows[row]) || (compProps.markedColumns && compProps.markedColumns[col])) {
       count = 3
       ccctx.fillStyle = fillStyleMarked.value

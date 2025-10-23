@@ -68,7 +68,7 @@
       <v-btn v-if="hasErrors || hasWarnings" @click="bottomSheetVisible = true" :text="$t('formFeedbackLayout', feedback.length)" :prepend-icon="hasErrors ? 'mdi-alert-circle' : 'mdi-alert'" :color="hasErrors ? 'error' : 'warning'" />
     </div>
 
-    <TabbedInputModal :label="dataImportConfig.label" :placeholder="dataImportConfig.placeholder" ref="inputModal" v-if="dataImportConfig" />
+    <TabbedInputModal :label="dataImportConfig.label" :placeholder="dataImportConfig.placeholder" ref="inputModal" @content-loaded="content => updateTableFromTabbed(dataImportConfig?.field || '', content)" v-if="dataImportConfig" />
     <FieldHubInputModal :current-layout="model.layout" ref="fieldbookInputModal" @content-loaded="updateTableFromFile" />
 
     <v-bottom-sheet v-model="bottomSheetVisible" inset>
@@ -108,6 +108,7 @@
   }
 
   interface DataImportConfig {
+    field: string
     label: string
     placeholder: string
   }
@@ -119,26 +120,32 @@
 
   const dataImportConfigs: { [key: string]: DataImportConfig } = {
     germplasm: {
+      field: 'germplasm',
       label: 'formLabelSetupGermplasmNames',
       placeholder: 'formPlaceholderSetupGermplasmNames',
     },
     rep: {
+      field: 'rep',
       label: 'formLabelSetupRepNames',
       placeholder: 'formPlaceholderSetupRepNames',
     },
     friendlyName: {
+      field: 'friendlyName',
       label: 'formLabelSetupFriendlyNames',
       placeholder: 'formPlaceholderSetupFriendlyNames',
     },
     barcode: {
+      field: 'barcode',
       label: 'formLabelSetupBarcodeNames',
       placeholder: 'formPlaceholderSetupBarcodeNames',
     },
     pedigree: {
+      field: 'pedigree',
       label: 'formLabelSetupPedigreeNames',
       placeholder: 'formPlaceholderSetupPedigreeNames',
     },
     treatment: {
+      field: 'treatment',
       label: 'formLabelSetupTreatmentNames',
       placeholder: 'formPlaceholderSetupTreatmentNames',
     },
@@ -255,6 +262,65 @@
     }
 
     tableHasModifications.value = false
+  }
+
+  function updateTableFromTabbed (fieldName: string, content: string) {
+    if (!model.value) {
+      return
+    }
+
+    const table = content.split('\n').filter(n => n !== null && n.length > 0).map(r => r.split('\t').map(v => v.trim()))
+
+    for (let row = 0; row < model.value.layout.rows; row++) {
+      for (let column = 0; column < model.value.layout.columns; column++) {
+        const tableGermplasm = (document.querySelector(`#germplasm-${row}-${column}`) as HTMLInputElement).value.trim()
+        const tableRep = (document.querySelector(`#rep-${row}-${column}`) as HTMLInputElement).value.trim()
+        const tableFriendlyName = (document.querySelector(`#friendlyName-${row}-${column}`) as HTMLInputElement).value.trim()
+        const tableBarcode = (document.querySelector(`#barcode-${row}-${column}`) as HTMLInputElement).value.trim()
+        const tablePedigree = (document.querySelector(`#pedigree-${row}-${column}`) as HTMLInputElement).value.trim()
+        const tableTreatment = (document.querySelector(`#treatment-${row}-${column}`) as HTMLInputElement).value.trim()
+        const tableControl = (document.querySelector(`#control-${row}-${column}`) as HTMLInputElement).checked
+        const tableBrapiId = (document.querySelector(`#brapiId-${row}-${column}`) as HTMLInputElement).value
+
+        if (!gridData.value[`${row}|${column}`]) {
+          gridData.value[`${row}|${column}`] = {
+            germplasm: '',
+            rep: undefined,
+            friendlyName: undefined,
+            barcode: undefined,
+            pedigree: undefined,
+            treatment: undefined,
+            categories: [],
+            brapiId: undefined,
+            isMarked: false,
+            comments: [],
+            geography: undefined,
+            measurements: {},
+          }
+        }
+
+        const cell = gridData.value[`${row}|${column}`]
+        if (cell) {
+          cell.germplasm = tableGermplasm
+          cell.rep = tableRep
+          cell.friendlyName = tableFriendlyName === '' ? undefined : tableFriendlyName
+          cell.barcode = tableBarcode === '' ? undefined : tableBarcode
+          cell.pedigree = tablePedigree === '' ? undefined : tablePedigree
+          cell.treatment = tableTreatment === '' ? undefined : tableTreatment
+          cell.categories = tableControl ? [CellCategory.CONTROL] : []
+          cell.brapiId = tableBrapiId
+          cell.isMarked = false
+          cell.comments = []
+          cell.geography = undefined
+          cell.measurements = {}
+
+          // @ts-ignore
+          cell[fieldName] = table[row][column]
+          // @ts-ignore
+          document.querySelector(`#${fieldName}-${row}-${column}`).value = table[row][column]
+        }
+      }
+    }
   }
 
   function updateTableFromFile (grid: Grid) {
@@ -545,7 +611,7 @@
             (document.querySelector(`#friendlyName-${row}-${column}`) as HTMLInputElement).value = random || '';
             (document.querySelector(`#pedigree-${row}-${column}`) as HTMLInputElement).value = `${getRandomGivenName()} x ${getRandomGivenName()}`;
             (document.querySelector(`#barcode-${row}-${column}`) as HTMLInputElement).value = `b-${displayRow}|${displayColumn}`;
-            (document.querySelector(`#treatment-${row}-${column}`) as HTMLInputElement).value = row < Math.ceil(trial.layout.rows / 2) ? 'Untreated' : 'High nitrogen'
+            // (document.querySelector(`#treatment-${row}-${column}`) as HTMLInputElement).value = row < Math.ceil(trial.layout.rows / 2) ? 'Untreated' : 'High nitrogen'
             // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
             cell.rep = `${rep || tableRep}`
             cell.brapiId = tableBrapiId
