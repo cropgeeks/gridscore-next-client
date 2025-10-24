@@ -747,6 +747,37 @@ async function getTrialData (trialId: string): Promise<{ [key: string]: CellPlus
   }
 }
 
+async function setPlotMarked (trialId: string, row: number, column: number, isMarked: boolean) {
+  const trial = await getTrialById(trialId)
+  const cell = await getCell(trialId, row, column)
+
+  if (trial && cell) {
+    if (isMarked) {
+      cell.isMarked = isMarked
+    } else {
+      delete cell.isMarked
+    }
+    cell.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      if (transaction.plotMarkedTransactions[`${row}|${column}`] !== undefined && transaction.plotMarkedTransactions[`${row}|${column}`] !== null && transaction.plotMarkedTransactions[`${row}|${column}`] !== isMarked) {
+        // If there is a marking value and it's not the same as the new one, they cancel each other out, so remove the transaction item
+        delete transaction.plotMarkedTransactions[`${row}|${column}`]
+      } else {
+        // Else, there isn't a value OR it's the same, so just set it again
+        transaction.plotMarkedTransactions[`${row}|${column}`] = isMarked
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('data', cell)
+  }
+}
+
 async function changeTrialsData (trialId: string, dataMapping: DataModification, geolocation?: Geolocation) {
   const trial = await getTrialById(trialId)
 
@@ -993,4 +1024,5 @@ export {
   addTrialTraits,
   getTrialValidPlots,
   getTransactionForTrial,
+  setPlotMarked,
 }

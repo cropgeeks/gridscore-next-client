@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Cell, Trait, Trial } from '@/plugins/types/gridscore'
+import type { Cell, Measurement, Trait, Trial } from '@/plugins/types/gridscore'
 
 export interface TraitPlus extends Trait {
   color?: string
@@ -19,6 +19,10 @@ export interface Geolocation {
   lng?: number
   elevation?: number
   heading?: number
+}
+
+export interface HistoryMeasurement extends Measurement {
+  delete?: boolean
 }
 
 export interface TrialPlus extends Trial {

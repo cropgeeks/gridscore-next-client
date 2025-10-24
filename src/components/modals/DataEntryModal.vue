@@ -18,14 +18,11 @@
         <v-toolbar-title>{{ cell.displayName }}</v-toolbar-title>
 
         <v-btn-group>
-          <TraitDropdown :traits="trial.traits" />
-          <ResponsiveButton
-            :text="$t('buttonStartGuidedWalk')"
-            prepend-icon="mdi-directions-fork"
-            variant="tonal"
-            size="small"
-            @click="onGuidedWalk"
-            v-if="!isGuidedWalk"
+          <TraitDropdown size="small" :traits="trial.traits" />
+          <DataEntryActions
+            :trial="trial"
+            :cell="cell"
+            :is-guided-walk="isGuidedWalk"
           />
         </v-btn-group>
 
@@ -53,7 +50,7 @@
         </v-toolbar-items>
       </v-toolbar>
 
-      <v-card-text class="py-0">
+      <v-card-text class="pa-0">
         <v-container :fluid="isGuidedWalk">
           <v-row v-if="guidedWalk">
             <v-col cols="12" md="4" class="d-flex">
@@ -132,6 +129,7 @@
                           icon="mdi-history"
                           size="small"
                           class="mb-1"
+                          :disabled="!hasHistoricData[trait.id || '']"
                           v-tooltip:top="$t('tooltipViewTraitDataHistory')"
                           @click="showHistory(trait)"
                         />
@@ -216,7 +214,7 @@
   }
 
   export type CellData = { [key: string]: TraitData }
-  export type TraitData = { [key: string]: string }
+  export type TraitData = { [key: string]: string | undefined }
 
   const emit = defineEmits(['data-changed', 'hide'])
 
@@ -246,6 +244,19 @@
   const expandedTraitGroups = ref<number[]>([])
 
   const isGuidedWalk = computed(() => guidedWalk.value !== undefined)
+
+  const hasHistoricData: ComputedRef<{ [index: string]: boolean }> = computed(() => {
+    const result: { [index: string]: boolean } = {}
+
+    const c = cell.value
+    if (c && c.measurements) {
+      visibleTraits.value.forEach(t => {
+        result[t.id || ''] = c.measurements[t.id || ''] !== undefined && (c.measurements[t.id || ''] || []).length > 0
+      })
+    }
+
+    return result
+  })
 
   const cancelConfig = computed(() => {
     if (isGuidedWalk.value && guidedWalk.value) {
@@ -431,21 +442,6 @@
       }
     }
   })
-
-  function onGuidedWalk () {
-    emitter.emit('show-confirm', {
-      title: t('modalTitleGuidedWalk'),
-      message: t('modalTextGuidedWalkQuestion'),
-      okTitle: t('buttonYes'),
-      cancelTitle: t('buttonNo'),
-      okVariant: 'success',
-      callback: (result: boolean) => {
-        if (result) {
-          router.push(`/collect/walk?row=${cell.value?.row}&column=${cell.value?.column}`)
-        }
-      },
-    })
-  }
 
   function confirmClose () {
     if (!compProps.trial.editable) {

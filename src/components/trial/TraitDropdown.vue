@@ -4,6 +4,7 @@
       <ResponsiveButton
         v-bind="props"
         variant="tonal"
+        :size="size || 'default'"
         prepend-icon="mdi-tag-multiple"
         :text="$t('toolbarTraitVisibility')"
       />
@@ -36,7 +37,7 @@
           <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectAll')" @click="toggleVisibilityAll(true)" :prepend-icon="isSquare ? 'mdi-square' : 'mdi-circle'" />
           <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectNone')" @click="toggleVisibilityAll(false)" :prepend-icon="isSquare ? 'mdi-square-outline' : 'mdi-circle-outline'" />
         </v-btn-group>
-      </v-list-item>  
+      </v-list-item>
 
       <v-list-group
         v-for="(group, index) in traitsByGroup"
@@ -106,6 +107,7 @@
   // Props
   const compProps = defineProps<{
     traits: TraitPlus[]
+    size?: 'x-small' | 'small' | 'default' | 'large' | 'x-large'
   }>()
   const emit = defineEmits(['trait-cutoff-changed'])
 

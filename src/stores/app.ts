@@ -42,7 +42,7 @@ export const coreStore = defineStore('core', {
     hideCitationMessage: false,
     highlightControls: true,
     highlightConfig: {
-      type: 'controls',
+      type: undefined,
     } as HighlightConfig,
     displayMarkerIndicators: true,
     displayMinCellWidth: 4,
@@ -243,14 +243,12 @@ export const coreStore = defineStore('core', {
       this.highlightControls = newHighlightControls
     },
     setHighlightConfig (newHighlightConfig: HighlightConfig) {
-      const final: HighlightConfig = Object.assign({
+      this.highlightConfig = Object.assign({
         type: undefined,
         reps: undefined,
         treatments: undefined,
         germplasm: undefined,
       }, newHighlightConfig)
-
-      this.highlightConfig = final
     },
     setDisplayMarkerIndicators (newDisplayMarkerIndicators: boolean) {
       this.displayMarkerIndicators = newDisplayMarkerIndicators

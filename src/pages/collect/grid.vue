@@ -10,6 +10,7 @@
               v-bind="props"
               prepend-icon="mdi-marker"
               variant="tonal"
+              :color="(store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined) ? 'primary' : undefined"
               :text="$t('toolbarPlotHighlight')"
             />
           </template>

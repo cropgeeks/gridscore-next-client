@@ -2,6 +2,7 @@
   <div v-if="model">
     <TraitSection
       :trait="trait"
+      short-title
     >
       <template #default>
         <slot name="default" />
@@ -13,6 +14,7 @@
       :people="people"
       :trait="trait"
       :measurements="measurements"
+      :editable="editable"
       :set-index="setIndex - 1"
       :label="trait.setSize > 1 ? $t('formLabelMeasurementSet', { position: $n(setIndex) }) : $t('formLabelMeasurementEntry')"
       v-for="setIndex in (trait.setSize || 1)"
@@ -36,6 +38,7 @@
     people?: Person[]
     trait: TraitPlus
     measurements: Measurement[] | undefined
+    editable?: boolean
   }>()
 
   const model = defineModel<TraitData>({})

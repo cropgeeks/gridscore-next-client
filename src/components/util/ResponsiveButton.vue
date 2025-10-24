@@ -17,5 +17,6 @@
     appendIcon?: string | undefined
     disabled?: boolean
     variant?: 'flat' | 'text' | 'elevated' | 'outlined' | 'plain' | 'tonal' | undefined
+    size?: 'x-small' | 'small' | 'default' | 'large' | 'x-large'
   }>()
 </script>
