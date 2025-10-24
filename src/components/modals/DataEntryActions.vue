@@ -71,6 +71,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
   import CommentModal from '@/components/modals/CommentModal.vue'
+  import type { Comment } from '@/plugins/types/gridscore'
 
   const store = coreStore()
   const router = useRouter()
