@@ -1,6 +1,6 @@
 import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
-import { DisplayOrder, TimeframeType, type Corners, type Group, type Markers, type Measurement, type Person, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
+import { DisplayOrder, TimeframeType, type Comment, type Corners, type Group, type Markers, type Measurement, type Person, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type TrialGroup } from '@/plugins/types/client'
 import { getColumnLabel, getRowLabel } from '@/plugins/util'
 import { getId } from '@/plugins/id'
@@ -1008,6 +1008,93 @@ function logTransactions (trial: TrialPlus) {
   }
 }
 
+async function addPlotComment (trialId: string, row: number, column: number, commentContent: string) {
+  const cell = await getCell(trialId, row, column)
+  const trial = await getTrialById(trialId)
+
+  if (trial && cell) {
+    if (!cell.comments) {
+      cell.comments = []
+    }
+
+    const newComment = {
+      content: commentContent,
+      timestamp: new Date().toISOString()
+    }
+
+    cell.comments.push(newComment)
+    cell.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      if (!transaction.plotCommentAddedTransactions[`${row}|${column}`]) {
+        transaction.plotCommentAddedTransactions[`${row}|${column}`] = []
+      }
+
+      transaction.plotCommentAddedTransactions[`${row}|${column}`].push(newComment)
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('data', cell)
+  } else {
+    return new Promise(resolve => resolve(cell))
+  }
+}
+
+async function deletePlotComment (trialId: string, row: number, column: number, comment: Comment) {
+  const cell = await getCell(trialId, row, column)
+  const trial = await getTrialById(trialId)
+
+  if (trial && cell) {
+    cell.comments = cell.comments.filter((c: Comment) => c.timestamp !== comment.timestamp && c.content !== comment.content)
+    cell.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      const tAdd = transaction.plotCommentAddedTransactions[`${row}|${column}`]
+
+      if (tAdd) {
+        // There are add transactions, so search them
+        const match = tAdd.findIndex((c: Comment) => c.content === comment.content && c.timestamp === comment.timestamp)
+
+        if (match === -1) {
+          // No match, add a new DELETE transaction
+          if (!transaction.plotCommentDeletedTransactions[`${row}|${column}`]) {
+            transaction.plotCommentDeletedTransactions[`${row}|${column}`] = []
+          }
+
+          transaction.plotCommentDeletedTransactions[`${row}|${column}`].push(comment)
+        } else {
+          // Remove the match
+          tAdd.splice(match, 1)
+        }
+      } else {
+        // There aren't any add transactions, so immediately add a delete transaction
+        if (!transaction.plotCommentDeletedTransactions[`${row}|${column}`]) {
+          transaction.plotCommentDeletedTransactions[`${row}|${column}`] = []
+        }
+
+        transaction.plotCommentDeletedTransactions[`${row}|${column}`].push(comment)
+      }
+
+      if (transaction.plotCommentAddedTransactions[`${row}|${column}`] && transaction.plotCommentAddedTransactions[`${row}|${column}`].length === 0) {
+        delete transaction.plotCommentAddedTransactions[`${row}|${column}`]
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('data', cell)
+  } else {
+    return new Promise(resolve => resolve(cell))
+  }
+}
+
 export {
   getDb,
   getTrialGroups,
@@ -1025,4 +1112,6 @@ export {
   getTrialValidPlots,
   getTransactionForTrial,
   setPlotMarked,
+  addPlotComment,
+  deletePlotComment,
 }

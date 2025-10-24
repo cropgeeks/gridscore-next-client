@@ -21,7 +21,7 @@
             >
               <v-card prepend-icon="mdi-calendar" :title="new Date(comment.raw.timestamp).toLocaleDateString()" class="mb-4">
                 <template #append>
-                  <v-btn color="error" :disabled="!editable" icon="mdi-delete" v-tooltip:top="$t('buttonDelete')" />
+                  <v-btn color="error" :disabled="!editable" icon="mdi-delete" v-tooltip:top="$t('buttonDelete')" @click="deleteComment(comment.raw)" />
                 </template>
                 <template #text>{{ comment.raw.content }}</template>
               </v-card>
@@ -29,15 +29,11 @@
           </template>
 
           <template #footer="{ pageCount }">
-            <v-btn color="primary" :text="$t('buttonCreateComment')" v-if="editable" prepend-icon="mdi-comment-plus" @click="showAddSection = !showAddSection" />
+            <template v-if="editable">
+              <SpeechRecognitionTextarea v-model="newComment" />
 
-            <v-expand-transition>
-              <div v-show="showAddSection">
-                <v-divider />
-
-                <SpeechRecognitionTextarea v-model="newComment" />
-              </div>
-            </v-expand-transition>
+              <v-btn color="primary" prepend-icon="mdi-comment-plus" :text="$t('buttonCreateComment')" :disabled="!newComment || newComment.trim().length === 0" @click="addComment" />
+            </template>
 
             <v-pagination v-model="page" :length="pageCount" />
           </template>
@@ -59,15 +55,27 @@
   const dialog = ref(false)
   const perPage = ref(5)
   const page = ref(1)
-  const showAddSection = ref(false)
 
   const newComment = ref<string>()
 
-  defineProps<{
+  const compProps = defineProps<{
     comments: Comment[]
     type: 'trial' | 'plot'
     editable: boolean
   }>()
+
+  function addComment () {
+    emit('comment-added', newComment.value)
+    newComment.value = undefined
+  }
+
+  function deleteComment (comment: Comment) {
+    if (isProxy(comment)) {
+      comment = toRaw(comment)
+    }
+
+    emit('comment-deleted', comment)
+  }
 
   function show () {
     dialog.value = true
@@ -75,6 +83,8 @@
   function hide () {
     dialog.value = false
   }
+
+  const emit = defineEmits(['comment-added', 'comment-deleted'])
 
   defineExpose({
     show,

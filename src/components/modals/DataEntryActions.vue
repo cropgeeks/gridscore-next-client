@@ -56,12 +56,14 @@
     type="plot"
     :comments="cell.comments"
     :editable="trial.editable || false"
+    @comment-added="addNewComment"
+    @comment-deleted="deleteComment"
     ref="commentModal"
   />
 </template>
 
 <script setup lang="ts">
-  import { setPlotMarked } from '@/plugins/idb'
+  import { addPlotComment, deletePlotComment, setPlotMarked } from '@/plugins/idb'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
 
@@ -121,5 +123,23 @@
         }
       },
     })
+  }
+
+  function addNewComment (content: string) {
+    addPlotComment(compProps.trial.localId || '', compProps.cell.row || 0, compProps.cell.column || 0, content)
+      .then(() => {
+        emitter.emit('plot-comments-changed', compProps.cell.row || 0, compProps.cell.column || 0, compProps.cell.trialId || 0)
+        emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'added' } })
+        // this.$emit('comments-changed')
+      })
+  }
+
+  function deleteComment (comment: Comment) {
+    deletePlotComment(compProps.trial.localId || '', compProps.cell.row || 0, compProps.cell.column || 0, comment)
+      .then(() => {
+        emitter.emit('plot-comments-changed', compProps.cell.row || 0, compProps.cell.column || 0, compProps.cell.trialId || 0)
+        emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'deleted' } })
+        // this.$emit('comments-changed')
+      })
   }
 </script>
