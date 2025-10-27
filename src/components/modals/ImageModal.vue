@@ -266,7 +266,7 @@ export default {
      * Shows the modal dialog and resets it to its initial state
      */
     show: function () {
-      this.supportsSaving = window.showSaveFilePicker !== undefined
+      this.supportsSaving = false
       this.supportsGps = navigator.geolocation !== undefined && navigator.geolocation !== null
       this.postfix = null
 
