@@ -33,7 +33,7 @@
       </v-list-item>
 
       <v-list-item>
-        <v-btn-group class="d-flex">
+        <v-btn-group density="compact" class="d-flex">
           <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectAll')" @click="toggleVisibilityAll(true)" :prepend-icon="isSquare ? 'mdi-square' : 'mdi-circle'" />
           <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectNone')" @click="toggleVisibilityAll(false)" :prepend-icon="isSquare ? 'mdi-square-outline' : 'mdi-circle-outline'" />
         </v-btn-group>

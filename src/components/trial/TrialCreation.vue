@@ -430,7 +430,7 @@
       }
 
       if (!trial.value.mediaFilenameFormat) {
-        trial.value.mediaFilenameFormat = mediaFilenameParts.concat()
+        trial.value.mediaFilenameFormat = mediaFilenameParts.concat().map(p => p.id)
       }
     } else {
       trial.value = {
@@ -449,7 +449,7 @@
           markers: undefined,
         },
         data: {},
-        mediaFilenameFormat: mediaFilenameParts.concat(),
+        mediaFilenameFormat: mediaFilenameParts.concat().map(p => p.id),
       }
     }
   })

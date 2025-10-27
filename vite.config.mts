@@ -8,6 +8,7 @@ import VueRouter from 'unplugin-vue-router/vite'
 import { VueRouterAutoImports } from 'unplugin-vue-router'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { VitePWA } from 'vite-plugin-pwa'
+// import { analyzer } from 'vite-bundle-analyzer'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -17,6 +18,7 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   base: './',
   plugins: [
+    // analyzer(),
     VueRouter({
       dts: 'src/typed-router.d.ts',
     }),

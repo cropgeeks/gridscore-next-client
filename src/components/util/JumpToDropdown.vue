@@ -1,7 +1,12 @@
 <template>
   <v-menu v-model="menuShown">
     <template #activator="{ props }">
-      <v-btn v-bind="props" variant="tonal" prepend-icon="mdi-arrow-expand-all" :text="$t('toolbarJumpTo')" />
+      <ResponsiveButton
+        v-bind="props"
+        variant="tonal"
+        prepend-icon="mdi-arrow-expand-all"
+        :text="$t('toolbarJumpTo')"
+      />
     </template>
 
     <v-sheet class="pa-3">

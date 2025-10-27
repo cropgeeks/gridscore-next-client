@@ -114,10 +114,11 @@
 </template>
 
 <script setup lang="ts">
+  import { mediaFilenameParts } from '@/plugins/constants'
   import { getTrialGroups } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
   import { personTypes } from '@/plugins/types/types'
-  import { getTraitColor, toLocalDateTimeString } from '@/plugins/util'
+  import { getTraitColor } from '@/plugins/util'
   import draggable from 'vuedraggable'
 
   export interface FilenameChip {
@@ -142,15 +143,6 @@
 
   const model = defineModel<TrialPlus>()
 
-  const allMediaFilenameParts = [
-    { id: 'trial', title: 'widgetMediaFilenameTrial', icon: 'mdi-notebook', example: 'Barley-trial-Season24' },
-    { id: 'timestamp', title: 'widgetMediaFilenameTimestamp', icon: 'mdi-calendar', example: toLocalDateTimeString(new Date()) },
-    { id: 'germplasm', title: 'widgetMediaFilenameGermplasm', icon: 'mdi-sprout', example: 'Laureate' },
-    { id: 'row', title: 'widgetMediaFilenameRow', icon: 'mdi-land-rows-horizontal', example: '1' },
-    { id: 'column', title: 'widgetMediaFilenameColumn', icon: 'mdi-land-rows-vertical', example: '7' },
-    { id: 'trait', title: 'widgetMediaFilenameTrait', icon: 'mdi-tag', example: 'Awn length' },
-  ]
-
   const group = ref<string>()
   const trialGroups = ref<string[]>([])
   const usedMediaFilenameChips = ref<FilenameChip[]>([])
@@ -163,7 +155,7 @@
   const isValid = computed(() => model.value && model.value.name && model.value.name.trim().length > 0)
 
   function resetFilenameChips () {
-    usedMediaFilenameChips.value = allMediaFilenameParts.concat()
+    usedMediaFilenameChips.value = mediaFilenameParts.concat()
     unusedMediaFilenameChips.value = []
   }
 
@@ -177,8 +169,8 @@
     })
 
     if (model.value) {
-      usedMediaFilenameChips.value = (model.value.mediaFilenameFormat || []).map(p => allMediaFilenameParts.find(op => op.id === p)).filter(p => p !== undefined)
-      unusedMediaFilenameChips.value = allMediaFilenameParts.filter(p => !usedMediaFilenameChips.value.some(op => op.id === p.id))
+      usedMediaFilenameChips.value = (model.value.mediaFilenameFormat || []).map(p => mediaFilenameParts.find(op => op.id === p)).filter(p => p !== undefined)
+      unusedMediaFilenameChips.value = mediaFilenameParts.filter(p => !usedMediaFilenameChips.value.some(op => op.id === p.id))
       group.value = model.value.group?.name
       peopleCutoffIndex.value = (model.value.people || []).length
     }

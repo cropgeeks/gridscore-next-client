@@ -4,16 +4,20 @@
       <v-btn-group density="compact">
         <TraitDropdown :traits="trial.traits" @trait-cutoff-changed="e => { traitCutoff = e }" />
         <JumpToDropdown />
-        <v-menu :close-on-content-click="false">
-          <template #activator="{ props }">
-            <ResponsiveButton
-              v-bind="props"
-              prepend-icon="mdi-marker"
-              variant="tonal"
-              :color="(store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined) ? 'primary' : undefined"
-              :text="$t('toolbarPlotHighlight')"
-            />
-          </template>
+
+        <OverflowMenu
+          :items="overflowItems"
+          :breakpoint="mdAndUp"
+        />
+        <v-menu activator="#grid-media-mode">
+          <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
+            <v-list-subheader :title="$t('menuItemMediaModeHeading')" />
+            <v-list-item :title="$t('menuItemMediaModeDisabled')" prepend-icon="mdi-cancel" :append-icon="store.storeMediaMode === undefined ? 'mdi-check' : undefined" @click="store.setMediaMode(undefined)" />
+            <v-list-item :title="$t('menuItemMediaModeImage')" prepend-icon="mdi-image" :append-icon="store.storeMediaMode === 'image' ? 'mdi-check' : undefined" @click="store.setMediaMode('image')" />
+            <v-list-item :title="$t('menuItemMediaModeVideo')" prepend-icon="mdi-video" :append-icon="store.storeMediaMode === 'video' ? 'mdi-check' : undefined" @click="store.setMediaMode('video')" />
+          </v-list>
+        </v-menu>
+        <v-menu :close-on-content-click="false" activator="#grid-highlight">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
             <v-list-item :title="$t('formLabelPlotHighlightNothing')" prepend-icon="mdi-marker-cancel" :append-icon="store.storeHighlightConfig.type === undefined ? 'mdi-check' : undefined" @click="setHighlight(undefined)" />
             <v-list-item v-if="trialControls && trialControls.length > 0" :title="$t('formLabelPlotHighlightControls')" prepend-icon="mdi-checkbox-marked" :append-icon="store.storeHighlightConfig.type === 'controls' ? 'mdi-check' : undefined" @click="setHighlight('controls')" />
@@ -94,6 +98,8 @@
     </v-menu>
 
     <SearchResultModal ref="searchResultModal" :list="searchResults" v-if="searchResults && searchResults.length > 0" />
+
+    <ImageModal :trial="trial" />
   </div>
 </template>
 
@@ -101,10 +107,11 @@
   import DataGrid from '@/components/data/DataGrid.vue'
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
+  import ImageModal from '@/components/modals/MediaModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
-  import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
-import { categoricalColors } from '@/plugins/color'
+  import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
+  import { categoricalColors } from '@/plugins/color'
   import { getTrialControlsCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
@@ -112,8 +119,12 @@ import { categoricalColors } from '@/plugins/color'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
+  import { useDisplay } from 'vuetify'
 
   const store = coreStore()
+  const { mdAndUp } = useDisplay()
+  const { t } = useI18n()
 
   const trial = ref<TrialPlus>()
   const geolocation = ref<Geolocation>()
@@ -139,6 +150,28 @@ import { categoricalColors } from '@/plugins/color'
 
   let textSynth: SpeechSynthesis | undefined = undefined
   let geolocationWatchId: number | undefined = undefined
+
+  const overflowItems: ComputedRef<MenuItem[]> = computed(() => {
+    return [{
+      text: t('toolbarPlotHighlight'),
+      id: 'grid-highlight',
+      active: store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined,
+      activeColor: 'primary',
+      prependIcon: 'mdi-marker',
+      variant: 'tonal',
+      size: undefined,
+      click: () => {},
+    }, {
+      text: t('toolbarPlotMediaMode'),
+      id: 'grid-media-mode',
+      active: store.storeMediaMode !== undefined,
+      prependIcon: 'mdi-camera-burst',
+      activeColor: 'primary',
+      variant: 'tonal',
+      size: undefined,
+      click: () => {},
+    }]
+  })
 
   const showCanvas = computed(() => {
     if (store.storeMainDisplayMode === MainDisplayMode.CANVAS_ONLY) {
@@ -230,7 +263,11 @@ import { categoricalColors } from '@/plugins/color'
   }
 
   function selectPlot (row: number, column: number) {
-    dataEntryModal.value?.show(row, column)
+    if (store.storeMediaMode !== undefined) {
+      emitter.emit('tag-media', row, column, store.storeMediaMode)
+    } else {
+      dataEntryModal.value?.show(row, column)
+    }
   }
 
   function trialPropertiesChanged (trialId: string) {

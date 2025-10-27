@@ -1,56 +1,8 @@
 <template>
-  <template v-if="mdAndUp">
-    <ResponsiveButton
-      :text="cell.isMarked ? $t('buttonUnbookmarkCell') : $t('buttonBookmarkCell')"
-      size="small"
-      variant="tonal"
-      :base-color="cell.isMarked ? 'primary' : undefined"
-      :prepend-icon="cell.isMarked ? 'mdi-bookmark' : 'mdi-bookmark-outline'"
-      @click="toggleMarked"
-      :disabled="!trial.editable"
-    />
-    <ResponsiveButton
-      :text="$t('buttonCommentCount', (cell.comments || []).length)"
-      prepend-icon="mdi-comment-text"
-      variant="tonal"
-      size="small"
-      @click="showComments"
-    />
-    <ResponsiveButton
-      :text="$t('buttonStartGuidedWalk')"
-      prepend-icon="mdi-directions-fork"
-      variant="tonal"
-      size="small"
-      @click="onGuidedWalk"
-      v-if="!isGuidedWalk"
-    />
-  </template>
-  <v-menu v-else>
-    <template #activator="{ props }">
-      <v-btn v-bind="props" size="small" variant="tonal" icon="mdi-dots-vertical" />
-    </template>
-
-    <v-list color="primary">
-      <v-list-item
-        :title="cell.isMarked ? $t('buttonUnbookmarkCell') : $t('buttonBookmarkCell')"
-        :active="cell.isMarked === true"
-        :prepend-icon="cell.isMarked ? 'mdi-bookmark' : 'mdi-bookmark-outline'"
-        @click="toggleMarked"
-        :disabled="!trial.editable"
-      />
-      <v-list-item
-        :title="$t('buttonCommentCount', (cell.comments || []).length)"
-        prepend-icon="mdi-comment-text"
-        @click="showComments"
-      />
-      <v-list-item
-        :title="$t('buttonStartGuidedWalk')"
-        prepend-icon="mdi-directions-fork"
-        @click="onGuidedWalk"
-        v-if="!isGuidedWalk"
-      />
-    </v-list>
-  </v-menu>
+  <OverflowMenu
+    :items="items"
+    :breakpoint="mdAndUp"
+  />
 
   <CommentModal
     type="plot"
@@ -72,6 +24,7 @@
   import { useDisplay } from 'vuetify'
   import CommentModal from '@/components/modals/CommentModal.vue'
   import type { Comment } from '@/plugins/types/gridscore'
+  import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
 
   const store = coreStore()
   const router = useRouter()
@@ -85,6 +38,31 @@
     trial: TrialPlus
     isGuidedWalk: boolean
   }>()
+
+  const items: ComputedRef<MenuItem[]> = computed(() => {
+    return [{
+      text: compProps.cell.isMarked ? t('buttonUnbookmarkCell') : t('buttonBookmarkCell'),
+      size: 'small',
+      variant: 'tonal',
+      baseColor: compProps.cell.isMarked ? 'primary' : undefined,
+      prependIcon: compProps.cell.isMarked ? 'mdi-bookmark' : 'mdi-bookmark-outline',
+      click: toggleMarked,
+      disabled: !compProps.trial.editable,
+    }, {
+      text: t('buttonCommentCount', (compProps.cell.comments || []).length),
+      prependIcon: 'mdi-comment-text',
+      variant: 'tonal',
+      size: 'small',
+      click: showComments,
+    }, {
+      text: t('buttonStartGuidedWalk'),
+      prependIcon: 'mdi-directions-fork',
+      variant: 'tonal',
+      size: 'small',
+      click: onGuidedWalk,
+      visible: !compProps.isGuidedWalk,
+    }]
+  })
 
   function toggleMarked () {
     const c = compProps.cell

@@ -1,5 +1,25 @@
 <template>
   <v-container v-if="trial" class="data-entry">
+    <v-menu>
+      <template #activator="{ props }">
+        <v-btn
+          v-bind="props"
+          :text="$t('toolbarPlotMediaMode')"
+          :active="store.storeMediaMode !== undefined"
+          active-color="primary"
+          prepend-icon="mdi-camera-burst"
+          variant="tonal"
+        />
+      </template>
+
+      <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
+        <v-list-subheader :title="$t('menuItemMediaModeHeading')" />
+        <v-list-item :title="$t('menuItemMediaModeDisabled')" prepend-icon="mdi-cancel" :append-icon="store.storeMediaMode === undefined ? 'mdi-check' : undefined" @click="store.setMediaMode(undefined)" />
+        <v-list-item :title="$t('menuItemMediaModeImage')" prepend-icon="mdi-image" :append-icon="store.storeMediaMode === 'image' ? 'mdi-check' : undefined" @click="store.setMediaMode('image')" />
+        <v-list-item :title="$t('menuItemMediaModeVideo')" prepend-icon="mdi-video" :append-icon="store.storeMediaMode === 'video' ? 'mdi-check' : undefined" @click="store.setMediaMode('video')" />
+      </v-list>
+    </v-menu>
+
     <GermplasmAutocomplete
       :trial="trial"
       class="mt-5"
@@ -8,16 +28,20 @@
     />
 
     <DataEntryModal :trial="trial" :geolocation="geolocation" ref="dataEntryModal" @data-changed="loadTrial" @hide="autofocus" />
+
+    <MediaModal :trial="trial" @hide="autofocus" />
   </v-container>
 </template>
 
 <script setup lang="ts">
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
+  import MediaModal from '@/components/modals/MediaModal.vue'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
+  import emitter from 'tiny-emitter/instance'
 
   const store = coreStore()
 
@@ -86,7 +110,11 @@
   }
 
   function selectPlot (row: number, column: number) {
-    dataEntryModal.value?.show(row, column)
+    if (store.storeMediaMode !== undefined) {
+      emitter.emit('tag-media', row, column, store.storeMediaMode)
+    } else {
+      dataEntryModal.value?.show(row, column)
+    }
   }
 
   watch(searchMatch, async newValue => {

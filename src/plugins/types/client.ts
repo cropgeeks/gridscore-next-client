@@ -30,6 +30,7 @@ export interface TrialPlus extends Trial {
   traits: TraitPlus[]
   editable?: boolean
   shareStatus?: ShareStatus
+  mediaFilenameFormat?: string[]
   transactionCount?: number
   group?: TrialGroup
   hasRemoteUpdate?: boolean

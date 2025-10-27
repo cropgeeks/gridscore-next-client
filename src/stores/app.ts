@@ -31,6 +31,7 @@ export const coreStore = defineStore('core', {
   state: () => ({
     rippleEnabled: true,
     transitionsEnabled: 'yes' as 'yes' | 'no',
+    mediaMode: undefined as 'image' | 'video' | undefined,
     themeColor: THEME_COLORS[0] as string,
     uniqueClientId: null as (string | null),
     runCount: 0,
@@ -88,6 +89,7 @@ export const coreStore = defineStore('core', {
     storePerformanceMode: (state): boolean => state.rippleEnabled === false && state.transitionsEnabled === 'no',
     storeRippleEnabled: (state): boolean => state.rippleEnabled,
     storeTransitionsEnabled: (state): 'yes' | 'no' => state.transitionsEnabled,
+    storeMediaMode: (state): 'image' | 'video' | undefined => state.mediaMode,
     storeThemeColor: (state): string => state.themeColor,
     storeUniqueClientId: (state): string | null => state.uniqueClientId,
     storeRunCount: (state): number => state.runCount,
@@ -157,6 +159,9 @@ export const coreStore = defineStore('core', {
     setUniqueClientId (newUniqueClientId: string) {
       this.uniqueClientId = newUniqueClientId
     },
+    setMediaMode (newMediaMode: 'image' | 'video' | undefined) {
+      this.mediaMode = newMediaMode
+    },
     setRunCount (newRunCount: number) {
       this.runCount = newRunCount
     },
@@ -184,6 +189,7 @@ export const coreStore = defineStore('core', {
     async setSelectedTrial (newSelectedTrial: string | undefined) {
       /* Remember to reset everything here */
       const currentId = this.selectedTrial
+      this.mediaMode = undefined
       this.selectedTrial = newSelectedTrial
       this.hiddenTraits = []
       this.highlightConfig = {
