@@ -101,10 +101,10 @@
 
       <div class="h-100">
         <router-view :key="$route.path" class="h-100" />
+
+        <AppFooter v-if="route.path !== '/collect/grid'" />
       </div>
     </v-main>
-
-    <AppFooter v-if="route.path !== '/collect/grid'" />
 
     <ConfirmModal />
     <ChangelogModal />

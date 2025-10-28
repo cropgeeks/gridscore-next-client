@@ -759,6 +759,16 @@
       },
       {
         "type": "new",
+        "title": "New setup screen",
+        "text": "The trial creation/setup screen has been streamlined into a 'wizard'-type interface that takes you through the setup step by step."
+      },
+      {
+        "type": "new",
+        "title": "Trial editing/duplicating improved",
+        "text": "Editing an existing trial will now reuse the same user interface as the trial setup so it's easier to find everything."
+      },
+      {
+        "type": "new",
         "title": "Plot highlighting",
         "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
       },

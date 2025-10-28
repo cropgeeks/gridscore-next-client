@@ -64,7 +64,7 @@
       <v-list>
         <v-list-item v-for="translation in translations" :key="`translation-${translation.locale}`" :title="$t(translation.name)" :subtitle="translation.by">
           <template #prepend>
-            <v-avatar>{{ translation.flag }}</v-avatar>
+            <v-avatar color="muted" variant="tonal" :text="translation.flag" />
           </template>
         </v-list-item>
       </v-list>

@@ -1,11 +1,10 @@
 <template>
   <v-footer
-    app
     height="40"
     class="d-flex justify-space-between border-t border-primary border-opacity-100"
   >
     <div class="text-caption text-disabled">
-      &copy; {{ new Date().getFullYear() }} <span class="d-none d-sm-inline-block">GridScore: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
+      &copy; {{ new Date().getFullYear() }} <span class="d-none d-sm-inline-block">GridScore NEXT: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
     </div>
 
     <div class="text-caption text-disabled">
