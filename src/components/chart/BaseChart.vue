@@ -3,10 +3,13 @@
     :model-value:loading="localLoading"
     @update:loading="notifyLoading"
   >
-    <v-toolbar density="comfortable" color="surface">
-      <v-toolbar-title class="ms-4"><v-icon size="x-small" start color="primary" :icon="compProps.headerIcon" /> {{ compProps.title ? $t(compProps.title) : undefined }}<slot name="title-append" /></v-toolbar-title>
+    <v-toolbar density="comfortable" color="surface" class="trait-toolbar">
+      <v-toolbar-title class="ms-4">
+        <slot name="toolbar-title">
+          <v-icon size="x-small" start :color="headerIconColor" :icon="compProps.headerIcon" /> {{ compProps.title ? $t(compProps.title) : undefined }}<slot name="title-append" />
+        </slot>
+      </v-toolbar-title>
       <slot name="toolbar-prepend" />
-      <v-spacer />
       <v-switch
         hide-details
         color="primary"
@@ -63,6 +66,7 @@ import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiF
     sourceFile?: DownloadBlob
     chartId: string
     headerIcon?: string
+    headerIconColor?: string
   }
 
   const compProps = withDefaults(defineProps<ChartProps>(), {
@@ -74,6 +78,7 @@ import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiF
     supportsFileDownload: true,
     canDownload: false,
     headerIcon: mdiChartAreaspline,
+    headerIconColor: 'primary',
   })
 
   const store = coreStore()
@@ -138,3 +143,9 @@ import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiF
     }
   })
 </script>
+
+<style>
+.trait-toolbar .v-toolbar__content {
+  height: auto !important;
+}
+</style>

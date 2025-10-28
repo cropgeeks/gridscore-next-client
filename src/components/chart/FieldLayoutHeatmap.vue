@@ -25,6 +25,7 @@
               :min="0"
               :max="timepoints.length - 1"
               class="flex-grow-0"
+              color="primary"
               :label="$t('formLabelHeatmapTimeline')"
               :messages="['f']"
               :step="1"
@@ -459,6 +460,12 @@ import { mdiAlert, mdiLandFields } from '@mdi/js'
       }
 
       nextTick(() => redraw())
+    } else if (heatmapChart.value) {
+      try {
+        Plotly.purge(heatmapChart.value)
+      } catch {
+        // Do nothing here, this might fail on first run
+      }
     }
   })
 

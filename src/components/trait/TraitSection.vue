@@ -22,7 +22,7 @@
         <slot name="default" />
       </div>
     </template>
-    <template #subtitle v-if="showDetails && (trait.description || (trait.restrictions && (trait.restrictions.min !== undefined || trait.restrictions.max !== undefined)) || trait.timeframe)">
+    <template #subtitle v-if="showSubtitle && (trait.description || (trait.restrictions && (trait.restrictions.min !== undefined || trait.restrictions.max !== undefined)) || trait.timeframe)">
       <div class="d-flex flex-column">
         <div :class="store.storeShowFullTraitDescription ? 'text-wrap' : undefined" v-if="trait.description">{{ trait.description }}</div>
         <v-chip-group v-if="trait.restrictions || trait.timeframe">
@@ -48,10 +48,12 @@
     trait: TraitPlus
     showDetails?: boolean
     shortTitle?: boolean
+    showSubtitle?: boolean
   }
 
   const compProps = withDefaults(defineProps<TraitSectionProps>(), {
     showDetails: true,
     shortTitle: false,
+    showSubtitle: false,
   })
 </script>

@@ -7,6 +7,9 @@
     autocomplete="off"
     item-value="id"
     item-title="name"
+    :multiple="multiple"
+    :chips="multiple"
+    clearable
     :label="$t('formLabelHeatmapTrait')"
     :hint="$t('formDescriptionHeatmapTrait')"
     persistent-hint
@@ -30,7 +33,12 @@
 
   const selectedTrait = defineModel<TraitPlus>('selectedTrait')
 
-  defineProps<{
+  interface TraitSelectProps {
     traits: TraitPlus[]
-  }>()
+    multiple?: boolean
+  }
+
+  withDefaults(defineProps<TraitSelectProps>(), {
+    multiple: false,
+  })
 </script>

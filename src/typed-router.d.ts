@@ -32,6 +32,7 @@ declare module 'vue-router/auto-routes' {
     '/trial/import/example': RouteRecordInfo<'/trial/import/example', '/trial/import/example', Record<never, never>, Record<never, never>>,
     '/visualization/heatmap': RouteRecordInfo<'/visualization/heatmap', '/visualization/heatmap', Record<never, never>, Record<never, never>>,
     '/visualization/map': RouteRecordInfo<'/visualization/map', '/visualization/map', Record<never, never>, Record<never, never>>,
+    '/visualization/statistics': RouteRecordInfo<'/visualization/statistics', '/visualization/statistics', Record<never, never>, Record<never, never>>,
   }
 
   /**
@@ -99,6 +100,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/visualization/map.vue': {
       routes: '/visualization/map'
+      views: never
+    }
+    'src/pages/visualization/statistics.vue': {
+      routes: '/visualization/statistics'
       views: never
     }
   }

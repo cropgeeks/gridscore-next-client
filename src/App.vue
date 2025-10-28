@@ -90,6 +90,7 @@
             </template>
 
             <v-list-item :prepend-icon="mdiGradientHorizontal" :title="$t('menuVisualizationHeatmap')" to="/visualization/heatmap" />
+            <v-list-item :prepend-icon="mdiChartGantt" :title="$t('menuVisualizationStatistics')" to="/visualization/statistics" />
             <v-list-item :prepend-icon="mdiMap" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 
@@ -161,7 +162,7 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
-import { mdiBarcodeScan, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+import { mdiBarcodeScan, mdiChartGantt, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()

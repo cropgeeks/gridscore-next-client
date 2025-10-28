@@ -10,7 +10,7 @@
       <section v-for="(trait, traitIndex) in traits" :key="`trait-section-${trait.id}`">
         <v-divider v-if="traitIndex > 0" />
 
-        <TraitSection :trait="trait" :show-details="false" />
+        <TraitSection :trait="trait" :show-details="false" :show-subtitle="false" />
 
         <v-list density="compact" v-if="cell.measurements[trait.id || ''] && (cell.measurements[trait.id || ''] || []).length > 0">
           <template v-for="(measure, index) in cell.measurements[trait.id || '']" :key="`selected-measure-${trait.id}-${index}`">
