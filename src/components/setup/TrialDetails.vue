@@ -4,7 +4,7 @@
       <v-col cols="12" md="6">
         <v-text-field
           v-model="model.name"
-          prepend-inner-icon="mdi-text-short"
+          :prepend-inner-icon="mdiTextShort"
           :label="$t('formLabelTrialSetupTrialName')"
           :hint="$t('formDescriptionTrialSetupTrialName')"
           persistent-hint
@@ -14,7 +14,7 @@
       <v-col cols="12" md="6">
         <v-textarea
           v-model="model.description"
-          prepend-inner-icon="mdi-text-long"
+          :prepend-inner-icon="mdiTextLong"
           :label="$t('formLabelTrialSetupTrialDescription')"
           :hint="$t('formDescriptionTrialSetupTrialDescription')"
           persistent-hint
@@ -25,7 +25,7 @@
         <v-combobox
           v-model="group"
           :items="trialGroups"
-          prepend-inner-icon="mdi-folder-table"
+          :prepend-inner-icon="mdiFolderTable"
           :label="$t('formLabelTrialSetupTrialGroup')"
           :hint="$t('formDescriptionTrialSetupTrialGroup')"
           persistent-hint
@@ -37,7 +37,7 @@
         <div class="text-subtitle-2">{{ $t('formLabelTrialSetupTrialPeople') }}</div>
         <p>{{ $t('formDescriptionTrialSetupTrialPeople') }}</p>
 
-        <v-btn @click="addPersonModal?.show()" prepend-icon="mdi-account-plus" :text="$t('buttonAdd')" />
+        <v-btn @click="addPersonModal?.show()" :prepend-icon="mdiAccountPlus" :text="$t('buttonAdd')" />
 
         <div class="mt-5">
           <v-chip
@@ -61,7 +61,7 @@
           <v-col class="d-flex flex-column" cols="6">
             <v-card class="flex-grow-1 d-flex flex-column" :title="$t('pageSetupMediaFilenameUsedTitle')" :subtitle="$t('pageSetupMediaFilenameUsedSubtitle')">
               <template #append>
-                <v-btn @click="resetFilenameChips" color="info" icon="mdi-undo-variant" v-tooltip:top="$t('buttonReset')" />
+                <v-btn @click="resetFilenameChips" color="info" :icon="mdiUndoVariant" v-tooltip:top="$t('buttonReset')" />
               </template>
               <v-card-text class="flex-grow-1 d-flex flex-column">
                 <draggable
@@ -119,6 +119,7 @@
   import type { TrialPlus } from '@/plugins/types/client'
   import { personTypes } from '@/plugins/types/types'
   import { getTraitColor } from '@/plugins/util'
+  import { mdiAccountPlus, mdiFolderTable, mdiTextLong, mdiTextShort, mdiUndoVariant } from '@mdi/js'
   import draggable from 'vuedraggable'
 
   export interface FilenameChip {

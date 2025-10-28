@@ -15,14 +15,14 @@
       />
       <v-menu>
         <template #activator="{ props }">
-          <v-btn v-bind="props" icon="mdi-dots-vertical" />
+          <v-btn v-bind="props" :icon="mdiDotsVertical" />
         </template>
 
         <v-list>
           <slot name="list-prepend" />
-          <v-list-item :disabled="!canDownload" @click="downloadChart('png')" :title="$t('buttonDownloadPng')" prepend-icon="mdi-file-image" v-if="compProps.supportsPngDownload" />
-          <v-list-item :disabled="!canDownload" @click="downloadChart('svg')" :title="$t('buttonDownloadSvg')" prepend-icon="mdi-file-code" v-if="compProps.supportsSvgDownload" />
-          <v-list-item :disabled="!canDownload" @click="downloadSource" :title="$t('buttonDownloadFile')" prepend-icon="mdi-file-document" v-if="compProps.supportsFileDownload" />
+          <v-list-item :disabled="!canDownload" @click="downloadChart('png')" :title="$t('buttonDownloadPng')" :prepend-icon="mdiFileImage" v-if="compProps.supportsPngDownload" />
+          <v-list-item :disabled="!canDownload" @click="downloadChart('svg')" :title="$t('buttonDownloadSvg')" :prepend-icon="mdiFileCode" v-if="compProps.supportsSvgDownload" />
+          <v-list-item :disabled="!canDownload" @click="downloadSource" :title="$t('buttonDownloadFile')" :prepend-icon="mdiFileDocument" v-if="compProps.supportsFileDownload" />
           <slot name="list-append" />
         </v-list>
       </v-menu>
@@ -45,6 +45,7 @@
   import { downloadBlob, downloadSvgsFromContainer, type DownloadBlob } from '@/plugins/file'
   import { getDateTimeString } from '@/plugins/formatting'
   import { coreStore } from '@/stores/app'
+import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiFileImage } from '@mdi/js'
   import Plotly from 'plotly.js/lib/core'
 
   const emit = defineEmits(['update:loading', 'force-redraw'])
@@ -72,7 +73,7 @@
     supportsSvgDownload: true,
     supportsFileDownload: true,
     canDownload: false,
-    headerIcon: 'mdi-chart-areaspline',
+    headerIcon: mdiChartAreaspline,
   })
 
   const store = coreStore()

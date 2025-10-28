@@ -1,18 +1,20 @@
 <template>
   <div class="direction-grid">
-    <div><v-btn @click="emit('direction', 'topLeft')" icon="mdi-arrow-top-left" /></div>
-    <div><v-btn @click="emit('direction', 'top')" icon="mdi-arrow-up" /></div>
-    <div><v-btn @click="emit('direction', 'topRight')" icon="mdi-arrow-top-right" /></div>
-    <div><v-btn @click="emit('direction', 'left')" icon="mdi-arrow-left" /></div>
+    <div><v-btn @click="emit('direction', 'topLeft')" :icon="mdiArrowTopLeft" /></div>
+    <div><v-btn @click="emit('direction', 'top')" :icon="mdiArrowUp" /></div>
+    <div><v-btn @click="emit('direction', 'topRight')" :icon="mdiArrowTopRight" /></div>
+    <div><v-btn @click="emit('direction', 'left')" :icon="mdiArrowLeft" /></div>
     <div><v-btn @click="emit('center')" :icon="centerIcon" /></div>
-    <div><v-btn @click="emit('direction', 'right')" icon="mdi-arrow-right" /></div>
-    <div><v-btn @click="emit('direction', 'bottomLeft')" icon="mdi-arrow-bottom-left" /></div>
-    <div><v-btn @click="emit('direction', 'bottom')" icon="mdi-arrow-down" /></div>
-    <div><v-btn @click="emit('direction', 'bottomRight')" icon="mdi-arrow-bottom-right" /></div>
+    <div><v-btn @click="emit('direction', 'right')" :icon="mdiArrowRight" /></div>
+    <div><v-btn @click="emit('direction', 'bottomLeft')" :icon="mdiArrowBottomLeft" /></div>
+    <div><v-btn @click="emit('direction', 'bottom')" :icon="mdiArrowDown" /></div>
+    <div><v-btn @click="emit('direction', 'bottomRight')" :icon="mdiArrowBottomRight" /></div>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { mdiArrowBottomLeft, mdiArrowBottomRight, mdiArrowDown, mdiArrowLeft, mdiArrowRight, mdiArrowTopLeft, mdiArrowTopRight, mdiArrowUp } from '@mdi/js'
+
   const emit = defineEmits(['direction', 'center'])
 
   defineProps<{

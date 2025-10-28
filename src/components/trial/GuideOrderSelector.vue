@@ -31,8 +31,7 @@
                 class="height-auto flex-grow-1"
                 stacked
                 :text="$t(option.type.i18n)"
-                :active="option.type.name === walkName"
-                active-color="primary"
+                :color="option.type.name === walkName ? 'primary' : undefined"
                 variant="tonal"
                 :disabled="!option.valid"
                 @click="walkName = option.type.name"
@@ -61,8 +60,7 @@
                 class="height-auto flex-grow-1"
                 stacked
                 :text="$t(option.type.i18n)"
-                :active="option.type.name === walkName"
-                active-color="primary"
+                :color="option.type.name === walkName ? 'primary' : undefined"
                 variant="tonal"
                 :disabled="!option.valid"
                 @click="walkName = option.type.name"
@@ -104,7 +102,7 @@
       </v-col>
     </v-row>
 
-    <v-btn color="primary" :disabled="!valid" variant="tonal" @click="emit('order-changed', { order: walkName, scoreWidth: scoreWidth, neighbor: neighbor })" :text="$t('buttonStart')" prepend-icon="mdi-account-arrow-right" />
+    <v-btn color="primary" :disabled="!valid" variant="tonal" @click="emit('order-changed', { order: walkName, scoreWidth: scoreWidth, neighbor: neighbor })" :text="$t('buttonStart')" :prepend-icon="mdiAccountArrowRight" />
   </div>
 </template>
 
@@ -117,6 +115,7 @@
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
   import type { XY } from '@/plugins/location'
   import TrialPreviewCanvas from '@/components/data/TrialPreviewCanvas.vue'
+  import { mdiAccountArrowRight } from '@mdi/js'
 
   export interface GuideOrderConfig {
     order: string

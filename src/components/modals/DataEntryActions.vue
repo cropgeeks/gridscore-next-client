@@ -25,6 +25,7 @@
   import CommentModal from '@/components/modals/CommentModal.vue'
   import type { Comment } from '@/plugins/types/gridscore'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
+  import { mdiBookmark, mdiBookmarkOutline, mdiCamera, mdiCommentText, mdiDirectionsFork } from '@mdi/js'
 
   const store = coreStore()
   const router = useRouter()
@@ -44,19 +45,25 @@
       text: compProps.cell.isMarked ? t('buttonUnbookmarkCell') : t('buttonBookmarkCell'),
       size: 'small',
       variant: 'tonal',
-      baseColor: compProps.cell.isMarked ? 'primary' : undefined,
-      prependIcon: compProps.cell.isMarked ? 'mdi-bookmark' : 'mdi-bookmark-outline',
+      color: compProps.cell.isMarked ? 'primary' : undefined,
+      prependIcon: compProps.cell.isMarked ? mdiBookmark : mdiBookmarkOutline,
       click: toggleMarked,
       disabled: !compProps.trial.editable,
     }, {
+      text: t('buttonTagPhoto'),
+      prependIcon: mdiCamera,
+      variant: 'tonal',
+      size: 'small',
+      click: () => emitter.emit('tag-media', compProps.cell.row || 0, compProps.cell.column || 0, 'image'),
+    }, {
       text: t('buttonCommentCount', (compProps.cell.comments || []).length),
-      prependIcon: 'mdi-comment-text',
+      prependIcon: mdiCommentText,
       variant: 'tonal',
       size: 'small',
       click: showComments,
     }, {
       text: t('buttonStartGuidedWalk'),
-      prependIcon: 'mdi-directions-fork',
+      prependIcon: mdiDirectionsFork,
       variant: 'tonal',
       size: 'small',
       click: onGuidedWalk,

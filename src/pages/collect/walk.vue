@@ -34,10 +34,13 @@
         />
       </template>
     </v-container>
+
+    <MediaModal :trial="trial" />
   </div>
 </template>
 
 <script setup lang="ts">
+  import MediaModal from '@/components/modals/MediaModal.vue'
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'
   import GuideOrderSelector from '@/components/trial/GuideOrderSelector.vue'
   import { getCell, getTrialById } from '@/plugins/idb'

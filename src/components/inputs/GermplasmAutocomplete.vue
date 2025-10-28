@@ -14,7 +14,7 @@
     autocomplete="off"
     :custom-filter="filterGermplasm"
     ref="searchField"
-    prepend-inner-icon="mdi-magnify"
+    :prepend-inner-icon="mdiMagnify"
   >
     <template #item="{ props, item }">
       <v-list-item
@@ -32,6 +32,7 @@
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { filterGermplasm } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
+  import { mdiMagnify } from '@mdi/js'
 
   const store = coreStore()
 

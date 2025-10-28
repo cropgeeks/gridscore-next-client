@@ -4,7 +4,7 @@
       <ResponsiveButton
         v-bind="props"
         variant="tonal"
-        prepend-icon="mdi-arrow-expand-all"
+        :prepend-icon="mdiArrowExpandAll"
         :text="$t('toolbarJumpTo')"
       />
     </template>
@@ -14,12 +14,12 @@
         tag="div"
         @direction="scrollTo"
         @center="scrollTo('center')"
-        center-icon="mdi-circle"
+        :center-icon="mdiCircle"
       />
 
       <div class="d-flex flex-column ga-3 mt-5">
-        <v-btn @click="scrollTo('gps')" v-if="store.storeGpsEnabled" :text="$t('buttonGPS')" prepend-icon="mdi-map-marker" />
-        <v-btn @click="showMarkedPlots" v-if="hasMarkedPlots" :text="$t('buttonMarkedPlots')" prepend-icon="mdi-playlist-check" />
+        <v-btn @click="scrollTo('gps')" v-if="store.storeGpsEnabled" :text="$t('buttonGPS')" :prepend-icon="mdiMapMarker" />
+        <v-btn @click="showMarkedPlots" v-if="hasMarkedPlots" :text="$t('buttonMarkedPlots')" :prepend-icon="mdiPlaylistCheck" />
       </div>
     </v-sheet>
   </v-menu>
@@ -30,6 +30,7 @@
   import type { CellPlus } from '@/plugins/types/client'
   import type { Cell } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
+  import { mdiArrowExpandAll, mdiCircle, mdiMapMarker, mdiPlaylistCheck } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 

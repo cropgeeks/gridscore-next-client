@@ -38,17 +38,17 @@
             <p>{{ $t('formDescriptionSettingsTheme') }}</p>
 
             <v-btn-toggle mandatory v-model="theme" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" prepend-icon="mdi-white-balance-sunny" value="light" :text="$t('menuItemThemeLight')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'light'" /></template></v-btn>
-              <v-btn class="flex-grow-1" prepend-icon="mdi-weather-night" value="dark" :text="$t('menuItemThemeDark')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'dark'" /></template></v-btn>
-              <v-btn class="flex-grow-1" prepend-icon="mdi-desktop-tower-monitor" value="system" :text="$t('menuItemThemeSystem')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'system'" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiWhiteBalanceSunny" value="light" :text="$t('menuItemThemeLight')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'light'" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiWeatherNight" value="dark" :text="$t('menuItemThemeDark')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'dark'" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiDesktopTowerMonitor" value="system" :text="$t('menuItemThemeSystem')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'system'" /></template></v-btn>
             </v-btn-toggle>
 
             <h4 class="mt-3">{{ $t('formLabelSettingsPerformanceMode') }}</h4>
             <p>{{ $t('formDescriptionSettingsPerformanceMode') }}</p>
 
             <v-btn-toggle mandatory v-model="performanceMode" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" prepend-icon="mdi-leaf" :value="true" :text="$t('genericEnabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === true" /></template></v-btn>
-              <v-btn class="flex-grow-1" prepend-icon="mdi-speedometer" :value="false" :text="$t('genericDisabled')"><template #append><v-icon icon="mdi-check" v-if="store.storePerformanceMode === false" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiLeaf" :value="true" :text="$t('genericEnabled')"><template #append><v-icon :icon="mdiCheck" v-if="store.storePerformanceMode === true" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiSpeedometer" :value="false" :text="$t('genericDisabled')"><template #append><v-icon :icon="mdiCheck" v-if="store.storePerformanceMode === false" /></template></v-btn>
             </v-btn-toggle>
           </template>
         </v-card>
@@ -71,8 +71,8 @@
             <p>{{ $t('formDescriptionSettingsNavigationMode') }}</p>
 
             <v-btn-toggle mandatory v-model="navigationMode" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" prepend-icon="mdi-gesture-tap" :value="NavigationMode.DRAG" :text="$t('buttonNavModeDrag')"><template #append><v-icon icon="mdi-check" v-if="store.storeNavigationMode === NavigationMode.DRAG" /></template></v-btn>
-              <v-btn class="flex-grow-1" prepend-icon="mdi-cursor-move" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon icon="mdi-check" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiGestureTap" :value="NavigationMode.DRAG" :text="$t('buttonNavModeDrag')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeNavigationMode === NavigationMode.DRAG" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiCursorMove" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
             </v-btn-toggle>
 
             <v-switch
@@ -117,7 +117,7 @@
             <h4 class="mt-3">{{ $t('formLabelSettingsTraitColors') }}</h4>
             <p>{{ $t('formDescriptionSettingsTraitColors') }}</p>
 
-            <v-btn prepend-icon="mdi-undo-variant" :text="$t('tooltipSettingsResetColors')" @click="setTraitColors(categoricalColors.GridScoreDefault)" />
+            <v-btn :prepend-icon="mdiUndoVariant" :text="$t('tooltipSettingsResetColors')" @click="setTraitColors(categoricalColors.GridScoreDefault)" />
 
             <v-chip-group class="mt-3" column v-model="currentTraitIndex">
               <v-chip
@@ -132,9 +132,9 @@
                 @click="changeColor(index)"
               >
                 <template #prepend>
-                  <v-icon icon="mdi-circle" :color="color" />
+                  <v-icon :icon="mdiCircle" :color="color" />
                 </template>
-                <template #close><v-icon icon="mdi-close-circle" @click.stop="deleteColor(index)" /></template>
+                <template #close><v-icon :icon="mdiCloseCircle" @click.stop="deleteColor(index)" /></template>
               </v-chip>
             </v-chip-group>
 
@@ -142,14 +142,14 @@
             <p>{{ $t('formDescriptionSettingsTraitColorAdd') }}</p>
             <v-color-picker v-model="currentTraitColor" mode="hex" :modes="['hex']" />
 
-            <v-btn :text="$t(currentTraitIndex !== undefined ? 'buttonUpdate' : 'buttonAdd')" prepend-icon="mdi-plus" class="mt-3" color="primary" @click="addColor" />
+            <v-btn :text="$t(currentTraitIndex !== undefined ? 'buttonUpdate' : 'buttonAdd')" :prepend-icon="mdiPlus" class="mt-3" color="primary" @click="addColor" />
 
             <h4 class="mt-3">{{ $t('formLabelSettingsTraitColorPreset') }}</h4>
             <p>{{ $t('formDescriptionSettingsTraitColorPreset') }}</p>
 
             <v-menu>
               <template #activator="{ props }">
-                <v-btn v-bind="props" :text="$t('dropdownSettingsTraitColorPreset')" prepend-icon="mdi-palette-swatch" append-icon="mdi-menu-down" />
+                <v-btn v-bind="props" :text="$t('dropdownSettingsTraitColorPreset')" :prepend-icon="mdiPaletteSwatch" :append-icon="mdiMenuDown" />
               </template>
 
               <v-list>
@@ -232,34 +232,34 @@
             <p>{{ $t('formDescriptionSettingsCanvasShape') }}</p>
 
             <v-btn-toggle mandatory v-model="canvasShape" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" prepend-icon="mdi-circle" :value="CanvasShape.CIRCLE" :text="$t('buttonCanvasShapeCircle')"><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasShape === CanvasShape.CIRCLE" /></template></v-btn>
-              <v-btn class="flex-grow-1" prepend-icon="mdi-square" :value="CanvasShape.SQUARE" :text="$t('buttonCanvasShapeSquare')"><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasShape === CanvasShape.SQUARE" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiCircle" :value="CanvasShape.CIRCLE" :text="$t('buttonCanvasShapeCircle')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasShape === CanvasShape.CIRCLE" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiSquare" :value="CanvasShape.SQUARE" :text="$t('buttonCanvasShapeSquare')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasShape === CanvasShape.SQUARE" /></template></v-btn>
             </v-btn-toggle>
 
             <h4 class="mt-3">{{ $t('formLabelSettingsCanvasSize') }}</h4>
             <p>{{ $t('formDescriptionSettingsCanvasSize') }}</p>
 
             <v-btn-toggle mandatory v-model="canvasSize" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" :value="CanvasSize.SMALL" :text="$t('buttonCanvasSizeSmall')"><template #prepend><v-icon size="x-small" :icon="isSquare ? 'mdi-square' : 'mdi-circle'" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasSize === CanvasSize.SMALL" /></template></v-btn>
-              <v-btn class="flex-grow-1" :value="CanvasSize.MEDIUM" :text="$t('buttonCanvasSizeMedium')"><template #prepend><v-icon :icon="isSquare ? 'mdi-square' : 'mdi-circle'" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasSize === CanvasSize.MEDIUM" /></template></v-btn>
-              <v-btn class="flex-grow-1" :value="CanvasSize.LARGE" :text="$t('buttonCanvasSizeLarge')"><template #prepend><v-icon size="x-large" :icon="isSquare ? 'mdi-square' : 'mdi-circle'" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasSize === CanvasSize.LARGE" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="CanvasSize.SMALL" :text="$t('buttonCanvasSizeSmall')"><template #prepend><v-icon size="x-small" :icon="isSquare ? mdiSquare : mdiCircle" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasSize === CanvasSize.SMALL" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="CanvasSize.MEDIUM" :text="$t('buttonCanvasSizeMedium')"><template #prepend><v-icon :icon="isSquare ? mdiSquare : mdiCircle" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasSize === CanvasSize.MEDIUM" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="CanvasSize.LARGE" :text="$t('buttonCanvasSizeLarge')"><template #prepend><v-icon size="x-large" :icon="isSquare ? mdiSquare : mdiCircle" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasSize === CanvasSize.LARGE" /></template></v-btn>
             </v-btn-toggle>
 
             <h4 class="mt-3">{{ $t('formLabelSettingsCanvasDensity') }}</h4>
             <p>{{ $t('formDescriptionSettingsCanvasDensity') }}</p>
 
             <v-btn-toggle mandatory v-model="canvasDensity" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" :value="CanvasDensity.LOW" :text="$t('buttonCanvasDensityLow')"><template #prepend><v-icon icon="mdi-view-module" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasDensity === CanvasDensity.LOW" /></template></v-btn>
-              <v-btn class="flex-grow-1" :value="CanvasDensity.MEDIUM" :text="$t('buttonCanvasDensityMedium')"><template #prepend><v-icon icon="mdi-view-comfy" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasDensity === CanvasDensity.MEDIUM" /></template></v-btn>
-              <v-btn class="flex-grow-1" :value="CanvasDensity.HIGH" :text="$t('buttonCanvasDensityHigh')"><template #prepend><v-icon icon="mdi-view-grid-compact" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeCanvasDensity === CanvasDensity.HIGH" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="CanvasDensity.LOW" :text="$t('buttonCanvasDensityLow')"><template #prepend><v-icon :icon="mdiViewModule" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasDensity === CanvasDensity.LOW" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="CanvasDensity.MEDIUM" :text="$t('buttonCanvasDensityMedium')"><template #prepend><v-icon :icon="mdiViewComfy" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasDensity === CanvasDensity.MEDIUM" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="CanvasDensity.HIGH" :text="$t('buttonCanvasDensityHigh')"><template #prepend><v-icon :icon="mdiViewGridCompact" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeCanvasDensity === CanvasDensity.HIGH" /></template></v-btn>
             </v-btn-toggle>
 
             <h4 class="mt-3">{{ $t('formLabelSettingsMainDisplayMode') }}</h4>
             <p>{{ $t('formDescriptionSettingsMainDisplayMode') }}</p>
 
             <v-btn-toggle mandatory v-model="mainDisplayMode" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" :value="MainDisplayMode.AUTO" :text="$t('buttonMainDisplayModeAuto')"><template #prepend><v-icon icon="mdi-view-module" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeMainDisplayMode === MainDisplayMode.AUTO" /></template></v-btn>
-              <v-btn class="flex-grow-1" :value="MainDisplayMode.CANVAS_ONLY" :text="$t('buttonMainDisplayModeCanvasOnly')"><template #prepend><v-icon icon="mdi-view-comfy" /></template><template #append><v-icon icon="mdi-check" v-if="store.storeMainDisplayMode === MainDisplayMode.CANVAS_ONLY" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="MainDisplayMode.AUTO" :text="$t('buttonMainDisplayModeAuto')"><template #prepend><v-icon :icon="mdiViewModule" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeMainDisplayMode === MainDisplayMode.AUTO" /></template></v-btn>
+              <v-btn class="flex-grow-1" :value="MainDisplayMode.CANVAS_ONLY" :text="$t('buttonMainDisplayModeCanvasOnly')"><template #prepend><v-icon :icon="mdiViewComfy" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeMainDisplayMode === MainDisplayMode.CANVAS_ONLY" /></template></v-btn>
             </v-btn-toggle>
           </template>
         </v-card>
@@ -273,6 +273,7 @@
   import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
+  import { mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDesktopTowerMonitor, mdiGestureTap, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const store = coreStore()

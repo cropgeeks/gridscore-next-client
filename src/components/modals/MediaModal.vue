@@ -28,11 +28,23 @@
         </template>
 
         <template v-if="inputFile">
-          <v-chip label prepend-icon="mdi-calendar" :text="inputFileDate.toLocaleString()" v-if="inputFileDate" />
+          <v-chip class="my-5" label :prepend-icon="mdiCalendar" :text="inputFileDate.toLocaleString()" v-if="inputFileDate" />
+
+          <v-select
+            v-model="selectedTraits"
+            return-object
+            :items="trial.traits"
+            item-title="name"
+            multiple
+            chips
+            clearable
+            :label="$t('formLabelImageTagTraitSelector')"
+          />
 
           <v-text-field
             class="mt-3"
             v-model="postfix"
+            clearable
             :label="$t('formLabelImageTagFilenamePostfix')"
           />
 
@@ -47,7 +59,7 @@
             v-if="platform.ios"
             :text="$t('modalTextImageTaggingIOSWarning')"
             color="warning"
-            icon="mdi-alert"
+            :icon="mdiAlert"
           />
         </template>
       </template>
@@ -70,6 +82,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
   import { saveAs } from 'file-saver'
+  import { mdiAlert, mdiCalendar } from '@mdi/js'
 
   const store = coreStore()
   const { platform } = useDisplay()
@@ -93,7 +106,7 @@
   const video = useTemplateRef('video')
 
   const canContinue = computed(() => {
-    return true
+    return mediaData.value !== undefined
   })
   const filename = computed(() => {
     const c = cell.value
@@ -176,8 +189,15 @@
       hide()
     }
   }
-  function show (row: number, column: number, type: 'image' | 'video' = 'image') {
+  function show (row: number, column: number, type: 'image' | 'video' = 'image', traitIds?: string[]) {
     mode.value = type
+
+    if (traitIds && traitIds.length > 0) {
+      selectedTraits.value = compProps.trial.traits.filter(t => traitIds.includes(t.id || ''))
+    } else {
+      selectedTraits.value = []
+    }
+
     getCell(store.storeSelectedTrial || '', row, column)
       .then(c => {
         cell.value = c

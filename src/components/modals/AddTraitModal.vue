@@ -7,7 +7,7 @@
           <v-btn
             size="small"
             variant="flat"
-            icon="mdi-close"
+            :icon="mdiClose"
             @click="hide"
           />
         </div>
@@ -32,6 +32,7 @@
 <script setup lang="ts">
   import type { TraitPlus } from '@/plugins/types/client'
   import TrialTraits from '@/components/setup/TrialTraits.vue'
+  import { mdiClose } from '@mdi/js'
 
   const dialog = ref(false)
   const traits = ref<TraitPlus[]>([])

@@ -6,7 +6,7 @@
           <v-text-field
             class="mb-3"
             v-model="currentTrait.name"
-            prepend-inner-icon="mdi-text-short"
+            :prepend-inner-icon="mdiTextShort"
             :label="$t('formLabelTraitName')"
             :hint="$t('formDescriptionTraitName')"
             :error-messages="formState.name ? [formState.name] : undefined"
@@ -18,7 +18,7 @@
           <v-textarea
             class="mb-3"
             v-model="currentTrait.description"
-            prepend-inner-icon="mdi-text-long"
+            :prepend-inner-icon="mdiTextLong"
             :label="$t('formLabelTraitDescription')"
             :hint="$t('formDescriptionTraitDescription')"
             persistent-hint
@@ -45,7 +45,7 @@
                 class="mb-3"
                 v-model="group.name"
                 list="trait-groups"
-                prepend-inner-icon="mdi-tag-text"
+                :prepend-inner-icon="mdiTagText"
                 :label="$t('formLabelTraitGroup')"
                 :hint="$t('formDescriptionTraitGroup')"
                 persistent-hint
@@ -68,7 +68,7 @@
             :disabled="!canEdit"
             :delimiters="['\n']"
             :messages="formState.categories ? undefined : ['f']"
-            prepend-inner-icon="mdi-tag-multiple"
+            :prepend-inner-icon="mdiTagMultiple"
             :label="$t('formLabelTraitRestrictionsCategories')"
             :error-messages="formState.categories ? [formState.categories] : undefined"
             persistent-hint
@@ -86,7 +86,7 @@
                 v-model="restrictions.min"
                 class="mb-3"
                 :disabled="!canEdit"
-                prepend-inner-icon="mdi-format-vertical-align-bottom"
+                :prepend-inner-icon="mdiFormatVerticalAlignBottom"
                 :label="$t('formLabelTraitRestrictionsMin')"
                 :hint="$t('formDescriptionTraitRestrictionsMin')"
                 :error-messages="formState.min ? [formState.min] : undefined"
@@ -98,7 +98,7 @@
                 v-model="restrictions.max"
                 class="mb-3"
                 :disabled="!canEdit"
-                prepend-inner-icon="mdi-format-vertical-align-top"
+                :prepend-inner-icon="mdiFormatVerticalAlignTop"
                 :label="$t('formLabelTraitRestrictionsMax')"
                 :hint="$t('formDescriptionTraitRestrictionsMax')"
                 :error-messages="formState.max ? [formState.max] : undefined"
@@ -112,7 +112,7 @@
             class="mb-3"
             :min="1"
             :disabled="!canEdit"
-            prepend-inner-icon="mdi-set-split"
+            :prepend-inner-icon="mdiSetSplit"
             :label="$t('formLabelTraitSetSize')"
             :hint="$t('formDescriptionTraitSetSize')"
             persistent-hint
@@ -123,7 +123,7 @@
             color="primary"
             class="mb-3"
             :disabled="!canEdit"
-            prepend-icon="mdi-timeline-plus"
+            :prepend-icon="mdiTimelinePlus"
             :label="$t('formLabelTraitAllowRepeats')"
             :hint="$t('formDescriptionTraitAllowRepeats')"
             persistent-hint
@@ -134,7 +134,7 @@
             color="primary"
             class="mb-3"
             :disabled="!canEdit"
-            prepend-icon="mdi-calendar-expand-horizontal"
+            :prepend-icon="mdiCalendarExpandHorizontal"
             :label="$t('formLabelTraitTimeframe')"
             :hint="$t('formDescriptionTraitTimeframe')"
             persistent-hint
@@ -142,7 +142,7 @@
 
           <v-card
             :title="$t('formLabelTraitTimeframeType')"
-            prepend-icon="mdi-calendar-expand-horizontal"
+            :prepend-icon="mdiCalendarExpandHorizontal"
             variant="tonal"
 
             v-if="timeframeSet && timeframe"
@@ -153,8 +153,8 @@
 
             <template #text>
               <v-btn-toggle v-model="timeframe.type" :disabled="!canEdit" variant="tonal" class="mb-3">
-                <v-btn :value="TimeframeType.SUGGEST" color="warning" :text="$t('formSelectOptionTraitTimeframeSuggest')" prepend-icon="mdi-alert" />
-                <v-btn :value="TimeframeType.ENFORCE" color="error" :text="$t('formSelectOptionTraitTimeframeEnforce')" prepend-icon="mdi-minus-circle" />
+                <v-btn :value="TimeframeType.SUGGEST" color="warning" :text="$t('formSelectOptionTraitTimeframeSuggest')" :prepend-icon="mdiAlert" />
+                <v-btn :value="TimeframeType.ENFORCE" color="error" :text="$t('formSelectOptionTraitTimeframeEnforce')" :prepend-icon="mdiMinusCircle" />
               </v-btn-toggle>
 
               <v-row>
@@ -166,7 +166,7 @@
                     prepend-icon=""
                     :disabled="!canEdit"
                     :max="timeframe.end"
-                    prepend-inner-icon="mdi-calendar-start"
+                    :prepend-inner-icon="mdiCalendarStart"
                     clearable
                     :model-value="timeframe.start ? date.toJsDate(timeframe.start) : undefined"
                     @update:model-value="setStartDate"
@@ -180,7 +180,7 @@
                     prepend-icon=""
                     :disabled="!canEdit"
                     :min="timeframe.start"
-                    prepend-inner-icon="mdi-calendar-end"
+                    :prepend-inner-icon="mdiCalendarEnd"
                     clearable
                     :model-value="timeframe.end ? date.toJsDate(timeframe.end) : undefined"
                     @update:model-value="setEndDate"
@@ -190,7 +190,7 @@
             </template>
           </v-card>
 
-          <v-btn class="my-5" color="primary" :disabled="!currentTrait || !currentTrait.name || currentTrait.name.trim().length === 0" :prepend-icon="currentTrait.id ? 'mdi-tag-edit' : 'mdi-tag-plus'" :text="$t(currentTrait.id ? 'buttonUpdate' : 'buttonAdd')" @click="addTrait" />
+          <v-btn class="my-5" color="primary" :disabled="!currentTrait || !currentTrait.name || currentTrait.name.trim().length === 0" :prepend-icon="currentTrait.id ? mdiTagEdit : mdiTagPlus" :text="$t(currentTrait.id ? 'buttonUpdate' : 'buttonAdd')" @click="addTrait" />
         </v-form>
       </v-col>
       <v-col cols="12" md="6">
@@ -220,7 +220,7 @@
             </div>
           </template>
           <template #actions v-if="model && model.length > 0">
-            <v-btn prepend-icon="mdi-delete" :text="$t('buttonClear')" :disabled="isEdit === true" @click="clearTraits" variant="tonal" color="error" />
+            <v-btn :prepend-icon="mdiDelete" :text="$t('buttonClear')" :disabled="isEdit === true" @click="clearTraits" variant="tonal" color="error" />
           </template>
         </v-card>
         <template v-if="model && model.length > 0">
@@ -249,7 +249,7 @@
                   class="me-2"
                   size="small"
                   :text="$t(trait.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
-                  :prepend-icon="trait.allowRepeats ? 'mdi-timeline-plus' : 'mdi-timeline-remove'"
+                  :prepend-icon="trait.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
                 />
 
                 <v-chip
@@ -257,7 +257,7 @@
                   class="me-2"
                   size="small"
                   :text="$t('formFeedbackTraitSetSize', { count: trait.setSize })"
-                  prepend-icon="mdi-set-split"
+                  :prepend-icon="mdiSetSplit"
                 />
 
                 <v-chip
@@ -266,7 +266,7 @@
                   class="me-2"
                   size="small"
                   :text="trait.group.name"
-                  prepend-icon="mdi-tag-text"
+                  :prepend-icon="mdiTagText"
                 />
               </div>
               <div v-if="trait.timeframe" class="mb-2">
@@ -275,7 +275,7 @@
                   size="small"
                   class="me-2"
                   :text="$t(trait.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
-                  :prepend-icon="trait.timeframe.type === TimeframeType.SUGGEST ? 'mdi-alert' : 'mdi-minus-circle'"
+                  :prepend-icon="trait.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
                 />
                 <v-chip
                   v-if="trait.timeframe.start"
@@ -283,7 +283,7 @@
                   size="small"
                   class="me-2"
                   :text="trait.timeframe.start"
-                  prepend-icon="mdi-calendar-start"
+                  :prepend-icon="mdiCalendarStart"
                 />
                 <v-chip
                   v-if="trait.timeframe.end"
@@ -291,13 +291,13 @@
                   size="small"
                   class="me-2"
                   :text="trait.timeframe.end"
-                  prepend-icon="mdi-calendar-end"
+                  :prepend-icon="mdiCalendarEnd"
                 />
               </div>
 
               <v-btn-group variant="tonal">
-                <v-btn :text="$t('buttonDuplicate')" color="info" prepend-icon="mdi-content-duplicate" @click.stop="duplicateTrait(trait)" />
-                <v-btn :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(trait.id || '') && isTrialOwner === false" prepend-icon="mdi-delete" @click.stop="deleteTrait(traitIndex)" />
+                <v-btn :text="$t('buttonDuplicate')" color="info" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(trait)" />
+                <v-btn :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(trait.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(traitIndex)" />
               </v-btn-group>
             </template>
           </v-card>
@@ -325,6 +325,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import { germinateToTraits, jsonToTraits, tabularToTraits, traitsToGerminate, traitsToTabular } from '@/plugins/util'
+  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
 
   const { t } = useI18n()
   const store = coreStore()

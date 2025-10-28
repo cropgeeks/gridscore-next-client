@@ -84,7 +84,7 @@
               :persistent-hint="config.hint !== undefined"
               prepend-icon=""
               :autofocus="config.autofocus"
-              prepend-inner-icon="mdi-paperclip"
+              :prepend-inner-icon="mdiPaperclip"
               :accept="config.accepts"
             />
             <v-checkbox
@@ -118,7 +118,8 @@
 </template>
 
 <script setup lang="ts" generic="T">
-  import { useDate } from 'vuetify'
+  import { mdiPaperclip } from '@mdi/js'
+import { useDate } from 'vuetify'
 
   export interface SelectOption {
     title: string

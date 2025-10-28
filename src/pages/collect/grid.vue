@@ -12,16 +12,16 @@
         <v-menu activator="#grid-media-mode">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
             <v-list-subheader :title="$t('menuItemMediaModeHeading')" />
-            <v-list-item :title="$t('menuItemMediaModeDisabled')" prepend-icon="mdi-cancel" :append-icon="store.storeMediaMode === undefined ? 'mdi-check' : undefined" @click="store.setMediaMode(undefined)" />
-            <v-list-item :title="$t('menuItemMediaModeImage')" prepend-icon="mdi-image" :append-icon="store.storeMediaMode === 'image' ? 'mdi-check' : undefined" @click="store.setMediaMode('image')" />
-            <v-list-item :title="$t('menuItemMediaModeVideo')" prepend-icon="mdi-video" :append-icon="store.storeMediaMode === 'video' ? 'mdi-check' : undefined" @click="store.setMediaMode('video')" />
+            <v-list-item :title="$t('menuItemMediaModeDisabled')" :prepend-icon="mdiCancel" :append-icon="store.storeMediaMode === undefined ? mdiCheck : undefined" @click="store.setMediaMode(undefined)" />
+            <v-list-item :title="$t('menuItemMediaModeImage')" :prepend-icon="mdiImage" :append-icon="store.storeMediaMode === 'image' ? mdiCheck : undefined" @click="store.setMediaMode('image')" />
+            <v-list-item :title="$t('menuItemMediaModeVideo')" :prepend-icon="mdiVideo" :append-icon="store.storeMediaMode === 'video' ? mdiCheck : undefined" @click="store.setMediaMode('video')" />
           </v-list>
         </v-menu>
         <v-menu :close-on-content-click="false" activator="#grid-highlight">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
-            <v-list-item :title="$t('formLabelPlotHighlightNothing')" prepend-icon="mdi-marker-cancel" :append-icon="store.storeHighlightConfig.type === undefined ? 'mdi-check' : undefined" @click="setHighlight(undefined)" />
-            <v-list-item v-if="trialControls && trialControls.length > 0" :title="$t('formLabelPlotHighlightControls')" prepend-icon="mdi-checkbox-marked" :append-icon="store.storeHighlightConfig.type === 'controls' ? 'mdi-check' : undefined" @click="setHighlight('controls')" />
-            <v-list-item v-if="trialTreatments && trialTreatments.length > 0" prepend-icon="mdi-sprinkler-fire" :append-icon="store.storeHighlightConfig.type === 'treatments' ? 'mdi-check' : undefined">
+            <v-list-item :title="$t('formLabelPlotHighlightNothing')" :prepend-icon="mdiMarkerCancel" :append-icon="store.storeHighlightConfig.type === undefined ? mdiCheck : undefined" @click="setHighlight(undefined)" />
+            <v-list-item v-if="trialControls && trialControls.length > 0" :title="$t('formLabelPlotHighlightControls')" :prepend-icon="mdiCheckboxMarked" :append-icon="store.storeHighlightConfig.type === 'controls' ? mdiCheck : undefined" @click="setHighlight('controls')" />
+            <v-list-item v-if="trialTreatments && trialTreatments.length > 0" :prepend-icon="mdiSprinklerFire" :append-icon="store.storeHighlightConfig.type === 'treatments' ? mdiCheck : undefined">
               <v-select
                 :label="$t('formLabelPlotHighlightTreatments')"
                 multiple
@@ -36,7 +36,7 @@
                 </template>
               </v-select>
             </v-list-item>
-            <v-list-item v-if="trialReps && trialReps.length > 0" prepend-icon="mdi-format-list-numbered" :append-icon="store.storeHighlightConfig.type === 'reps' ? 'mdi-check' : undefined">
+            <v-list-item v-if="trialReps && trialReps.length > 0" :prepend-icon="mdiFormatListNumbered" :append-icon="store.storeHighlightConfig.type === 'reps' ? mdiCheck : undefined">
               <v-select
                 :label="$t('formLabelPlotHighlightReps')"
                 multiple
@@ -51,7 +51,7 @@
                 </template>
               </v-select>
             </v-list-item>
-            <v-list-item prepend-icon="mdi-sprout" :append-icon="store.storeHighlightConfig.type === 'germplasm' ? 'mdi-check' : undefined">
+            <v-list-item :prepend-icon="mdiSprout" :append-icon="store.storeHighlightConfig.type === 'germplasm' ? mdiCheck : undefined">
               <v-text-field
                 v-model="highlightSearch"
                 :label="$t('formLabelPlotHighlightName')"
@@ -63,7 +63,7 @@
           </v-list>
         </v-menu>
       </v-btn-group>
-      <v-btn v-if="trial.transactionCount !== undefined && trial.transactionCount > 0" prepend-icon="mdi-cloud-upload" @click="synchronize" color="info" variant="tonal" :text="$t('toolbarSyncInfo', trial.transactionCount)" />
+      <v-btn v-if="trial.transactionCount !== undefined && trial.transactionCount > 0" :prepend-icon="mdiCloudUpload" @click="synchronize" color="info" variant="tonal" :text="$t('toolbarSyncInfo', trial.transactionCount)" />
       <GermplasmAutocomplete
         :trial="trial"
         v-model="searchMatch"
@@ -85,21 +85,21 @@
           class="fab-jump-to"
           color="primary"
           size="large"
-          icon="mdi-cursor-move"
+          :icon="mdiCursorMove"
         />
       </template>
       <v-sheet class="pa-3">
         <ArrowDirectionGrid
           @direction="moveTowards"
           @center="jumpMenuVisible = false"
-          center-icon="mdi-cancel"
+          :center-icon="mdiCancel"
         />
       </v-sheet>
     </v-menu>
 
     <SearchResultModal ref="searchResultModal" :list="searchResults" v-if="searchResults && searchResults.length > 0" />
 
-    <ImageModal :trial="trial" />
+    <MediaModal :trial="trial" />
   </div>
 </template>
 
@@ -107,7 +107,7 @@
   import DataGrid from '@/components/data/DataGrid.vue'
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
-  import ImageModal from '@/components/modals/MediaModal.vue'
+  import MediaModal from '@/components/modals/MediaModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
@@ -116,6 +116,7 @@
   import { getTrialById } from '@/plugins/idb'
   import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
+  import { mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCloudUpload, mdiCursorMove, mdiFormatListNumbered, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
@@ -155,18 +156,16 @@
     return [{
       text: t('toolbarPlotHighlight'),
       id: 'grid-highlight',
-      active: store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined,
-      activeColor: 'primary',
-      prependIcon: 'mdi-marker',
+      color: store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined ? 'primary' : undefined,
+      prependIcon: mdiMarker,
       variant: 'tonal',
       size: undefined,
       click: () => {},
     }, {
       text: t('toolbarPlotMediaMode'),
       id: 'grid-media-mode',
-      active: store.storeMediaMode !== undefined,
-      prependIcon: 'mdi-camera-burst',
-      activeColor: 'primary',
+      prependIcon: mdiCameraBurst,
+      color: store.storeMediaMode !== undefined ? 'primary' : undefined,
       variant: 'tonal',
       size: undefined,
       click: () => {},

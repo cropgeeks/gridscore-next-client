@@ -6,8 +6,8 @@
       </slot>
     </template>
     <template #append v-if="trial.hasLocalUpdate || trial.hasRemoteUpdate">
-      <v-btn v-if="trial.hasLocalUpdate" icon="mdi-cloud-upload" color="info" v-tooltip:bottom="$t('tooltipTrialHasTransactions')" @click="emitter.emit('synchronize-trial', trial)" />
-      <v-btn v-else-if="trial.hasRemoteUpdate" icon="mdi-cloud-download" color="warning" v-tooltip:bottom="$t('tooltipTrialHasRemoteUpdate')" @click="emitter.emit('synchronize-trial', trial)" />
+      <v-btn v-if="trial.hasLocalUpdate" :icon="mdiCloudUpload" color="info" v-tooltip:bottom="$t('tooltipTrialHasTransactions')" @click="emitter.emit('synchronize-trial', trial)" />
+      <v-btn v-else-if="trial.hasRemoteUpdate" :icon="mdiCloudDownload" color="warning" v-tooltip:bottom="$t('tooltipTrialHasRemoteUpdate')" @click="emitter.emit('synchronize-trial', trial)" />
     </template>
     <template #subtitle v-if="trial.description">
       <span class="text-wrap" v-if="wrapDescription" v-html="trial.description" />
@@ -16,7 +16,7 @@
 
     <v-card-text class="pb-0">
       <div class="d-flex flex-row flex-wrap ga-2">
-        <v-chip v-if="trial.updatedOn" prepend-icon="mdi-calendar-edit" variant="tonal" color="primary" label v-tooltip:bottom="new Date(trial.updatedOn).toLocaleString()" :text="formatTimeAgo(trial.updatedOn)" />
+        <v-chip v-if="trial.updatedOn" :prepend-icon="mdiCalendarEdit" variant="tonal" color="primary" label v-tooltip:bottom="new Date(trial.updatedOn).toLocaleString()" :text="formatTimeAgo(trial.updatedOn)" />
         <slot name="chips" />
       </div>
     </v-card-text>
@@ -24,67 +24,67 @@
     <v-card-text class="bg-tonal" v-if="horizontal">
       <v-row>
         <v-col class="d-flex align-center justify-center">
-          <v-btn variant="tonal" class="cursor-default" icon="mdi-folder-table" v-tooltip:top="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
+          <v-btn variant="tonal" class="cursor-default" :icon="mdiFolderTable" v-tooltip:top="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trial.layout.rows, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-land-rows-horizontal" v-tooltip:top="$t('widgetTrialSelectorRows')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiLandRowsHorizontal" v-tooltip:top="$t('widgetTrialSelectorRows')" />
           </v-badge>
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trial.layout.columns, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-land-rows-vertical" v-tooltip:top="$t('widgetTrialSelectorColumns')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiLandRowsVertical" v-tooltip:top="$t('widgetTrialSelectorColumns')" />
           </v-badge>
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trial.traits.length, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-tag-multiple" v-tooltip:top="$t('widgetTrialSelectorTraits')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiTagMultiple" v-tooltip:top="$t('widgetTrialSelectorTraits')" />
           </v-badge>
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix((trial.people || []).length, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-account-multiple" v-tooltip:top="$t('widgetTrialSelectorPeople')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiAccountMultiple" v-tooltip:top="$t('widgetTrialSelectorPeople')" />
           </v-badge>
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix((trial.comments || []).length, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-comment-multiple" v-tooltip:top="$t('widgetTrialSelectorComments')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiCommentMultiple" v-tooltip:top="$t('widgetTrialSelectorComments')" />
           </v-badge>
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix((trial.events || []).length, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-flag-variant" v-tooltip:top="$t('widgetTrialSelectorEvents')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiFlagVariant" v-tooltip:top="$t('widgetTrialSelectorEvents')" />
           </v-badge>
         </v-col>
         <v-col class="d-flex align-center justify-center">
           <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trialDuration, 1)">
-            <v-btn variant="tonal" class="cursor-default" icon="mdi-calendar-expand-horizontal" v-tooltip:top="$t('widgetTrialSelectorTrialDuration')" />
+            <v-btn variant="tonal" class="cursor-default" :icon="mdiCalendarExpandHorizontal" v-tooltip:top="$t('widgetTrialSelectorTrialDuration')" />
           </v-badge>
         </v-col>
       </v-row>
     </v-card-text>
 
     <v-list variant="tonal" slim v-else>
-      <v-list-item prepend-icon="mdi-folder-table" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
-      <v-list-item prepend-icon="mdi-land-rows-horizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
-      <v-list-item prepend-icon="mdi-land-rows-vertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
-      <v-list-item prepend-icon="mdi-tag-multiple" :title="$t('widgetTrialSelectorTraits')"><template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template></v-list-item>
-      <v-list-item prepend-icon="mdi-account-multiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item prepend-icon="mdi-comment-multiple" :title="$t('widgetTrialSelectorComments')"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item prepend-icon="mdi-flag-variant" :title="$t('widgetTrialSelectorEvents')"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item prepend-icon="mdi-calendar-expand-horizontal" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
+      <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')"><template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiCalendarExpandHorizontal" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
     </v-list>
 
     <v-card-actions v-if="showActions">
       <slot name="actions">
         <div class="d-flex justify-space-between flex-grow-1 flex-wrap ga-2">
           <div>
-            <v-btn variant="tonal" :color="selected ? 'info' : undefined" :text="$t(selected ? 'buttonDeselect' : 'buttonSelect')" :prepend-icon="selected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'" v-if="selectionEnabled" @click="emit('toggle-select')" />
+            <v-btn variant="tonal" :color="selected ? 'info' : undefined" :text="$t(selected ? 'buttonDeselect' : 'buttonSelect')" :prepend-icon="selected ? mdiCheckboxMarked : mdiCheckboxBlankOutline" v-if="selectionEnabled" @click="emit('toggle-select')" />
             <template v-else>
-              <v-btn variant="tonal" append-icon="mdi-menu-down" v-if="horizontal === false" @click="menuShown = true"><v-icon icon="mdi-cog" /></v-btn>
+              <v-btn variant="tonal" :append-icon="mdiMenuDown" v-if="horizontal === false" @click="menuShown = true"><v-icon :icon="mdiCog" /></v-btn>
               <v-menu v-else>
                 <template #activator="{ props }">
-                  <v-btn variant="tonal" append-icon="mdi-menu-down" v-bind="props"><v-icon icon="mdi-cog" /></v-btn>
+                  <v-btn variant="tonal" :append-icon="mdiMenuDown" v-bind="props"><v-icon :icon="mdiCog" /></v-btn>
                 </template>
                 <TrialOptionsDropdown
                   :editable="trial.editable || false"
@@ -105,7 +105,7 @@
               </v-menu>
             </template>
           </div>
-          <v-btn :prepend-icon="isSelected ? 'mdi-notebook-check' : 'mdi-notebook-edit'" :text="$t(isSelected ? 'buttonActive' : 'buttonSelect')" :color="isSelected ? 'primary' : 'info'" variant="tonal" @click="emit('load')" />
+          <v-btn :prepend-icon="isSelected ? mdiNotebookCheck : mdiNotebookEdit" :text="$t(isSelected ? 'buttonActive' : 'buttonSelect')" :color="isSelected ? 'primary' : 'info'" variant="tonal" @click="emit('load')" />
         </div>
       </slot>
     </v-card-actions>
@@ -129,7 +129,7 @@
           @close-menu="menuShown = false"
         />
         <template #actions>
-          <v-btn variant="tonal" color="primary" append-icon="mdi-menu-up" @click="menuShown = false"><v-icon icon="mdi-cog" /></v-btn>
+          <v-btn variant="tonal" color="primary" :append-icon="mdiMenuUp" @click="menuShown = false"><v-icon :icon="mdiCog" /></v-btn>
         </template>
       </v-card>
     </v-expand-transition>
@@ -145,6 +145,7 @@
   import TrialOptionsDropdown from '@/components/trial/TrialOptionsDropdown.vue'
 
   import emitter from 'tiny-emitter/instance'
+  import { mdiAccountMultiple, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
 
   const store = coreStore()
 

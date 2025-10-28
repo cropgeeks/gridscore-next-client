@@ -11,7 +11,7 @@
     <v-card>
       <v-toolbar>
         <v-btn
-          icon="mdi-close"
+          :icon="mdiClose"
           @click="confirmClose"
         />
 
@@ -63,13 +63,13 @@
             <v-col cols="12" md="4" class="d-flex">
               <v-card class="text-center flex-grow-1">
                 <v-card-title>
-                  <v-icon icon="mdi-chevron-double-right" :class="(guidedWalk.prevCells && guidedWalk.prevCells.length > 0) ? null : 'text-muted'" />
+                  <v-icon :icon="mdiChevronDoubleRight" :class="(guidedWalk.prevCells && guidedWalk.prevCells.length > 0) ? null : 'text-muted'" />
                   <v-menu
                     open-on-hover
                     location="bottom center"
                   >
                     <template #activator="{ props }">
-                      <a v-bind="props" href="#" @click.prevent><v-icon icon="mdi-map-marker" id="guided-walk-current" class="mx-2" /></a>
+                      <a v-bind="props" href="#" @click.prevent><v-icon :icon="mdiMapMarker" id="guided-walk-current" class="mx-2" /></a>
                     </template>
                     <v-sheet class="pa-3">
                       <TrialPreviewCanvas
@@ -81,7 +81,7 @@
                       />
                     </v-sheet>
                   </v-menu>
-                  <v-icon icon="mdi-chevron-double-right" :class="(guidedWalk.nextCells && guidedWalk.nextCells.length > 0) ? null : 'text-muted'" />
+                  <v-icon :icon="mdiChevronDoubleRight" :class="(guidedWalk.nextCells && guidedWalk.nextCells.length > 0) ? null : 'text-muted'" />
                 </v-card-title>
 
                 <v-card-subtitle>
@@ -126,12 +126,19 @@
                         :ref="(el) => (refs[`${trait.id}`] = el)"
                       >
                         <v-btn
-                          icon="mdi-history"
+                          :icon="mdiHistory"
                           size="small"
                           class="mb-1"
                           :disabled="!hasHistoricData[trait.id || '']"
                           v-tooltip:top="$t('tooltipViewTraitDataHistory')"
                           @click="showHistory(trait)"
+                        />
+                        <v-btn
+                          :icon="mdiCamera"
+                          size="small"
+                          class="mb-1"
+                          v-tooltip:top="$t('buttonTagPhoto')"
+                          @click="emitter.emit('tag-media', cell.row || 0, cell.column || 0, 'image', [trait.id || ''])"
                         />
                       </TraitInputSection>
                     </template>
@@ -190,6 +197,7 @@
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
+  import { mdiCamera, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
 
   interface TraitGroup {
     name: string
@@ -262,7 +270,7 @@
     if (isGuidedWalk.value && guidedWalk.value) {
       return {
         title: t('buttonPrevious'),
-        prependIcon: 'mdi-chevron-left',
+        prependIcon: mdiChevronLeft,
         color: 'primary',
         appendIcon: undefined,
         disabled: guidedWalk.value.index === 0,
@@ -270,7 +278,7 @@
     } else {
       return {
         title: t('buttonCancel'),
-        prependIcon: 'mdi-cancel',
+        prependIcon: mdiCancel,
         color: undefined,
         appendIcon: undefined,
         disabled: false,
@@ -286,14 +294,14 @@
             title: t('buttonNext'),
             prependIcon: undefined,
             color: 'primary',
-            appendIcon: 'mdi-chevron-right',
+            appendIcon: mdiChevronRight,
             disabled: false,
           }
         } else {
           return {
             title: t('buttonFinish'),
             color: 'primary',
-            prependIcon: 'mdi-notebook-check',
+            prependIcon: mdiNotebookCheck,
             appendIcon: undefined,
             disabled: false,
           }
@@ -302,7 +310,7 @@
         return {
           title: t('buttonSave'),
           color: 'primary',
-          prependIcon: 'mdi-content-save',
+          prependIcon: mdiContentSave,
           appendIcon: undefined,
           disabled: !canSave.value,
         }
@@ -311,7 +319,7 @@
       return {
         title: t('buttonClose'),
         color: undefined,
-        prependIcon: 'mdi-cancel',
+        prependIcon: mdiCancel,
         appendIcon: undefined,
         disabled: !canSave.value,
       }
@@ -456,7 +464,7 @@
           okVariant: 'error',
           callback: (result: boolean) => {
             if (result) {
-              router.push('/collect/grid')
+              hide()
             }
           },
         })

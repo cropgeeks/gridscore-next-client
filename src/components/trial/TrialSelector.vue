@@ -13,7 +13,7 @@
           class="ma-2"
           autocomplete="off"
           width="min(50vw, 250px)"
-          prepend-inner-icon="mdi-magnify"
+          :prepend-inner-icon="mdiMagnify"
           :placeholder="$t('formLabelTrialSelectorSearch')"
           clearable
           hide-details
@@ -22,47 +22,47 @@
       </div>
 
       <div class="me-3 d-flex align-center">
-        <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorRefresh')" icon="mdi-update" @click="update" />
+        <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorRefresh')" :icon="mdiUpdate" @click="update" />
         <v-menu>
           <template #activator="{ props }">
-            <v-btn v-bind="props" :icon="trialDisplayMode === TrialListType.GRID ? 'mdi-view-grid' : 'mdi-view-sequential'" v-tooltip:top="$t('tooltipTrialSelectorArrangement')" />
+            <v-btn v-bind="props" :icon="trialDisplayMode === TrialListType.GRID ? mdiViewGrid : mdiViewSequential" v-tooltip:top="$t('tooltipTrialSelectorArrangement')" />
           </template>
           <v-list slim v-model="trialDisplayMode">
-            <v-list-item prepend-icon="mdi-view-grid" :title="$t('tooltipTrialSelectorArrangementGrid')" @click="trialDisplayMode = TrialListType.GRID" :append-icon="trialDisplayMode === TrialListType.GRID ? 'mdi-check' : undefined" />
-            <v-list-item prepend-icon="mdi-view-sequential" :title="$t('tooltipTrialSelectorArrangementList')" @click="trialDisplayMode = TrialListType.LIST" :append-icon="trialDisplayMode === TrialListType.LIST ? 'mdi-check' : undefined" />
+            <v-list-item :prepend-icon="mdiViewGrid" :title="$t('tooltipTrialSelectorArrangementGrid')" @click="trialDisplayMode = TrialListType.GRID" :append-icon="trialDisplayMode === TrialListType.GRID ? mdiCheck : undefined" />
+            <v-list-item :prepend-icon="mdiViewSequential" :title="$t('tooltipTrialSelectorArrangementList')" @click="trialDisplayMode = TrialListType.LIST" :append-icon="trialDisplayMode === TrialListType.LIST ? mdiCheck : undefined" />
           </v-list>
         </v-menu>
         <v-menu :close-on-content-click="false">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-sort" v-tooltip:top="$t('formLabelTrialSelectorOrderBy')" />
+            <v-btn v-bind="props" :icon="mdiSort" v-tooltip:top="$t('formLabelTrialSelectorOrderBy')" />
           </template>
           <v-sheet class="pa-3">
             <v-select v-model="sortField" :items="sortOptions" class="mb-3" :label="$t('formLabelTrialSelectorOrderBy')" persistent-hint :hint="$t('formDescriptionTrialSelectorOrderBy')" />
 
             <v-btn-toggle v-model="sortDescending" variant="tonal" color="primary" class="d-flex">
-              <v-btn class="flex-grow-1" prepend-icon="mdi-sort-ascending" :value="false" :text="$t('formCheckboxSortOrderAscending')">
-                <template #append><v-icon icon="mdi-check" v-if="sortDescending === false" /></template>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiSortAscending" :value="false" :text="$t('formCheckboxSortOrderAscending')">
+                <template #append><v-icon :icon="mdiCheck" v-if="sortDescending === false" /></template>
               </v-btn>
               <v-btn class="flex-grow-1" :value="true" :text="$t('formCheckboxSortOrderDescending')">
-                <template #prepend><v-icon icon="mdi-sort-descending" style="transform: scaleY(-1);" /></template>
-                <template #append><v-icon icon="mdi-check" v-if="sortDescending === true" /></template>
+                <template #prepend><v-icon :icon="mdiSortDescending" style="transform: scaleY(-1);" /></template>
+                <template #append><v-icon :icon="mdiCheck" v-if="sortDescending === true" /></template>
               </v-btn>
             </v-btn-toggle>
           </v-sheet>
         </v-menu>
-        <v-btn v-tooltip:top="$t('tooltipTrialSelectorMultiSelect')" :icon="selectionEnabled ? 'mdi-checkbox-multiple-marked' : 'mdi-checkbox-multiple-blank-outline'" @click="selectionEnabled = !selectionEnabled" v-if="selectedTrials.length === 0" />
+        <v-btn v-tooltip:top="$t('tooltipTrialSelectorMultiSelect')" :icon="selectionEnabled ? mdiCheckboxMultipleMarked : mdiCheckboxMultipleBlankOutline" @click="selectionEnabled = !selectionEnabled" v-if="selectedTrials.length === 0" />
         <v-menu v-else>
           <template #activator="{ props }">
             <v-badge class="pe-none" location="top left" color="primary" offset-y="10" offset-x="10" :content="getNumberWithSuffix(selectedTrials.length, 1)">
-              <v-btn v-bind="props" :icon="selectionEnabled ? 'mdi-checkbox-multiple-marked' : 'mdi-checkbox-multiple-blank-outline'" />
+              <v-btn v-bind="props" :icon="selectionEnabled ? mdiCheckboxMultipleMarked : mdiCheckboxMultipleBlankOutline" />
             </v-badge>
           </template>
           <v-list slim>
-            <v-list-item prepend-icon="mdi-checkbox-blank-off-outline" :title="$t('buttonCancelSelection')" @click="selectionEnabled = false" />
+            <v-list-item :prepend-icon="mdiCheckboxBlankOffOutline" :title="$t('buttonCancelSelection')" @click="selectionEnabled = false" />
             <v-divider />
-            <v-list-item prepend-icon="mdi-tag-plus" :title="$t('buttonAddTrait')" :disabled="editableSelectedTrials.length === 0" @click="addTrait()" />
+            <v-list-item :prepend-icon="mdiTagPlus" :title="$t('buttonAddTrait')" :disabled="editableSelectedTrials.length === 0" @click="addTrait()" />
             <v-divider />
-            <v-list-item prepend-icon="mdi-delete" :title="$t('buttonDelete')" base-color="error" @click="deleteSelectedTrials" />
+            <v-list-item :prepend-icon="mdiDelete" :title="$t('buttonDelete')" base-color="error" @click="deleteSelectedTrials" />
           </v-list>
         </v-menu>
       </div>
@@ -84,13 +84,13 @@
         </v-chip>
       </v-chip-group>
 
-      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? 'mdi-check' : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" prepend-icon="mdi-cloud-download" @click="filterWarning('remote')">
+      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? mdiCheck : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" :prepend-icon="mdiCloudDownload" @click="filterWarning('remote')">
         <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</span></template>
       </v-card>
-      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? 'mdi-check' : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" prepend-icon="mdi-cloud-upload" @click="filterWarning('local')">
+      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? mdiCheck : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" :prepend-icon="mdiCloudUpload" @click="filterWarning('local')">
         <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</span></template>
       </v-card>
-      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? 'mdi-check' : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" prepend-icon="mdi-calendar-alert" @click="filterWarning('expiry')">
+      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? mdiCheck : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" :prepend-icon="mdiCalendarAlert" @click="filterWarning('expiry')">
         <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</span></template>
       </v-card>
     </v-card-text>
@@ -162,6 +162,7 @@
   import { postCheckUpdate } from '@/plugins/api'
   import type { TrialUpdateCheck } from '@/plugins/types/gridscore'
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
+import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
 
   interface TrialGroup {
     id: string

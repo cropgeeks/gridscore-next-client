@@ -30,7 +30,7 @@
       </template>
       <template #append-inner>
         <UseGeolocation v-slot="{ coords: { latitude, longitude } }">
-          <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryGetGps')" :disabled="editable === false" variant="tonal" size="small" @click="setGps(latitude, longitude)" icon="mdi-map-marker" />
+          <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryGetGps')" :disabled="editable === false" variant="tonal" size="small" @click="setGps(latitude, longitude)" :icon="mdiMapMarker" />
         </UseGeolocation>
       </template>
     </v-text-field>
@@ -67,7 +67,7 @@
             variant="outlined"
             hide-details
           />
-          <v-btn class="ms-1" variant="flat" :disabled="editable === false || model === undefined || model === null" color="error" size="small" @click="model = undefined" icon="mdi-cancel" />
+          <v-btn class="ms-1" variant="flat" :disabled="editable === false || model === undefined || model === null" color="error" size="small" @click="model = undefined" :icon="mdiCancel" />
         </template>
       </v-slider>
     </div>
@@ -84,10 +84,10 @@
       ref="input"
     >
       <template #append-inner>
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateMinusOne')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(-1)" icon="mdi-chevron-left" />
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateToday')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(0)" icon="mdi-calendar-today" />
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDatePlusOne')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(1)" icon="mdi-chevron-right" />
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateReset')" color="error" :disabled="editable === false || !model" variant="tonal" size="small" @click="model = undefined" icon="mdi-cancel" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateMinusOne')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(-1)" :icon="mdiChevronLeft" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateToday')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(0)" :icon="mdiCalendarToday" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDatePlusOne')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(1)" :icon="mdiChevronRight" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateReset')" color="error" :disabled="editable === false || !model" variant="tonal" size="small" @click="model = undefined" :icon="mdiCancel" />
       </template>
 
       <template #message v-if="description">
@@ -169,7 +169,7 @@
             v-if="model !== undefined && model !== null"
             @click="model = undefined"
           >
-            <v-icon icon="mdi-cancel" color="error" />
+            <v-icon :icon="mdiCancel" color="error" />
           </v-btn>
         </v-btn-toggle>
 
@@ -192,6 +192,7 @@
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
+  import { mdiCalendarToday, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker } from '@mdi/js'
 
   const nonTtsTraitTypes = new Set([TraitDataType.gps, TraitDataType.video, TraitDataType.image, TraitDataType.date, TraitDataType.text, TraitDataType.range])
 

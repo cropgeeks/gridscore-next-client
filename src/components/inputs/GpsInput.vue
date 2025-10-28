@@ -9,7 +9,7 @@
       :label="$t('formPlaceholderLatitude')"
     />
 
-    <v-btn icon="mdi-map-marker" @click="setGps" v-if="supportsGps" />
+    <v-btn :icon="mdiMapMarker" @click="setGps" v-if="supportsGps" />
 
     <v-number-input
       v-model="model.lng"
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
   import type { LatLng } from '@/plugins/types/gridscore'
+  import { mdiMapMarker } from '@mdi/js'
 
   const model = defineModel<LatLng>()
 

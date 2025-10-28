@@ -16,7 +16,7 @@
           </template>
           <template #actions>
             <v-spacer />
-            <v-btn color="primary" variant="tonal" :text="$t('buttonLoad')" prepend-icon="mdi-cellphone-arrow-down-variant" @click="loadExample(trial)" />
+            <v-btn color="primary" variant="tonal" :text="$t('buttonLoad')" :prepend-icon="mdiCellphoneArrowDownVariant" @click="loadExample(trial)" />
           </template>
           <template #chips v-if="trial.tags && trial.tags.length > 0">
             <v-chip label v-for="tag in trial.tags" :key="`example-${trial.id}-${tag.icon}`" :text="tag.text" :prepend-icon="tag.icon" />
@@ -32,6 +32,7 @@
   import type { TrialPlus } from '@/plugins/types/client'
   import { DisplayOrder, PersonType, TraitDataType, type Person, type Trait } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
+  import { mdiAccountMultiple, mdiCalendar, mdiCalendarMultiselect, mdiCellphoneArrowDownVariant, mdiSetSplit, mdiViewGrid, mdiViewList } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
@@ -84,7 +85,7 @@
       },
       source: 'barley.json',
       image: 'barley-trial.svg',
-      tags: [{ text: t('trialTagLayoutGrid'), icon: 'mdi-view-grid' }, { text: t('trialTagSingleMeasurement'), icon: 'mdi-calendar' }, { text: t('trialTagPeople'), icon: 'mdi-account-multiple' }],
+      tags: [{ text: t('trialTagLayoutGrid'), icon: mdiViewGrid }, { text: t('trialTagSingleMeasurement'), icon: mdiCalendar }, { text: t('trialTagPeople'), icon: mdiAccountMultiple }],
     }, {
       id: 'multi',
       trial: {
@@ -105,7 +106,7 @@
       },
       source: 'timeline.json',
       image: 'timeline-trial.svg',
-      tags: [{ text: t('trialTagLayoutGrid'), icon: 'mdi-view-grid' }, { text: t('trialTagMultiMeasurement'), icon: 'mdi-calendar-multiselect' }],
+      tags: [{ text: t('trialTagLayoutGrid'), icon: mdiViewGrid }, { text: t('trialTagMultiMeasurement'), icon: mdiCalendarMultiselect }],
     }, {
       id: 'measurementset',
       trial: {
@@ -126,7 +127,7 @@
       },
       source: 'measurementset.json',
       image: 'measurementset-trial.svg',
-      tags: [{ text: t('trialTagLayoutGrid'), icon: 'mdi-view-grid' }, { text: t('trialTagMultiMeasurement'), icon: 'mdi-calendar-multiselect' }, { text: t('trialTagSetSize'), icon: 'mdi-set-split' }],
+      tags: [{ text: t('trialTagLayoutGrid'), icon: mdiViewGrid }, { text: t('trialTagMultiMeasurement'), icon: mdiCalendarMultiselect }, { text: t('trialTagSetSize'), icon: mdiSetSplit }],
     }, {
       id: 'cows',
       trial: {
@@ -147,7 +148,7 @@
       },
       source: 'cows.json',
       image: 'cow-trial.svg',
-      tags: [{ text: t('trialTagLayoutList'), icon: 'mdi-view-list' }, { text: t('trialTagMultiMeasurement'), icon: 'mdi-calendar-multiselect' }],
+      tags: [{ text: t('trialTagLayoutList'), icon: mdiViewList }, { text: t('trialTagMultiMeasurement'), icon: mdiCalendarMultiselect }],
     }, {
       id: 'training',
       trial: {
@@ -168,7 +169,7 @@
       },
       source: 'training.json',
       image: 'training-trial.svg',
-      tags: [{ text: t('trialTagLayoutGrid'), icon: 'mdi-view-grid' }],
+      tags: [{ text: t('trialTagLayoutGrid'), icon: mdiViewGrid }],
     }]
   })
 

@@ -5,9 +5,9 @@
         <v-card-text class="flex-grow-1">
           <p class="text-h2">{{ $t('appTitle') }}</p>
 
-          <p class="text-subtitle-1 my-3"><v-icon size="x-small" icon="mdi-tag-outline" /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
-          <p class="text-subtitle-1 my-3" v-if="storeDeviceConfigString"><v-icon size="x-small" icon="mdi-laptop" /> {{ storeDeviceConfigString }}</p>
-          <p class="text-subtitle-1 my-3"><v-icon size="x-small" icon="mdi-information" /> <a href="#" @click.prevent="showChangelog">{{ $t('pageAboutChangelog') }}</a></p>
+          <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiTagOutline" /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
+          <p class="text-subtitle-1 my-3" v-if="storeDeviceConfigString"><v-icon size="x-small" :icon="mdiLaptop" /> {{ storeDeviceConfigString }}</p>
+          <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiInformation" /> <a href="#" @click.prevent="showChangelog">{{ $t('pageAboutChangelog') }}</a></p>
         </v-card-text>
         <v-avatar
           class="ma-3"
@@ -22,22 +22,22 @@
     <p v-html="$t('pageAboutParagraphTwo')" />
 
     <v-list>
-      <v-list-item prepend-icon="mdi-information">
+      <v-list-item :prepend-icon="mdiInformation">
         <template #title>
           <span class="text-wrap" v-html="$t('pageAboutDocumentationLink')" />
         </template>
       </v-list-item>
-      <v-list-item prepend-icon="mdi-book-education">
+      <v-list-item :prepend-icon="mdiBookEducation">
         <template #title>
           <span class="text-wrap" v-html="$t('pageAboutTrainingLink')" />
         </template>
       </v-list-item>
-      <v-list-item prepend-icon="mdi-github">
+      <v-list-item :prepend-icon="mdiGithub">
         <template #title>
           <span class="text-wrap" v-html="$t('pageAboutGitHubLink')" />
         </template>
       </v-list-item>
-      <v-list-item prepend-icon="mdi-newspaper-variant">
+      <v-list-item :prepend-icon="mdiNewspaperVariant">
         <template #title>
           <span class="text-wrap" v-html="$t('pageHomeTextCitation')" />
         </template>
@@ -75,6 +75,7 @@
 <script setup lang="ts">
   import { gridScoreVersion } from '@/plugins/constants'
   import { coreStore } from '@/stores/app'
+import { mdiBookEducation, mdiGithub, mdiInformation, mdiLaptop, mdiNewspaperVariant, mdiTagOutline } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 

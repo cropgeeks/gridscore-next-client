@@ -6,7 +6,7 @@
     v-model="textContent"
   >
     <template #append-inner v-if="isSupported">
-      <v-btn icon="mdi-microphone-message" :color="isListening ? 'primary' : undefined" @click="toggleRecording" v-tooltip:top="$t('tooltipDataEntryCommentMicrophone')" />
+      <v-btn :icon="mdiMicrophoneMessage" :color="isListening ? 'primary' : undefined" @click="toggleRecording" v-tooltip:top="$t('tooltipDataEntryCommentMicrophone')" />
     </template>
   </v-textarea>
 </template>
@@ -15,6 +15,7 @@
   import { coreStore } from '@/stores/app'
   import emitter from 'tiny-emitter/instance'
   import { useSpeechRecognition } from '@vueuse/core'
+  import { mdiMicrophoneMessage } from '@mdi/js'
 
   const store = coreStore()
 

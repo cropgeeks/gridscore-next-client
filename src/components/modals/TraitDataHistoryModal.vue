@@ -20,14 +20,14 @@
                 :measurements="undefined"
                 :editable="measurements.delete !== true"
               >
-                <v-chip size="small" label prepend-icon="mdi-calendar" :text="new Date(measurements.timestamp).toLocaleString()" />
+                <v-chip size="small" label :prepend-icon="mdiCalendar" :text="new Date(measurements.timestamp).toLocaleString()" />
               </TraitInputSection>
 
               <v-btn
                 variant="tonal"
                 class="mb-3"
                 @click="measurements.delete = !measurements.delete"
-                :prepend-icon="measurements.delete ? 'mdi-delete' : 'mdi-delete-off-outline'"
+                :prepend-icon="measurements.delete ? mdiDelete : mdiDeleteOffOutline"
                 :text="measurements.delete ? $t('buttonUndeleteTimepointData') : $t('buttonDeleteTimepointData')"
               />
             </v-list-item>
@@ -63,6 +63,7 @@
   import { changeTrialsData, type DataModification } from '@/plugins/idb'
 
   import emitter from 'tiny-emitter/instance'
+  import { mdiCalendar, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
 
   const compProps = defineProps<{
     editable: boolean

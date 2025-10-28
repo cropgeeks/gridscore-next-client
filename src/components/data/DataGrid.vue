@@ -32,7 +32,7 @@
     <div :class="`data-grid-wrapper force-ltr ${(store.storeNavigationMode === NavigationMode.JUMP) ? 'no-scroll' : ''}`" ref="wrapper">
       <template v-if="userPosition">
         <v-icon
-          :icon="userPosition.rotate !== undefined ? 'mdi-navigation' : 'mdi-record-circle-outline'"
+          :icon="userPosition.rotate !== undefined ? mdiNavigation : mdiRecordCircleOutline"
           class="grid-icon gps-position"
           :style="{
             left: `${userPosition.x}px`,
@@ -41,7 +41,7 @@
           }"
         />
       </template>
-      <v-icon icon="mdi-circle" class="grid-icon position-absolute marker" v-for="(marker, mIndex) in markers" :key="`marker-${mIndex}`" :style="{ left: `${marker.x}px`, top: `${marker.y}px` }" />
+      <v-icon :icon="mdiCircle" class="grid-icon position-absolute marker" v-for="(marker, mIndex) in markers" :key="`marker-${mIndex}`" :style="{ left: `${marker.x}px`, top: `${marker.y}px` }" />
 
       <div ref="dataGrid" class="data-grid" :style="{ gridTemplateColumns: `repeat(${trial.layout.columns}, ${cellWidth}px)`, gridTemplateRows: `repeat(${trial.layout.rows}, ${cellHeight}px)` }">
         <template v-for="row in rows">
@@ -62,9 +62,9 @@
               :style="getStyle(cell)"
             >
               <template v-if="cell">
-                <v-icon icon="mdi-bookmark" class="grid-icon bookmark" v-if="cell.isMarked" />
-                <v-icon icon="mdi-message-text" class="mdi-flip-h grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
-                <v-icon icon="mdi-checkbox-marked" class="grid-icon check" v-if="store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
+                <v-icon :icon="mdiBookmark" class="grid-icon bookmark" v-if="cell.isMarked" />
+                <v-icon :icon="mdiMessageText" class="mdi-flip-h grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
+                <v-icon :icon="mdiCheckboxMarked" class="grid-icon check" v-if="store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
                 <div class="cell-text my-1">{{ cell[store.storePlotDisplayField] }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0 && (!traitCutoff || !cell.latestDates || !cell.latestDates[trait.id] || (cell.latestDates[trait.id] > traitCutoff))">
@@ -104,6 +104,7 @@
   import { useI18n } from 'vue-i18n'
   import emitter from 'tiny-emitter/instance'
   import { categoricalColors } from '@/plugins/color'
+  import { mdiCircle, mdiNavigation, mdiRecordCircleOutline, mdiBookmark, mdiMessageText, mdiCheckboxMarked } from '@mdi/js'
 
   const { n } = useI18n()
   const store = coreStore()

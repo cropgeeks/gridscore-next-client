@@ -2,7 +2,7 @@
   <div>
     <BaseChart
       title="pageVisualizationFieldHeatmapTitle"
-      header-icon="mdi-land-fields"
+      :header-icon="mdiLandFields"
       :chart-id="id"
       v-model:interactive="interactive"
       :source-file="sourceFile"
@@ -36,7 +36,7 @@
             </v-slider>
           </div>
 
-          <v-alert color="warning" :text="$t(message)" variant="tonal" icon="mdi-alert" class="my-5" v-if="message" />
+          <v-alert color="warning" :text="$t(message)" variant="tonal" :icon="mdiAlert" class="my-5" v-if="message" />
         </v-card-text>
       </template>
 
@@ -75,6 +75,7 @@
   import { useI18n } from 'vue-i18n'
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
+import { mdiAlert, mdiLandFields } from '@mdi/js'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([

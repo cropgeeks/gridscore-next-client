@@ -19,9 +19,9 @@
               v-for="(comment, i) in items"
               :key="`changelog-entry-${i}`"
             >
-              <v-card prepend-icon="mdi-calendar" :title="new Date(comment.raw.timestamp).toLocaleDateString()" class="mb-4">
+              <v-card :prepend-icon="mdiCalendar" :title="new Date(comment.raw.timestamp).toLocaleDateString()" class="mb-4">
                 <template #append>
-                  <v-btn color="error" :disabled="!editable" icon="mdi-delete" v-tooltip:top="$t('buttonDelete')" @click="deleteComment(comment.raw)" />
+                  <v-btn color="error" :disabled="!editable" :icon="mdiDelete" v-tooltip:top="$t('buttonDelete')" @click="deleteComment(comment.raw)" />
                 </template>
                 <template #text>{{ comment.raw.content }}</template>
               </v-card>
@@ -32,7 +32,7 @@
             <template v-if="editable">
               <SpeechRecognitionTextarea v-model="newComment" />
 
-              <v-btn color="primary" prepend-icon="mdi-comment-plus" :text="$t('buttonCreateComment')" :disabled="!newComment || newComment.trim().length === 0" @click="addComment" />
+              <v-btn color="primary" :prepend-icon="mdiCommentPlus" :text="$t('buttonCreateComment')" :disabled="!newComment || newComment.trim().length === 0" @click="addComment" />
             </template>
 
             <v-pagination v-model="page" :length="pageCount" />
@@ -51,6 +51,7 @@
 <script setup lang="ts">
   import type { Comment } from '@/plugins/types/gridscore'
   import SpeechRecognitionTextarea from '@/components/inputs/SpeechRecognitionTextarea.vue'
+import { mdiCalendar, mdiCommentPlus, mdiDelete } from '@mdi/js'
 
   const dialog = ref(false)
   const perPage = ref(5)

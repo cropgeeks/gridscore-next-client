@@ -1,6 +1,7 @@
 import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
 import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
 import { toLocalDateTimeString } from '@/plugins/util'
+import { mdiAlphabeticalVariant, mdiCalendar, mdiCamera, mdiCheckboxMarked, mdiDecimal, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMapMarkerMultiple, mdiNotebook, mdiNumeric, mdiSprout, mdiTag, mdiTuneVariant, mdiVideo } from '@mdi/js'
 
 const gridScoreVersion = '4.0.0'
 
@@ -20,12 +21,12 @@ export interface MediaFilenamePart {
 }
 
 const mediaFilenameParts: MediaFilenamePart[] = [
-  { id: 'trial', title: 'widgetMediaFilenameTrial', icon: 'mdi-notebook', example: 'Barley-trial-Season24', extract: (trial, cell) => trial.name },
-  { id: 'timestamp', title: 'widgetMediaFilenameTimestamp', icon: 'mdi-calendar', example: toLocalDateTimeString(new Date()), extract: (trial, cell, trait, date) => toLocalDateTimeString(date || new Date()) },
-  { id: 'germplasm', title: 'widgetMediaFilenameGermplasm', icon: 'mdi-sprout', example: 'Laureate', extract: (trial, cell) => cell.displayName || cell.germplasm },
-  { id: 'row', title: 'widgetMediaFilenameRow', icon: 'mdi-land-rows-horizontal', example: '1', extract: (trial, cell) => `${cell.displayRow || '1'}` },
-  { id: 'column', title: 'widgetMediaFilenameColumn', icon: 'mdi-land-rows-vertical', example: '7', extract: (trial, cell) => `${cell.displayColumn || '1'}` },
-  { id: 'trait', title: 'widgetMediaFilenameTrait', icon: 'mdi-tag', example: 'Awn length', extract: (trial, cell, trait) => trait?.name || '' },
+  { id: 'trial', title: 'widgetMediaFilenameTrial', icon: mdiNotebook, example: 'Barley-trial-Season24', extract: (trial, cell) => trial.name },
+  { id: 'timestamp', title: 'widgetMediaFilenameTimestamp', icon: mdiCalendar, example: toLocalDateTimeString(new Date()), extract: (trial, cell, trait, date) => toLocalDateTimeString(date || new Date()) },
+  { id: 'germplasm', title: 'widgetMediaFilenameGermplasm', icon: mdiSprout, example: 'Laureate', extract: (trial, cell) => cell.displayName || cell.germplasm },
+  { id: 'row', title: 'widgetMediaFilenameRow', icon: mdiLandRowsHorizontal, example: '1', extract: (trial, cell) => `${cell.displayRow || '1'}` },
+  { id: 'column', title: 'widgetMediaFilenameColumn', icon: mdiLandRowsVertical, example: '7', extract: (trial, cell) => `${cell.displayColumn || '1'}` },
+  { id: 'trait', title: 'widgetMediaFilenameTrait', icon: mdiTag, example: 'Awn length', extract: (trial, cell, trait) => trait?.name || '' },
 ]
 
 const CELL_CATEGORIES: { [key: string]: CellCategoryInfo } = {}
@@ -42,52 +43,52 @@ export interface DataType {
 const dataTypes: DataType[] = [{
   title: 'traitTypeInt',
   shortTitle: 'traitTypeShortInt',
-  icon: 'mdi-numeric',
+  icon: mdiNumeric,
   value: TraitDataType.int,
 }, {
   title: 'traitTypeFloat',
   shortTitle: 'traitTypeShortFloat',
-  icon: 'mdi-decimal',
+  icon: mdiDecimal,
   value: TraitDataType.float,
 }, {
   title: 'traitTypeRange',
   shortTitle: 'traitTypeShortRange',
-  icon: 'mdi-tune-variant',
+  icon: mdiTuneVariant,
   value: TraitDataType.range,
 }, {
   title: 'traitTypeCategorical',
   shortTitle: 'traitTypeShortCategorical',
-  icon: 'mdi-format-list-numbered',
+  icon: mdiFormatListNumbered,
   value: TraitDataType.categorical,
 }, {
   title: 'traitTypeBoolean',
   shortTitle: 'traitTypeShortBoolean',
-  icon: 'mdi-checkbox-marked',
+  icon: mdiCheckboxMarked,
   value: TraitDataType.boolean,
 }, {
   title: 'traitTypeDate',
   shortTitle: 'traitTypeShortDate',
-  icon: 'mdi-calendar',
+  icon: mdiCalendar,
   value: TraitDataType.date,
 }, {
   title: 'traitTypeGps',
   shortTitle: 'traitTypeShortGps',
-  icon: 'mdi-map-marker-multiple',
+  icon: mdiMapMarkerMultiple,
   value: TraitDataType.gps,
 }, {
   title: 'traitTypeImage',
   shortTitle: 'traitTypeShortImage',
-  icon: 'mdi-camera',
+  icon: mdiCamera,
   value: TraitDataType.image,
 }, {
   title: 'traitTypeVideo',
   shortTitle: 'traitTypeShortVideo',
-  icon: 'mdi-video',
+  icon: mdiVideo,
   value: TraitDataType.video,
 }, {
   title: 'traitTypeText',
   shortTitle: 'traitTypeShortText',
-  icon: 'mdi-alphabetical-variant',
+  icon: mdiAlphabeticalVariant,
   value: TraitDataType.text,
 }]
 

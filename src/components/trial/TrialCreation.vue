@@ -29,7 +29,7 @@
           <v-btn
             :text="$t('buttonPrevious')"
             @click="checkTableChanges(prev, false)"
-            prepend-icon="mdi-arrow-left"
+            :prepend-icon="mdiArrowLeft"
             :disabled="prevDisabled"
           />
         </template>
@@ -37,7 +37,7 @@
           <v-btn
             :text="$t(stepperIndex === 3 ? pageConfig.createButtonText : 'buttonNext')"
             @click="checkTableChanges(next, true)"
-            append-icon="mdi-arrow-right"
+            :append-icon="mdiArrowRight"
             :color="stepperIndex === 3 ? 'primary' : undefined"
             :disabled="nextDisabled"
           />
@@ -61,7 +61,7 @@
           <v-btn
             :text="$t('buttonPrevious')"
             @click="checkTableChanges(prev, false)"
-            prepend-icon="mdi-arrow-left"
+            :prepend-icon="mdiArrowLeft"
             :disabled="prevDisabled"
           />
         </template>
@@ -69,7 +69,7 @@
           <v-btn
             :text="$t(stepperIndex === 3 ? pageConfig.createButtonText : 'buttonNext')"
             @click="checkTableChanges(next, true)"
-            append-icon="mdi-arrow-right"
+            :append-icon="mdiArrowRight"
             :color="stepperIndex === 3 ? 'primary' : undefined"
             :disabled="nextDisabled"
           />
@@ -132,6 +132,7 @@
   import { addTrial, getTrialData, updateTrialProperties } from '@/plugins/idb'
   import { coreStore } from '@/stores/app'
   import { mediaFilenameParts } from '@/plugins/constants'
+  import { mdiArrowLeft, mdiArrowRight, mdiFileDocumentMultiple, mdiNotebookCheck, mdiNotebookMultiple, mdiNotebookPlus, mdiTagMultiple, mdiViewGridPlus } from '@mdi/js'
 
   export interface TrialCreationProps {
     source?: TrialPlus
@@ -186,21 +187,21 @@
         title: 'modalTitleTrialModification',
         text: 'modalTextTrialModification',
         createButtonText: 'buttonSave',
-        createButtonIcon: 'mdi-notebook-check',
+        createButtonIcon: mdiNotebookCheck,
       }
     } else if (compProps.isClone) {
       return {
         title: 'modalTitleTrialDuplicate',
         text: 'modalTextTrialDuplicate',
         createButtonText: 'buttonDuplicate',
-        createButtonIcon: 'mdi-notebook-multiple',
+        createButtonIcon: mdiNotebookMultiple,
       }
     } else {
       return {
         title: 'pageTrialSetupTitle',
         text: 'pageTrialSetupText',
         createButtonText: 'buttonCreateTrial',
-        createButtonIcon: 'mdi-notebook-plus',
+        createButtonIcon: mdiNotebookPlus,
       }
     }
   })
@@ -208,13 +209,13 @@
   const steps: ComputedRef<StepperStep[]> = computed(() => {
     return [{
       title: t('pageSetupTrialInformationTitle'),
-      icon: 'mdi-file-document-multiple',
+      icon: mdiFileDocumentMultiple,
     }, {
       title: t('pageTrialSetupCardLayoutTitle'),
-      icon: 'mdi-view-grid-plus',
+      icon: mdiViewGridPlus,
     }, {
       title: t('pageTrialSetupCardTraitsTitle'),
-      icon: 'mdi-tag-multiple',
+      icon: mdiTagMultiple,
     }]
   })
 

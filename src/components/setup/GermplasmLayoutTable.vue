@@ -5,10 +5,10 @@
         <v-card :title="$t('formGroupSetupShowFields')">
           <template #text>
             <v-btn-toggle v-model="visibleFields" color="primary" variant="tonal" multiple direction="vertical">
-              <v-btn value="treatment" :text="$t('formCheckboxSetupShowTreatment')" prepend-icon="mdi-sprinkler-fire" />
-              <v-btn value="friendlyName" :text="$t('formCheckboxSetupShowFriendlyName')" prepend-icon="mdi-eye-check" />
-              <v-btn value="barcode" :text="$t('formCheckboxSetupShowBarcode')" prepend-icon="mdi-barcode" />
-              <v-btn value="pedigree" :text="$t('formCheckboxSetupShowPedigree')" prepend-icon="mdi-family-tree" />
+              <v-btn value="treatment" :text="$t('formCheckboxSetupShowTreatment')" :prepend-icon="mdiSprinklerFire" />
+              <v-btn value="friendlyName" :text="$t('formCheckboxSetupShowFriendlyName')" :prepend-icon="mdiEyeCheck" />
+              <v-btn value="barcode" :text="$t('formCheckboxSetupShowBarcode')" :prepend-icon="mdiBarcode" />
+              <v-btn value="pedigree" :text="$t('formCheckboxSetupShowPedigree')" :prepend-icon="mdiFamilyTree" />
             </v-btn-toggle>
           </template>
         </v-card>
@@ -18,7 +18,7 @@
           v-model="checkName"
           :messages="['f']"
           :label="$t('formLabelSetupGermplasmGridMarkCheck')"
-          append-inner-icon="mdi-checkbox-multiple-marked"
+          :append-inner-icon="mdiCheckboxMultipleMarked"
           :disabled="isEdit === true"
           @click:append-inner="markChecks"
           @keyup.exact.enter="markChecks"
@@ -26,8 +26,8 @@
           <template #message>
             <p>{{ $t('formDescriptionSetupGermplasmGridMarkCheck') }}</p>
             <p>
-              <span class="me-3"><v-icon icon="mdi-playlist-check" /> <a href="#" @click.prevent="markAll(true)">{{ $t('buttonMarkAll') }}</a></span>
-              <span><v-icon icon="mdi-playlist-remove" /> <a href="#" @click.prevent="markAll(false)">{{ $t('buttonUnmarkAll') }}</a></span>
+              <span class="me-3"><v-icon :icon="mdiPlaylistCheck" /> <a href="#" @click.prevent="markAll(true)">{{ $t('buttonMarkAll') }}</a></span>
+              <span><v-icon :icon="mdiPlaylistRemove" /> <a href="#" @click.prevent="markAll(false)">{{ $t('buttonUnmarkAll') }}</a></span>
             </p>
           </template>
         </v-text-field>
@@ -37,18 +37,18 @@
 
     <v-menu>
       <template #activator="{ props }">
-        <v-btn v-bind="props" prepend-icon="mdi-file-plus" :text="$t('buttonImportLayoutData')" :disabled="isEdit === true" />
+        <v-btn v-bind="props" :prepend-icon="mdiFilePlus" :text="$t('buttonImportLayoutData')" :disabled="isEdit === true" />
       </template>
 
       <v-list :disabled="isEdit === true">
-        <v-list-item prepend-icon="mdi-table" :title="$t('dropdownImportGermplasmGrid')" @click="setTabInputConfig('germplasm')" />
-        <v-list-item prepend-icon="mdi-table" :title="$t('dropdownImportRepGrid')" @click="setTabInputConfig('rep')" />
-        <v-list-item prepend-icon="mdi-table" :title="$t('dropdownImportTreatmentGrid')" @click="setTabInputConfig('treatment')" />
-        <v-list-item prepend-icon="mdi-table" :title="$t('dropdownImportFriendlyNameGrid')" @click="setTabInputConfig('friendlyName')" />
-        <v-list-item prepend-icon="mdi-table" :title="$t('dropdownImportBarcodeGrid')" @click="setTabInputConfig('barcode')" />
-        <v-list-item prepend-icon="mdi-table" :title="$t('dropdownImportPedigreeGrid')" @click="setTabInputConfig('pedigree')" />
-        <v-list-item prepend-icon="mdi-file-table" :title="$t('dropdownImportFieldHub')" @click="fieldbookInputModal?.show()" />
-        <v-list-item prepend-icon="mdi-shuffle" :title="$t('dropdownImportRandom')" @click="fillRandom" v-if="isDevelopment" />
+        <v-list-item :prepend-icon="mdiTable" :title="$t('dropdownImportGermplasmGrid')" @click="setTabInputConfig('germplasm')" />
+        <v-list-item :prepend-icon="mdiTable" :title="$t('dropdownImportRepGrid')" @click="setTabInputConfig('rep')" />
+        <v-list-item :prepend-icon="mdiTable" :title="$t('dropdownImportTreatmentGrid')" @click="setTabInputConfig('treatment')" />
+        <v-list-item :prepend-icon="mdiTable" :title="$t('dropdownImportFriendlyNameGrid')" @click="setTabInputConfig('friendlyName')" />
+        <v-list-item :prepend-icon="mdiTable" :title="$t('dropdownImportBarcodeGrid')" @click="setTabInputConfig('barcode')" />
+        <v-list-item :prepend-icon="mdiTable" :title="$t('dropdownImportPedigreeGrid')" @click="setTabInputConfig('pedigree')" />
+        <v-list-item :prepend-icon="mdiFileTable" :title="$t('dropdownImportFieldHub')" @click="fieldbookInputModal?.show()" />
+        <v-list-item :prepend-icon="mdiShuffle" :title="$t('dropdownImportRandom')" @click="fillRandom" v-if="isDevelopment" />
       </v-list>
     </v-menu>
 
@@ -62,10 +62,10 @@
       </div>
     </v-card>
 
-    <v-btn @click="checkData" class="my-5" :disabled="isEdit === true" color="primary" prepend-icon="mdi-playlist-check" :text="$t('buttonCheckOverData')" />
+    <v-btn @click="checkData" class="my-5" :disabled="isEdit === true" color="primary" :prepend-icon="mdiPlaylistCheck" :text="$t('buttonCheckOverData')" />
 
     <div class="">
-      <v-btn v-if="hasErrors || hasWarnings" @click="bottomSheetVisible = true" :text="$t('formFeedbackLayout', feedback.length)" :prepend-icon="hasErrors ? 'mdi-alert-circle' : 'mdi-alert'" :color="hasErrors ? 'error' : 'warning'" />
+      <v-btn v-if="hasErrors || hasWarnings" @click="bottomSheetVisible = true" :text="$t('formFeedbackLayout', feedback.length)" :prepend-icon="hasErrors ? mdiAlertCircle : mdiAlert" :color="hasErrors ? 'error' : 'warning'" />
     </div>
 
     <TabbedInputModal :label="dataImportConfig.label" :placeholder="dataImportConfig.placeholder" ref="inputModal" @content-loaded="content => updateTableFromTabbed(dataImportConfig?.field || '', content)" v-if="dataImportConfig" />
@@ -80,7 +80,7 @@
             <v-list-item
               v-for="(item, itemIndex) in feedback"
               :key="`feedback-item-${itemIndex}`"
-              :prepend-icon="item.type === 'error' ? 'mdi-alert-circle' : 'mdi-alert'"
+              :prepend-icon="item.type === 'error' ? mdiAlertCircle : mdiAlert"
               :base-color="item.type === 'error' ? 'error' : 'warning'"
               :title="item.message"
             />
@@ -101,6 +101,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import type { TrialPlus } from '@/plugins/types/client'
+  import { mdiAlert, mdiAlertCircle, mdiBarcode, mdiCheckboxMultipleMarked, mdiEyeCheck, mdiFamilyTree, mdiFilePlus, mdiFileTable, mdiPlaylistCheck, mdiPlaylistRemove, mdiShuffle, mdiSprinklerFire, mdiTable } from '@mdi/js'
 
   export interface LayoutFeedback {
     type: 'warning' | 'error'

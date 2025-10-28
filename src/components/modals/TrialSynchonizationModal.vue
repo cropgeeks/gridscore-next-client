@@ -6,7 +6,7 @@
           <v-alert
             v-if="isOnline === false"
             color="error"
-            icon="mdi-lan-disconnect"
+            :icon="mdiLanDisconnect"
             density="compact"
             :text="$t('modalTextNetworkUnavailableWarning')"
             variant="tonal"
@@ -19,21 +19,21 @@
             <v-card v-if="transaction" :title="$t('modalTextTrialSynchronizationCount', trial.transactionCount || 0)">
               <v-list>
                 <!-- TRIAL EDIT -->
-                <v-list-item v-if="transaction.trialEditTransaction" prepend-icon="mdi-notebook-edit" :title="$t('transactionTypeTrialModified')">
+                <v-list-item v-if="transaction.trialEditTransaction" :prepend-icon="mdiNotebookEdit" :title="$t('transactionTypeTrialModified')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTrialModifiedText') }}</span></template>
                 </v-list-item>
                 <!-- TRAITS ADDED -->
-                <v-list-item v-if="transaction.trialTraitAddedTransactions && transaction.trialTraitAddedTransactions.length > 0" prepend-icon="mdi-tag-plus" :title="$t('transactionTypeTraitsAdded')">
+                <v-list-item v-if="transaction.trialTraitAddedTransactions && transaction.trialTraitAddedTransactions.length > 0" :prepend-icon="mdiTagPlus" :title="$t('transactionTypeTraitsAdded')">
                   <template #subtitle>
                     <TraitSection :trait="trait" v-for="trait in transaction.trialTraitAddedTransactions" :key="`trait-${trait.id}`" />
                   </template>
                 </v-list-item>
                 <!-- PERSON ADDED -->
-                <v-list-item v-if="transaction.trialPersonAddedTransactions && transaction.trialPersonAddedTransactions.length > 0" prepend-icon="mdi-account-plus" :title="$t('transactionTypePeopleAdded')">
+                <v-list-item v-if="transaction.trialPersonAddedTransactions && transaction.trialPersonAddedTransactions.length > 0" :prepend-icon="mdiAccountPlus" :title="$t('transactionTypePeopleAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePeopleAddedCount', Object.keys(transaction.trialPersonAddedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- TRAIT DETAILS CHANGED -->
-                <v-list-item v-if="transaction.traitChangeTransactions && transaction.traitChangeTransactions.length > 0" prepend-icon="mdi-tag-edit" :title="$t('transactionTypeTraitsModified')">
+                <v-list-item v-if="transaction.traitChangeTransactions && transaction.traitChangeTransactions.length > 0" :prepend-icon="mdiTagEdit" :title="$t('transactionTypeTraitsModified')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTraitsModifiedCount', Object.keys(transaction.traitChangeTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- BRAPI IDS CHANGED -->
@@ -46,53 +46,53 @@
                 <!-- BRAPI CONFIG CHANGED -->
                 <v-list-item v-if="transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== ''" prepend-icon="$brapi" :title="$t('transactionTypeBrapiConfigChanged')" />
                 <!-- PLOT DETAILS CHANGED -->
-                <v-list-item v-if="transaction.plotDetailsChangeTransaction && Object.keys(transaction.plotDetailsChangeTransaction).length > 0" prepend-icon="mdi-table-edit" :title="$t('transactionTypePlotDetailsChanged')">
+                <v-list-item v-if="transaction.plotDetailsChangeTransaction && Object.keys(transaction.plotDetailsChangeTransaction).length > 0" :prepend-icon="mdiTableEdit" :title="$t('transactionTypePlotDetailsChanged')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotDetailsChangedCount', Object.keys(transaction.plotDetailsChangeTransaction).length) }}</span></template>
                 </v-list-item>
                 <!-- GERMPLASM ADDED -->
-                <v-list-item v-if="transaction.trialGermplasmAddedTransactions && transaction.trialGermplasmAddedTransactions.length > 0" prepend-icon="mdi-table-row-plus-after" :title="$t('transactionTypeGermplasmAdded')">
+                <v-list-item v-if="transaction.trialGermplasmAddedTransactions && transaction.trialGermplasmAddedTransactions.length > 0" :prepend-icon="mdiTableRowPlusAfter" :title="$t('transactionTypeGermplasmAdded')">
                   <template #subtitle><span class="text-wrap">{{ transaction.trialGermplasmAddedTransactions.join(', ') }}</span></template>
                 </v-list-item>
                 <!-- PLOT COMMENT ADDED -->
-                <v-list-item v-if="transaction.plotCommentAddedTransactions && Object.keys(transaction.plotCommentAddedTransactions).length > 0" prepend-icon="mdi-comment-plus" :title="$t('transactionTypePlotCommentAdded')">
+                <v-list-item v-if="transaction.plotCommentAddedTransactions && Object.keys(transaction.plotCommentAddedTransactions).length > 0" :prepend-icon="mdiCommentPlus" :title="$t('transactionTypePlotCommentAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotCommentAddedCount', Object.keys(transaction.plotCommentAddedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- PLOT COMMENT DELETED -->
-                <v-list-item v-if="transaction.plotCommentDeletedTransactions && Object.keys(transaction.plotCommentDeletedTransactions).length > 0" prepend-icon="mdi-comment-minus" :title="$t('transactionTypePlotCommentDeleted')">
+                <v-list-item v-if="transaction.plotCommentDeletedTransactions && Object.keys(transaction.plotCommentDeletedTransactions).length > 0" :prepend-icon="mdiCommentMinus" :title="$t('transactionTypePlotCommentDeleted')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotCommentDeletedCount', Object.keys(transaction.plotCommentAddedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- PLOT TRAIT DATA CHANGED -->
-                <v-list-item v-if="transaction.plotTraitDataChangeTransactions && Object.keys(transaction.plotTraitDataChangeTransactions).length > 0" prepend-icon="mdi-text-box-edit" :title="$t('transactionTypeTraitDataChanged')">
+                <v-list-item v-if="transaction.plotTraitDataChangeTransactions && Object.keys(transaction.plotTraitDataChangeTransactions).length > 0" :prepend-icon="mdiTextBoxEdit" :title="$t('transactionTypeTraitDataChanged')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTraitDataChangedCount', Object.keys(transaction.plotTraitDataChangeTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- PLOT GEOGRAPHY CHANGED -->
-                <v-list-item v-if="transaction.plotGeographyChangeTransactions && Object.keys(transaction.plotGeographyChangeTransactions).length > 0" prepend-icon="mdi-vector-polyline-edit" :title="$t('transactionTypePlotGeographyChanged')">
+                <v-list-item v-if="transaction.plotGeographyChangeTransactions && Object.keys(transaction.plotGeographyChangeTransactions).length > 0" :prepend-icon="mdiVectorPolylineEdit" :title="$t('transactionTypePlotGeographyChanged')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotGeographyChangedCount', Object.keys(transaction.plotGeographyChangeTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- PLOT MARKED CHANGED -->
-                <v-list-item v-if="transaction.plotMarkedTransactions && Object.keys(transaction.plotMarkedTransactions).length > 0" prepend-icon="mdi-bookmark" :title="$t('transactionTypePlotMarkedChanged')">
+                <v-list-item v-if="transaction.plotMarkedTransactions && Object.keys(transaction.plotMarkedTransactions).length > 0" :prepend-icon="mdiBookmark" :title="$t('transactionTypePlotMarkedChanged')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotMarkedChangedCount', Object.keys(transaction.plotMarkedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- TRIAL COMMENT ADDED -->
-                <v-list-item v-if="transaction.trialCommentAddedTransactions && Object.keys(transaction.trialCommentAddedTransactions).length > 0" prepend-icon="mdi-comment-plus" :title="$t('transactionTypeTrialCommentAdded')">
+                <v-list-item v-if="transaction.trialCommentAddedTransactions && Object.keys(transaction.trialCommentAddedTransactions).length > 0" :prepend-icon="mdiCommentPlus" :title="$t('transactionTypeTrialCommentAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTrialCommentAddedCount', Object.keys(transaction.trialCommentAddedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- TRIAL COMMENT DELETED -->
-                <v-list-item v-if="transaction.trialCommentDeletedTransactions && Object.keys(transaction.trialCommentDeletedTransactions).length > 0" prepend-icon="mdi-comment-minus" :title="$t('transactionTypeTrialCommentDeleted')">
+                <v-list-item v-if="transaction.trialCommentDeletedTransactions && Object.keys(transaction.trialCommentDeletedTransactions).length > 0" :prepend-icon="mdiCommentMinus" :title="$t('transactionTypeTrialCommentDeleted')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTrialCommentDeletedCount', Object.keys(transaction.trialCommentDeletedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- TRIAL EVENT ADDED -->
-                <v-list-item v-if="transaction.trialEventAddedTransactions && transaction.trialEventAddedTransactions.length > 0" prepend-icon="mdi-flag-plus" :title="$t('transactionTypeTrialEventAdded')">
+                <v-list-item v-if="transaction.trialEventAddedTransactions && transaction.trialEventAddedTransactions.length > 0" :prepend-icon="mdiFlagPlus" :title="$t('transactionTypeTrialEventAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTrialEventAddedCount', Object.keys(transaction.trialEventAddedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- TRIAL EVENT DELETED -->
-                <v-list-item v-if="transaction.trialEventDeletedTransactions && transaction.trialEventDeletedTransactions.length > 0" prepend-icon="mdi-flag-minus" :title="$t('transactionTypeTrialEventDeleted')">
+                <v-list-item v-if="transaction.trialEventDeletedTransactions && transaction.trialEventDeletedTransactions.length > 0" :prepend-icon="mdiFlagMinus" :title="$t('transactionTypeTrialEventDeleted')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTrialEventDeletedCount', Object.keys(transaction.trialEventDeletedTransactions).length) }}</span></template>
                 </v-list-item>
               </v-list>
 
               <template #actions v-if="(trial.transactionCount || 0) > 0">
-                <v-btn color="error" @click="deleteLocalChanges" variant="tonal" prepend-icon="mdi-delete" :text="$t('buttonDeleteLocalChanges')" />
+                <v-btn color="error" @click="deleteLocalChanges" variant="tonal" :prepend-icon="mdiDelete" :text="$t('buttonDeleteLocalChanges')" />
               </template>
             </v-card>
 
@@ -102,7 +102,7 @@
               <v-alert
                 v-if="trial.hasRemoteUpdate"
                 color="info"
-                icon="mdi-cloud-download"
+                :icon="mdiCloudDownload"
                 density="compact"
                 :text="$t('modalTextTrialSynchronizationRemoteChanges')"
                 variant="tonal"
@@ -116,8 +116,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn :text="$t('buttonCancel')" prepend-icon="mdi-cancel" @click="hide" />
-          <v-btn :text="$t('buttonSynchronize')" prepend-icon="mdi-database-sync" @click="askToSynchronize" :disabled="isOnline === false" color="primary" variant="tonal" />
+          <v-btn :text="$t('buttonCancel')" :prepend-icon="mdiCancel" @click="hide" />
+          <v-btn :text="$t('buttonSynchronize')" :prepend-icon="mdiDatabaseSync" @click="askToSynchronize" :disabled="isOnline === false" color="primary" variant="tonal" />
         </v-card-actions>
       </v-card>
     </UseOnline>
@@ -134,6 +134,7 @@
   import { useI18n } from 'vue-i18n'
   import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
   import { coreStore } from '@/stores/app'
+  import { mdiAccountPlus, mdiBookmark, mdiCancel, mdiCloudDownload, mdiCommentMinus, mdiCommentPlus, mdiDatabaseSync, mdiDelete, mdiFlagMinus, mdiFlagPlus, mdiLanDisconnect, mdiNotebookEdit, mdiTableEdit, mdiTableRowPlusAfter, mdiTagEdit, mdiTagPlus, mdiTextBoxEdit, mdiVectorPolylineEdit } from '@mdi/js'
 
   const { t } = useI18n()
 

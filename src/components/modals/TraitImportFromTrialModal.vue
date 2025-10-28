@@ -48,7 +48,7 @@
             </template>
 
             <template #prepend="{ item }">
-              <v-icon icon="mdi-circle" :color="item.color" v-if="!item.children" />
+              <v-icon :icon="mdiCircle" :color="item.color" v-if="!item.children" />
             </template>
             <template #append="{ item }">
               <v-chip label v-if="!item.children" :text="$t(dataTypes.find(dt => dt.value === item.dataType)?.shortTitle || '')" :prepend-icon="dataTypes.find(dt => dt.value === item.dataType)?.icon" />
@@ -72,6 +72,7 @@
   import { getTrials } from '@/plugins/idb'
   import type { TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { TraitDataType, type Trait } from '@/plugins/types/gridscore'
+  import { mdiCircle } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   interface TraitGroup extends TraitPlus {

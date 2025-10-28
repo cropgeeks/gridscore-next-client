@@ -30,13 +30,14 @@
 
 <script setup lang="ts">
   import { gridScoreVersion } from '@/plugins/constants'
+  import { mdiGithub, mdiTwitter, mdiWeb } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 
   const items = [
     {
       title: 'GridScore NEXT website',
-      icon: 'mdi-web',
+      icon: mdiWeb,
       href: 'https://ics.hutton.ac.uk/get-gridscore',
     },
     {
@@ -46,12 +47,12 @@
     },
     {
       title: 'GridScore in Twitter',
-      icon: 'mdi-twitter',
+      icon: mdiTwitter,
       href: 'https://twitter.com/GerminateHub',
     },
     {
       title: 'GridScore GitHub',
-      icon: 'mdi-github',
+      icon: mdiGithub,
       href: 'https://github.com/cropgeeks/gridscore-next-client',
     },
   ]

@@ -42,16 +42,16 @@
 
           <v-row v-if="cornerLabels">
             <v-col cols="6">
-              <v-btn prepend-icon="mdi-arrow-top-left" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.topLeft)" @click="setCorner('topLeft')" />
+              <v-btn :prepend-icon="mdiArrowTopLeft" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.topLeft)" @click="setCorner('topLeft')" />
             </v-col>
             <v-col cols="6">
-              <v-btn append-icon="mdi-arrow-top-right" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.topRight)" @click="setCorner('topRight')" />
+              <v-btn :append-icon="mdiArrowTopRight" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.topRight)" @click="setCorner('topRight')" />
             </v-col>
             <v-col cols="6">
-              <v-btn prepend-icon="mdi-arrow-bottom-left" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomLeft)" @click="setCorner('bottomLeft')" />
+              <v-btn :prepend-icon="mdiArrowBottomLeft" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomLeft)" @click="setCorner('bottomLeft')" />
             </v-col>
             <v-col cols="6">
-              <v-btn append-icon="mdi-arrow-bottom-right" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomRight)" @click="setCorner('bottomRight')" />
+              <v-btn :append-icon="mdiArrowBottomRight" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomRight)" @click="setCorner('bottomRight')" />
             </v-col>
           </v-row>
         </div>
@@ -64,7 +64,7 @@
   import type { Corners, Layout } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
 
-  import L, { type TileLayer, type Map, type Marker, LatLngBounds } from 'leaflet'
+  import L, { type TileLayer, type Map, type Marker, type LatLngBounds } from 'leaflet'
   import 'leaflet/dist/leaflet.css'
   import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
   import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -72,6 +72,7 @@
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
   import GpsInput from '@/components/inputs/GpsInput.vue'
   import { isGeographyValid, isLocationValid, toGeoJson, trialLayoutToPlots } from '@/plugins/location'
+  import { mdiArrowBottomLeft, mdiArrowBottomRight, mdiArrowTopLeft, mdiArrowTopRight } from '@mdi/js'
 
   // Set the leaflet marker icon
   // @ts-ignore

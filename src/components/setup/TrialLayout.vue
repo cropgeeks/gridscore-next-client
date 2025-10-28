@@ -9,8 +9,8 @@
           value="1"
         >
           <v-btn-toggle v-model="layoutType" :disabled="isEdit" mandatory color="primary" variant="tonal">
-            <v-btn prepend-icon="mdi-grid" :text="$t('pageTrialLayoutDimensionsGrid')" value="grid" :append-icon="layoutType === 'grid' ? 'mdi-check' : undefined" />
-            <v-btn prepend-icon="mdi-land-rows-horizontal" :text="$t('pageTrialLayoutDimensionsList')" value="list" :append-icon="layoutType === 'list' ? 'mdi-check' : undefined" />
+            <v-btn :prepend-icon="mdiGrid" :text="$t('pageTrialLayoutDimensionsGrid')" value="grid" :append-icon="layoutType === 'grid' ? mdiCheck : undefined" />
+            <v-btn :prepend-icon="mdiLandRowsHorizontal" :text="$t('pageTrialLayoutDimensionsList')" value="list" :append-icon="layoutType === 'list' ? mdiCheck : undefined" />
           </v-btn-toggle>
 
           <p class="my-5">{{ $t(layoutType === 'grid' ? 'pageTrialLayoutDimensionsTextGrid' : 'pageTrialLayoutDimensionsTextList') }}</p>
@@ -23,16 +23,16 @@
                 :min="1"
                 required
                 :disabled="isEdit"
-                prepend-inner-icon="mdi-land-rows-horizontal"
+                :prepend-inner-icon="mdiLandRowsHorizontal"
                 :label="$t('formLabelSetupRows')"
                 :hint="$t('formLabelDescriptionRows')"
                 persistent-hint
               />
 
               <v-btn-toggle v-model="model.layout.rowOrder" :disabled="isEdit" mandatory color="primary" variant="tonal" class="mt-3">
-                <v-btn :value="DisplayOrder.TOP_TO_BOTTOM" :text="$t('buttonTopToBottom')" prepend-icon="mdi-sort-ascending" />
+                <v-btn :value="DisplayOrder.TOP_TO_BOTTOM" :text="$t('buttonTopToBottom')" :prepend-icon="mdiSortAscending" />
                 <v-btn :value="DisplayOrder.BOTTOM_TO_TOP" :text="$t('buttonBottomToTop')">
-                  <template #prepend><v-icon icon="mdi-sort-ascending" class="mdi-flip-v" /></template>
+                  <template #prepend><v-icon :icon="mdiSortAscending" class="mdi-flip-v" /></template>
                 </v-btn>
               </v-btn-toggle>
             </v-col>
@@ -43,7 +43,7 @@
                 :min="1"
                 required
                 :disabled="isEdit"
-                prepend-inner-icon="mdi-land-rows-vertical"
+                :prepend-inner-icon="mdiLandRowsVertical"
                 :label="$t('formLabelSetupColumns')"
                 :hint="$t('formLabelDescriptionColumns')"
                 persistent-hint
@@ -51,21 +51,21 @@
 
               <v-btn-toggle v-model="model.layout.columnOrder" :disabled="isEdit" mandatory color="primary" variant="tonal" class="mt-3">
                 <v-btn :value="DisplayOrder.LEFT_TO_RIGHT" :text="$t('buttonLeftToRight')">
-                  <template #prepend><v-icon icon="mdi-sort-ascending" class="sort-ltr" /></template>
+                  <template #prepend><v-icon :icon="mdiSortAscending" class="sort-ltr" /></template>
                 </v-btn>
                 <v-btn :value="DisplayOrder.RIGHT_TO_LEFT" :text="$t('buttonRightToLeft')">
-                  <template #prepend><v-icon icon="mdi-sort-ascending" class="sort-rtl" /></template>
+                  <template #prepend><v-icon :icon="mdiSortAscending" class="sort-rtl" /></template>
                 </v-btn>
               </v-btn-toggle>
             </v-col>
           </v-row>
 
           <template #prev="{ prev }">
-            <v-btn prepend-icon="mdi-arrow-up" color="primary" @click="prev" />
+            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
           </template>
 
           <template #next="{ next }">
-            <v-btn append-icon="mdi-arrow-down" color="primary" @click="next" />
+            <v-btn :append-icon="mdiArrowDown" color="primary" @click="next" />
           </template>
         </v-stepper-vertical-item>
 
@@ -77,11 +77,11 @@
           <GermplasmLayoutTable v-model="model" :is-edit="isEdit" :is-clone="isClone" ref="germplasmLayoutTable" />
 
           <template #prev="{ prev }">
-            <v-btn prepend-icon="mdi-arrow-up" color="primary" @click="checkLeave(prev)" />
+            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="checkLeave(prev)" />
           </template>
 
           <template #next="{ next }">
-            <v-btn append-icon="mdi-arrow-down" color="primary" @click="checkLeave(next)" :disabled="!isGermplasmValid" />
+            <v-btn :append-icon="mdiArrowDown" color="primary" @click="checkLeave(next)" :disabled="!isGermplasmValid" />
           </template>
         </v-stepper-vertical-item>
 
@@ -93,11 +93,11 @@
           <CornerPointsMap v-model="model.layout" ref="cornerPointMap" />
 
           <template #prev="{ prev }">
-            <v-btn prepend-icon="mdi-arrow-up" color="primary" @click="prev" />
+            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
           </template>
 
           <template #next="{ next }">
-            <v-btn append-icon="mdi-arrow-down" color="primary" @click="next" />
+            <v-btn :append-icon="mdiArrowDown" color="primary" @click="next" />
           </template>
         </v-stepper-vertical-item>
 
@@ -109,11 +109,11 @@
           <LayoutMarkers v-model="model.layout" ref="layoutMarkers" />
 
           <template #prev="{ prev }">
-            <v-btn prepend-icon="mdi-arrow-up" color="primary" @click="prev" />
+            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
           </template>
 
           <template #next>
-            <v-btn append-icon="mdi-arrow-down" color="primary" @click="emit('next')" :disabled="!isValid" />
+            <v-btn :append-icon="mdiArrowDown" color="primary" @click="emit('next')" :disabled="!isValid" />
           </template>
         </v-stepper-vertical-item>
       </template>
@@ -130,6 +130,7 @@
   import LayoutMarkers from '@/components/setup/LayoutMarkers.vue'
   import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
   import type { TrialPlus } from '@/plugins/types/client'
+  import { mdiArrowDown, mdiArrowUp, mdiCheck, mdiGrid, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSortAscending } from '@mdi/js'
 
   const { t } = useI18n()
 

@@ -60,7 +60,7 @@
 
     <v-card variant="tonal" class="mt-5">
       <div class="d-flex flex-wrap flex-sm-nowrap justify-center justify-sm-start">
-        <v-icon color="primary" class="ma-5" size="80" icon="mdi-newspaper-variant-outline" />
+        <v-icon color="primary" class="ma-5" size="80" :icon="mdiNewspaperVariantOutline" />
         <div>
           <v-card-title class="text-h5">{{ $t('pageHomeTitleCitation') }}</v-card-title>
 
@@ -76,6 +76,7 @@
 <script lang="ts" setup>
   import TrialSelector from '@/components/trial/TrialSelector.vue'
   import { categoricalColors } from '@/plugins/color'
+  import { mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
@@ -86,7 +87,7 @@
       subtitle: t('pageHomeCardSubtitleSetup'),
       image: 'banner-setup.svg',
       color: categoricalColors.GridScoreDefault[0],
-      icon: 'mdi-notebook-plus',
+      icon: mdiNotebookPlus,
       to: '/setup',
     }, {
       id: 'share',
@@ -94,7 +95,7 @@
       subtitle: t('pageHomeCardSubtitleShareData'),
       image: 'banner-share.svg',
       color: categoricalColors.GridScoreDefault[1],
-      icon: 'mdi-qrcode-scan',
+      icon: mdiQrcodeScan,
       to: '/trial/import',
     }, {
       id: 'example',
@@ -102,7 +103,7 @@
       subtitle: t('pageHomeCardSubtitleLoadExample'),
       image: 'banner-load-example.svg',
       color: categoricalColors.GridScoreDefault[2],
-      icon: 'mdi-clipboard-text-clock',
+      icon: mdiClipboardTextClock,
       to: '/trial/import/example',
     }, {
       id: 'settings',
@@ -110,7 +111,7 @@
       subtitle: t('pageHomeCardSubtitleSettings'),
       image: 'banner-settings.svg',
       color: categoricalColors.GridScoreDefault[3],
-      icon: 'mdi-cog',
+      icon: mdiCog,
       to: '/settings',
     }]
   })

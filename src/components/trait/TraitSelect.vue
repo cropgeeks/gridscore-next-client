@@ -13,12 +13,12 @@
   >
     <template #item="{ props, item }">
       <v-list-item v-bind="props" slim :title="item.raw.name">
-        <template #prepend><v-icon :color="item.raw.color" icon="mdi-circle" /></template>
+        <template #prepend><v-icon :color="item.raw.color" :icon="mdiCircle" /></template>
       </v-list-item>
     </template>
     <template #selection="{ item }">
       <v-list-item slim :title="item.raw.name">
-        <template #prepend><v-icon :color="item.raw.color" icon="mdi-circle" /></template>
+        <template #prepend><v-icon :color="item.raw.color" :icon="mdiCircle" /></template>
       </v-list-item>
     </template>
   </v-select>
@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
   import type { TraitPlus } from '@/plugins/types/client'
+  import { mdiCircle } from '@mdi/js'
 
   const selectedTrait = defineModel<TraitPlus>('selectedTrait')
 

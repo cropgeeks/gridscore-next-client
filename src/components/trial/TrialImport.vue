@@ -9,7 +9,7 @@
       <v-alert
         v-if="isOnline === false"
         color="error"
-        icon="mdi-lan-disconnect"
+        :icon="mdiLanDisconnect"
         density="compact"
         :text="$t('modalTextNetworkUnavailableWarning')"
         variant="tonal"
@@ -30,7 +30,7 @@
 
         <v-text-field v-model="shareCode" :label="$t('formLabelTrialImportCode')" :hint="$t('formDescriptionTrialImportCode')" persistent-hint>
           <template #append>
-            <v-btn icon="mdi-qrcode-scan" v-tooltip:top="$t('buttonScanQR')" @click="showCamera = !showCamera" />
+            <v-btn :icon="mdiQrcodeScan" v-tooltip:top="$t('buttonScanQR')" @click="showCamera = !showCamera" />
           </template>
         </v-text-field>
 
@@ -42,7 +42,7 @@
 
         <p class="text-error mt-3 mb-0" v-if="serverError"><span v-html="serverError" /></p>
 
-        <v-btn color="primary" class="mt-3" :disabled="!shareCode || loading" :text="$t('buttonCheckShareCode')" prepend-icon="mdi-magnify" @click="getTrial" />
+        <v-btn color="primary" class="mt-3" :disabled="!shareCode || loading" :text="$t('buttonCheckShareCode')" :prepend-icon="mdiMagnify" @click="getTrial" />
       </div>
     </UseOnline>
 
@@ -57,25 +57,25 @@
           <div class="d-flex justify-space-between flex-wrap">
             <div>{{ $t('modalTitleTrialPreview') }}</div>
             <div>
-              <v-btn :text="$t('modalTextTrialImportPermissionUpgradeNew')" prepend-icon="mdi-notebook-plus" color="primary" @click="importAsNew" v-if="trial" />
+              <v-btn :text="$t('modalTextTrialImportPermissionUpgradeNew')" :prepend-icon="mdiNotebookPlus" color="primary" @click="importAsNew" v-if="trial" />
             </div>
           </div>
         </template>
         <template #text>
-          <v-banner class="mb-3" bg-color="info" color="white" :text="infoMessage" v-if="infoMessage" icon="mdi-information">
+          <v-banner class="mb-3" bg-color="info" color="white" :text="infoMessage" v-if="infoMessage" :icon="mdiInformation">
             <template #actions v-if="noChangeRequired">
-              <v-btn :text="$t('buttonLoadTrial')" prepend-icon="mdi-notebook-check" @click="navigateToLocal" />
-              <v-btn :text="$t('modalTextTrialImportPermissionUpgradeNew')" prepend-icon="mdi-notebook-plus" @click="importAsNew" />
+              <v-btn :text="$t('buttonLoadTrial')" :prepend-icon="mdiNotebookCheck" @click="navigateToLocal" />
+              <v-btn :text="$t('modalTextTrialImportPermissionUpgradeNew')" :prepend-icon="mdiNotebookPlus" @click="importAsNew" />
             </template>
             <template #actions v-else-if="!trial">
-              <v-btn :text="$t('buttonLoadTrial')" prepend-icon="mdi-notebook-check" @click="navigateToLocal" />
+              <v-btn :text="$t('buttonLoadTrial')" :prepend-icon="mdiNotebookCheck" @click="navigateToLocal" />
             </template>
           </v-banner>
 
           <template v-if="trial">
             <p>{{ $t('modalTextTrialPreview') }}</p>
 
-            <v-combobox class="my-3" v-model="trialGroup" autocomplete="off" :label="$t('formLabelTrialSetupTrialGroup')" prepend-icon="mdi-folder-table" :hint="$t('formDescriptionTrialSetupTrialGroup')" persistent-hint :items="trialGroups" />
+            <v-combobox class="my-3" v-model="trialGroup" autocomplete="off" :label="$t('formLabelTrialSetupTrialGroup')" :prepend-icon="mdiFolderTable" :hint="$t('formDescriptionTrialSetupTrialGroup')" persistent-hint :items="trialGroups" />
 
             <TrialCard :trial="trial" :show-actions="false" />
           </template>
@@ -95,6 +95,7 @@
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
 
   import emitter from 'tiny-emitter/instance'
+  import { mdiFolderTable, mdiInformation, mdiLanDisconnect, mdiMagnify, mdiNotebookCheck, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
 
   const compProps = defineProps<{
     code?: string

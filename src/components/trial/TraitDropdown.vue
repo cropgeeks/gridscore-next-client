@@ -5,7 +5,7 @@
         v-bind="props"
         variant="tonal"
         :size="size || 'default'"
-        prepend-icon="mdi-tag-multiple"
+        :prepend-icon="mdiTagMultiple"
         :text="$t('toolbarTraitVisibility')"
       />
     </template>
@@ -22,7 +22,7 @@
         <v-date-input
           :label="$t('formLabelTraitDropdownCutoffDate')"
           prepend-icon=""
-          prepend-inner-icon="mdi-calendar-start"
+          :prepend-inner-icon="mdiCalendarStart"
           clearable
           hide-details
           density="compact"
@@ -34,8 +34,8 @@
 
       <v-list-item>
         <v-btn-group density="compact" class="d-flex">
-          <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectAll')" @click="toggleVisibilityAll(true)" :prepend-icon="isSquare ? 'mdi-square' : 'mdi-circle'" />
-          <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectNone')" @click="toggleVisibilityAll(false)" :prepend-icon="isSquare ? 'mdi-square-outline' : 'mdi-circle-outline'" />
+          <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectAll')" @click="toggleVisibilityAll(true)" :prepend-icon="isSquare ? mdiSquare : mdiCircle" />
+          <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectNone')" @click="toggleVisibilityAll(false)" :prepend-icon="isSquare ? mdiSquareOutline : mdiCircleOutline" />
         </v-btn-group>
       </v-list-item>
 
@@ -50,7 +50,7 @@
             :title="group.name"
           >
             <template #prepend>
-              <v-icon :icon="group.allMarked ? 'mdi-checkbox-marked' : (group.someMarked ? 'mdi-minus-box' : 'mdi-checkbox-blank-outline')" @click.prevent.stop="updateHiddenTraits(group)" />
+              <v-icon :icon="group.allMarked ? mdiCheckboxMarked : (group.someMarked ? mdiMinusBox : mdiCheckboxBlankOutline)" @click.prevent.stop="updateHiddenTraits(group)" />
             </template>
           </v-list-item>
         </template>
@@ -82,6 +82,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDate } from 'vuetify'
   import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
+  import { mdiCalendarStart, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCircle, mdiCircleHalfFull, mdiCircleOutline, mdiMinusBox, mdiSquare, mdiSquareOpacity, mdiSquareOutline, mdiTagMultiple } from '@mdi/js'
 
   const date = useDate()
   const store = coreStore()
@@ -173,9 +174,9 @@
 
   function getIcon (trait: MiniTrait) {
     if (trait.allowRepeats) {
-      return isSquare.value ? 'mdi-square-opacity' : 'mdi-circle-half-full'
+      return isSquare.value ? mdiSquareOpacity : mdiCircleHalfFull
     } else {
-      return isSquare.value ? 'mdi-square' : 'mdi-circle'
+      return isSquare.value ? mdiSquare : mdiCircle
     }
   }
 

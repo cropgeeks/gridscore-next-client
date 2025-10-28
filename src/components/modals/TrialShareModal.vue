@@ -18,7 +18,7 @@
           <v-alert
             v-if="isOnline === false"
             color="error"
-            icon="mdi-lan-disconnect"
+            :icon="mdiLanDisconnect"
             density="compact"
             :text="$t('modalTextNetworkUnavailableWarning')"
             variant="tonal"
@@ -48,7 +48,7 @@
 
             <div v-if="error" class="my-3 text-error">{{ error }}</div>
 
-            <v-btn color="primary" prepend-icon="mdi-qrcode" :text="$t('buttonGenerateShareCodes')" @click="share" />
+            <v-btn color="primary" :prepend-icon="mdiQrcode" :text="$t('buttonGenerateShareCodes')" @click="share" />
           </div>
         </UseOnline>
       </template>
@@ -69,6 +69,7 @@
   import { useI18n } from 'vue-i18n'
   import { shareTrial } from '@/plugins/api'
   import emitter from 'tiny-emitter/instance'
+  import { mdiLanDisconnect, mdiQrcode } from '@mdi/js'
 
   const { t } = useI18n()
 

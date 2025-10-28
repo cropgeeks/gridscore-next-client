@@ -22,7 +22,7 @@
               :key="`changelog-entry-${i}`"
             >
               <v-card :title="version.raw.version" class="mb-4">
-                <template #subtitle><v-chip label prepend-icon="mdi-calendar" :text="new Date(version.raw.date).toLocaleDateString()" /></template>
+                <template #subtitle><v-chip label :prepend-icon="mdiCalendar" :text="new Date(version.raw.date).toLocaleDateString()" /></template>
 
                 <v-list>
                   <v-list-item
@@ -68,6 +68,7 @@
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
   import type { FilterMatch, InternalItem } from 'vuetify'
+  import { mdiBugCheck, mdiCalendar, mdiChevronTripleUp, mdiNewBox } from '@mdi/js'
 
   const { t } = useI18n()
 
@@ -113,9 +114,9 @@
 
   const badges: ComputedRef<{ [index: string]: BadgeInfo }> = computed(() => {
     return {
-      new: { color: 'success', text: t('changelogBadgeNew'), icon: 'mdi-new-box' },
-      update: { color: 'info', text: t('changelogBadgeUpdate'), icon: 'mdi-chevron-triple-up' },
-      bugfix: { color: 'warning', text: t('changelogBadgeFix'), icon: 'mdi-bug-check' },
+      new: { color: 'success', text: t('changelogBadgeNew'), icon: mdiNewBox },
+      update: { color: 'info', text: t('changelogBadgeUpdate'), icon: mdiChevronTripleUp },
+      bugfix: { color: 'warning', text: t('changelogBadgeFix'), icon: mdiBugCheck },
     }
   })
 

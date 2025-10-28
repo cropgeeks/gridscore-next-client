@@ -5,18 +5,17 @@
         <v-btn
           v-bind="props"
           :text="$t('toolbarPlotMediaMode')"
-          :active="store.storeMediaMode !== undefined"
-          active-color="primary"
-          prepend-icon="mdi-camera-burst"
+          :color="store.storeMediaMode !== undefined ? 'primary' : undefined"
+          :prepend-icon="mdiCameraBurst"
           variant="tonal"
         />
       </template>
 
       <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
         <v-list-subheader :title="$t('menuItemMediaModeHeading')" />
-        <v-list-item :title="$t('menuItemMediaModeDisabled')" prepend-icon="mdi-cancel" :append-icon="store.storeMediaMode === undefined ? 'mdi-check' : undefined" @click="store.setMediaMode(undefined)" />
-        <v-list-item :title="$t('menuItemMediaModeImage')" prepend-icon="mdi-image" :append-icon="store.storeMediaMode === 'image' ? 'mdi-check' : undefined" @click="store.setMediaMode('image')" />
-        <v-list-item :title="$t('menuItemMediaModeVideo')" prepend-icon="mdi-video" :append-icon="store.storeMediaMode === 'video' ? 'mdi-check' : undefined" @click="store.setMediaMode('video')" />
+        <v-list-item :title="$t('menuItemMediaModeDisabled')" :prepend-icon="mdiCancel" :append-icon="store.storeMediaMode === undefined ? mdiCheck : undefined" @click="store.setMediaMode(undefined)" />
+        <v-list-item :title="$t('menuItemMediaModeImage')" :prepend-icon="mdiImage" :append-icon="store.storeMediaMode === 'image' ? mdiCheck : undefined" @click="store.setMediaMode('image')" />
+        <v-list-item :title="$t('menuItemMediaModeVideo')" :prepend-icon="mdiVideo" :append-icon="store.storeMediaMode === 'video' ? mdiCheck : undefined" @click="store.setMediaMode('video')" />
       </v-list>
     </v-menu>
 
@@ -41,6 +40,7 @@
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
+  import { mdiCameraBurst, mdiCancel, mdiCheck, mdiImage, mdiVideo } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
 
   const store = coreStore()

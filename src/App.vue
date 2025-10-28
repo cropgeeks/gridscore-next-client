@@ -20,26 +20,26 @@
 
         <v-menu v-if="selectedTrial && trialInfoPages.includes(route.path)">
           <template #activator="{ props }">
-            <v-btn icon="mdi-notebook" v-bind="props" />
+            <v-btn :icon="mdiNotebook" v-bind="props" />
           </template>
           <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" :interactive="false" />
         </v-menu>
 
         <v-menu>
           <template #activator="{ props }">
-            <v-btn icon="mdi-theme-light-dark" v-bind="props" />
+            <v-btn :icon="mdiThemeLightDark" v-bind="props" />
           </template>
           <v-list>
             <v-list-subheader class="text-high-emphasis text-uppercase font-weight-black">{{ $t('menuTheme') }}</v-list-subheader>
-            <v-list-item prepend-icon="mdi-white-balance-sunny" :active="store.storeTheme === 'light'" @click="store.setTheme('light')" :title="$t('menuItemThemeLight')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'light'" /></template></v-list-item>
-            <v-list-item prepend-icon="mdi-weather-night" :active="store.storeTheme === 'dark'" @click="store.setTheme('dark')" :title="$t('menuItemThemeDark')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'dark'" /></template></v-list-item>
-            <v-list-item prepend-icon="mdi-desktop-tower-monitor" :active="store.storeTheme === 'system'" @click="store.setTheme('system')" :title="$t('menuItemThemeSystem')"><template #append><v-icon icon="mdi-check" v-if="store.storeTheme === 'system'" /></template></v-list-item>
+            <v-list-item :prepend-icon="mdiWhiteBalanceSunny" :active="store.storeTheme === 'light'" @click="store.setTheme('light')" :title="$t('menuItemThemeLight')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'light'" /></template></v-list-item>
+            <v-list-item :prepend-icon="mdiWeatherNight" :active="store.storeTheme === 'dark'" @click="store.setTheme('dark')" :title="$t('menuItemThemeDark')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'dark'" /></template></v-list-item>
+            <v-list-item :prepend-icon="mdiDesktopTowerMonitor" :active="store.storeTheme === 'system'" @click="store.setTheme('system')" :title="$t('menuItemThemeSystem')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'system'" /></template></v-list-item>
           </v-list>
         </v-menu>
 
         <v-menu>
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-translate" />
+            <v-btn v-bind="props" :icon="mdiTranslate" />
           </template>
           <v-list>
             <v-list-subheader class="text-high-emphasis text-uppercase font-weight-black">{{ $t('menuLocale') }}</v-list-subheader>
@@ -55,7 +55,7 @@
                 <span class="me-3">{{ language.icon }}</span>
               </template>
               <template #append>
-                <v-icon v-if="language.locale === store.storeLocale">mdi-check</v-icon>
+                <v-icon v-if="language.locale === store.storeLocale" :icon="mdiCheck" />
               </template>
             </v-list-item>
           </v-list>
@@ -71,29 +71,29 @@
         :expand-on-hover="mdAndUp"
       >
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-home" :title="$t('menuHome')" to="/" />
-          <v-list-item prepend-icon="mdi-notebook-plus" :title="$t('pageHomeCardTitleSetup')" to="/setup" />
+          <v-list-item :prepend-icon="mdiHome" :title="$t('menuHome')" to="/" />
+          <v-list-item :prepend-icon="mdiNotebookPlus" :title="$t('pageHomeCardTitleSetup')" to="/setup" />
 
           <v-list-group value="data-entry">
             <template #activator="{ props }">
-              <v-list-item v-bind="props" :disabled="!selectedTrial" link prepend-icon="mdi-pencil-ruler" :title="$t('menuDataEntry')" />
+              <v-list-item v-bind="props" :disabled="!selectedTrial" link :prepend-icon="mdiPencilRuler" :title="$t('menuDataEntry')" />
             </template>
 
-            <v-list-item prepend-icon="mdi-grid" :title="$t('menuDataEntryGrid')" to="/collect/grid" />
-            <v-list-item prepend-icon="mdi-directions-fork" :title="$t('menuDataEntryGuidedWalk')" to="/collect/walk" />
-            <v-list-item prepend-icon="mdi-barcode-scan" :title="$t('menuDataEntryInput')" to="/collect/input" />
+            <v-list-item :prepend-icon="mdiGrid" :title="$t('menuDataEntryGrid')" to="/collect/grid" />
+            <v-list-item :prepend-icon="mdiDirectionsFork" :title="$t('menuDataEntryGuidedWalk')" to="/collect/walk" />
+            <v-list-item :prepend-icon="mdiBarcodeScan" :title="$t('menuDataEntryInput')" to="/collect/input" />
           </v-list-group>
 
           <v-list-group value="visualization">
             <template #activator="{ props }">
-              <v-list-item v-bind="props" :disabled="!selectedTrial" link prepend-icon="mdi-chart-waterfall" :title="$t('menuDataVisualization')" />
+              <v-list-item v-bind="props" :disabled="!selectedTrial" link :prepend-icon="mdiChartWaterfall" :title="$t('menuDataVisualization')" />
             </template>
 
-            <v-list-item prepend-icon="mdi-gradient-horizontal" :title="$t('menuVisualizationHeatmap')" to="/visualization/heatmap" />
-            <v-list-item prepend-icon="mdi-map" :title="$t('menuVisualizationMap')" to="/visualization/map" />
+            <v-list-item :prepend-icon="mdiGradientHorizontal" :title="$t('menuVisualizationHeatmap')" to="/visualization/heatmap" />
+            <v-list-item :prepend-icon="mdiMap" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 
-          <v-list-item prepend-icon="mdi-cog" :title="$t('menuSettings')" to="/settings" />
+          <v-list-item :prepend-icon="mdiCog" :title="$t('menuSettings')" to="/settings" />
           <v-list-item prepend-icon="$gridscore" :title="$t('menuAbout')" to="/about" />
         </v-list>
       </v-navigation-drawer>
@@ -161,6 +161,7 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
+import { mdiBarcodeScan, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()

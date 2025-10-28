@@ -20,7 +20,7 @@
 
         <v-btn :text="$t('buttonReadColumns')" @click="readColumns">
           <template #prepend>
-            <v-icon class="mdi-rotate-270" icon="mdi-view-split-vertical" />
+            <v-icon class="mdi-rotate-270" :icon="mdiViewSplitVertical" />
           </template>
         </v-btn>
 
@@ -70,6 +70,7 @@
   import type { Layout } from '@/plugins/types/gridscore'
   import { getColumnIndex, getRowIndex } from '@/plugins/util'
   import type { CellPlus } from '@/plugins/types/client'
+import { mdiViewSplitVertical } from '@mdi/js'
 
   interface SelectOption {
     title: string

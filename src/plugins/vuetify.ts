@@ -5,13 +5,13 @@
  */
 
 // Styles
-import '@mdi/font/css/materialdesignicons.css'
+// import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
 import axios from 'axios'
 
-import { aliases as defaultAliases } from 'vuetify/iconsets/mdi'
-import { createVuetify, type IconAliases, type VuetifyOptions } from 'vuetify'
+import { aliases as defaultAliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { createVuetify, type IconAliases } from 'vuetify'
 
 import enGB from '@/plugins/i18n/en_GB.json'
 import deDE from '@/plugins/i18n/de_DE.json'
@@ -98,7 +98,11 @@ function initVuetify () {
       VDateInput,
     },
     icons: {
+      defaultSet: 'mdi',
       aliases,
+      sets: {
+        mdi,
+      },
     },
     theme: {
       defaultTheme: 'system',
