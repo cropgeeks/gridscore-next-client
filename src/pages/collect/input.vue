@@ -29,6 +29,7 @@
     <DataEntryModal :trial="trial" :geolocation="geolocation" ref="dataEntryModal" @data-changed="loadTrial" @hide="autofocus" />
 
     <MediaModal :trial="trial" @hide="autofocus" />
+    <TrialPersonSelectModal :trial="trial" v-if="trial && trial.people && trial.people.length > 0" />
   </v-container>
 </template>
 
@@ -36,6 +37,7 @@
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
+  import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'

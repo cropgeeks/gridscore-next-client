@@ -36,11 +36,13 @@
     </v-container>
 
     <MediaModal :trial="trial" />
+    <TrialPersonSelectModal :trial="trial" v-if="trial && trial.people && trial.people.length > 0" />
   </div>
 </template>
 
 <script setup lang="ts">
   import MediaModal from '@/components/modals/MediaModal.vue'
+  import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'
   import GuideOrderSelector from '@/components/trial/GuideOrderSelector.vue'
   import { getCell, getTrialById } from '@/plugins/idb'

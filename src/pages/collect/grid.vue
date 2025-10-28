@@ -67,6 +67,7 @@
       <GermplasmAutocomplete
         :trial="trial"
         v-model="searchMatch"
+        min-width="120px"
         max-width="min(50vw, 250px)"
         density="compact"
         ref="searchField"
@@ -100,6 +101,7 @@
     <SearchResultModal ref="searchResultModal" :list="searchResults" v-if="searchResults && searchResults.length > 0" />
 
     <MediaModal :trial="trial" />
+    <TrialPersonSelectModal :trial="trial" v-if="trial && trial.people && trial.people.length > 0" />
   </div>
 </template>
 
@@ -108,6 +110,7 @@
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
+  import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
@@ -116,7 +119,7 @@
   import { getTrialById } from '@/plugins/idb'
   import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCloudUpload, mdiCursorMove, mdiFormatListNumbered, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
+  import { mdiAccountMultiple, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCloudUpload, mdiCursorMove, mdiFormatListNumbered, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
@@ -154,6 +157,12 @@
 
   const overflowItems: ComputedRef<MenuItem[]> = computed(() => {
     return [{
+      text: t('toolbarPersonSelector'),
+      prependIcon: mdiAccountMultiple,
+      variant: 'tonal',
+      size: undefined,
+      click: () => emitter.emit('show-trial-person-selector'),
+    }, {
       text: t('toolbarPlotHighlight'),
       id: 'grid-highlight',
       color: store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined ? 'primary' : undefined,

@@ -119,7 +119,7 @@
 
 <script setup lang="ts" generic="T">
   import { mdiPaperclip } from '@mdi/js'
-import { useDate } from 'vuetify'
+  import { useDate } from 'vuetify'
 
   export interface SelectOption {
     title: string

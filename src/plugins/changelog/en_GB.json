@@ -771,6 +771,11 @@
         "type": "update",
         "title": "Dedicated guided walk and scan input page",
         "text": "In addition to the main data display grid you can now use a dedicated guided walk page as well as a barcode-focussed input page to enter data more efficiently."
+      },
+      {
+        "type": "bugfix",
+        "title": "Image saving issues",
+        "text": "In previous versions there have been issues with saving images on some devices. This has now been resolved."
       }
     ]
   }

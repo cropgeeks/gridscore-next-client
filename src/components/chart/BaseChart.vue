@@ -48,7 +48,7 @@
   import { downloadBlob, downloadSvgsFromContainer, type DownloadBlob } from '@/plugins/file'
   import { getDateTimeString } from '@/plugins/formatting'
   import { coreStore } from '@/stores/app'
-import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiFileImage } from '@mdi/js'
+  import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiFileImage } from '@mdi/js'
   import Plotly from 'plotly.js/lib/core'
 
   const emit = defineEmits(['update:loading', 'force-redraw'])

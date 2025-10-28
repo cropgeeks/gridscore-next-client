@@ -128,6 +128,7 @@
                 @delete="deleteTrialLocal(trial.raw)"
                 @load="loadTrial(trial.raw)"
                 @add-trait="addTrait(trial.raw)"
+                @add-person="addPerson(trial.raw)"
                 @duplicate="router.push(`/setup/${trial.raw.localId}/clone`)"
                 @edit="router.push(`/setup/${trial.raw.localId}/edit`)"
                 @toggle-select="toggleSelect(trial)"
@@ -143,12 +144,13 @@
     </v-card-text>
 
     <TrialShareModal :trial="selectedTrial" ref="trialShareModal" v-if="selectedTrial" />
-    <AddTraitModal ref="addTrialModal" v-if="selectedTrial || selectedTrials.length > 0" @traits-added="addTraitsToSelectedTrials" />
+    <AddTraitModal ref="addTraitModal" v-if="selectedTrial || selectedTrials.length > 0" @traits-added="addTraitsToSelectedTrials" />
+    <AddPersonModal ref="addPersonModal" v-if="selectedTrial || selectedTrials.length > 0" @person-added="addPersonToSelectedTrials" />
   </v-card>
 </template>
 
 <script setup lang="ts">
-  import { addTrialTraits, deleteTrial, getTrials } from '@/plugins/idb'
+  import { addTrialPeople, addTrialTraits, deleteTrial, getTrials } from '@/plugins/idb'
   import { TrialListType, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import TrialCard from '@/components/trial/TrialCard.vue'
@@ -160,9 +162,10 @@
   import { getNumberWithSuffix } from '@/plugins/formatting'
   import type { FilterMatch, InternalItem } from 'vuetify'
   import { postCheckUpdate } from '@/plugins/api'
-  import type { TrialUpdateCheck } from '@/plugins/types/gridscore'
+  import type { Person, TrialUpdateCheck } from '@/plugins/types/gridscore'
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
-import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
+  import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
+  import AddPersonModal from '@/components/modals/AddPersonModal.vue'
 
   interface TrialGroup {
     id: string
@@ -193,7 +196,8 @@ import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMult
   const sortDescending = ref(true)
   const trialDisplayMode = ref(store.storeTrialListArrangement)
   const trialShareModal = useTemplateRef('trialShareModal')
-  const addTrialModal = useTemplateRef('addTrialModal')
+  const addTraitModal = useTemplateRef('addTraitModal')
+  const addPersonModal = useTemplateRef('addPersonModal')
 
   const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
 
@@ -309,6 +313,25 @@ import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMult
     }
   }
 
+  function addPersonToSelectedTrials (person: Person) {
+    let trials: TrialPlus[] = []
+    if (selectionEnabled.value) {
+      trials = selectedTrials.value
+    } else if (selectedTrial.value) {
+      trials = [selectedTrial.value]
+    }
+
+    Promise.all(trials.map(t => addTrialPeople(t.localId || '', [person])))
+      .then(() => {
+        emitter.emit('trials-updated')
+        emitter.emit('plausible-event', { key: 'person-added' })
+
+        if (store.storeSelectedTrial && trials.map(t => t.localId || '').includes(store.storeSelectedTrial)) {
+          store.setSelectedTrialPerson(undefined)
+        }
+      })
+  }
+
   function addTraitsToSelectedTrials (traits: TraitPlus[]) {
     let trials: TrialPlus[] = []
     if (selectionEnabled.value) {
@@ -327,7 +350,14 @@ import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMult
   function addTrait (trial?: TrialPlus) {
     selectedTrial.value = trial
 
-    nextTick(() => addTrialModal.value?.show())
+    nextTick(() => addTraitModal.value?.show())
+    nextTick(() => addTraitModal.value?.show())
+  }
+
+  function addPerson (trial?: TrialPlus) {
+    selectedTrial.value = trial
+
+    nextTick(() => addPersonModal.value?.show())
   }
 
   function shareTrial (trial: TrialPlus) {

@@ -70,7 +70,7 @@
   import type { Layout } from '@/plugins/types/gridscore'
   import { getColumnIndex, getRowIndex } from '@/plugins/util'
   import type { CellPlus } from '@/plugins/types/client'
-import { mdiViewSplitVertical } from '@mdi/js'
+  import { mdiViewSplitVertical } from '@mdi/js'
 
   interface SelectOption {
     title: string

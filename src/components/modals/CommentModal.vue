@@ -51,7 +51,7 @@
 <script setup lang="ts">
   import type { Comment } from '@/plugins/types/gridscore'
   import SpeechRecognitionTextarea from '@/components/inputs/SpeechRecognitionTextarea.vue'
-import { mdiCalendar, mdiCommentPlus, mdiDelete } from '@mdi/js'
+  import { mdiCalendar, mdiCommentPlus, mdiDelete } from '@mdi/js'
 
   const dialog = ref(false)
   const perPage = ref(5)

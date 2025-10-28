@@ -76,7 +76,7 @@
   import { useI18n } from 'vue-i18n'
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
-import { mdiAlert, mdiLandFields } from '@mdi/js'
+  import { mdiAlert, mdiLandFields } from '@mdi/js'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([

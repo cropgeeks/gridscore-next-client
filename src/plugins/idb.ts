@@ -1095,6 +1095,39 @@ async function deletePlotComment (trialId: string, row: number, column: number, 
   }
 }
 
+async function addTrialPeople (trialId: string, people: Person[]) {
+  const trial = await getTrialById(trialId)
+
+  people = JSON.parse(JSON.stringify(people))
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialPersonAddedTransactions.push(...people)
+
+      await db.put('transactions', transaction)
+    }
+
+    if (!trial.people) {
+      trial.people = []
+    }
+
+    people.forEach(p => {
+      trial.people.push(p)
+    })
+    trial.updatedOn = new Date().toISOString()
+
+    await db.put('trials', trial)
+
+    return new Promise(resolve => resolve(trial))
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
 export {
   getDb,
   getTrialGroups,
@@ -1107,6 +1140,7 @@ export {
   addTrial,
   updateTrial,
   deleteTrial,
+  addTrialPeople,
   changeTrialsData,
   addTrialTraits,
   getTrialValidPlots,

@@ -75,7 +75,7 @@
 <script setup lang="ts">
   import { gridScoreVersion } from '@/plugins/constants'
   import { coreStore } from '@/stores/app'
-import { mdiBookEducation, mdiGithub, mdiInformation, mdiLaptop, mdiNewspaperVariant, mdiTagOutline } from '@mdi/js'
+  import { mdiBookEducation, mdiGithub, mdiInformation, mdiLaptop, mdiNewspaperVariant, mdiTagOutline } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 
