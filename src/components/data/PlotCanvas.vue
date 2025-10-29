@@ -820,6 +820,7 @@
 
       let counter = 0
       // Define an update interval
+      // @ts-ignore
       flingInterval = setInterval(() => {
         // Run 25 iterations
         if (counter++ < 25) {

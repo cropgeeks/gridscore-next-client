@@ -206,17 +206,17 @@ export const coreStore = defineStore('core', {
         const trial = await getTrialById(newSelectedTrial)
         ensureTraitImagesCached(trial)
         if (trial.brapiConfig) {
-          this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(trial.brapiConfig)))
+          this.brapiConfig = Object.assign({ url: undefined, token: undefined }, JSON.parse(JSON.stringify(trial.brapiConfig)))
         } else {
           this.brapiConfig = {
-            url: null,
-            token: null,
+            url: undefined,
+            token: undefined,
           }
         }
       } else {
         this.brapiConfig = {
-          url: null,
-          token: null,
+          url: undefined,
+          token: undefined,
         }
       }
 
@@ -306,11 +306,11 @@ export const coreStore = defineStore('core', {
     },
     setBrapiConfig (newBrapiConfig: BrapiConfig) {
       if (newBrapiConfig) {
-        this.brapiConfig = Object.assign({ url: null, token: null }, JSON.parse(JSON.stringify(newBrapiConfig)))
+        this.brapiConfig = Object.assign({ url: undefined, token: undefined }, JSON.parse(JSON.stringify(newBrapiConfig)))
       } else {
         this.brapiConfig = {
-          url: null,
-          token: null,
+          url: undefined,
+          token: undefined,
         }
       }
     },
