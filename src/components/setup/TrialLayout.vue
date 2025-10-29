@@ -15,50 +15,12 @@
 
           <p class="my-5">{{ $t(layoutType === 'grid' ? 'pageTrialLayoutDimensionsTextGrid' : 'pageTrialLayoutDimensionsTextList') }}</p>
 
-          <v-row>
-            <v-col cols="12" md="6">
-              <NumberInputWithFallback
-                v-model="model.layout.rows"
-                :default-value="1"
-                :min="1"
-                required
-                :disabled="isEdit"
-                :prepend-inner-icon="mdiLandRowsHorizontal"
-                :label="$t('formLabelSetupRows')"
-                :hint="$t('formLabelDescriptionRows')"
-                persistent-hint
-              />
-
-              <v-btn-toggle v-model="model.layout.rowOrder" :disabled="isEdit" mandatory color="primary" variant="tonal" class="mt-3">
-                <v-btn :value="DisplayOrder.TOP_TO_BOTTOM" :text="$t('buttonTopToBottom')" :prepend-icon="mdiSortAscending" />
-                <v-btn :value="DisplayOrder.BOTTOM_TO_TOP" :text="$t('buttonBottomToTop')">
-                  <template #prepend><v-icon :icon="mdiSortAscending" class="mdi-flip-v" /></template>
-                </v-btn>
-              </v-btn-toggle>
-            </v-col>
-            <v-col cols="12" md="6" v-if="layoutType === 'grid'">
-              <NumberInputWithFallback
-                v-model="model.layout.columns"
-                :default-value="1"
-                :min="1"
-                required
-                :disabled="isEdit"
-                :prepend-inner-icon="mdiLandRowsVertical"
-                :label="$t('formLabelSetupColumns')"
-                :hint="$t('formLabelDescriptionColumns')"
-                persistent-hint
-              />
-
-              <v-btn-toggle v-model="model.layout.columnOrder" :disabled="isEdit" mandatory color="primary" variant="tonal" class="mt-3">
-                <v-btn :value="DisplayOrder.LEFT_TO_RIGHT" :text="$t('buttonLeftToRight')">
-                  <template #prepend><v-icon :icon="mdiSortAscending" class="sort-ltr" /></template>
-                </v-btn>
-                <v-btn :value="DisplayOrder.RIGHT_TO_LEFT" :text="$t('buttonRightToLeft')">
-                  <template #prepend><v-icon :icon="mdiSortAscending" class="sort-rtl" /></template>
-                </v-btn>
-              </v-btn-toggle>
-            </v-col>
-          </v-row>
+          <LayoutDimensions
+            v-model="model.layout"
+            v-model:layout-type="layoutType"
+            :is-edit="isEdit"
+            can-change
+          />
 
           <template #prev="{ prev }">
             <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
@@ -122,15 +84,13 @@
 </template>
 
 <script setup lang="ts">
-  import { DisplayOrder } from '@/plugins/types/gridscore'
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
   import { useI18n } from 'vue-i18n'
   import GermplasmLayoutTable from '@/components/setup/GermplasmLayoutTable.vue'
   import CornerPointsMap from '@/components/setup/CornerPointsMap.vue'
   import LayoutMarkers from '@/components/setup/LayoutMarkers.vue'
-  import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
   import type { TrialPlus } from '@/plugins/types/client'
-  import { mdiArrowDown, mdiArrowUp, mdiCheck, mdiGrid, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSortAscending } from '@mdi/js'
+  import { mdiArrowDown, mdiArrowUp, mdiCheck, mdiGrid, mdiLandRowsHorizontal } from '@mdi/js'
 
   const { t } = useI18n()
 
@@ -213,16 +173,6 @@
     refreshTable,
   })
 </script>
-
-<style scoped>
-.sort-ltr::before {
-  transform: rotate(90deg) scaleX(-1) scaleY(-1);
-}
-
-.sort-rtl::before {
-  transform: rotate(90deg) scaleX(-1);
-}
-</style>
 
 <style>
 .layout-stepper .v-stepper-actions {

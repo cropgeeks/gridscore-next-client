@@ -5,11 +5,12 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "resolveJsonModule": true,
 
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite-plugin-pwa/client"],
+    "types": ["node", "vite-plugin-pwa/client"],
   }
 }

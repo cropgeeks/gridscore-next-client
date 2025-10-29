@@ -19,6 +19,19 @@ const DIVISIONS = [
   { amount: Number.POSITIVE_INFINITY, name: 'years' as const },
 ]
 
+function isNumber (value: string, isInt = false) {
+  try {
+    const int = Number(value)
+    if (isNaN(+value) || isNaN(int) || (isInt && !Number.isInteger(int))) {
+      return false
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
 function getTraitColor (index: number) {
   const store = coreStore()
 
@@ -430,4 +443,5 @@ export {
   getToday,
   getDate,
   isValidDateString,
+  isNumber,
 }

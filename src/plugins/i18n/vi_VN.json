@@ -237,7 +237,7 @@
   "formLabelTrialImportUrl": "URL GridScore kế thừa",
   "formDescriptionTrialImportUrl": "URL của phiên bản GridScore cũ. Theo mặc định đây là https://ics.hutton.ac.uk/gridscore/",
   "formDescriptionTrialImportCode": "Mã QR đã được chia sẻ với bạn. Ngoài ra, hãy sử dụng nút mã QR ở bên phải để quét mã bằng máy ảnh.",
-  "formLabelBrapiUrl": "URL <a target='_blank' href='https://brapi.org/'> BrAPI </a>",
+  "formLabelBrapiUrl": "URL BrAPI",
   "formLabelBrapiToken": "Token",
   "formLabelBrapiTraitSearch": "Lọc danh sách đặc tính",
   "formLabelExportBrapiProgram": "Chương trình",

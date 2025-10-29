@@ -85,7 +85,8 @@ export interface Cell {
 }
 
 export interface BrapiConfig {
-    url?: string | null;
+    url?: string;
+    token?: string;
 }
 
 export interface SocialShareConfig {

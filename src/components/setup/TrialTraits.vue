@@ -209,7 +209,7 @@
                   <v-list-item @click="importExportStart(false, 'germinate')">{{ $t('dropdownOptionImportTraitsGerminate') }}</v-list-item>
                   <v-list-item @click="importExportStart(false, 'tabular')">{{ $t('dropdownOptionImportTraitsTabular') }}</v-list-item>
                   <v-list-item @click="traitImportFromTrialModal?.show()">{{ $t('dropdownOptionImportTraitsOtherTrial') }}</v-list-item>
-                  <v-list-item @click="importBrapiTraits">{{ $t('dropdownOptionImportTraitsBrapi') }}</v-list-item>
+                  <v-list-item @click="traitImportFromBrapiModal?.show()">{{ $t('dropdownOptionImportTraitsBrapi') }}</v-list-item>
 
                   <v-list-subheader>{{ $t('dropdownSectionExportTraits') }}</v-list-subheader>
                   <v-list-item :disabled="!model || model.length === 0" @click="importExportStart(true, 'json')">{{ $t('dropdownOptionExportTraitsJson') }}</v-list-item>
@@ -306,6 +306,7 @@
       </v-col>
     </v-row>
 
+    <TraitImportFromBrapiModal ref="traitImportFromBrapiModal" @traits-selected="addTraitsFromOtherTrial" />
     <TraitImportFromTrialModal ref="traitImportFromTrialModal" @traits-selected="addTraitsFromOtherTrial" />
     <GenericAddEditFormModal :ok-title="formContent.okTitle" :title="formContent.title" :fields="formFields" :item="formContent" :notify="importExport" ref="formModal" />
   </div>
@@ -322,6 +323,7 @@
   import { useDate } from 'vuetify'
   import GenericAddEditFormModal from '@/components/modals/GenericAddEditFormModal.vue'
   import TraitImportFromTrialModal from '@/components/modals/TraitImportFromTrialModal.vue'
+  import TraitImportFromBrapiModal from '@/components/modals/TraitImportFromBrapiModal.vue'
 
   import emitter from 'tiny-emitter/instance'
   import { germinateToTraits, jsonToTraits, tabularToTraits, traitsToGerminate, traitsToTabular } from '@/plugins/util'
@@ -360,6 +362,7 @@
     isTrialOwner: false,
   })
 
+  const traitImportFromBrapiModal = useTemplateRef('traitImportFromBrapiModal')
   const traitImportFromTrialModal = useTemplateRef('traitImportFromTrialModal')
   const categoryInput = useTemplateRef('categoryInput')
   const formModal = useTemplateRef('formModal')
@@ -615,13 +618,15 @@
 
   function addTraitsFromOtherTrial (newTraits: TraitPlus[]) {
     newTraits.forEach(t => {
-      const trait = JSON.parse(JSON.stringify(t))
-      delete trait.color
-      delete trait.editable
-      delete trait.progress
-      delete trait.visible
-      trait.id = getId()
-      model.value?.push(trait)
+      if (!existingTraitNames.value.includes(t.name.trim().toLowerCase())) {
+        const trait = JSON.parse(JSON.stringify(t))
+        delete trait.color
+        delete trait.editable
+        delete trait.progress
+        delete trait.visible
+        trait.id = getId()
+        model.value?.push(trait)
+      }
     })
   }
 
@@ -808,10 +813,6 @@
         resolve(true)
       }
     })
-  }
-
-  function importBrapiTraits () {
-    // TODO
   }
 
   const isValid = computed(() => model.value && model.value.length > 0)

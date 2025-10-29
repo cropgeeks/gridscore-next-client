@@ -25,6 +25,10 @@ export interface HistoryMeasurement extends Measurement {
   delete?: boolean
 }
 
+export interface TraitGroup extends TraitPlus {
+  children: Trait[]
+}
+
 export interface TrialPlus extends Trial {
   localId: string | undefined
   traits: TraitPlus[]
@@ -57,6 +61,15 @@ export interface MiniCell {
   rep?: string
   displayRow?: number
   displayColumn?: number
+}
+
+export interface BrapiImportCell {
+  row: number
+  column: number
+  germplasm: string
+  rep?: string
+  brapiId: string
+  categories: string[]
 }
 
 export interface RemoteConfig {

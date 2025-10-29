@@ -1,6 +1,6 @@
 import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
-import { DisplayOrder, TimeframeType, type Comment, type Corners, type Group, type Markers, type Measurement, type Person, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
+import { DisplayOrder, TimeframeType, type BrapiConfig, type Comment, type Corners, type Group, type Markers, type Measurement, type Person, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type TrialGroup } from '@/plugins/types/client'
 import { getColumnLabel, getRowLabel } from '@/plugins/util'
 import { getId } from '@/plugins/id'
@@ -157,6 +157,35 @@ async function deleteTrial (localId: string) {
       .then(() => {
         return db.delete('transactions', localId)
       })
+  } else {
+    return new Promise<void>(resolve => resolve())
+  }
+}
+
+async function updateTrialBrapiConfig (localId: string, brapiConfig: BrapiConfig) {
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    trial.brapiConfig = brapiConfig
+
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = logTransactions(trial) ? ((await db.get('transactions', localId)) || getEmptyTransaction(localId)) : null
+
+      if (!transaction.brapiConfigChangeTransaction) {
+        transaction.brapiConfigChangeTransaction = {
+          url: undefined,
+        }
+      }
+
+      transaction.brapiConfigChangeTransaction.url = brapiConfig ? brapiConfig.url : null
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
   } else {
     return new Promise<void>(resolve => resolve())
   }
@@ -995,7 +1024,7 @@ function getEmptyTransaction (trialId: string): Transaction {
       traitBrapiIds: {},
     },
     brapiConfigChangeTransaction: {
-      url: null,
+      url: undefined,
     },
   }
 }
@@ -1019,7 +1048,7 @@ async function addPlotComment (trialId: string, row: number, column: number, com
 
     const newComment = {
       content: commentContent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
     cell.comments.push(newComment)
@@ -1148,4 +1177,5 @@ export {
   setPlotMarked,
   addPlotComment,
   deletePlotComment,
+  updateTrialBrapiConfig,
 }

@@ -104,14 +104,10 @@
         <p v-if="error" class="mt-5 text-error">{{ error }}</p>
       </template>
 
-      <v-divider />
-
-      <v-card-actions class="bg-surface-light">
-        <v-btn :text="$t('buttonCancel')" variant="plain" @click="dialog = false" />
-
+      <v-card-actions>
         <v-spacer />
-
-        <v-btn :text="$t(compProps.okTitle)" :disabled="!valid" @click="save" />
+        <v-btn :text="$t('buttonCancel')" variant="plain" @click="dialog = false" />
+        <v-btn :text="$t(compProps.okTitle)" color="primary" variant="tonal" :disabled="!valid" @click="save" />
       </v-card-actions>
     </v-card>
   </v-dialog>

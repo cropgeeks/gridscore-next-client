@@ -6,7 +6,7 @@ import emitter from 'tiny-emitter/instance'
 import axios from 'axios'
 import { gridScoreVersion } from '@/plugins/constants'
 import type { RemoteConfig, TrialPlus } from './types/client'
-import type { Transaction, Trial, TrialTimestamp, TrialUpdateCheck } from './types/gridscore'
+import type { Transaction, TrialTimestamp, TrialUpdateCheck } from './types/gridscore'
 
 interface InternalResult {
   trial: TrialPlus

@@ -79,8 +79,8 @@ export const coreStore = defineStore('core', {
       plausibleApiHost: undefined,
     } as PlausibleConfig,
     brapiConfig: {
-      url: null,
-      token: null,
+      url: undefined,
+      token: undefined,
     },
     changelogVersionNumber: undefined as (string | undefined),
     deviceConfig: null as any,
