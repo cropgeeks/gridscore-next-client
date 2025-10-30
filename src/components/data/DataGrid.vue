@@ -281,7 +281,7 @@
 
   const visibleTraits = computed(() => {
     if (compProps.trial) {
-      return compProps.trial.traits.filter(t => !store.storeHiddenTraits.includes(t.id || ''))
+      return store.storeHideTraitCircles ? [] : compProps.trial.traits.filter(t => !store.storeHiddenTraits.includes(t.id || ''))
     } else {
       return []
     }

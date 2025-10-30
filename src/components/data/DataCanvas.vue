@@ -144,10 +144,14 @@
     isResetting.value = true
 
     nextTick(() => {
-      if (store.storeHiddenTraits) {
-        dimensions.value.visibleTraitCount = compProps.trial.traits.filter(t => !store.storeHiddenTraits.includes(t.id || '')).length
+      if (store.storeHideTraitCircles) {
+        dimensions.value.visibleTraitCount = 0
       } else {
-        dimensions.value.visibleTraitCount = compProps.trial.traits.length
+        if (store.storeHiddenTraits) {
+          dimensions.value.visibleTraitCount = compProps.trial.traits.filter(t => !store.storeHiddenTraits.includes(t.id || '')).length
+        } else {
+          dimensions.value.visibleTraitCount = compProps.trial.traits.length
+        }
       }
 
       dimensions.value.rowHeaderWidth = dimensions.value.padding + (dimensions.value.fontSize * `${compProps.trial.layout.rows}`.length)
@@ -274,6 +278,8 @@
     }
     reset()
   })
+
+  watch(() => store.storeHideTraitCircles, async () => reset())
 
   onMounted(() => {
     window.addEventListener('resize', reset)

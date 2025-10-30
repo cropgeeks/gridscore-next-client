@@ -63,6 +63,7 @@ export const coreStore = defineStore('core', {
     mapLayer: 'theme',
     trialListMode: TrialListMode.ALL as TrialListMode,
     trialListArrangement: TrialListType.GRID as TrialListType,
+    hideTraitCircles: true,
     hiddenTraits: [] as string[],
     showFullTraitDescription: true,
     escapeBarcode: null as (string | null),
@@ -126,6 +127,7 @@ export const coreStore = defineStore('core', {
     storeTrialListArrangement: (state): TrialListType => state.trialListArrangement,
     storeMapLayer: (state): string => state.mapLayer,
     storeSelectedTrial: (state): string | undefined => state.selectedTrial,
+    storeHideTraitCircles: (state): boolean => state.hideTraitCircles || false,
     storeHiddenTraits: (state): string[] => state.hiddenTraits,
     storePlausible: (state): PlausibleConfig => state.plausible,
     storeServerUrl: (state): string | null => state.serverUrl,
@@ -165,6 +167,9 @@ export const coreStore = defineStore('core', {
     setRunCount (newRunCount: number) {
       this.runCount = newRunCount
     },
+    setHideTraitCircles (newHideTraitCircles: boolean) {
+      this.hideTraitCircles = newHideTraitCircles
+    },
     setHiddenTraits (newHiddenTraits: string[]) {
       this.hiddenTraits = newHiddenTraits
     },
@@ -192,6 +197,7 @@ export const coreStore = defineStore('core', {
       this.mediaMode = undefined
       this.selectedTrial = newSelectedTrial
       this.hiddenTraits = []
+      this.hideTraitCircles = false
       this.highlightConfig = {
         type: undefined,
         germplasm: undefined,

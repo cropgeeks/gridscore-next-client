@@ -105,6 +105,8 @@
   "buttonSwapGuidedWalkCells": "Swap",
   "buttonDeleteLocalChanges": "Delete local changes",
   "buttonReset": "Reset",
+  "buttonHideTraitCircles": "Hide trait circles",
+  "buttonHideTraitSquares": "Hide trait squares",
   "appTitle": "GridScore NEXT",
   "appTitleLegacy": "GridScore legacy",
   "cellCategoryControl": "Control/Check",

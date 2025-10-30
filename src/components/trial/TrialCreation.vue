@@ -47,7 +47,7 @@
       <v-stepper-window>
         <v-stepper-window-item :value="1">
           <div class="d-flex justify-end">
-            <v-btn :text="$t('dropdownOptionBrapiTrialImport')" class="mb-3" prepend-icon="$brapi" @click="trialCreationFromBrapiModal?.show()" />
+            <v-btn :text="$t('dropdownOptionBrapiTrialImport')" class="mb-3" prepend-icon="$brapi" @click="trialCreationFromBrapiModal?.show()" :disabled="isEdit" />
           </div>
           <TrialDetails v-model="trial" :is-clone="isClone" :is-edit="isEdit" ref="trialDetails" />
         </v-stepper-window-item>
@@ -118,7 +118,7 @@
         </template>
       </v-card>
     </v-bottom-sheet>
-    <TrialCreationFromBrapiModal ref="trialCreationFromBrapiModal" />
+    <TrialCreationFromBrapiModal v-model="trial" ref="trialCreationFromBrapiModal" />
   </v-container>
 </template>
 

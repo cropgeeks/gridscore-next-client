@@ -32,6 +32,8 @@
         />
       </v-list-item>
 
+      <v-list-item :title="$t(store.storeCanvasShape === CanvasShape.CIRCLE ? 'buttonHideTraitCircles' : 'buttonHideTraitSquares')" :append-icon="store.storeHideTraitCircles ? mdiCheck : undefined" @click="store.setHideTraitCircles(!store.storeHideTraitCircles)" />
+
       <v-list-item>
         <v-btn-group density="compact" class="d-flex">
           <v-btn class="flex-grow-1" variant="tonal" :text="$t('buttonSelectAll')" @click="toggleVisibilityAll(true)" :prepend-icon="isSquare ? mdiSquare : mdiCircle" />
@@ -82,7 +84,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDate } from 'vuetify'
   import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
-  import { mdiCalendarStart, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCircle, mdiCircleHalfFull, mdiCircleOutline, mdiMinusBox, mdiSquare, mdiSquareOpacity, mdiSquareOutline, mdiTagMultiple } from '@mdi/js'
+  import { mdiCalendarStart, mdiCheck, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCircle, mdiCircleHalfFull, mdiCircleOutline, mdiMinusBox, mdiSquare, mdiSquareOpacity, mdiSquareOutline, mdiTagMultiple } from '@mdi/js'
 
   const date = useDate()
   const store = coreStore()

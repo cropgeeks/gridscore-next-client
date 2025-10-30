@@ -186,7 +186,7 @@
       return true
     } else {
       if (trial.value) {
-        return trial.value.layout.rows * trial.value.layout.columns > 1000
+        return (trial.value.layout.rows * trial.value.layout.columns > 1000) || (trial.value.layout.rows * trial.value.layout.columns * trial.value.traits.length > 2000)
       } else {
         return true
       }

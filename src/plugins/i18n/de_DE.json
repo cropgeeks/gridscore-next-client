@@ -104,6 +104,8 @@
   "buttonSwapGuidedWalkCells": "Wechseln",
   "buttonDeleteLocalChanges": "Lokale Veränderungen löschen",
   "buttonReset": "Zurücksetzen",
+  "buttonHideTraitCircles": "Merkmalskreise ausblenden",
+  "buttonHideTraitSquares": "Merkmalsrechtecke ausblenden",
   "cellCategoryControl": "Kontrolle",
   "changelogBadgeNew": "NEU",
   "changelogBadgeUpdate": "AKT",
