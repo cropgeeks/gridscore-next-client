@@ -3,10 +3,10 @@
     <v-text-field
       v-if="trait.dataType === TraitDataType.text"
       :label="label"
-      :readonly="editable === false"
+      :readonly="isEditable === false"
       :messages="description ? ['f'] : undefined"
       @keyup.enter="emit('traverse')"
-      :clearable="editable !== false"
+      :clearable="isEditable !== false"
       v-model="model"
       ref="input"
       @change="tts"
@@ -21,7 +21,7 @@
       readonly
       :messages="description ? ['f'] : undefined"
       @keyup.enter="emit('traverse')"
-      :clearable="editable !== false"
+      :clearable="isEditable !== false"
       v-model="model"
       ref="input"
     >
@@ -30,7 +30,7 @@
       </template>
       <template #append-inner>
         <UseGeolocation v-slot="{ coords: { latitude, longitude } }">
-          <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryGetGps')" :disabled="editable === false" variant="tonal" size="small" @click="setGps(latitude, longitude)" :icon="mdiMapMarker" />
+          <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryGetGps')" :disabled="isEditable === false" variant="tonal" size="small" @click="setGps(latitude, longitude)" :icon="mdiMapMarker" />
         </UseGeolocation>
       </template>
     </v-text-field>
@@ -38,7 +38,7 @@
       <div class="text-subtitle-2">{{ label }}</div>
       <v-slider
         v-model="model"
-        :readonly="editable === false"
+        :readonly="isEditable === false"
         :messages="description ? ['f'] : undefined"
         :color="(model !== null && model !== undefined) ? 'primary' : undefined"
         @wheel="$event.target.blur()"
@@ -57,7 +57,7 @@
           <v-number-input
             v-model="model"
             density="compact"
-            :readonly="trait.editable"
+            :readonly="isEditable === false"
             width="100"
             :bg-color="(model !== null && model !== undefined) ? 'warning' : undefined"
             :min="trait.restrictions?.min"
@@ -67,7 +67,7 @@
             variant="outlined"
             hide-details
           />
-          <v-btn class="ms-1" variant="flat" :disabled="editable === false || model === undefined || model === null" color="error" size="small" @click="model = undefined" :icon="mdiCancel" />
+          <v-btn class="ms-1" variant="flat" :disabled="isEditable === false || model === undefined || model === null" color="error" size="small" @click="model = undefined" :icon="mdiCancel" />
         </template>
       </v-slider>
     </div>
@@ -76,7 +76,7 @@
       type="date"
       v-model="model"
       :label="label"
-      :readonly="editable === false"
+      :readonly="isEditable === false"
       :messages="description ? ['f'] : undefined"
       @keyup.enter="setDate"
       @keyup.exact="handleDateInputChar"
@@ -84,10 +84,10 @@
       ref="input"
     >
       <template #append-inner>
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateMinusOne')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(-1)" :icon="mdiChevronLeft" />
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateToday')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(0)" :icon="mdiCalendarToday" />
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDatePlusOne')" :disabled="editable === false" variant="tonal" size="small" @click="setDateDelta(1)" :icon="mdiChevronRight" />
-        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateReset')" color="error" :disabled="editable === false || !model" variant="tonal" size="small" @click="model = undefined" :icon="mdiCancel" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateMinusOne')" :disabled="isEditable === false" variant="tonal" size="small" @click="setDateDelta(-1)" :icon="mdiChevronLeft" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateToday')" :disabled="isEditable === false" variant="tonal" size="small" @click="setDateDelta(0)" :icon="mdiCalendarToday" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDatePlusOne')" :disabled="isEditable === false" variant="tonal" size="small" @click="setDateDelta(1)" :icon="mdiChevronRight" />
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateReset')" color="error" :disabled="isEditable === false || !model" variant="tonal" size="small" @click="model = undefined" :icon="mdiCancel" />
       </template>
 
       <template #message v-if="description">
@@ -100,12 +100,12 @@
       @wheel="$event.target.blur()"
       :messages="description ? ['f'] : undefined"
       :label="label"
-      :readonly="editable === false"
+      :readonly="isEditable === false"
       @keyup.enter="emit('traverse')"
       control-variant="split"
       :model-value="model !== undefined ? +model : undefined"
       @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
-      :clearable="editable !== false"
+      :clearable="isEditable !== false"
       :class="store.storeLargeButtonsForIntTraits ? 'large-buttons' : undefined"
       ref="input"
       v-else-if="trait.dataType === TraitDataType.int"
@@ -121,12 +121,12 @@
       :messages="description ? ['f'] : undefined"
       :label="label"
       :precision="null"
-      :readonly="editable === false"
+      :readonly="isEditable === false"
       @keyup.enter="emit('traverse')"
       control-variant="split"
       :model-value="model !== undefined ? +model : undefined"
       @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
-      :clearable="editable !== false"
+      :clearable="isEditable !== false"
       ref="input"
       v-else-if="trait.dataType === TraitDataType.float"
     >
@@ -140,7 +140,7 @@
         :label="label"
         :items="traitCategories"
         :messages="description ? ['f'] : undefined"
-        :readonly="editable === false"
+        :readonly="isEditable === false"
         @keyup.enter="emit('traverse')"
         ref="input"
         v-if="(trait.restrictions?.categories || []).length > store.storeCategoryCountInline"
@@ -153,7 +153,7 @@
         <div class="text-subtitle-2">{{ label }}</div>
         <v-btn-toggle
           v-model="model"
-          :disabled="editable === false"
+          :disabled="isEditable === false"
           color="primary"
           variant="outlined"
           divided
@@ -229,7 +229,7 @@
     }
   })
 
-  const editable = computed(() => {
+  const isEditable = computed(() => {
     if (compProps.editable !== undefined) {
       return compProps.editable
     } else {

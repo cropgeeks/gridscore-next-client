@@ -34,12 +34,14 @@
 
   const refs = ref<{ [index: number]: Element | ComponentPublicInstance | null }>({})
 
-  const compProps = defineProps<{
+  const compProps = withDefaults(defineProps<{
     people?: Person[]
     trait: TraitPlus
     measurements: Measurement[] | undefined
     editable?: boolean
-  }>()
+  }>(), {
+    editable: true,
+  })
 
   const model = defineModel<TraitData>({})
 
