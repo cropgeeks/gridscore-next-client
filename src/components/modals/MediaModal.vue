@@ -16,6 +16,7 @@
         />
         <v-file-input
           v-model="inputFile"
+          capture="environment"
           :class="mode === 'image' ? 'opacity-0' : ''"
           :label="$t('formLabelVideoFile')"
           accept="video/*"
