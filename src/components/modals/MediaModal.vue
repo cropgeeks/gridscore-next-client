@@ -5,7 +5,7 @@
     would not allow to call the `.click()` method on the file input as it's not triggered from a user interaction.
   -->
   <v-dialog eager scrollable v-model="dialog" max-width="min(90vw, 1024px)">
-    <v-card :title="$t(mode === 'video' ? 'modalTitleVideoTag' : 'modalTitleImageTag')">
+    <v-card :title="$t(mode === 'video' ? 'modalTitleVideoTag' : 'modalTitleImageTag')" id="media-modal">
       <template #text>
         <v-file-input
           v-model="inputFile"
@@ -83,7 +83,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
   import { saveAs } from 'file-saver'
-  import { mdiAlert, mdiCalendar } from '@mdi/js'
+  import { mdiAlert, mdiCalendar, mdiPaperclip } from '@mdi/js'
 
   const store = coreStore()
   const { platform } = useDisplay()
@@ -232,6 +232,9 @@
 
   onMounted(() => {
     emitter.on('tag-media', show)
+
+    // Manually force this attribute onto the input field as Vuetify does not support setting it otherwise
+    document.querySelector('#media-modal input[type=file]')?.setAttribute('capture', 'environment')
   })
   onBeforeUnmount(() => {
     emitter.off('tag-media', show)

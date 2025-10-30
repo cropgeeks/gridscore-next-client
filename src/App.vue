@@ -455,6 +455,9 @@ ol:not([class]) li:not([class])
 .v-navigation-drawer--rail:not(.v-navigation-drawer--is-hovering) .v-list-group__items * {
   display: none;
 }
+.v-navigation-drawer--top.v-navigation-drawer--active  {
+  height: auto !important;
+}
 
 code {
   color: #e83e8c;
