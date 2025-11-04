@@ -145,7 +145,8 @@ export default {
       'storeCanvasSize',
       'storeCanvasShape',
       'storeCanvasDensity',
-      'storePlotDisplayField'
+      'storePlotDisplayField',
+      'storeHideTraitCircles'
     ]),
     cellClass: function () {
       return {
@@ -247,7 +248,7 @@ export default {
     },
     visibleTraits: function () {
       if (this.trial) {
-        return this.trial.traits.filter(t => !this.storeHiddenTraits.includes(t.id))
+        return this.storeHideTraitCircles ? [] : this.trial.traits.filter(t => !this.storeHiddenTraits.includes(t.id))
       } else {
         return []
       }

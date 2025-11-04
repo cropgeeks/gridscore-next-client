@@ -33,18 +33,18 @@
 
       <b-button type="submit" variant="primary" :disabled="!canProceed"><IBiCloudDownload /> {{ $t('buttonReceiveData') }}</b-button>
 
+      <div v-if="errors && errors.length > 0" class="my-3">
+        <h3>{{ $t('widgetBrapiTrialImportErrorsTitle') }}</h3>
+
+        <b-list-group class="import-errors">
+          <b-list-group-item variant="danger" v-for="(error, index) in errors" :key="`import-error-${index}`">{{ error }}</b-list-group-item>
+        </b-list-group>
+      </div>
+
       <template v-if="layoutValid">
         <hr />
 
         <TrialLayoutDimensionComponent class="mt-3" :editLabelsAllowed="false" :editValuesAllowed="false" :layout="layout" @layout-changed="updateLayout" ref="trialDimensionComponent" />
-
-        <div v-if="errors && errors.length > 0" class="my-3">
-          <h3>{{ $t('widgetBrapiTrialImportErrorsTitle') }}</h3>
-
-          <b-list-group class="import-errors">
-            <b-list-group-item variant="danger" v-for="(error, index) in errors" :key="`import-error-${index}`">{{ error }}</b-list-group-item>
-          </b-list-group>
-        </div>
 
         <b-button @click="importData" variant="primary" :disabled="!canImport"><IBiCloudDownload /> {{ $t('buttonImportData') }}</b-button>
       </template>

@@ -8,10 +8,12 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolve from 'unplugin-icons/resolver'
 import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
 import { VitePWA } from 'vite-plugin-pwa'
+// import { analyzer } from 'vite-bundle-analyzer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    // analyzer(),
     vue(),
     Components({
       resolvers: [BootstrapVueNextResolver(), IconsResolve()],

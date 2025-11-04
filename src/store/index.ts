@@ -47,6 +47,7 @@ export const coreStore = defineStore('core', {
     mapLayer: 'theme',
     trialListMode: TRIAL_LIST_ALL,
     trialListArrangement: TRIAL_LIST_GRID,
+    hideTraitCircles: false,
     hiddenTraits: [] as string[],
     showFullTraitDescription: true,
     escapeBarcode: null as (string | null),
@@ -100,6 +101,7 @@ export const coreStore = defineStore('core', {
     storeTrialListArrangement: (state): string => state.trialListArrangement,
     storeMapLayer: (state): string => state.mapLayer,
     storeSelectedTrial: (state): string | null => state.selectedTrial,
+    storeHideTraitCircles: (state): boolean => state.hideTraitCircles || false,
     storeHiddenTraits: (state): string[] => state.hiddenTraits,
     storePlausible: (state): PlausibleConfig => state.plausible,
     storeServerUrl: (state): string | null => state.serverUrl,
@@ -119,6 +121,9 @@ export const coreStore = defineStore('core', {
     },
     setHiddenTraits: function (newHiddenTraits: string[]) {
       this.hiddenTraits = newHiddenTraits
+    },
+    setHideTraitCircles: function (newHideTraitCircles: boolean) {
+      this.hideTraitCircles = newHideTraitCircles
     },
     setSelectedTrialPerson: function (newSelectedTrialPerson: string | null) {
       this.selectedTrialPerson = newSelectedTrialPerson
@@ -140,6 +145,7 @@ export const coreStore = defineStore('core', {
       const currentId = this.selectedTrial
       this.selectedTrial = newSelectedTrial
       this.hiddenTraits = []
+      this.hideTraitCircles = false
       if (currentId !== newSelectedTrial) {
         this.selectedTrialPerson = null
       }

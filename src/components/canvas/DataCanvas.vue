@@ -97,7 +97,8 @@ export default {
       'storeDisplayMinCellWidth',
       'storeCanvasDensity',
       'storeCanvasSize',
-      'storePlotDisplayField'
+      'storePlotDisplayField',
+      'storeHideTraitCircles'
     ])
   },
   watch: {
@@ -108,6 +109,9 @@ export default {
       if (this.$refs.plotCanvas) {
         this.scrollToPosition = this.$refs.plotCanvas.getCenterPosition()
       }
+      this.reset()
+    },
+    storeHideTraitCircles: function () {
       this.reset()
     }
   },
@@ -187,10 +191,14 @@ export default {
       this.isResetting = true
 
       this.$nextTick(() => {
-        if (this.storeHiddenTraits) {
-          this.dimensions.visibleTraitCount = this.trial.traits.filter(t => !this.storeHiddenTraits.includes(t.id)).length
+        if (this.storeHideTraitCircles) {
+          this.dimensions.visibleTraitCount = 0
         } else {
-          this.dimensions.visibleTraitCount = this.trial.traits.length
+          if (this.storeHiddenTraits) {
+            this.dimensions.visibleTraitCount = this.trial.traits.filter(t => !this.storeHiddenTraits.includes(t.id)).length
+          } else {
+            this.dimensions.visibleTraitCount = this.trial.traits.length
+          }
         }
 
         this.dimensions.rowHeaderWidth = this.dimensions.padding + (this.dimensions.fontSize * `${this.trial.layout.rows}`.length)

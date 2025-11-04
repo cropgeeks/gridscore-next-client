@@ -3,6 +3,7 @@
     <template #button-content>
       <IBiDiamondHalf :style="{ transform: 'rotate(45deg)' }" width="1.3em" height="1.3em" v-if="store.canvasShape === CANVAS_SHAPE_SQUARE" /><IBiCircleHalf v-else /> <span class="d-none d-lg-inline-block">{{ $t('toolbarTraitVisibility') }}</span>
     </template>
+    <b-dropdown-item-button @click="store.setHideTraitCircles(!store.storeHideTraitCircles)">{{ $t(store.storeCanvasShape === CANVAS_SHAPE_CIRCLE ? 'buttonHideTraitCircles' : 'buttonHideTraitSquares') }} <IBiCheck2 v-if="store.storeHideTraitCircles" /></b-dropdown-item-button>
     <b-dropdown-form>
       <b-form-group class="mb-0" :label="$t('formLabelTraitDropdownCutoffDate')" label-for="cutoff" :title="$t('formDescriptionTraitDropdownCutoffDate')" v-if="atLeastOneMultiTrait">
         <b-input-group>
@@ -37,7 +38,7 @@
 
 <script setup lang="ts">
 import { coreStore } from '@/store'
-import { CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
+import { CANVAS_SHAPE_CIRCLE, CANVAS_SHAPE_SQUARE } from '@/plugins/constants'
 import TraitIcon from '@/components/icons/TraitIcon.vue'
 import { TraitPlus } from '@/plugins/types/client'
 import { useI18n } from 'vue-i18n'
