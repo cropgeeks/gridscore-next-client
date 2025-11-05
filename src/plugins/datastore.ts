@@ -80,6 +80,19 @@ async function loadTrialData () {
   }
 }
 
+async function updateTrialInformation () {
+  const store = coreStore()
+  const selectedTrial = store.storeSelectedTrial
+  if (selectedTrial) {
+    try {
+      trial = await getTrialById(selectedTrial)
+      emitter.emit('trial-information-updated')
+    } catch {
+      // Nothing happens here
+    }
+  }
+}
+
 function updateCellCache (row: number, column: number, trialId: string) {
   const store = coreStore()
   if (store.storeSelectedTrial === trialId && trialData) {
@@ -98,6 +111,7 @@ function updateCellCache (row: number, column: number, trialId: string) {
 async function init () {
   emitter.on('trial-selected', loadTrialData)
   emitter.on('plot-comments-changed', updateCellCache)
+  emitter.on('trial-properties-changed', updateTrialInformation)
   emitter.on('plot-marked-changed', updateCellCache)
   emitter.on('plot-data-changed', updateCellCache)
 

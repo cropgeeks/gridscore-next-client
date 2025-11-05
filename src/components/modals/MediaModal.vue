@@ -83,7 +83,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
   import { saveAs } from 'file-saver'
-  import { mdiAlert, mdiCalendar, mdiPaperclip } from '@mdi/js'
+  import { mdiAlert, mdiCalendar } from '@mdi/js'
 
   const store = coreStore()
   const { platform } = useDisplay()

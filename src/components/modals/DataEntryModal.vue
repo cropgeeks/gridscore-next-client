@@ -120,6 +120,7 @@
                         v-model="cellData[trait.id || '']"
                         v-if="cellData[trait.id || '']"
                         :trait="trait"
+                        :editable="trial.editable || false"
                         :measurements="cell.measurements[trait.id || '']"
                         :people="trial.people"
                         @traverse="(setIndex: number) => traverse(trait, traitIndex, group.traits, setIndex)"

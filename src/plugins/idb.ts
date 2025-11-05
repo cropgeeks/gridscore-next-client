@@ -1,6 +1,6 @@
 import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
-import { DisplayOrder, TimeframeType, type BrapiConfig, type Comment, type Corners, type Group, type Markers, type Measurement, type Person, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
+import { DisplayOrder, TimeframeType, type BrapiConfig, type Comment, type Corners, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type TrialGroup } from '@/plugins/types/client'
 import { getColumnLabel, getRowLabel } from '@/plugins/util'
 import { getId } from '@/plugins/id'
@@ -11,6 +11,10 @@ let store: any | undefined
 
 export interface DataModification {
   [index: string]: TraitMeasurement[]
+}
+
+export interface PlotModification {
+  [index: string]: PlotDetailContent
 }
 
 export interface TrialModification {
@@ -1037,6 +1041,39 @@ function logTransactions (trial: TrialPlus) {
   }
 }
 
+async function addTrialComment (trialId: string, commentContent: string) {
+  const trial = await getTrialById(trialId)
+
+  commentContent = JSON.parse(JSON.stringify(commentContent))
+
+  if (trial) {
+    if (!trial.comments) {
+      trial.comments = []
+    }
+
+    const newComment = {
+      content: commentContent,
+      timestamp: new Date().toISOString(),
+    }
+
+    trial.comments.push(newComment)
+    trial.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialCommentAddedTransactions.push(newComment)
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
 async function addPlotComment (trialId: string, row: number, column: number, commentContent: string) {
   const cell = await getCell(trialId, row, column)
   const trial = await getTrialById(trialId)
@@ -1070,6 +1107,107 @@ async function addPlotComment (trialId: string, row: number, column: number, com
     return db.put('data', cell)
   } else {
     return new Promise(resolve => resolve(cell))
+  }
+}
+
+async function deleteTrialComment (trialId: string, comment: Comment) {
+  const trial = await getTrialById(trialId)
+
+  comment = JSON.parse(JSON.stringify(comment))
+
+  if (trial) {
+    const db = await getDb()
+    trial.comments = trial.comments.filter((c: Comment) => c.timestamp !== comment.timestamp && c.content !== comment.content)
+    trial.updatedOn = new Date().toISOString()
+    // Make sure there's no data stored in the `trials` table
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      const match = transaction.trialCommentAddedTransactions.findIndex((c: Comment) => c.content === comment.content && c.timestamp === comment.timestamp)
+
+      if (match === -1) {
+        // No match, add a new DELETE transaction
+        transaction.trialCommentDeletedTransactions.push(comment)
+      } else {
+        // Remove the match
+        transaction.trialCommentAddedTransactions.splice(match, 1)
+      }
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
+async function addTrialEvent (trialId: string, event: Event) {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    if (!trial.events) {
+      trial.events = []
+    }
+
+    const newEvent = {
+      content: event.content,
+      type: event.type,
+      impact: event.impact,
+      timestamp: event.timestamp || new Date().toISOString(),
+    }
+
+    trial.events.push(newEvent)
+    trial.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      transaction.trialEventAddedTransactions.push(newEvent)
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
+async function deleteTrialEvent (trialId: string, event: Event) {
+  const trial = await getTrialById(trialId)
+
+  event = JSON.parse(JSON.stringify(event))
+
+  if (trial) {
+    const db = await getDb()
+    trial.events = trial.events.filter((c: Event) => c.timestamp !== event.timestamp && c.content !== event.content)
+    trial.updatedOn = new Date().toISOString()
+    // Make sure there's no data stored in the `trials` table
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      const match = transaction.trialEventAddedTransactions.findIndex((c: Event) => c.content === event.content && c.timestamp === event.timestamp && c.type === event.type && c.impact === event.impact)
+
+      if (match === -1) {
+        // No match, add a new DELETE transaction
+        transaction.trialEventDeletedTransactions.push(event)
+      } else {
+        // Remove the match
+        transaction.trialEventAddedTransactions.splice(match, 1)
+      }
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
+  } else {
+    return new Promise(resolve => resolve(trial))
   }
 }
 
@@ -1124,6 +1262,64 @@ async function deletePlotComment (trialId: string, row: number, column: number, 
   }
 }
 
+async function updatePlotMetadata (trialId: string, plotMetadata: PlotModification) {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+    const transaction: Transaction = logTransactions(trial) ? ((await db.get('transactions', trialId)) || getEmptyTransaction(trialId)) : null
+
+    for (const [key, data] of Object.entries(plotMetadata)) {
+      const [row, column] = key.split('|').map(c => +c)
+
+      const cell = await getCell(trialId, row || 0, column || 0)
+      // Remove this as it was only added temporarily
+      delete cell.displayName
+      delete cell.displayRow
+      delete cell.displayColumn
+
+      if (data.friendlyName === 'DELETE') {
+        delete cell.friendlyName
+      } else if (data.friendlyName !== null && data.friendlyName !== '') {
+        cell.friendlyName = data.friendlyName
+      }
+      if (data.barcode === 'DELETE') {
+        delete cell.barcode
+      } else if (data.barcode !== null && data.barcode !== '') {
+        cell.barcode = data.barcode
+      }
+      if (data.pedigree === 'DELETE') {
+        delete cell.pedigree
+      } else if (data.pedigree !== null && data.pedigree !== '') {
+        cell.pedigree = data.pedigree
+      }
+      if (data.treatment === 'DELETE') {
+        delete cell.treatment
+      } else if (data.treatment !== null && data.treatment !== '') {
+        cell.treatment = data.treatment
+      }
+
+      if (logTransactions(trial)) {
+        // Set the transaction details to use whatever the current new state of the plot is.
+        transaction.plotDetailsChangeTransaction[key] = {
+          row: data.row,
+          column: data.column,
+          friendlyName: cell.friendlyName,
+          barcode: cell.barcode,
+          pedigree: cell.pedigree,
+          treatment: cell.treatment,
+        }
+      }
+
+      await db.put('data', cell)
+    }
+
+    if (transaction) {
+      await db.put('transactions', transaction)
+    }
+  }
+}
+
 async function addTrialPeople (trialId: string, people: Person[]) {
   const trial = await getTrialById(trialId)
 
@@ -1166,6 +1362,7 @@ export {
   getCell,
   getTrialById,
   getTrialData,
+  updatePlotMetadata,
   addTrial,
   updateTrial,
   deleteTrial,
@@ -1177,5 +1374,9 @@ export {
   setPlotMarked,
   addPlotComment,
   deletePlotComment,
+  addTrialComment,
+  deleteTrialComment,
+  addTrialEvent,
+  deleteTrialEvent,
   updateTrialBrapiConfig,
 }

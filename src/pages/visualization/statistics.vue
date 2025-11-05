@@ -80,8 +80,6 @@
   const selectedGermplasmNames = computed(() => selectedGermplasm.value.map(g => g.displayName || g.germplasm))
 
   function showBottomSheet (row: number, column: number, trait: TraitPlus) {
-    console.log(row, column, trait)
-
     getCell(store.storeSelectedTrial || '', row, column)
       .then(cell => {
         featuredTrait.value = trait

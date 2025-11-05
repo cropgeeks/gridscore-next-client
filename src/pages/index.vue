@@ -18,6 +18,8 @@
       </div>
     </v-card>
 
+    <HelpCard />
+
     <v-row>
       <v-col
         v-for="banner in banners"
@@ -75,6 +77,7 @@
 
 <script lang="ts" setup>
   import TrialSelector from '@/components/trial/TrialSelector.vue'
+  import HelpCard from '@/components/util/HelpCard.vue'
   import { categoricalColors } from '@/plugins/color'
   import { mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
   import { useI18n } from 'vue-i18n'

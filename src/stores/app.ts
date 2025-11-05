@@ -41,6 +41,7 @@ export const coreStore = defineStore('core', {
     systemTheme: 'dark',
     theme: 'system',
     hideCitationMessage: false,
+    hideHelpInformation: false,
     highlightControls: true,
     highlightConfig: {
       type: undefined,
@@ -72,7 +73,6 @@ export const coreStore = defineStore('core', {
     autoSelectFirstInput: true,
     autoProgressInputs: true,
     categoryCountInline: 4,
-    toolbarHiddenAfterInstallShown: false,
     mainDisplayMode: MainDisplayMode.AUTO as MainDisplayMode,
     plausible: {
       plausibleDomain: undefined,
@@ -101,6 +101,7 @@ export const coreStore = defineStore('core', {
     storeIsDarkMode: (state): boolean => (state.theme === 'system' ? state.systemTheme : state.theme) === 'dark',
     storeSystemTheme: (state): string => state.systemTheme || 'dark',
     storeHideCitationMessage: (state): boolean => state.hideCitationMessage,
+    storeHideHelpInformation: (state): boolean => state.hideHelpInformation || false,
     storeHighlightControls: (state): boolean => state.highlightControls,
     storeHighlightConfig: (state): HighlightConfig => state.highlightConfig,
     storeDisplayMarkerIndicators: (state): boolean => state.displayMarkerIndicators,
@@ -136,7 +137,6 @@ export const coreStore = defineStore('core', {
     storeDeviceConfig: (state): any => state.deviceConfig,
     storeShowFullTraitDescription: (state): boolean => state.showFullTraitDescription,
     storeCategoryCountInline: (state): number => state.categoryCountInline,
-    storeToolbarHiddenAfterInstallShown: (state): boolean => state.toolbarHiddenAfterInstallShown,
   },
   actions: {
     setPerformanceMode (newPerformanceMode: boolean) {
@@ -251,6 +251,9 @@ export const coreStore = defineStore('core', {
     setHideCitationMessage (newHideCitationMessage: boolean) {
       this.hideCitationMessage = newHideCitationMessage
     },
+    setHideHelpInformation (newHideHelpInformation: boolean) {
+      this.hideHelpInformation = newHideHelpInformation
+    },
     setHighlightControls (newHighlightControls: boolean) {
       this.highlightControls = newHighlightControls
     },
@@ -334,9 +337,6 @@ export const coreStore = defineStore('core', {
     },
     setCategoryCountInline (newCategoryCountInline: number) {
       this.categoryCountInline = newCategoryCountInline
-    },
-    setToolbarHiddenAfterInstallShown (newToolbarHiddenAfterInstallShown: boolean) {
-      this.toolbarHiddenAfterInstallShown = newToolbarHiddenAfterInstallShown
     },
   },
   persist: {

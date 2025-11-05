@@ -11,7 +11,7 @@
           :page="page"
         >
           <template #header="{ pageCount }">
-            <v-pagination v-model="page" :length="pageCount" />
+            <v-pagination v-model="page" :length="pageCount" v-if="pageCount > 1" />
           </template>
 
           <template #default="{ items }">
@@ -30,12 +30,16 @@
 
           <template #footer="{ pageCount }">
             <template v-if="editable">
-              <SpeechRecognitionTextarea v-model="newComment" />
+              <SpeechRecognitionTextarea
+                :label="$t('formLabelCommentContent')"
+                :hint="$t('formDescriptionCommentContent')"
+                v-model="newComment"
+              />
 
-              <v-btn color="primary" :prepend-icon="mdiCommentPlus" :text="$t('buttonCreateComment')" :disabled="!newComment || newComment.trim().length === 0" @click="addComment" />
+              <v-btn class="mt-3" color="primary" :prepend-icon="mdiCommentPlus" :text="$t('buttonCreateComment')" :disabled="!newComment || newComment.trim().length === 0" @click="addComment" />
             </template>
 
-            <v-pagination v-model="page" :length="pageCount" />
+            <v-pagination v-model="page" :length="pageCount" v-if="pageCount > 1" />
           </template>
         </v-data-iterator>
       </template>
@@ -53,6 +57,10 @@
   import SpeechRecognitionTextarea from '@/components/inputs/SpeechRecognitionTextarea.vue'
   import { mdiCalendar, mdiCommentPlus, mdiDelete } from '@mdi/js'
 
+  import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
   const dialog = ref(false)
   const perPage = ref(5)
   const page = ref(1)
@@ -71,11 +79,22 @@
   }
 
   function deleteComment (comment: Comment) {
-    if (isProxy(comment)) {
-      comment = toRaw(comment)
-    }
+    emitter.emit('show-confirm', {
+      title: t('modalTitleDeleteItem'),
+      message: t('modalTextDeleteItem'),
+      okTitle: t('genericYes'),
+      cancelTitle: t('genericNo'),
+      okVariant: 'error',
+      callback: (result: boolean) => {
+        if (result === true) {
+          if (isProxy(comment)) {
+            comment = toRaw(comment)
+          }
 
-    emit('comment-deleted', comment)
+          emit('comment-deleted', comment)
+        }
+      },
+    })
   }
 
   function show () {

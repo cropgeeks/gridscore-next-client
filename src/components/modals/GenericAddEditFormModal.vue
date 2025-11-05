@@ -51,7 +51,7 @@
             />
             <v-date-input
               v-else-if="config.type === 'date'"
-              hide-details
+              :hide-details="config.hint === undefined"
               :label="$t(config.title)"
               :display-format="(d: any) => d ? d.toLocaleDateString() : ''"
               :hint="config.hint ? $t(config.hint) : undefined"
@@ -65,7 +65,7 @@
             />
             <v-date-input
               v-else-if="config.type === 'dateobject'"
-              hide-details
+              :hide-details="config.hint === undefined"
               :label="$t(config.title)"
               :display-format="(d: any) => d ? d.toLocaleDateString() : ''"
               :hint="config.hint ? $t(config.hint) : undefined"

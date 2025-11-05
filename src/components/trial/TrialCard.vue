@@ -21,48 +21,34 @@
       </div>
     </v-card-text>
 
-    <v-card-text class="bg-tonal" v-if="horizontal">
-      <v-row>
-        <v-col class="d-flex align-center justify-center">
-          <v-btn variant="tonal" class="cursor-default" :icon="mdiFolderTable" v-tooltip:top="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
+    <v-list variant="tonal" v-if="horizontal">
+      <v-row no-gutters>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trial.layout.rows, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiLandRowsHorizontal" v-tooltip:top="$t('widgetTrialSelectorRows')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trial.layout.columns, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiLandRowsVertical" v-tooltip:top="$t('widgetTrialSelectorColumns')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trial.traits.length, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiTagMultiple" v-tooltip:top="$t('widgetTrialSelectorTraits')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')"><template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template></v-list-item>
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix((trial.people || []).length, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiAccountMultiple" v-tooltip:top="$t('widgetTrialSelectorPeople')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix((trial.comments || []).length, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiCommentMultiple" v-tooltip:top="$t('widgetTrialSelectorComments')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix((trial.events || []).length, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiFlagVariant" v-tooltip:top="$t('widgetTrialSelectorEvents')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
         </v-col>
-        <v-col class="d-flex align-center justify-center">
-          <v-badge location="bottom right" :offset-x="10" :offset-y="10" color="info" :content="getNumberWithSuffix(trialDuration, 1)">
-            <v-btn variant="tonal" class="cursor-default" :icon="mdiCalendarExpandHorizontal" v-tooltip:top="$t('widgetTrialSelectorTrialDuration')" />
-          </v-badge>
+        <v-col cols="12" sm="6" md="4" lg="3">
+          <v-list-item :prepend-icon="mdiCalendarExpandHorizontal" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
         </v-col>
       </v-row>
-    </v-card-text>
+    </v-list>
 
     <v-list variant="tonal" slim v-else>
       <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
@@ -70,8 +56,8 @@
       <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')"><template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiCalendarExpandHorizontal" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
     </v-list>
 
@@ -133,6 +119,23 @@
         </template>
       </v-card>
     </v-expand-transition>
+
+    <CommentModal
+      type="trial"
+      :comments="trial.comments || []"
+      :editable="trial.editable || false"
+      @comment-added="addNewComment"
+      @comment-deleted="deleteComment"
+      ref="commentModal"
+    />
+
+    <EventModal
+      :events="trial.events || []"
+      :editable="trial.editable || false"
+      @event-added="addNewEvent"
+      @event-deleted="deleteEvent"
+      ref="eventModal"
+    />
   </v-card>
 </template>
 
@@ -146,6 +149,10 @@
 
   import emitter from 'tiny-emitter/instance'
   import { mdiAccountMultiple, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
+  import CommentModal from '@/components/modals/CommentModal.vue'
+  import { addTrialComment, addTrialEvent, deleteTrialComment, deleteTrialEvent } from '@/plugins/idb'
+  import type { Comment, Event } from '@/plugins/types/gridscore'
+  import EventModal from '@/components/modals/EventModal.vue'
 
   const store = coreStore()
 
@@ -171,6 +178,8 @@
   })
 
   const emit = defineEmits(['share', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm'])
+  const commentModal = useTemplateRef('commentModal')
+  const eventModal = useTemplateRef('eventModal')
 
   const trialDuration = computed(() => {
     if (compProps.trial && compProps.trial.createdOn && compProps.trial.updatedOn) {
@@ -194,4 +203,36 @@
   const isSelected = computed(() => {
     return compProps.trial && compProps.trial.localId === store.selectedTrial
   })
+
+  function addNewEvent (event: Event) {
+    addTrialEvent(compProps.trial.localId || '', event)
+      .then(() => {
+        emitter.emit('trial-properties-changed', compProps.trial.localId || '')
+        emitter.emit('plausible-event', { key: 'trial-event', props: { type: 'added' } })
+      })
+  }
+
+  function deleteEvent (event: Event) {
+    deleteTrialEvent(compProps.trial.localId || '', event)
+      .then(() => {
+        emitter.emit('trial-properties-changed', compProps.trial.localId || '')
+        emitter.emit('plausible-event', { key: 'trial-event', props: { type: 'deleted' } })
+      })
+  }
+
+  function addNewComment (content: string) {
+    addTrialComment(compProps.trial.localId || '', content)
+      .then(() => {
+        emitter.emit('trial-properties-changed', compProps.trial.localId || '')
+        emitter.emit('plausible-event', { key: 'trial-comment', props: { type: 'added' } })
+      })
+  }
+
+  function deleteComment (comment: Comment) {
+    deleteTrialComment(compProps.trial.localId || '', comment)
+      .then(() => {
+        emitter.emit('trial-properties-changed', compProps.trial.localId || '')
+        emitter.emit('plausible-event', { key: 'trial-comment', props: { type: 'deleted' } })
+      })
+  }
 </script>

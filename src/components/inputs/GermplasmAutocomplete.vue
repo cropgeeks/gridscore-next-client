@@ -23,8 +23,9 @@
     <template #item="{ props, item }">
       <v-list-item
         v-bind="props"
+        :title="`${item.raw.displayName} (${$t('formLabelFieldLayoutRowColumn', { row: item.raw.displayRow || 1, column: item.raw.displayColumn || 1 })})`"
       >
-        <template #title><PlotInformation :cell="item.raw" /></template>
+        <template #title v-if="performanceMode === false"><PlotInformation :cell="item.raw" /></template>
       </v-list-item>
     </template>
   </v-autocomplete>
@@ -36,6 +37,7 @@
   import { filterGermplasm } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { mdiMagnify } from '@mdi/js'
+  import PlotInformation from '@/components/plot/PlotInformation.vue'
 
   const store = coreStore()
 
@@ -57,6 +59,7 @@
   })
 
   const searchField = useTemplateRef('searchField')
+  const performanceMode = computed(() => store.storePerformanceMode === true || trialGermplasm.value.length > 1000)
 
   function getTrialGermplasm () {
     const data = getTrialDataCached()

@@ -101,7 +101,6 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
       await brapiGetInfo()
     }
 
-    console.log(serverInfos[baseUrl]?.find(c => c.service === callName))
     if (!serverInfos[baseUrl] || !serverInfos[baseUrl].some(c => c.service === callName && c.versions.includes(Version.TWO_ONE))) {
       emitter.emit('show-snackbar', {
         text: i18n.global.t('toastTextBrapiCallNotAvailable'),

@@ -47,7 +47,7 @@
 
   const forced = ref(false)
   const dialog = computed(() => {
-    return compProps.trial.people && compProps.trial.people.length > 0 && (!store.storeSelectedTrialPerson || !compProps.trial.people.some(p => p.id === store.storeSelectedTrialPerson))
+    return compProps.trial.editable === true && compProps.trial.people && compProps.trial.people.length > 0 && (!store.storeSelectedTrialPerson || !compProps.trial.people.some(p => p.id === store.storeSelectedTrialPerson))
   })
 
   function selectPerson (person: Person) {

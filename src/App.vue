@@ -22,7 +22,7 @@
           <template #activator="{ props }">
             <v-btn :icon="mdiNotebook" v-bind="props" />
           </template>
-          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" :interactive="false" />
+          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" :interactive="false" ref="selectedTrialCard" />
         </v-menu>
 
         <v-menu>
@@ -205,7 +205,9 @@
   }
 
   function loadTrialInfo () {
-    selectedTrial.value = getTrialCached()
+    nextTick(() => {
+      selectedTrial.value = getTrialCached()
+    })
   }
 
   function enablePlausible () {
@@ -387,12 +389,16 @@
     emitter.on('show-snackbar', showSnackbar)
     emitter.on('show-loading', showLoading)
     emitter.on('trial-data-loaded', loadTrialInfo)
+    emitter.on('trial-properties-changed', loadTrialInfo)
+    emitter.on('trial-information-updated', loadTrialInfo)
     emitter.on('plausible-event', plausibleEvent)
   })
   onBeforeUnmount(() => {
     emitter.off('show-snackbar', showSnackbar)
     emitter.off('show-loading', showLoading)
     emitter.off('trial-data-loaded', loadTrialInfo)
+    emitter.off('trial-properties-changed', loadTrialInfo)
+    emitter.off('trial-information-updated', loadTrialInfo)
     emitter.off('plausible-event', plausibleEvent)
   })
 

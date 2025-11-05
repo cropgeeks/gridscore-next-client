@@ -326,8 +326,9 @@
   import TraitImportFromBrapiModal from '@/components/modals/TraitImportFromBrapiModal.vue'
 
   import emitter from 'tiny-emitter/instance'
-  import { germinateToTraits, jsonToTraits, tabularToTraits, traitsToGerminate, traitsToTabular } from '@/plugins/util'
+  import { germinateToTraits, jsonToTraits, tabularToTraits } from '@/plugins/util'
   import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
+  import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
 
   const { t } = useI18n()
   const store = coreStore()

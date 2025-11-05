@@ -129,6 +129,8 @@
                 @load="loadTrial(trial.raw)"
                 @add-trait="addTrait(trial.raw)"
                 @add-person="addPerson(trial.raw)"
+                @add-metadata="addMetadata(trial.raw)"
+                @add-data="addData(trial.raw)"
                 @duplicate="router.push(`/setup/${trial.raw.localId}/clone`)"
                 @edit="router.push(`/setup/${trial.raw.localId}/edit`)"
                 @toggle-select="toggleSelect(trial)"
@@ -146,6 +148,8 @@
     <TrialShareModal :trial="selectedTrial" ref="trialShareModal" v-if="selectedTrial" />
     <AddTraitModal ref="addTraitModal" v-if="selectedTrial || selectedTrials.length > 0" @traits-added="addTraitsToSelectedTrials" />
     <AddPersonModal ref="addPersonModal" v-if="selectedTrial || selectedTrials.length > 0" @person-added="addPersonToSelectedTrials" />
+    <UpdateTrialMetadataModal :trial="selectedTrial" ref="updateTrialMetadataModal" v-if="selectedTrial" />
+    <UpdateTrialDataModal :trial="selectedTrial" ref="updateTrialDataModal" v-if="selectedTrial" />
   </v-card>
 </template>
 
@@ -166,6 +170,8 @@
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
   import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
   import AddPersonModal from '@/components/modals/AddPersonModal.vue'
+  import UpdateTrialMetadataModal from '@/components/modals/UpdateTrialMetadataModal.vue'
+  import UpdateTrialDataModal from '@/components/modals/UpdateTrialDataModal.vue'
 
   interface TrialGroup {
     id: string
@@ -198,6 +204,8 @@
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTraitModal = useTemplateRef('addTraitModal')
   const addPersonModal = useTemplateRef('addPersonModal')
+  const updateTrialMetadataModal = useTemplateRef('updateTrialMetadataModal')
+  const updateTrialDataModal = useTemplateRef('updateTrialDataModal')
 
   const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
 
@@ -311,6 +319,18 @@
     } else {
       filterForWarning.value = type
     }
+  }
+
+  function addMetadata (trial: TrialPlus) {
+    selectedTrial.value = trial
+
+    nextTick(() => updateTrialMetadataModal.value?.show())
+  }
+
+  function addData (trial: TrialPlus) {
+    selectedTrial.value = trial
+
+    nextTick(() => updateTrialDataModal.value?.show())
   }
 
   function addPersonToSelectedTrials (person: Person) {
@@ -501,11 +521,13 @@
 
   onMounted(() => {
     emitter.on('trial-properties-changed', update)
+    emitter.on('trial-information-updated', update)
     emitter.on('trials-updated', update)
     update()
   })
   onBeforeUnmount(() => {
     emitter.off('trial-properties-changed', update)
+    emitter.off('trial-information-updated', update)
     emitter.off('trials-updated', update)
   })
 </script>

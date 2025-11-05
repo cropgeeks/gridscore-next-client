@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/collect/grid': RouteRecordInfo<'/collect/grid', '/collect/grid', Record<never, never>, Record<never, never>>,
     '/collect/input': RouteRecordInfo<'/collect/input', '/collect/input', Record<never, never>, Record<never, never>>,
     '/collect/walk': RouteRecordInfo<'/collect/walk', '/collect/walk', Record<never, never>, Record<never, never>>,
+    '/export': RouteRecordInfo<'/export', '/export', Record<never, never>, Record<never, never>>,
     '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>>,
     '/setup/': RouteRecordInfo<'/setup/', '/setup', Record<never, never>, Record<never, never>>,
     '/setup/[id]/clone': RouteRecordInfo<'/setup/[id]/clone', '/setup/:id/clone', { id: ParamValue<true> }, { id: ParamValue<false> }>,
@@ -64,6 +65,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/collect/walk.vue': {
       routes: '/collect/walk'
+      views: never
+    }
+    'src/pages/export.vue': {
+      routes: '/export'
       views: never
     }
     'src/pages/settings.vue': {

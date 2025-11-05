@@ -44,7 +44,7 @@ export interface Comment {
 }
 
 export interface Event {
-    timestamp: string;
+    timestamp?: string;
     content: string;
     type: EventType;
     impact: number;

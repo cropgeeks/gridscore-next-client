@@ -1,5 +1,5 @@
 <template>
-  <v-list slim height="100%" v-click-outside="clickOutside">
+  <v-list slim height="100%" v-click-outside="clickOutside" class="d-flex flex-column justify-end">
     <v-list-item :prepend-icon="mdiExportVariant" :title="$t('buttonShare')" @click="internalEmit('share')" />
     <v-list-item :prepend-icon="mdiDatabaseSync" :title="$t('buttonSynchronize')" @click="internalEmit('synchronize')" v-if="canSynchronize" />
     <v-list-item :prepend-icon="mdiNotebookMultiple" :title="$t('buttonDuplicateTrial')" @click="internalEmit('duplicate')" />

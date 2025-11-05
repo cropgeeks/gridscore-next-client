@@ -101,7 +101,7 @@
     <SearchResultModal ref="searchResultModal" :list="searchResults" v-if="searchResults && searchResults.length > 0" />
 
     <MediaModal :trial="trial" />
-    <TrialPersonSelectModal :trial="trial" v-if="trial && trial.people && trial.people.length > 0" />
+    <TrialPersonSelectModal :trial="trial" v-if="trial && hasTrialPeople" />
   </div>
 </template>
 
@@ -155,14 +155,10 @@
   let textSynth: SpeechSynthesis | undefined = undefined
   let geolocationWatchId: number | undefined = undefined
 
+  const hasTrialPeople = computed(() => trial.value && trial.value.people && trial.value.people.length > 0)
+
   const overflowItems: ComputedRef<MenuItem[]> = computed(() => {
-    return [{
-      text: t('toolbarPersonSelector'),
-      prependIcon: mdiAccountMultiple,
-      variant: 'tonal',
-      size: undefined,
-      click: () => emitter.emit('show-trial-person-selector'),
-    }, {
+    const result: MenuItem[] = [{
       text: t('toolbarPlotHighlight'),
       id: 'grid-highlight',
       color: store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined ? 'primary' : undefined,
@@ -179,6 +175,18 @@
       size: undefined,
       click: () => {},
     }]
+
+    if (trial.value?.editable === true && hasTrialPeople.value === true) {
+      result.unshift({
+        text: t('toolbarPersonSelector'),
+        prependIcon: mdiAccountMultiple,
+        variant: 'tonal',
+        size: undefined,
+        click: () => emitter.emit('show-trial-person-selector'),
+      })
+    }
+
+    return result
   })
 
   const showCanvas = computed(() => {

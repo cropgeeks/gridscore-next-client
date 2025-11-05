@@ -50,6 +50,14 @@
               <v-btn class="flex-grow-1" :prepend-icon="mdiLeaf" :value="true" :text="$t('genericEnabled')"><template #append><v-icon :icon="mdiCheck" v-if="store.storePerformanceMode === true" /></template></v-btn>
               <v-btn class="flex-grow-1" :prepend-icon="mdiSpeedometer" :value="false" :text="$t('genericDisabled')"><template #append><v-icon :icon="mdiCheck" v-if="store.storePerformanceMode === false" /></template></v-btn>
             </v-btn-toggle>
+
+            <v-switch
+              :label="$t('formLabelSettingsHideHelp')"
+              :hint="$t('formDescriptionSettingsHideHelp')"
+              persistent-hint
+              color="primary"
+              v-model="hideHelpInformation"
+            />
           </template>
         </v-card>
 
@@ -298,6 +306,7 @@
   const plotDisplayField = ref(store.storePlotDisplayField)
   const autoSelectSearch = ref(store.storeAutoSelectSearch)
   const autoSelectFirstInput = ref(store.storeAutoSelectFirstInput)
+  const hideHelpInformation = ref(store.storeHideHelpInformation)
   const autoProgressInputs = ref(store.storeAutoProgressInputs)
   const voiceFeedbackEnabled = ref(store.storeVoiceFeedbackEnabled)
 
@@ -363,6 +372,7 @@
   watch(autoSelectFirstInput, async newValue => store.setAutoSelectFirstInput(newValue))
   watch(autoProgressInputs, async newValue => store.setAutoProgressInputs(newValue))
   watch(voiceFeedbackEnabled, async newValue => store.setVoiceFeedbackEnabled(newValue))
+  watch(hideHelpInformation, async newValue => store.setHideHelpInformation(newValue))
   watch(performanceMode, async newValue => {
     store.setPerformanceMode(newValue)
     window.location.reload()

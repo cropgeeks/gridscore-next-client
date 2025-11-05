@@ -18,7 +18,7 @@
                 v-model="traitData[mIndex]"
                 :trait="trait"
                 :measurements="undefined"
-                :editable="measurements.delete !== true"
+                :editable="editable && measurements.delete !== true"
               >
                 <v-chip size="small" label :prepend-icon="mdiCalendar" :text="new Date(measurements.timestamp).toLocaleString()" />
               </TraitInputSection>
@@ -26,6 +26,7 @@
               <v-btn
                 variant="tonal"
                 class="mb-3"
+                :disabled="editable === false"
                 @click="measurements.delete = !measurements.delete"
                 :prepend-icon="measurements.delete ? mdiDelete : mdiDeleteOffOutline"
                 :text="measurements.delete ? $t('buttonUndeleteTimepointData') : $t('buttonDeleteTimepointData')"

@@ -4,10 +4,10 @@ import { autoType, tsvParse } from 'd3-dsv'
 import { i18n } from '@/plugins/vuetify'
 import { coreStore } from '@/stores/app'
 import type { FilterMatch, InternalItem } from 'vuetify'
-import type { CellPlus } from './types/client'
+import type { CellPlus, TrialPlus } from '@/plugins/types/client'
 
-const GERMINATE_EXPECTED_COLUMNS = ['Name', 'Short Name', 'Description', 'Data Type', 'Unit Name', 'Unit Abbreviation', 'Unit Descriptions', 'Trait categories (comma separated)', 'Min (only for numeric traits)', 'Max (only for numeric traits)']
-const TABULAR_EXPECTED_COLUMNS = ['Name', 'Description', 'Data Type', 'Allow repeats', 'Set size', 'Group name', 'Categories', 'Minimum', 'Maximum', 'Timeframe type', 'Timeframe start', 'Timeframe end', 'BrAPI ID']
+export const GERMINATE_EXPECTED_COLUMNS = ['Name', 'Short Name', 'Description', 'Data Type', 'Unit Name', 'Unit Abbreviation', 'Unit Descriptions', 'Trait categories (comma separated)', 'Min (only for numeric traits)', 'Max (only for numeric traits)']
+export const TABULAR_EXPECTED_COLUMNS = ['Name', 'Description', 'Data Type', 'Allow repeats', 'Set size', 'Group name', 'Categories', 'Minimum', 'Maximum', 'Timeframe type', 'Timeframe start', 'Timeframe end', 'BrAPI ID']
 
 const DIVISIONS = [
   { amount: 60, name: 'seconds' as const },
@@ -157,36 +157,6 @@ function germinateToTraits (traitString: string): Trait[] {
   } catch {
     throw new Error('Invalid Germinate trait format')
   }
-}
-
-function traitsToGerminate (traits: Trait[]): string {
-  let text = GERMINATE_EXPECTED_COLUMNS.join('\t')
-
-  traits.forEach(t => {
-    text += `\n${t.name}\t\t${t.description || ''}\t${toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}`
-  })
-
-  return text
-}
-
-function traitsToTabular (traits: Trait[]): string {
-  let text = TABULAR_EXPECTED_COLUMNS.join('\t')
-
-  traits.forEach(t => {
-    text += `\n${t.name}\t${t.description || ''}\t${t.dataType}\t${t.allowRepeats ? 1 : 0}\t${t.setSize}\t${t.group || ''}`
-
-    // Restrictions
-    text += `\t${(t.restrictions && t.restrictions.categories) ? t.restrictions.categories.join(',') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`
-
-    // Timeframe
-    if (t.timeframe) {
-      text += `\t${t.timeframe.type}\t${t.timeframe.start || ''}\t${t.timeframe.end || ''}`
-    } else {
-      text += '\t\t\t'
-    }
-  })
-
-  return text
 }
 
 function tabularToTraits (traitString: string): Trait[] {
@@ -424,6 +394,49 @@ function filterGermplasm (value: string, query: string, item?: InternalItem<Cell
   }
 }
 
+function checkDataMatchesTraitType (trait: Trait, value: string, checkDatesAndCategories = true) {
+  const trimmed = (typeof value === 'string') ? value.trim() : value
+
+  if (trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range') {
+    try {
+      if (!isNumber(trimmed, (trait.dataType === 'int' || trait.dataType === 'range'))) {
+        return false
+      }
+
+      const r = trait.restrictions
+
+      if (r) {
+        if (r.min !== undefined && r.min !== null && +value < r.min) {
+          return false
+        }
+        if (r.max !== undefined && r.max !== null && +value > r.max) {
+          return false
+        }
+      }
+    } catch {
+      return false
+    }
+  } else if (trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && checkDatesAndCategories) {
+    return trait.restrictions.categories.includes(value)
+  } else if (trait.dataType === 'date' && checkDatesAndCategories) {
+    return isValidDateString(value)
+  } else if (trait.dataType === 'gps') {
+    try {
+      const [lat, lng] = trimmed.split(';')
+
+      return lat !== undefined && lat !== null && lat !== '' && isNumber(lat, false) && lng !== undefined && lng !== null && lng !== '' && isNumber(lng, false)
+    } catch {
+      return false
+    }
+  }
+
+  return true
+}
+
+function safeTrialName (trial: TrialPlus) {
+  return trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+}
+
 export {
   getRowLabel,
   getColumnLabel,
@@ -431,9 +444,8 @@ export {
   filterGermplasm,
   getRowIndex,
   jsonToTraits,
-  traitsToGerminate,
   germinateToTraits,
-  traitsToTabular,
+  toGerminateDataType,
   tabularToTraits,
   getTraitColor,
   toLocalDateString,
@@ -444,4 +456,6 @@ export {
   getDate,
   isValidDateString,
   isNumber,
+  checkDataMatchesTraitType,
+  safeTrialName,
 }

@@ -218,7 +218,6 @@
           }
 
           const barcode = cell.barcode
-          console.log(barcode)
           if (barcode) {
             if (barcodeSet.has(barcode)) {
               feedback.value.push({

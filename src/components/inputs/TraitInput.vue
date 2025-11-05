@@ -292,13 +292,13 @@
   function handleDateInputChar (event: KeyboardEvent) {
     // If this could be part of a number, append to existing string
     // @ts-ignore
-    if (compProps.trait.editable && (event.key === '-' || event.key === '+' || !isNaN(event.key))) {
+    if (isEditable.value && (event.key === '-' || event.key === '+' || !isNaN(event.key))) {
       dateInput.value += event.key
     }
   }
 
   function setDateDelta (delta: number) {
-    if (!compProps.trait.editable) {
+    if (!isEditable.value) {
       return
     }
 
@@ -325,7 +325,7 @@
   }
 
   function setDate () {
-    if (!compProps.trait.editable) {
+    if (!isEditable.value) {
       return
     }
 

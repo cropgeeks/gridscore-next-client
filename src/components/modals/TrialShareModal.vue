@@ -5,9 +5,9 @@
         <div v-if="shareCodes">
           <p v-html="$t('modalTextTrialShareCodes')" />
           <v-btn-toggle v-model="selectedShareStatus" variant="tonal" color="primary" mandatory class="d-flex justify-content-around">
-            <v-btn stacked class="flex-grow-1" :value="ShareStatus.OWNER" :prepend-icon="shareStatusTypes[ShareStatus.OWNER]?.icon" :text="$t(shareStatusTypes[ShareStatus.OWNER]?.text || '')" />
-            <v-btn stacked class="flex-grow-1" :value="ShareStatus.EDITOR" :prepend-icon="shareStatusTypes[ShareStatus.EDITOR]?.icon" :text="$t(shareStatusTypes[ShareStatus.EDITOR]?.text || '')" />
-            <v-btn stacked class="flex-grow-1" :value="ShareStatus.VIEWER" :prepend-icon="shareStatusTypes[ShareStatus.VIEWER]?.icon" :text="$t(shareStatusTypes[ShareStatus.VIEWER]?.text || '')" />
+            <v-btn stacked :disabled="!shareCodes.ownerCode" class="flex-grow-1" :value="ShareStatus.OWNER" :prepend-icon="shareStatusTypes[ShareStatus.OWNER]?.icon" :text="$t(shareStatusTypes[ShareStatus.OWNER]?.text || '')" />
+            <v-btn stacked :disabled="!shareCodes.editorCode" class="flex-grow-1" :value="ShareStatus.EDITOR" :prepend-icon="shareStatusTypes[ShareStatus.EDITOR]?.icon" :text="$t(shareStatusTypes[ShareStatus.EDITOR]?.text || '')" />
+            <v-btn stacked :disabled="!shareCodes.viewerCode" class="flex-grow-1" :value="ShareStatus.VIEWER" :prepend-icon="shareStatusTypes[ShareStatus.VIEWER]?.icon" :text="$t(shareStatusTypes[ShareStatus.VIEWER]?.text || '')" />
           </v-btn-toggle>
 
           <StyledQRCode class="mt-3" :base-url="remoteUrlWithoutApi" :text="selectedShareCode" v-if="selectedShareCode" />

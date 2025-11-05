@@ -1,7 +1,7 @@
 <template>
   <v-textarea
-    :label="$t('formLabelCommentContent')"
-    :hint="$t('formDescriptionCommentContent')"
+    :label="label"
+    :hint="hint"
     persistent-hint
     v-model="textContent"
   >
@@ -30,6 +30,11 @@
     continuous: true,
     interimResults: true,
   })
+
+  const compProps = defineProps<{
+    label: string
+    hint: string
+  }>()
 
   const textContent = defineModel<string>()
 
