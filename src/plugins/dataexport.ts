@@ -1,6 +1,6 @@
 import emitter from 'tiny-emitter/instance'
 import { getTrialDataCached } from '@/plugins/datastore'
-import type { TrialPlus, CellPlus } from '@/plugins/types/client'
+import type { TrialPlus, CellPlus, TraitPlus } from '@/plugins/types/client'
 import { EventType, type Geography, type Measurement, type Trait } from '@/plugins/types/gridscore'
 import { GERMINATE_EXPECTED_COLUMNS, safeTrialName, TABULAR_EXPECTED_COLUMNS, toGerminateDataType, toLocalDateString, toLocalDateTimeString } from '@/plugins/util'
 import { saveAs } from 'file-saver'
@@ -20,8 +20,8 @@ export interface TabExportConfig {
   useTimestamps: boolean
 }
 
-function traitsToGridScore (traits: Trait[]): string {
-  const copy = JSON.parse(JSON.stringify(traits))
+function traitsToGridScore (traits: TraitPlus[]): string {
+  const copy: TraitPlus[] = JSON.parse(JSON.stringify(traits))
   copy.forEach(t => {
     delete t.id
     delete t.progress
