@@ -294,7 +294,7 @@
 </template>
 
 <script setup lang="ts">
-  import { downloadText, exportDataTab, exportPlotComments, exportTrialComments, exportTrialEvents, exportTrialLayout, traitsToGerminate, traitsToGridScore, traitsToTabular, trialToGerminate, trialToPotentialGerminate, type TabExportConfig } from '@/plugins/dataexport'
+  import { downloadText, exportDataTab, exportPlotComments, exportTrialComments, exportTrialEvents, exportTrialLayout, traitsToGerminate, traitsToGridScore, traitsToTabular, trialToPotentialGerminate, type TabExportConfig } from '@/plugins/dataexport'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getNumberWithSuffix } from '@/plugins/formatting'
   import { getTrialById } from '@/plugins/idb'
