@@ -94,6 +94,8 @@
             <v-list-item :prepend-icon="mdiMap" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 
+          <v-list-item :prepend-icon="mdiExport" :title="$t('menuDataExport')" to="/export" />
+
           <v-list-item :prepend-icon="mdiCog" :title="$t('menuSettings')" to="/settings" />
           <v-list-item prepend-icon="$gridscore" :title="$t('menuAbout')" to="/about" />
         </v-list>
@@ -162,7 +164,8 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
-  import { mdiBarcodeScan, mdiChartGantt, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiChartGantt, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiExport, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()
@@ -181,7 +184,7 @@
 
   const changelogVersionNumber = ref<string>()
 
-  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/collect/walk', '/collect/input', '/trial-export'])
+  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/collect/walk', '/collect/input', '/export'])
 
   let plausible: any
   let wakeLock: WakeLockSentinel | undefined

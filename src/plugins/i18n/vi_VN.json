@@ -246,7 +246,7 @@
   "formLabelExportBrapiStudyType": "Kiểu học",
   "formLabelExportTrialFormatGerminateAggregate": "Giá trị trung bình",
   "formDescriptionExportTrialFormatGerminateAggregate": "Quyết định xem có nên tính trung bình các giá trị trên các bộ và phép đo trong cùng một ngày hay không.",
-  "formDescriptionBrapiUrl": "URL của điểm cuối BrAPI. Thông thường có dạng <code> {URL} /brapi/v2/ </code>",
+  "formDescriptionBrapiUrl": "URL của điểm cuối <a href='https://brapi.org' target='_blank'>BrAPI</a>. Thông thường có dạng <code> {URL} /brapi/v2/ </code>",
   "formDescriptionBrapiToken": "Mã thông báo có thể được yêu cầu cho các hoạt động ghi hoặc giới hạn quyền truy cập",
   "formLabelMeasurementSet": "Đo đạt cho vị trí đã đặt {position}",
   "formLabelImageTagTraitSelector": "Chọn đặc tính để gắn thẻ (tùy chọn)",

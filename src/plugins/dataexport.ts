@@ -1,10 +1,13 @@
 import emitter from 'tiny-emitter/instance'
 import { getTrialDataCached } from '@/plugins/datastore'
-import type { TrialPlus, CellPlus, TraitPlus } from '@/plugins/types/client'
+import type { TrialPlus, CellPlus, TraitPlus, RemoteConfig } from '@/plugins/types/client'
 import { EventType, type Geography, type Measurement, type Trait } from '@/plugins/types/gridscore'
 import { GERMINATE_EXPECTED_COLUMNS, safeTrialName, TABULAR_EXPECTED_COLUMNS, toGerminateDataType, toLocalDateString, toLocalDateTimeString } from '@/plugins/util'
 import { saveAs } from 'file-saver'
 import { i18n } from '@/plugins/vuetify'
+import { exportToGerminate, exportToShapefile, shareTrial } from './api'
+import { coreStore } from '@/stores/app'
+import { getTrialById } from './idb'
 
 interface IndividualMeasurement {
   traitId: string
@@ -18,6 +21,119 @@ export interface TabExportConfig {
   aggregate: boolean
   includePeople: boolean
   useTimestamps: boolean
+}
+
+function trialToPotentialGerminate (trial: TrialPlus, type: 'template' | 'shapefile', aggregate = true) {
+  return new Promise<string>((resolve, reject) => {
+    let shareCode = null
+    if (trial.shareCodes) {
+      shareCode = Object.values(trial.shareCodes).find(c => c !== undefined && c !== null)
+    }
+
+    if (shareCode) {
+      if (trial.transactionCount !== undefined && trial.transactionCount > 0) {
+        emitter.emit('show-confirm', {
+          title: i18n.global.t('modalTitleExportSynchronization'),
+          message: i18n.global.t('modalTextExportSynchronization'),
+          okTitle: i18n.global.t('buttonYes'),
+          cancelTitle: i18n.global.t('buttonNo'),
+          cancelVariant: 'primary',
+          okVariant: 'primary',
+          callback: (value: boolean) => {
+            if (value) {
+              emitter.emit('synchronize-trial', trial)
+            } else {
+              emitter.emit('show-loading', true)
+
+              let remoteConfig = undefined
+
+              if (trial && trial.remoteUrl) {
+                remoteConfig = {
+                  remoteUrl: trial.remoteUrl,
+                  token: trial.remoteToken || undefined,
+                }
+              }
+
+              if (type === 'shapefile') {
+                trialToShapefile(remoteConfig, shareCode)
+                  .then(resolve)
+                  .catch(reject)
+              } else {
+                trialToGerminate(remoteConfig, shareCode, aggregate)
+                  .then(resolve)
+                  .catch(reject)
+              }
+            }
+          },
+        })
+      } else {
+        emitter.emit('show-loading', true)
+
+        let remoteConfig = undefined
+
+        if (trial && trial.remoteUrl) {
+          remoteConfig = {
+            remoteUrl: trial.remoteUrl,
+            token: trial.remoteToken || undefined,
+          }
+        }
+        if (type === 'shapefile') {
+          trialToShapefile(remoteConfig, shareCode)
+            .then(resolve)
+            .catch(reject)
+        } else {
+          trialToGerminate(remoteConfig, shareCode, aggregate)
+            .then(resolve)
+            .catch(reject)
+        }
+      }
+    } else {
+      emitter.emit('show-loading', true)
+
+      let remoteConfig = undefined
+
+      if (trial && trial.remoteUrl) {
+        remoteConfig = {
+          remoteUrl: trial.remoteUrl,
+          token: trial.remoteToken || undefined,
+        }
+      }
+      shareTrial(remoteConfig, trial.localId || '')
+        .then(() => {
+          return getTrialById(trial.localId || '')
+        })
+        .then(trial => {
+          trialToPotentialGerminate(trial, type, aggregate)
+            .then(result => resolve(result))
+            .catch(e => reject(e))
+        })
+        .catch(e => reject(e))
+    }
+  })
+}
+
+function trialToShapefile (remoteConfig: RemoteConfig | undefined, shareCode: string) {
+  return new Promise<string>((resolve, reject) => {
+    exportToShapefile(remoteConfig, shareCode)
+      .then(uuid => {
+        const store = coreStore()
+        resolve(`${store.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`)
+        emitter.emit('show-loading', false)
+      })
+      .catch(e => reject(e))
+  })
+}
+
+function trialToGerminate (remoteConfig: RemoteConfig | undefined, shareCode: string, aggregate = true) {
+  return new Promise<string>((resolve, reject) => {
+    exportToGerminate(remoteConfig, shareCode, aggregate)
+      .then(uuid => {
+        const store = coreStore()
+        resolve(`${store.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`)
+        emitter.emit('show-loading', false)
+      })
+      .catch(e => reject(e))
+  })
 }
 
 function traitsToGridScore (traits: TraitPlus[]): string {
@@ -422,4 +538,5 @@ export {
   exportTrialComments,
   exportTrialEvents,
   exportPlotComments,
+  trialToPotentialGerminate,
 }

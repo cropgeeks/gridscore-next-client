@@ -14,6 +14,7 @@ declare module 'vue' {
     ArrowDirectionGrid: typeof import('./components/util/ArrowDirectionGrid.vue')['default']
     BaseChart: typeof import('./components/chart/BaseChart.vue')['default']
     BrapiConfig: typeof import('./components/util/BrapiConfig.vue')['default']
+    BrapiExportSection: typeof import('./components/dataexport/BrapiExportSection.vue')['default']
     BrapiStudySelect: typeof import('./components/util/BrapiStudySelect.vue')['default']
     ChangelogModal: typeof import('./components/modals/ChangelogModal.vue')['default']
     ColumnHeader: typeof import('./components/data/ColumnHeader.vue')['default']

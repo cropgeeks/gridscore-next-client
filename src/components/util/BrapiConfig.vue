@@ -1,23 +1,27 @@
 <template>
-  <v-text-field
-    v-model="brapiUrl"
-    :label="$t('formLabelBrapiUrl')"
-    :messages="['f']"
-    type="url"
-    required
-  >
-    <template #message>
-      <span v-html="$t('formDescriptionBrapiUrl')" />
-    </template>
-  </v-text-field>
-
-  <v-text-field
-    v-model="brapiToken"
-    class="mt-3"
-    :label="$t('formLabelBrapiToken')"
-    :hint="$t('formDescriptionBrapiToken')"
-    persistent-hint
-  />
+  <v-row>
+    <v-col cols="12" md="6">
+      <v-text-field
+        v-model="brapiUrl"
+        :label="$t('formLabelBrapiUrl')"
+        :messages="['f']"
+        type="url"
+        required
+      >
+        <template #message>
+          <span v-html="$t('formDescriptionBrapiUrl')" />
+        </template>
+      </v-text-field>
+    </v-col>
+    <v-col cols="12" md="6">
+      <v-text-field
+        v-model="brapiToken"
+        :label="$t('formLabelBrapiToken')"
+        :hint="$t('formDescriptionBrapiToken')"
+        persistent-hint
+      />
+    </v-col>
+  </v-row>
 
   <v-btn
     class="mt-3"

@@ -4,7 +4,7 @@
       <v-progress-linear :active="isActive" color="primary" height="4" indeterminate />
     </template>
     <v-toolbar class="d-flex justify-space-between">
-      <v-toolbar-title class="flex-unset ms-4" :text="$t('widgetTrialSelectorTitle')" />
+      <v-toolbar-title class="flex-unset ms-4 my-3" :text="$t('widgetTrialSelectorTitle')" />
 
       <div>
         <v-text-field

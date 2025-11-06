@@ -49,7 +49,7 @@
 
   const trial = ref<TrialPlus>()
   const geolocation = ref<Geolocation>()
-  const searchMatch = ref<CellPlus>()
+  const searchMatch = ref<CellPlus[]>([])
 
   const dataEntryModal = useTemplateRef('dataEntryModal')
   const searchField = useTemplateRef('searchField')
@@ -120,9 +120,9 @@
   }
 
   watch(searchMatch, async newValue => {
-    if (newValue) {
-      selectPlot(newValue.row || 0, newValue.column || 0)
-      searchMatch.value = undefined
+    if (newValue && newValue.length > 0 && newValue[0]) {
+      selectPlot(newValue[0].row || 0, newValue[0].column || 0)
+      searchMatch.value = []
     }
   })
 

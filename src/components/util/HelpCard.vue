@@ -22,19 +22,19 @@
     <template #text>
       <v-row>
         <v-col v-if="showInstall">
-          <v-list-item slim @click="install" :title="$t('widgetHelpToolbarInstall')" :prepend-icon="mdiCellphoneArrowDown" />
+          <v-list-item slim min-width="200" @click="install" :title="$t('widgetHelpToolbarInstall')" :prepend-icon="mdiCellphoneArrowDown" />
         </v-col>
         <v-col v-else-if="!isInstalledAndroid">
-          <v-list-item slim @click="showInstallInfo = true" :title="$t('widgetHelpToolbarInstall')" :prepend-icon="mdiCellphoneArrowDown" />
+          <v-list-item slim min-width="200" @click="showInstallInfo = true" :title="$t('widgetHelpToolbarInstall')" :prepend-icon="mdiCellphoneArrowDown" />
         </v-col>
         <v-col>
-          <v-list-item slim href="mailto:sebastian.raubach@hutton.ac.uk?subject=GridScore" :title="$t('widgetHelpToolbarSupport')" :prepend-icon="mdiAccountQuestion" />
+          <v-list-item slim min-width="200" href="mailto:sebastian.raubach@hutton.ac.uk?subject=GridScore" :title="$t('widgetHelpToolbarSupport')" :prepend-icon="mdiAccountQuestion" />
         </v-col>
         <v-col>
-          <v-list-item slim href="https://cropgeeks.github.io/gridscore-next-client" target="_blank" :title="$t('widgetHelpToolbarDocumentation')" :prepend-icon="mdiInformation" />
+          <v-list-item slim min-width="200" href="https://cropgeeks.github.io/gridscore-next-client" target="_blank" :title="$t('widgetHelpToolbarDocumentation')" :prepend-icon="mdiInformation" />
         </v-col>
         <v-col>
-          <v-list-item slim href="https://github.com/cropgeeks/gridscore-next-client/issues/new/choose" target="_blank" :title="$t('widgetHelpToolbarSuggestions')" :prepend-icon="mdiGithub" />
+          <v-list-item slim min-width="200" href="https://github.com/cropgeeks/gridscore-next-client/issues/new/choose" target="_blank" :title="$t('widgetHelpToolbarSuggestions')" :prepend-icon="mdiGithub" />
         </v-col>
       </v-row>
     </template>

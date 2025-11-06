@@ -232,7 +232,7 @@ function getServerVersion (remoteConfig: RemoteConfig) {
   return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: 'settings/version', method: 'get', ignoreErrors: true })
 }
 
-async function shareTrial (remoteConfig: RemoteConfig, localId: string): Promise<TrialPlus | undefined> {
+async function shareTrial (remoteConfig: RemoteConfig | undefined, localId: string): Promise<TrialPlus | undefined> {
   const trial = await getTrialById(localId)
 
   if (remoteConfig && remoteConfig.remoteUrl) {

@@ -3,6 +3,7 @@
     <UseOnline v-slot="{ isOnline }">
       <v-tabs
         color="primary"
+        bg-color="surface"
         v-model="tab"
         center-active
         grow
@@ -223,6 +224,51 @@
             />
 
             <p class="mt-3" v-html="$t('pageExportTrialFormatGerminate')" />
+
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-card :title="$t('pageExportTrialFormatGerminateDataCardTitle')">
+                  <template #subtitle>
+                    <span class="text-wrap">{{ $t('pageExportTrialFormatGerminateDataCardSubtitle') }}</span>
+                  </template>
+
+                  <template #text>
+                    <v-switch
+                      v-model="germinateAggregate"
+                      :label="$t('formLabelExportTrialFormatGerminateAggregate')"
+                      :hint="$t('formDescriptionExportTrialFormatGerminateAggregate')"
+                      persistent-hint
+                      color="primary"
+                    />
+                  </template>
+
+                  <template #actions>
+                    <v-btn @click="exportDataGerminate" color="primary" :disabled="!isOnline || germinateFile !== undefined" variant="tonal" prepend-icon="$germinate" :text="$t('buttonExport')" />
+                    <template v-if="germinateFile !== undefined">
+                      <v-spacer />
+                      <v-btn :href="germinateFile" @click="germinateFile = undefined" color="success" :disabled="!isOnline" variant="tonal" :prepend-icon="mdiDownload" :text="$t('buttonDownload')" />
+                    </template>
+                  </template>
+                </v-card>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-card :title="$t('pageExportTrialFormatGerminateShapeCardTitle')">
+                  <template #subtitle>
+                    <span class="text-wrap">{{ $t('pageExportTrialFormatGerminateShapeCardSubtitle') }}</span>
+                  </template>
+
+                  <template #actions>
+                    <v-btn @click="exportShapefileGerminate" color="primary" :disabled="!isOnline || shapeFile !== undefined" variant="tonal" prepend-icon="$germinate" :text="$t('buttonExport')" />
+                    <template v-if="shapeFile !== undefined">
+                      <v-spacer />
+                      <v-btn :href="shapeFile" @click="shapeFile = undefined" color="success" :disabled="!isOnline" variant="tonal" :prepend-icon="mdiDownload" :text="$t('buttonDownload')" />
+                    </template>
+                  </template>
+                </v-card>
+              </v-col>
+            </v-row>
+
+            <v-alert class="mt-3" color="error" variant="tonal" :icon="mdiAlert" :text="germinateError" v-if="germinateError" />
           </v-sheet>
         </v-tabs-window-item>
         <v-tabs-window-item value="brapi">
@@ -236,6 +282,10 @@
               variant="tonal"
               border="start"
             />
+
+            <p class="mt-3" v-html="$t('pageExportTrialFormatBrapi')" />
+
+            <BrapiExportSection />
           </v-sheet>
         </v-tabs-window-item>
       </v-tabs-window>
@@ -244,17 +294,19 @@
 </template>
 
 <script setup lang="ts">
-  import { downloadText, exportDataTab, exportPlotComments, exportTrialComments, exportTrialEvents, exportTrialLayout, traitsToGerminate, traitsToGridScore, traitsToTabular, type TabExportConfig } from '@/plugins/dataexport'
+  import { downloadText, exportDataTab, exportPlotComments, exportTrialComments, exportTrialEvents, exportTrialLayout, traitsToGerminate, traitsToGridScore, traitsToTabular, trialToGerminate, trialToPotentialGerminate, type TabExportConfig } from '@/plugins/dataexport'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getNumberWithSuffix } from '@/plugins/formatting'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiCommentMultiple, mdiFileTable, mdiFlag, mdiLandFields, mdiLanDisconnect, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSprout, mdiTagMultiple } from '@mdi/js'
+  import { mdiAlert, mdiCommentMultiple, mdiDownload, mdiFileTable, mdiFlag, mdiLandFields, mdiLanDisconnect, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSprout, mdiTagMultiple } from '@mdi/js'
   import { UseOnline } from '@vueuse/components'
 
   import emitter from 'tiny-emitter/instance'
   import { safeTrialName } from '@/plugins/util'
+  import type { AxiosError } from 'axios'
+  import BrapiExportSection from '@/components/dataexport/BrapiExportSection.vue'
 
   const store = coreStore()
 
@@ -262,11 +314,16 @@
   const trialData = shallowRef<{ [index: string]: CellPlus } | undefined>({})
   const tab = ref<'tab' | 'layout' | 'traits' | 'comments' | 'events' | 'germinate' | 'brapi'>('tab')
   const plotCommentCount = ref(0)
+  const germinateAggregate = ref(true)
   const tabConfig = ref<TabExportConfig>({
-    aggregate: false,
+    aggregate: true,
     includePeople: false,
     useTimestamps: false,
   })
+
+  const germinateError = ref<string>()
+  const germinateFile = ref<string>()
+  const shapeFile = ref<string>()
 
   const trialCommentCount = computed(() => (trial.value?.comments || []).length)
   const trialEventCount = computed(() => (trial.value?.events || []).length)
@@ -323,6 +380,44 @@
     if (trial.value && trialData.value) {
       exportTrialEvents(trial.value)
     }
+  }
+
+  function exportShapefileGerminate () {
+    germinateError.value = undefined
+    shapeFile.value = undefined
+    if (trial.value) {
+      trialToPotentialGerminate(trial.value, 'shapefile', germinateAggregate.value)
+        .then(url => {
+          shapeFile.value = url
+        })
+        .catch((e: AxiosError) => {
+          germinateError.value = e.message
+          handleError(e)
+        })
+    }
+  }
+
+  function exportDataGerminate () {
+    germinateFile.value = undefined
+    germinateError.value = undefined
+    if (trial.value) {
+      trialToPotentialGerminate(trial.value, 'template', germinateAggregate.value)
+        .then(url => {
+          germinateFile.value = url
+        })
+        .catch((e: AxiosError) => {
+          germinateError.value = e.message
+          handleError(e)
+        })
+    }
+  }
+
+  function handleError (err: AxiosError) {
+    if (err && err.status === 404) {
+      // Handle missing trials
+      emitter.emit('show-missing-trial', trial.value)
+    }
+    emitter.emit('show-loading', false)
   }
 
   function updateTrialDataCache () {
