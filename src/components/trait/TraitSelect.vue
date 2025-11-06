@@ -1,6 +1,6 @@
 <template>
   <v-select
-    v-model="selectedTrait"
+    v-model="selectedTraits"
     :items="traits"
     class="flex-grow-0"
     return-object
@@ -31,7 +31,7 @@
   import type { TraitPlus } from '@/plugins/types/client'
   import { mdiCircle } from '@mdi/js'
 
-  const selectedTrait = defineModel<TraitPlus>()
+  const selectedTraits = defineModel<TraitPlus[]>()
 
   interface TraitSelectProps {
     traits: TraitPlus[]

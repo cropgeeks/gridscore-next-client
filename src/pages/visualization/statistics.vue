@@ -63,6 +63,7 @@
   import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import PlotDataInformation from '@/components/plot/PlotDataInformation.vue'
   import GpsTraitMap from '@/components/trait/GpsTraitMap.vue'
+  import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { TraitDataType } from '@/plugins/types/gridscore'

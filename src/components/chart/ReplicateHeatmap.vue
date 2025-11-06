@@ -16,7 +16,7 @@
 
           <div class="d-flex flex-wrap">
             <TraitSelect
-              v-model="selectedTrait"
+              v-model="selectedTraits"
               :traits="trial.traits"
             />
 
@@ -54,7 +54,7 @@
       v-if="selectedCell && trial"
     >
       <v-card :title="selectedCell.displayName || selectedCell.germplasm">
-        <PlotDataInformation :trial="trial" :trait="selectedTrait" :cell="selectedCell" />
+        <PlotDataInformation :trial="trial" :trait="firstTrait" :cell="selectedCell" />
       </v-card>
     </v-bottom-sheet>
   </div>
@@ -98,7 +98,7 @@
 
   const id = ref('rep-heatmap' + getId())
   const sourceFile = ref<DownloadBlob>()
-  const selectedTrait = ref<TraitPlus>()
+  const selectedTraits = ref<TraitPlus[]>([])
   const selectedCell = ref<CellPlus>()
   const timepoints = ref<string[]>([])
   const currentTimepoint = ref(0)
@@ -117,9 +117,11 @@
 
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
 
+  const firstTrait = computed(() => selectedTraits.value && selectedTraits.value.length > 0 ? selectedTraits.value[0] : undefined)
+
   const filename = computed(() => {
-    if (safeTrialName.value && selectedTrait.value) {
-      const traitName = selectedTrait.value.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+    if (safeTrialName.value && firstTrait.value) {
+      const traitName = firstTrait.value.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
       return `rep-heatmap-${safeTrialName.value}-${traitName}-${toLocalDateString(new Date())}`
     } else {
       return ''
@@ -128,7 +130,7 @@
 
   function redraw () {
     canDownload.value = false
-    const trait = selectedTrait.value
+    const trait = firstTrait.value
 
     if (heatmapChart.value && trait && trialData) {
       try {
@@ -455,7 +457,7 @@
 
   watch(currentTimepoint, async () => redraw())
 
-  watch(selectedTrait, async newValue => {
+  watch(firstTrait, async newValue => {
     currentTimepoint.value = 0
 
     const td = trialData
