@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-  import { brapiDefaultCatchHandler, brapiGetObservationUnits, brapiGetPrograms, brapiGetStudies, brapiGetStudyTypes, brapiGetTrials } from '@/plugins/brapi'
+  import { brapiDefaultCatchHandler, brapiGetPrograms, brapiGetStudies, brapiGetStudyTypes, brapiGetTrials } from '@/plugins/brapi'
   import type { Study, Trial, Program } from '@/plugins/types/brapi'
 
   const programs = ref<Program[]>([])
