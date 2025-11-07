@@ -9,8 +9,7 @@
             <v-progress-linear :active="isActive" color="primary" height="3" indeterminate />
           </template>
           <template #text>
-            <!-- @vue-ignore -->
-            <p :class="allGermplasmValidDbId ? 'text-success' : 'text-error'">{{ $t('pageBrapiExportBrapiGermplasmIdText', germplasmWithBrapiDbIds) }}</p>
+            <p :class="allGermplasmValidDbId ? 'text-success' : 'text-error'">{{ $t('pageBrapiExportBrapiGermplasmIdText', { count: germplasmWithBrapiDbIds.count, total: germplasmWithBrapiDbIds.total }) }}</p>
           </template>
           <template #actions>
             <v-btn variant="tonal" :color="allGermplasmValidDbId ? undefined : 'primary'" :disabled="germplasmLoading || allGermplasmValidDbId" @click="searchBrapiGermplasmMatches" :prepend-icon="mdiMagnify" :text="$t('buttonUpdate')" />
@@ -23,8 +22,7 @@
             <v-progress-linear :active="isActive" color="primary" height="3" indeterminate />
           </template>
           <template #text>
-            <!-- @vue-ignore -->
-            <p :class="allTraitsValidDbId ? 'text-success' : 'text-error'">{{ $t('pageBrapiExportBrapiTraitIdText', traitsWithBrapiDbIds) }}</p>
+            <p :class="allTraitsValidDbId ? 'text-success' : 'text-error'">{{ $t('pageBrapiExportBrapiTraitIdText', { count: traitsWithBrapiDbIds.count, total: traitsWithBrapiDbIds.total }) }}</p>
           </template>
           <template #actions>
             <v-btn variant="tonal" :color="allTraitsValidDbId ? undefined : 'primary'" :disabled="traitsLoading || allTraitsValidDbId" @click="searchBrapiTraitMatches" :prepend-icon="mdiMagnify" :text="$t('buttonUpdate')" />

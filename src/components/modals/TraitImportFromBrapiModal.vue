@@ -74,7 +74,7 @@
               restrictions.max = +v.scale.validValues.maximumValue
             }
             if (v.scale.validValues.categories && v.scale.validValues.categories.length > 0) {
-              restrictions.categories = v.scale.validValues.categories.map(c => c.label)
+              restrictions.categories = v.scale.validValues.categories.map(c => c.label || '')
             }
           }
 
@@ -117,7 +117,7 @@
           return {
             id: getId(),
             brapiId: v.observationVariableDbId,
-            name: v.observationVariableName,
+            name: v.observationVariableName || '',
             dataType: type,
             restrictions: Object.keys(restrictions).length === 0 ? undefined : restrictions,
             setSize,
