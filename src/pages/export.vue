@@ -1,5 +1,13 @@
 <template>
   <v-container v-if="trial">
+    <TrialCard
+      class="mb-5"
+      :trial="trial"
+      horizontal
+      :interactive="false"
+      :show-actions="false"
+    />
+
     <UseOnline v-slot="{ isOnline }">
       <v-tabs
         color="primary"
@@ -285,7 +293,10 @@
 
             <p class="mt-3" v-html="$t('pageExportTrialFormatBrapi')" />
 
-            <BrapiExportSection />
+            <BrapiExportSection
+              :trial="trial"
+              @trigger-reload-trial="updateTrialDataCache"
+            />
           </v-sheet>
         </v-tabs-window-item>
       </v-tabs-window>
@@ -307,6 +318,7 @@
   import { safeTrialName } from '@/plugins/util'
   import type { AxiosError } from 'axios'
   import BrapiExportSection from '@/components/dataexport/BrapiExportSection.vue'
+  import TrialCard from '@/components/trial/TrialCard.vue'
 
   const store = coreStore()
 

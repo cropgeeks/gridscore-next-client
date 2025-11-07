@@ -1,6 +1,6 @@
 import { updateTrialBrapiConfig } from '@/plugins/idb'
 import { coreStore } from '@/stores/app'
-import axios, { type AxiosError } from 'axios'
+import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 import emitter from 'tiny-emitter/instance'
 import { i18n } from '@/plugins/vuetify'
 import { Version, type BrapiCall, type Germplasm, type GermplasmSearch, type Observation, type ObservationUnit, type ObservationVariable, type ObservationVariableSearch, type Program, type ProgramParams, type Study, type StudyParams, type Trial, type TrialParams } from '@/plugins/types/brapi'
@@ -25,7 +25,7 @@ function brapiDefaultCatchHandler (err: AxiosError) {
         // We're using the emitter to show the brapi settings modal
         updateTrialBrapiConfig(store.storeSelectedTrial || '', { url: store.storeBrapiConfig.url, token: undefined })
           .then(() => emitter.emit('show-brapi-settings', 'errorMessageBrapiPermissionUnauthorized'))
-        return
+        break
       case 403: {
         message = i18n.global.t('httpErrorFourOThree')
         // We're using the emitter to show the brapi settings modal
@@ -111,13 +111,13 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
     }
   }
 
-  const axiosParams = {
+  const axiosParams: AxiosRequestConfig = {
     baseURL: baseUrl,
     url,
     params: method === 'get' ? params : null,
     data: method !== 'get' ? params : null,
     method,
-    crossDomain: true,
+    // crossDomain: true,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     } as { [index: string]: any },
@@ -126,10 +126,10 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
 
   const useAuth = token !== undefined && token !== null
 
-  if (useAuth) {
+  if (useAuth && axiosParams.headers) {
     // TODO: Whyyyyyyyy? The line below causes CORS issues, while the one below that works just fine.
-    // axiosParams.withCredentials = true
-    axiosParams.headers['Access-Control-Allow-Credentials'] = true
+    axiosParams.withCredentials = true
+    // axiosParams.headers['Access-Control-Allow-Credentials'] = true
     axiosParams.headers.Authorization = `Bearer ${token}`
   }
 

@@ -811,6 +811,88 @@ async function setPlotMarked (trialId: string, row: number, column: number, isMa
   }
 }
 
+async function updateGermplasmBrapiIds (trialId: string, germplasmBrapiIds: { [index: string]: string }) {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      // Add the new ones
+      if (!transaction.brapiIdChangeTransaction) {
+        transaction.brapiIdChangeTransaction = {
+          germplasmBrapiIds: {},
+          traitBrapiIds: {}
+        }
+      }
+
+      Object.entries(germplasmBrapiIds).forEach(([key, value]) => {
+        transaction.brapiIdChangeTransaction.germplasmBrapiIds[key] = value
+      })
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    // Get all data items belonging to this trial so we can add the new trait information
+    let cursor = await db.transaction('data', 'readwrite').store.openCursor(IDBKeyRange.bound([trial.localId, 0, 0], [trial.localId, trial.layout.rows, trial.layout.columns]))
+
+    while (cursor) {
+      const cell = cursor.value
+      if (cell && germplasmBrapiIds[`${cell.row}|${cell.column}`]) {
+        cell.brapiId = germplasmBrapiIds[`${cell.row}|${cell.column}`]
+
+        // Write it back to the database
+        await cursor.update(cell)
+      }
+
+      // Continue with the next one
+      cursor = await cursor.continue()
+    }
+
+    return new Promise(resolve => resolve(trial))
+  }
+}
+
+async function updateTraitBrapiIds (trialId: string, traitBrapiIds: { [index: string]: string }) {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      // Add the new ones
+      if (!transaction.brapiIdChangeTransaction) {
+        transaction.brapiIdChangeTransaction = {
+          germplasmBrapiIds: {},
+          traitBrapiIds: {}
+        }
+      }
+
+      Object.entries(traitBrapiIds).forEach(([key, value]) => {
+        transaction.brapiIdChangeTransaction.traitBrapiIds[key] = value
+      })
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    Object.entries(traitBrapiIds).forEach(([key, value]) => {
+      const match = trial.traits.find((t: Trait) => t.id === key)
+
+      if (match) {
+        match.brapiId = value
+      }
+    })
+
+    return db.put('trials', trial)
+  }
+}
+
 async function changeTrialsData (trialId: string, dataMapping: DataModification, geolocation?: Geolocation) {
   const trial = await getTrialById(trialId)
 
@@ -1379,4 +1461,6 @@ export {
   addTrialEvent,
   deleteTrialEvent,
   updateTrialBrapiConfig,
+  updateGermplasmBrapiIds,
+  updateTraitBrapiIds,
 }

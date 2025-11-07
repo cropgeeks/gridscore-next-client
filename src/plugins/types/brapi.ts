@@ -362,24 +362,24 @@ export interface ObservationUnitPosition {
 }
 
 export interface ObservationVariable extends BrapiObject {
-    commonCropName: string;
-    contextOfUse: string;
-    defaultValue: string;
-    documentationURL: string;
-    externalReferences: Reference[];
-    growthStage: string;
-    institution: string;
-    language: string;
-    method: AttributeMethod;
-    observationVariableDbId: string;
-    observationVariableName: string;
-    ontologyReference: OntologyReference;
-    scale: Scale;
-    scientist: string;
-    status: string;
-    submissionTimestamp: string;
-    synonyms: string[];
-    trait: Trait;
+    commonCropName?: string;
+    contextOfUse?: string;
+    defaultValue?: string;
+    documentationURL?: string;
+    externalReferences?: Reference[];
+    growthStage?: string;
+    institution?: string;
+    language?: string;
+    method?: AttributeMethod;
+    observationVariableDbId?: string;
+    observationVariableName?: string;
+    ontologyReference?: OntologyReference;
+    scale?: Scale;
+    scientist?: string;
+    status?: string;
+    submissionTimestamp?: string;
+    synonyms?: string[];
+    trait?: Trait;
 }
 
 export interface AttributeMethod extends BrapiObject {
@@ -402,33 +402,33 @@ export interface OntologyReference {
 }
 
 export interface Scale extends BrapiObject {
-    dataType: string;
-    decimalPlaces: number;
-    externalReferences: Reference[];
-    ontologyReference: OntologyReference;
-    scaleDbId: string;
-    scaleName: string;
-    scalePUI: string;
-    units: string;
-    validValues: ValidValues;
+    dataType?: string;
+    decimalPlaces?: number;
+    externalReferences?: Reference[];
+    ontologyReference?: OntologyReference;
+    scaleDbId?: string;
+    scaleName?: string;
+    scalePUI?: string;
+    units?: string;
+    validValues?: ValidValues;
 }
 
 export interface Trait extends BrapiObject {
-    alternativeAbbreviations: string[];
-    attribute: string;
-    attributePUI: string;
-    entity: string;
-    entityPUI: string;
-    externalReferences: Reference[];
-    mainAbbreviation: string;
-    ontologyReference: OntologyReference;
-    status: string;
-    synonyms: string[];
-    traitClass: string;
-    traitDbId: string;
-    traitDescription: string;
-    traitName: string;
-    traitPUI: string;
+    alternativeAbbreviations?: string[];
+    attribute?: string;
+    attributePUI?: string;
+    entity?: string;
+    entityPUI?: string;
+    externalReferences?: Reference[];
+    mainAbbreviation?: string;
+    ontologyReference?: OntologyReference;
+    status?: string;
+    synonyms?: string[];
+    traitClass?: string;
+    traitDbId?: string;
+    traitDescription?: string;
+    traitName?: string;
+    traitPUI?: string;
 }
 
 export interface Link {
@@ -437,14 +437,14 @@ export interface Link {
 }
 
 export interface ValidValues {
-    categories: Category[];
-    maximumValue: string;
-    minimumValue: string;
+    categories?: Category[];
+    maximumValue?: string;
+    minimumValue?: string;
 }
 
 export interface Category {
-    label: string;
-    value: string;
+    label?: string;
+    value?: string;
 }
 
 export interface Treatment {

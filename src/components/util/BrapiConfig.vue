@@ -35,8 +35,15 @@
 </template>
 
 <script setup lang="ts">
+  import { updateTrialBrapiConfig } from '@/plugins/idb'
+  import type { TrialPlus } from '@/plugins/types/client'
+  import type { BrapiConfig } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
   import { mdiRefresh } from '@mdi/js'
+
+  const compProps = defineProps<{
+    trial?: TrialPlus
+  }>()
 
   const store = coreStore()
 
@@ -44,12 +51,18 @@
   const brapiToken = ref<string | undefined>(store.storeBrapiConfig?.token)
 
   function save () {
-    store.setBrapiConfig({
+    const config: BrapiConfig = {
       url: brapiUrl.value,
-      token: brapiToken.value,
-    })
+      token: brapiToken.value === '' ? undefined : brapiToken.value,
+    }
+    store.setBrapiConfig(config)
 
-    emit('brapi-config-updated')
+    if (compProps.trial) {
+      updateTrialBrapiConfig(compProps.trial.localId || '', config)
+        .then(() => emit('brapi-config-updated'))
+    } else {
+      emit('brapi-config-updated')
+    }
   }
 
   const emit = defineEmits(['brapi-config-updated'])

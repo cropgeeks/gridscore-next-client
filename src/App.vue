@@ -184,7 +184,7 @@
 
   const changelogVersionNumber = ref<string>()
 
-  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/collect/walk', '/collect/input', '/export'])
+  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/collect/walk', '/collect/input'])
 
   let plausible: any
   let wakeLock: WakeLockSentinel | undefined

@@ -21,7 +21,7 @@
       </div>
     </v-card-text>
 
-    <v-list variant="tonal" v-if="horizontal">
+    <v-list variant="tonal" v-if="horizontal" :disabled="!interactive">
       <v-row no-gutters>
         <v-col cols="12" sm="6" md="4" lg="3">
           <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
@@ -50,7 +50,7 @@
       </v-row>
     </v-list>
 
-    <v-list variant="tonal" slim v-else>
+    <v-list variant="tonal" slim :disabled="!interactive" v-else>
       <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
       <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
