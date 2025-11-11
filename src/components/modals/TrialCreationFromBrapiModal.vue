@@ -179,6 +179,7 @@
         data[`${row}|${column}`] = {
           germplasm: c.germplasm,
           categories: c.categories || [],
+          rep: c.rep,
           isMarked: false,
           brapiId: c.brapiId,
           measurements: {},

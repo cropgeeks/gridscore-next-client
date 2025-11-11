@@ -131,9 +131,27 @@
       .catch(brapiDefaultCatchHandler)
   }
 
-  watch(program, async () => updateTrials(), { immediate: true })
-  watch(trial, async () => updateStudyTypes(), { immediate: true })
-  watch(studyType, async () => updateStudies(), { immediate: true })
+  watch(program, async newValue => {
+    trial.value = undefined
+    study.value = undefined
+    studyType.value = undefined
+    if (newValue) {
+      updateTrials()
+    }
+  }, { immediate: true })
+  watch(trial, async newValue => {
+    study.value = undefined
+    studyType.value = undefined
+    if (newValue) {
+      updateStudyTypes()
+    }
+  }, { immediate: true })
+  watch(studyType, async newValue => {
+    study.value = undefined
+    if (newValue) {
+      updateStudies()
+    }
+  }, { immediate: true })
 
   onMounted(() => {
     updatePrograms()

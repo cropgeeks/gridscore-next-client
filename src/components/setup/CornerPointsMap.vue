@@ -358,7 +358,7 @@
   })
 
   onMounted(() => {
-    if (model.value?.corners) {
+    if (model.value && model.value.corners && isGeographyValid(model.value.corners)) {
       corners.value = model.value.corners
       cornersEnabled.value = true
     } else {
