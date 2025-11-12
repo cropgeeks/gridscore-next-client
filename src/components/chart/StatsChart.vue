@@ -70,10 +70,15 @@
     categories: string[]
   }
 
+  export interface UserSelection {
+    type: 'germplasm' | 'reps' | 'treatments'
+    selectedItems: string[]
+  }
+
   const compProps = defineProps<{
     trial: TrialPlus
     trait: TraitPlus
-    selectedGermplasm: string[]
+    userSelection?: UserSelection
   }>()
 
   const { t } = useI18n()
@@ -115,6 +120,7 @@
       }
 
       const data = []
+      let selectedItems: string[] = []
       let chartType = 'box'
 
       let supportsClicking = true
@@ -130,9 +136,10 @@
           const datapoints: { [index: string]: Datapoint[] } = {}
           datapoints[GENERIC_TRACE] = []
 
-          if (compProps.selectedGermplasm) {
-            compProps.selectedGermplasm.forEach(g => {
-              datapoints[g] = []
+          if (compProps.userSelection && compProps.userSelection.selectedItems && compProps.userSelection.selectedItems.length > 0) {
+            selectedItems = compProps.userSelection.selectedItems
+            selectedItems.forEach(i => {
+              datapoints[i] = []
             })
           }
 
@@ -140,8 +147,24 @@
             const cell = trialDataConst[k]
 
             if (cell && cell.measurements && cell.measurements[compProps.trait.id || '']) {
-              const displayName = cell.displayName || cell.germplasm
-              const isSelected = compProps.selectedGermplasm.includes(displayName)
+              let selectionField: string
+              let isSelected = false
+
+              if (compProps.userSelection && compProps.userSelection.type) {
+                switch (compProps.userSelection.type) {
+                  case 'germplasm':
+                    selectionField = cell.displayName || cell.germplasm
+                    break
+                  case 'reps':
+                    selectionField = cell.rep || ''
+                    break
+                  case 'treatments':
+                    selectionField = cell.treatment || ''
+                    break
+                }
+
+                isSelected = compProps.userSelection.selectedItems.includes(selectionField)
+              }
 
               cell.measurements[compProps.trait.id || '']?.forEach(m => {
                 const dateString = new Date(m.timestamp).toLocaleString()
@@ -166,12 +189,12 @@
                     categories: cell.categories,
                   }
 
-                  if (isSelected) {
-                    if (!datapoints[displayName]) {
-                      datapoints[displayName] = []
+                  if (isSelected && selectionField) {
+                    if (!datapoints[selectionField]) {
+                      datapoints[selectionField] = []
                     }
 
-                    datapoints[displayName].push(dp)
+                    datapoints[selectionField]?.push(dp)
                   }
 
                   datapoints[GENERIC_TRACE]?.push(dp)
@@ -180,7 +203,7 @@
             }
           })
 
-          compProps.selectedGermplasm.forEach(k => {
+          selectedItems.forEach(k => {
             const dps = datapoints[k]
 
             if (dps) {
@@ -189,7 +212,7 @@
                 text: dps.map(d => d.name),
                 customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn })),
                 ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
-                name: k,
+                name: `&nbsp;${k}`,
                 type: chartType,
                 jitter: 0.5,
                 pointpos: 2,
@@ -233,9 +256,13 @@
           chartType = 'bar'
           const datapoints: { [index: string]: string[] } = {}
           datapoints[GENERIC_TRACE] = []
-          compProps.selectedGermplasm.forEach(g => {
-            datapoints[g] = []
-          })
+
+          if (compProps.userSelection && compProps.userSelection.selectedItems && compProps.userSelection.selectedItems.length > 0) {
+            selectedItems = compProps.userSelection.selectedItems
+            selectedItems.forEach(i => {
+              datapoints[i] = []
+            })
+          }
 
           const keys = new Set<string>()
 
@@ -243,8 +270,24 @@
             const cell = trialDataConst[k]
 
             if (cell && cell.measurements && cell.measurements[compProps.trait.id || '']) {
-              const displayName = cell.displayName || cell.germplasm
-              const isSelected = compProps.selectedGermplasm.includes(displayName)
+              let selectionField: string
+              let isSelected = false
+
+              if (compProps.userSelection && compProps.userSelection.type) {
+                switch (compProps.userSelection.type) {
+                  case 'germplasm':
+                    selectionField = cell.displayName || cell.germplasm
+                    break
+                  case 'reps':
+                    selectionField = cell.rep || ''
+                    break
+                  case 'treatments':
+                    selectionField = cell.treatment || ''
+                    break
+                }
+
+                isSelected = compProps.userSelection.selectedItems.includes(selectionField)
+              }
 
               cell.measurements[compProps.trait.id || '']?.forEach(m => {
                 m.values.forEach(v => {
@@ -260,13 +303,13 @@
                       keys.add(v || '')
                     }
 
-                    if (isSelected) {
-                      if (!datapoints[displayName]) {
-                        datapoints[displayName] = []
+                    if (isSelected && selectionField) {
+                      if (!datapoints[selectionField]) {
+                        datapoints[selectionField] = []
                       }
 
                       if (value !== undefined) {
-                        datapoints[displayName].push(value)
+                        datapoints[selectionField]?.push(value)
                       }
                     }
 
@@ -286,14 +329,14 @@
             keyArray = [...keys].sort()
           }
 
-          compProps.selectedGermplasm.forEach(k => {
+          selectedItems.forEach(k => {
             const dps = datapoints[k]
 
             if (dps) {
               data.unshift({
                 x: keyArray,
                 y: keyArray.map(k => dps.filter(dp => dp === k).length),
-                name: k,
+                name: `&nbsp;${k}`,
                 type: chartType,
               })
             }
@@ -324,7 +367,7 @@
       const layout = {
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
-        height: chartType === 'box' ? (compProps.selectedGermplasm.length * 100 + 400) : 450,
+        height: chartType === 'box' ? (selectedItems.length * 100 + 400) : 450,
         barmode: 'group',
         margin: {
           l: 30,
@@ -442,7 +485,7 @@
     }
   }
 
-  watch(() => compProps.selectedGermplasm, async () => redraw())
+  watch(() => compProps.userSelection, async () => redraw(), { deep: true })
 
   onMounted(() => redraw())
 

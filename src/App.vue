@@ -90,7 +90,8 @@
             </template>
 
             <v-list-item :prepend-icon="mdiGradientHorizontal" :title="$t('menuVisualizationHeatmap')" to="/visualization/heatmap" />
-            <v-list-item :prepend-icon="mdiChartGantt" :title="$t('menuVisualizationStatistics')" to="/visualization/statistics" />
+            <v-list-item :prepend-icon="mdiChartGantt" :title="$t('menuVisualizationStatistics')" to="/visualization/trait-statistics" />
+            <v-list-item :prepend-icon="mdiChartTimeline" :title="$t('menuVisualizationTrialStatistics')" to="/visualization/trial-statistics" />
             <v-list-item :prepend-icon="mdiMap" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 
@@ -164,7 +165,7 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
-  import { mdiBarcodeScan, mdiChartGantt, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiExport, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiChartGantt, mdiChartTimeline, mdiChartWaterfall, mdiCheck, mdiCog, mdiDesktopTowerMonitor, mdiDirectionsFork, mdiExport, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
@@ -184,7 +185,7 @@
 
   const changelogVersionNumber = ref<string>()
 
-  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/statistics', '/visualization/map', '/collect/walk', '/collect/input'])
+  const trialInfoPages = ref<string[]>(['/collect/grid', '/visualization/heatmap', '/visualization/timeline', '/visualization/trait-statistics', '/visualization/trial-statistics', '/visualization/map', '/collect/walk', '/collect/input'])
 
   let plausible: any
   let wakeLock: WakeLockSentinel | undefined

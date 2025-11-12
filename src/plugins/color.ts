@@ -22,6 +22,11 @@ function invertHex (hex: string) {
   return (Number(`0x1${hex.replace('#', '')}`) ^ 0xFFFFFF).toString(16).slice(1).toUpperCase()
 }
 
+function getPrimaryColor (): string {
+  const rgb = getComputedStyle(document.documentElement).getPropertyValue('--v-theme-primary').split(',').map(s => +s.trim())
+  return rgbToHex({ r: rgb[0] || 0, g: rgb[1] || 0, b: rgb[2] || 0 })
+}
+
 function brighten (c: Color, factor: number): Color {
   let r = c.r
   let g = c.g
@@ -125,6 +130,7 @@ export {
   validateColorName,
   toCssNamedColors,
   invertHex,
+  getPrimaryColor,
   brighten,
   categoricalColors,
   THEME_COLORS,

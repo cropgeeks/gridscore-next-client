@@ -33,7 +33,8 @@ declare module 'vue-router/auto-routes' {
     '/trial/import/example': RouteRecordInfo<'/trial/import/example', '/trial/import/example', Record<never, never>, Record<never, never>>,
     '/visualization/heatmap': RouteRecordInfo<'/visualization/heatmap', '/visualization/heatmap', Record<never, never>, Record<never, never>>,
     '/visualization/map': RouteRecordInfo<'/visualization/map', '/visualization/map', Record<never, never>, Record<never, never>>,
-    '/visualization/statistics': RouteRecordInfo<'/visualization/statistics', '/visualization/statistics', Record<never, never>, Record<never, never>>,
+    '/visualization/trait-statistics': RouteRecordInfo<'/visualization/trait-statistics', '/visualization/trait-statistics', Record<never, never>, Record<never, never>>,
+    '/visualization/trial-statistics': RouteRecordInfo<'/visualization/trial-statistics', '/visualization/trial-statistics', Record<never, never>, Record<never, never>>,
   }
 
   /**
@@ -107,8 +108,12 @@ declare module 'vue-router/auto-routes' {
       routes: '/visualization/map'
       views: never
     }
-    'src/pages/visualization/statistics.vue': {
-      routes: '/visualization/statistics'
+    'src/pages/visualization/trait-statistics.vue': {
+      routes: '/visualization/trait-statistics'
+      views: never
+    }
+    'src/pages/visualization/trial-statistics.vue': {
+      routes: '/visualization/trial-statistics'
       views: never
     }
   }
