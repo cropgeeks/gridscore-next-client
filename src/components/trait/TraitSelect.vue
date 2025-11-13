@@ -31,7 +31,7 @@
   import type { TraitPlus } from '@/plugins/types/client'
   import { mdiCircle } from '@mdi/js'
 
-  const selectedTraits = defineModel<TraitPlus[]>()
+  const selectedTraits = defineModel<TraitPlus[] | TraitPlus>()
 
   interface TraitSelectProps {
     traits: TraitPlus[]
