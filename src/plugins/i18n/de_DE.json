@@ -502,6 +502,7 @@
   "menuDataEntryGuidedWalk": "Gelenkter Ablauf",
   "menuDataEntryInput": "Suchen/scannen",
   "menuItemMediaModeHeading": "Automatische Medienmodus",
+  "menuItemHelpMediaModeHeading": "Wenn aktiviert, öffnet die Auswahl eines Plots direkt den Medien-Eingabemodus (Bild/Video) zur Markierung",
   "menuItemMediaModeDisabled": "Deaktiviert",
   "menuItemMediaModeImage": "Bild",
   "menuItemMediaModeVideo": "Video",

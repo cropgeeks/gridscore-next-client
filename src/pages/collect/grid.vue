@@ -10,8 +10,13 @@
           :breakpoint="mdAndUp"
         />
         <v-menu activator="#grid-media-mode">
-          <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
-            <v-list-subheader :title="$t('menuItemMediaModeHeading')" />
+          <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)" id="media-mode-dropdown">
+            <v-list-subheader>
+              <div class="d-flex justify-space-between">
+                <span>{{ $t('menuItemMediaModeHeading') }}</span>
+                <span v-tooltip:top="$t('menuItemHelpMediaModeHeading')"><v-icon :icon="mdiHelpCircle" color="primary" /></span>
+              </div>
+            </v-list-subheader>
             <v-list-item :title="$t('menuItemMediaModeDisabled')" :prepend-icon="mdiCancel" :append-icon="store.storeMediaMode === undefined ? mdiCheck : undefined" @click="store.setMediaMode(undefined)" />
             <v-list-item :title="$t('menuItemMediaModeImage')" :prepend-icon="mdiImage" :append-icon="store.storeMediaMode === 'image' ? mdiCheck : undefined" @click="store.setMediaMode('image')" />
             <v-list-item :title="$t('menuItemMediaModeVideo')" :prepend-icon="mdiVideo" :append-icon="store.storeMediaMode === 'video' ? mdiCheck : undefined" @click="store.setMediaMode('video')" />
@@ -119,7 +124,7 @@
   import { getTrialById } from '@/plugins/idb'
   import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountMultiple, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCloudUpload, mdiCursorMove, mdiFormatListNumbered, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
+  import { mdiAccountMultiple, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCloudUpload, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
@@ -449,5 +454,9 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+}
+
+#media-mode-dropdown .v-list-subheader__text {
+  flex-grow: 1;
 }
 </style>

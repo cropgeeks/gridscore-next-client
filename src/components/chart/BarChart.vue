@@ -27,6 +27,7 @@
   import bar from 'plotly.js/lib/bar'
   import { useI18n } from 'vue-i18n'
   import { coreStore } from '@/stores/app'
+  import BaseChart from '@/components/chart/BaseChart.vue'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([

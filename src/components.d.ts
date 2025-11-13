@@ -78,6 +78,7 @@ declare module 'vue' {
     TrialImport: typeof import('./components/trial/TrialImport.vue')['default']
     TrialLayout: typeof import('./components/setup/TrialLayout.vue')['default']
     TrialOptionsDropdown: typeof import('./components/trial/TrialOptionsDropdown.vue')['default']
+    TrialPersonDataMap: typeof import('./components/trial/TrialPersonDataMap.vue')['default']
     TrialPersonSelectModal: typeof import('./components/modals/TrialPersonSelectModal.vue')['default']
     TrialPreviewCanvas: typeof import('./components/data/TrialPreviewCanvas.vue')['default']
     TrialSelector: typeof import('./components/trial/TrialSelector.vue')['default']

@@ -509,6 +509,7 @@
   "menuDataEntryGuidedWalk": "Guided walk",
   "menuDataEntryInput": "Search/scan",
   "menuItemMediaModeHeading": "Automatic media mode",
+  "menuItemHelpMediaModeHeading": "When enabled, selecting a plot will directly open the media input mode (image/video) for tagging.",
   "menuItemMediaModeDisabled": "Disabled",
   "menuItemMediaModeImage": "Image",
   "menuItemMediaModeVideo": "Video",
