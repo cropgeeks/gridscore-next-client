@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" xl="6">
+        <v-col cols="12" xl="6" v-if="hasPersonChartData">
           <BarChart
             :trial="trial"
             x-title="widgetChartPersonBarCount"
@@ -53,7 +53,7 @@
             :chart-data="trialStats.peopleTraitData"
           />
         </v-col>
-        <v-col cols="12" xl="6">
+        <v-col cols="12" xl="6" v-if="hasPersonChartData">
           <LineChart
             :trial="trial"
             x-title="widgetChartPersonLineTime"
@@ -66,7 +66,7 @@
         <v-col cols="12" xl="6" v-for="year in Object.keys(trialStats.calendarData)" :key="`year-heatmap-${year}`">
           <CalendarHeatmap :trial="trial" :year="+year" :chart-data="trialStats.calendarData[+year]" />
         </v-col>
-        <v-col cols="12" xl="6">
+        <v-col cols="12" xl="6" v-if="hasLocationData">
           <v-card :title="$t('widgetTrialDataMapTitle')">
             <TrialPersonDataMap :trial="trial" :area-type="areaType" :overall="trialStats.peopleLocationData.overall" :person-data="trialStats.peopleLocationData.people" />
           </v-card>
@@ -126,6 +126,23 @@
   const trial = ref<TrialPlus>()
   const trialData = shallowRef<{ [index: string]: CellPlus } | undefined>({})
   const areaType = ref('meter')
+
+  const hasLocationData = computed(() => {
+    return trialStats.value && trialStats.value.peopleLocationData && trialStats.value.peopleLocationData.overall && trialStats.value.peopleLocationData.overall.bounds && trialStats.value.peopleLocationData.overall.bounds.length > 0
+  })
+
+  const hasPersonChartData = computed(() => {
+    if (trialStats.value) {
+      if (trialStats.value.peopleTimeData && Object.keys(trialStats.value.peopleTimeData).length > 0) {
+        return true
+      }
+      if (trialStats.value.peopleTraitData && Object.keys(trialStats.value.peopleTraitData).length > 0) {
+        return true
+      }
+    }
+
+    return false
+  })
 
   const totalArea = computed(() => {
     if (trialStats.value && trialStats.value.peopleLocationData && trialStats.value.peopleLocationData.overall) {

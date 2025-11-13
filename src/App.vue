@@ -70,7 +70,7 @@
         :permanent="mdAndUp"
         :expand-on-hover="mdAndUp"
       >
-        <v-list density="compact" nav>
+        <v-list density="compact" slim nav>
           <v-list-item :prepend-icon="mdiHome" :title="$t('menuHome')" to="/" />
           <v-list-item :prepend-icon="mdiNotebookPlus" :title="$t('pageHomeCardTitleSetup')" to="/setup" />
 
