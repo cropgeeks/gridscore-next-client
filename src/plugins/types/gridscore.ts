@@ -68,14 +68,17 @@ export interface Layout {
     rowLabels: number[];
 }
 
-export interface Cell {
-    brapiId?: string;
+export interface CellMetadata {
     germplasm: string;
     pedigree?: string;
     friendlyName?: string;
     barcode?: string;
     treatment?: string;
     rep?: string;
+}
+
+export interface Cell extends CellMetadata {
+    brapiId?: string;
     isMarked: boolean;
     geography?: Geography;
     measurements: { [index: string]: Measurement[] };
@@ -235,6 +238,7 @@ export interface Transaction {
     trialEventDeletedTransactions: TrialEventContent[];
     trialPersonAddedTransactions: Person[];
     trialGermplasmAddedTransactions: string[];
+    trialGermplasmWithMetadataAddedTransactions: CellMetadata[];
     trialTraitAddedTransactions: Trait[];
     trialTraitDeletedTransactions: Trait[];
     traitChangeTransactions: TraitEditContent[];

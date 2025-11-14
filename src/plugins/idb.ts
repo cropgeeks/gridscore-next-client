@@ -1,6 +1,6 @@
 import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
-import { DisplayOrder, TimeframeType, type BrapiConfig, type Comment, type Corners, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
+import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type TrialGroup } from '@/plugins/types/client'
 import { getColumnLabel, getRowLabel } from '@/plugins/util'
 import { getId } from '@/plugins/id'
@@ -824,7 +824,7 @@ async function updateGermplasmBrapiIds (trialId: string, germplasmBrapiIds: { [i
       if (!transaction.brapiIdChangeTransaction) {
         transaction.brapiIdChangeTransaction = {
           germplasmBrapiIds: {},
-          traitBrapiIds: {}
+          traitBrapiIds: {},
         }
       }
 
@@ -869,7 +869,7 @@ async function updateTraitBrapiIds (trialId: string, traitBrapiIds: { [index: st
       if (!transaction.brapiIdChangeTransaction) {
         transaction.brapiIdChangeTransaction = {
           germplasmBrapiIds: {},
-          traitBrapiIds: {}
+          traitBrapiIds: {},
         }
       }
 
@@ -1101,6 +1101,7 @@ function getEmptyTransaction (trialId: string): Transaction {
     trialEventDeletedTransactions: [],
     trialPersonAddedTransactions: [],
     trialGermplasmAddedTransactions: [],
+    trialGermplasmWithMetadataAddedTransactions: [],
     trialTraitAddedTransactions: [],
     trialTraitDeletedTransactions: [],
     traitChangeTransactions: [],
@@ -1435,6 +1436,64 @@ async function addTrialPeople (trialId: string, people: Person[]) {
   }
 }
 
+async function addTrialGermplasm (trialId: string, germplasm: CellMetadata[]) {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      // Add the new ones
+      transaction.trialGermplasmWithMetadataAddedTransactions.push(...germplasm)
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    const newData = germplasm.map((g, i) => {
+      const cell = {
+        trialId,
+        row: trial.layout.rows + i,
+        column: 0,
+        friendlyName: g.friendlyName,
+        treatment: g.treatment,
+        barcode: g.barcode,
+        pedigree: g.pedigree,
+        germplasm: g.germplasm,
+        rep: g.rep,
+        brapiId: null,
+        measurements: {} as { [index: string]: Measurement[] },
+        geography: {},
+        comments: [],
+        categories: []
+      }
+
+      trial.traits.forEach((t: Trait) => {
+        cell.measurements[t.id || ''] = []
+      })
+
+      return cell
+    })
+
+    trial.layout.rows += newData.length
+
+    await db.put('trials', trial)
+
+    return new Promise<void>((resolve, reject) => {
+      const tx = db.transaction('data', 'readwrite')
+
+      Promise.all(newData.map(cell => tx.store.add(cell)))
+        .then(() => {
+          resolve()
+          return tx.done
+        })
+        .catch(e => reject(e))
+    })
+  }
+}
+
 export {
   getDb,
   getTrialGroups,
@@ -1445,6 +1504,7 @@ export {
   getTrialById,
   getTrialData,
   updatePlotMetadata,
+  addTrialGermplasm,
   addTrial,
   updateTrial,
   deleteTrial,

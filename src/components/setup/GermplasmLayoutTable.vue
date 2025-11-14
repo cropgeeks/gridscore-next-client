@@ -466,11 +466,11 @@
         } else {
           g.value = ''
         }
-        g.placeholder = 'Name/Id'
+        g.placeholder = t('formLabelSetupGermplasm')
         // Rep input
         const rep = createElement(cell, 'input') as HTMLInputElement
         rep.id = `rep-${row}-${column}`
-        rep.placeholder = 'Rep'
+        rep.placeholder = t('formLabelSetupRep')
         if (dataCell) {
           rep.value = dataCell.rep || ''
         } else {
@@ -483,7 +483,7 @@
         if (!visibleFields.value.includes('treatment')) {
           treatment.classList.add('d-none')
         }
-        treatment.placeholder = 'Treatment'
+        treatment.placeholder = t('formLabelSetupTreatment')
         if (dataCell) {
           treatment.value = dataCell.treatment || ''
         } else {
@@ -496,7 +496,7 @@
         if (!visibleFields.value.includes('friendlyName')) {
           friendlyName.classList.add('d-none')
         }
-        friendlyName.placeholder = 'Friendly name'
+        friendlyName.placeholder = t('formLabelSetupFriendlyName')
         if (dataCell) {
           friendlyName.value = dataCell.friendlyName || ''
         } else {
@@ -509,7 +509,7 @@
         if (!visibleFields.value.includes('barcode')) {
           barcode.classList.add('d-none')
         }
-        barcode.placeholder = 'Barcode'
+        barcode.placeholder = t('formLabelSetupBarcode')
         if (dataCell) {
           barcode.value = dataCell.barcode || ''
         } else {
@@ -522,7 +522,7 @@
         if (!visibleFields.value.includes('pedigree')) {
           pedigree.classList.add('d-none')
         }
-        pedigree.placeholder = 'Pedigree'
+        pedigree.placeholder = t('formLabelSetupPedigree')
         if (dataCell) {
           pedigree.value = dataCell.pedigree || ''
         } else {

@@ -130,6 +130,7 @@
                 @add-trait="addTrait(trial.raw)"
                 @add-person="addPerson(trial.raw)"
                 @add-metadata="addMetadata(trial.raw)"
+                @add-germplasm="addGermplasm(trial.raw)"
                 @add-data="addData(trial.raw)"
                 @duplicate="router.push(`/setup/${trial.raw.localId}/clone`)"
                 @edit="router.push(`/setup/${trial.raw.localId}/edit`)"
@@ -146,8 +147,9 @@
     </v-card-text>
 
     <TrialShareModal :trial="selectedTrial" ref="trialShareModal" v-if="selectedTrial" />
-    <AddTraitModal ref="addTraitModal" v-if="selectedTrial || selectedTrials.length > 0" @traits-added="addTraitsToSelectedTrials" />
-    <AddPersonModal ref="addPersonModal" v-if="selectedTrial || selectedTrials.length > 0" @person-added="addPersonToSelectedTrials" />
+    <AddTraitModal ref="addTraitModal" v-if="selectedTrialsEditable" @traits-added="addTraitsToSelectedTrials" />
+    <AddPersonModal ref="addPersonModal" v-if="selectedTrialsEditable" @person-added="addPersonToSelectedTrials" />
+    <AddTrialGermplasmModal :trial="selectedTrial" ref="addGermplasmModal" v-if="selectedTrial && selectedTrialsEditable" />
     <UpdateTrialMetadataModal :trial="selectedTrial" ref="updateTrialMetadataModal" v-if="selectedTrial" />
     <UpdateTrialDataModal :trial="selectedTrial" ref="updateTrialDataModal" v-if="selectedTrial" />
   </v-card>
@@ -172,6 +174,7 @@
   import AddPersonModal from '@/components/modals/AddPersonModal.vue'
   import UpdateTrialMetadataModal from '@/components/modals/UpdateTrialMetadataModal.vue'
   import UpdateTrialDataModal from '@/components/modals/UpdateTrialDataModal.vue'
+  import AddTrialGermplasmModal from '@/components/modals/AddTrialGermplasmModal.vue'
 
   interface TrialGroup {
     id: string
@@ -204,12 +207,15 @@
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTraitModal = useTemplateRef('addTraitModal')
   const addPersonModal = useTemplateRef('addPersonModal')
+  const addGermplasmModal = useTemplateRef('addGermplasmModal')
   const updateTrialMetadataModal = useTemplateRef('updateTrialMetadataModal')
   const updateTrialDataModal = useTemplateRef('updateTrialDataModal')
 
   const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
 
   const editableSelectedTrials = computed(() => selectedTrials.value.filter(t => t.editable === true))
+
+  const selectedTrialsEditable = computed(() => (selectedTrial.value && selectedTrial.value.editable === true) || (selectedTrials.value && selectedTrials.value.length > 0 && selectedTrials.value.every(t => t.editable === true)))
 
   watch(selectionEnabled, async () => {
     selectedTrials.value = []
@@ -319,6 +325,12 @@
     } else {
       filterForWarning.value = type
     }
+  }
+
+  function addGermplasm (trial: TrialPlus) {
+    selectedTrial.value = trial
+
+    nextTick(() => addGermplasmModal.value?.show())
   }
 
   function addMetadata (trial: TrialPlus) {

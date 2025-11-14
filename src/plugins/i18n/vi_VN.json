@@ -208,7 +208,6 @@
   "formLabelFielDBookGermplasm": "Nguồn gen/giống",
   "formLabelFielDBookRep": "Lặp lại",
   "formLabelAddGermplasmName": "Định danh nguồn gen/giống",
-  "formDescriptionAddGermplasm": "Nhập tên/mã nguồn gen/giống.",
   "formDescriptionFielDBookRow": "Tiêu đề cột trong sổ điền chứa thông tin về trường hàng.",
   "formDescriptionFielDBookColumn": "Tiêu đề cột trong sổ thực địa chứa thông tin về trường cột.",
   "formDescriptionFielDBookGermplasm": "Tiêu đề cột trong sổ điền dã chứa thông tin về nguồn gen/giống của lô.",

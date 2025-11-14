@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddPersonModal: typeof import('./components/modals/AddPersonModal.vue')['default']
     AddTraitModal: typeof import('./components/modals/AddTraitModal.vue')['default']
+    AddTrialGermplasmModal: typeof import('./components/modals/AddTrialGermplasmModal.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     ArrowDirectionGrid: typeof import('./components/util/ArrowDirectionGrid.vue')['default']
     BarChart: typeof import('./components/chart/BarChart.vue')['default']
@@ -22,6 +23,7 @@ declare module 'vue' {
     ColumnHeader: typeof import('./components/data/ColumnHeader.vue')['default']
     CommentModal: typeof import('./components/modals/CommentModal.vue')['default']
     ConfirmModal: typeof import('./components/modals/ConfirmModal.vue')['default']
+    copy: typeof import('./components/modals/AddPersonModal copy.vue')['default']
     CornerPointsMap: typeof import('./components/setup/CornerPointsMap.vue')['default']
     DataCanvas: typeof import('./components/data/DataCanvas.vue')['default']
     DataEntryActions: typeof import('./components/modals/DataEntryActions.vue')['default']
@@ -34,6 +36,7 @@ declare module 'vue' {
     GenericAddEditFormModal: typeof import('./components/modals/GenericAddEditFormModal.vue')['default']
     GermplasmAutocomplete: typeof import('./components/inputs/GermplasmAutocomplete.vue')['default']
     GermplasmLayoutTable: typeof import('./components/setup/GermplasmLayoutTable.vue')['default']
+    GermplasmMetadataInputSection: typeof import('./components/inputs/GermplasmMetadataInputSection.vue')['default']
     GpsInput: typeof import('./components/inputs/GpsInput.vue')['default']
     GpsTraitMap: typeof import('./components/trait/GpsTraitMap.vue')['default']
     GuideOrderSelector: typeof import('./components/trial/GuideOrderSelector.vue')['default']

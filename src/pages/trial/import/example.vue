@@ -32,7 +32,7 @@
   import type { TrialPlus } from '@/plugins/types/client'
   import { DisplayOrder, PersonType, TraitDataType, type Person, type Trait } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountMultiple, mdiCalendar, mdiCalendarMultiselect, mdiCellphoneArrowDownVariant, mdiSetSplit, mdiViewGrid, mdiViewList } from '@mdi/js'
+  import { mdiAccountMultiple, mdiCalendar, mdiCalendarMultiselect, mdiCellphoneArrowDownVariant, mdiFormatListNumbered, mdiSetSplit, mdiViewGrid, mdiViewList } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
@@ -85,7 +85,7 @@
       },
       source: 'barley.json',
       image: 'barley-trial.svg',
-      tags: [{ text: t('trialTagLayoutGrid'), icon: mdiViewGrid }, { text: t('trialTagSingleMeasurement'), icon: mdiCalendar }, { text: t('trialTagPeople'), icon: mdiAccountMultiple }],
+      tags: [{ text: t('trialTagLayoutGrid'), icon: mdiViewGrid }, { text: t('trialTagSingleMeasurement'), icon: mdiCalendar }, { text: t('trialTagReps'), icon: mdiFormatListNumbered }, { text: t('trialTagPeople'), icon: mdiAccountMultiple }],
     }, {
       id: 'multi',
       trial: {
