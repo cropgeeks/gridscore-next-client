@@ -10,7 +10,7 @@
         :key="`example-${trial.id}`"
         class="d-flex"
       >
-        <TrialCard :trial="trial.trial" :wrap-description="true" :shareable="false" class="example-card">
+        <TrialCard :trial="trial.trial" :wrap-description="true" :interactive="false" :can-share="false" class="example-card">
           <template #prepend>
             <v-avatar :image="`img/example/${trial.image}`" size="80" rounded="0" />
           </template>

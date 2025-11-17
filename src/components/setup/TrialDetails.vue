@@ -58,7 +58,7 @@
 
       <v-col cols="12" md="6" class="no-select">
         <v-row class="filename-chips">
-          <v-col class="d-flex flex-column" cols="6">
+          <v-col class="d-flex flex-column" cols="12" md="6">
             <v-card class="flex-grow-1 d-flex flex-column" :title="$t('pageSetupMediaFilenameUsedTitle')" :subtitle="$t('pageSetupMediaFilenameUsedSubtitle')">
               <template #append>
                 <v-btn @click="resetFilenameChips" color="info" :icon="mdiUndoVariant" v-tooltip:top="$t('buttonReset')" />
@@ -77,7 +77,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col class="d-flex flex-column" cols="6">
+          <v-col class="d-flex flex-column" cols="12" md="6">
             <v-card class="flex-grow-1 d-flex flex-column" :title="$t('pageSetupMediaFilenameUnusedTitle')" :subtitle="$t('pageSetupMediaFilenameUnusedSubtitle')">
               <v-card-text class="flex-grow-1 d-flex flex-column">
                 <draggable

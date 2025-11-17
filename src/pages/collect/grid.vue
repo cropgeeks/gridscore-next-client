@@ -73,7 +73,7 @@
         :trial="trial"
         v-model="searchMatch"
         scan-in-bottom-sheet
-        min-width="120px"
+        min-width="200px"
         max-width="min(50vw, 250px)"
         density="compact"
         ref="searchField"

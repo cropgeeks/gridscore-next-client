@@ -73,7 +73,7 @@
 
             <v-combobox class="my-3" v-model="trialGroup" autocomplete="off" :label="$t('formLabelTrialSetupTrialGroup')" :prepend-icon="mdiFolderTable" :hint="$t('formDescriptionTrialSetupTrialGroup')" persistent-hint :items="trialGroups" />
 
-            <TrialCard :trial="trial" :show-actions="false" />
+            <TrialCard :trial="trial" :interactive="false" :can-share="false" :show-actions="false" />
           </template>
         </template>
       </v-card>

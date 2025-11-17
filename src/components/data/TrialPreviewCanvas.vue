@@ -33,7 +33,7 @@
   const internalHeight = ref<number>(250)
 
   const fillStyleHighlight = computed(() => theme.current.value.colors.primary)
-  const fillStyleDarkGray = computed(() => store.storeDarkMode ? '#2f2f2f' : '#d0d0d0')
+  const fillStyleDarkGray = computed(() => store.storeIsDarkMode ? '#2f2f2f' : '#d0d0d0')
 
   let ctx: CanvasRenderingContext2D | null = null
 
@@ -241,6 +241,7 @@
     }
   }
 
+  watch(() => store.storeIsDarkMode, async () => reset())
   watch(() => compProps.cells, async () => reset())
   watch(() => compProps.path, async () => reset())
   watch(() => compProps.width, async () => {

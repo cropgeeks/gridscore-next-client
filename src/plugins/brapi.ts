@@ -96,7 +96,7 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
   const baseUrl = brapiConfig?.url || 'undefined'
   const token = brapiConfig?.token
 
-  if (infoCheck) {
+  if (baseUrl !== 'undefined' && infoCheck) {
     if (!serverInfos[baseUrl] || Object.keys(serverInfos[baseUrl]).length === 0) {
       await brapiGetInfo()
     }
@@ -142,7 +142,7 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
 async function brapiGetInfo () {
   const store = coreStore()
   const url = store.storeBrapiConfig ? store.storeBrapiConfig.url : null
-  if (url) {
+  if (url && url.length > 0) {
     await brapiAxios('serverinfo', 'serverinfo', null, 'get', false)
       .then(result => {
         if (result && result.data && result.data.result) {

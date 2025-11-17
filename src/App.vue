@@ -23,7 +23,7 @@
           <template #activator="{ props }">
             <v-btn :icon="mdiNotebook" v-bind="props" />
           </template>
-          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" :interactive="false" ref="selectedTrialCard" />
+          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" interactive :can-share="false" ref="selectedTrialCard" />
         </v-menu>
 
         <v-menu>
@@ -96,7 +96,7 @@
             <v-list-item :prepend-icon="mdiMap" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 
-          <v-list-item :prepend-icon="mdiExport" :title="$t('menuDataExport')" to="/export" />
+          <v-list-item :prepend-icon="mdiExport" :disabled="!selectedTrial" :title="$t('menuDataExport')" to="/export" />
 
           <v-list-item :prepend-icon="mdiCog" :title="$t('menuSettings')" to="/settings" />
           <v-list-item prepend-icon="$gridscore" :title="$t('menuAbout')" to="/about" />

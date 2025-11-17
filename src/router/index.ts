@@ -22,6 +22,22 @@ routes.push({
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: setupLayouts(routes),
+  scrollBehavior (to, from, savedPosition) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        if (savedPosition) {
+          // Restore scroll position
+          resolve(savedPosition)
+        } else if (from && to && from.path === to.path) {
+          // Do nothing?
+          resolve()
+        } else {
+          // Scroll to top
+          resolve({ left: 0, top: 0 })
+        }
+      }, 250)
+    })
+  },
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

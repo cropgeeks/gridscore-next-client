@@ -2,7 +2,7 @@
   <v-card :title="trial.name" :variant="isSelected ? 'outlined' : undefined" class="d-flex flex-column flex-grow-1">
     <template #prepend>
       <slot name="prepend">
-        <v-btn v-tooltip:top="$t(shareStatusConfig?.text || '')" :color="getTraitColor(shareStatusConfig?.colorIndex || 0)" :icon="shareStatusConfig?.icon" @click="emit('share')" :disabled="!interactive" />
+        <v-btn v-tooltip:top="$t(shareStatusConfig?.text || '')" :color="getTraitColor(shareStatusConfig?.colorIndex || 0)" :icon="shareStatusConfig?.icon" @click="emit('share')" :disabled="!canShare" />
       </slot>
     </template>
     <template #append v-if="trial.hasLocalUpdate || trial.hasRemoteUpdate">
@@ -165,6 +165,7 @@
     wrapDescription?: boolean
     showActions?: boolean
     interactive?: boolean
+    canShare?: boolean
     horizontal?: boolean
   }
 
@@ -174,6 +175,7 @@
     wrapDescription: false,
     showActions: true,
     interactive: true,
+    canShare: true,
     horizontal: false,
   })
 

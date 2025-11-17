@@ -5,6 +5,7 @@
       :trial="trial"
       horizontal
       :interactive="false"
+      :can-share="false"
       :show-actions="false"
     />
 

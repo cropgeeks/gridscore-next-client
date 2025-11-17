@@ -15,6 +15,8 @@
       :readonly="abortController !== undefined"
       :multiple="multiple"
       :chips="multiple"
+      :min-width="minWidth"
+      :max-width="maxWidth"
       autocomplete="off"
       :hint="hint"
       :persistent-hint="hint !== undefined"
@@ -87,6 +89,8 @@
     label?: string
     hint?: string
     scanInBottomSheet?: boolean
+    minWidth?: string
+    maxWidth?: string
   }
 
   const compProps = withDefaults(defineProps<GermplasmAutoCompleteProps>(), {
@@ -156,9 +160,9 @@
     })
 
     if (matches.length > 0) {
-      searchMatch.value = matches
+      searchMatch.value = compProps.multiple ? matches : (matches.length > 0 ? matches[0] : undefined)
     } else {
-      searchMatch.value = []
+      searchMatch.value = compProps.multiple ? [] : undefined
     }
   }
 
