@@ -112,7 +112,7 @@
 
     <ConfirmModal />
     <ChangelogModal />
-    <v-snackbar-queue timeout="4000" location="top" v-model="snackbarQueue" />
+    <v-snackbar-queue timeout="4000" location="bottom" v-model="snackbarQueue" />
     <v-overlay
       :model-value="loading"
       class="align-center justify-center"

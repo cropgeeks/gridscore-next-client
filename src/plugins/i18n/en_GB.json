@@ -843,6 +843,7 @@
   "toastTitleBrapiError": "BrAPI error",
   "toastTextBrapiTimeout": "The request has timed out. Please try again later.",
   "toastTextBrapiCallNotAvailable": "The selected BrAPI server does not support the required API call.",
+  "toastNfcNoMatchFound": "No matching germplasm found for '{search}'",
   "toastDataInputRestrictedTitle": "Data input restricted",
   "toastDataInputRestrictedText": "You have selected a plot outside of the marked columns/rows. To disable this restriction, please change the GridScore settings.",
   "toastTextTrialShareCodeSameOrHigherPermission": "You already have this trial available on your device with the same or higher permission status.\nDo you want to load your existing trial or import it as a new trial?",

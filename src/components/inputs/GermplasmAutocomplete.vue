@@ -73,7 +73,11 @@
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
 
+  import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
+
   const store = coreStore()
+  const { t } = useI18n()
 
   const searchMatch = defineModel<CellPlus[] | CellPlus>()
   const trialGermplasm = ref<CellPlus[]>([])
@@ -160,9 +164,13 @@
     })
 
     if (matches.length > 0) {
-      searchMatch.value = compProps.multiple ? matches : (matches.length > 0 ? matches[0] : undefined)
+      searchMatch.value = compProps.multiple ? matches : matches[0]
     } else {
       searchMatch.value = compProps.multiple ? [] : undefined
+      emitter.emit('show-snackbar', {
+        text: t('toastNfcNoMatchFound', { search: matchString.trim() }),
+        color: 'warning',
+      })
     }
   }
 

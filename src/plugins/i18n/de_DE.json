@@ -837,6 +837,7 @@
   "toastTitleTrialShareCodeUpgrade": "Berechtigungsaufstufung",
   "toastTextTrialShareCodeAsNew": "Sicher, dass der Versuch als neuer, separater Versuch importiert werden?",
   "toastTitleTrialShareCodeAsNew": "Als neu importieren",
+  "toastNfcNoMatchFound": "Kein passendes Keimplasma gefunden für '{search}'",
   "toastMediaSavedAs": "Mediendatei gespeichert als: {filename}",
   "tooltipBrapiExportBrapiTraitRunSearch": "Bitte zuerst eine Suche laufen lassen bevor die Merkmale als neue Merkmale importiert werden.",
   "tooltipDontShowAgain": "Nicht nochmal anzeigen.",
