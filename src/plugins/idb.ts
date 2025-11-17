@@ -5,7 +5,7 @@ import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geoloc
 import { getColumnLabel, getRowLabel } from '@/plugins/util'
 import { getId } from '@/plugins/id'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
-import { trialLayoutToPlots } from '@/plugins/location'
+import { isGeographyValid, trialLayoutToPlots } from '@/plugins/location'
 
 let store: any | undefined
 
@@ -203,7 +203,7 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
   if (trial) {
     const db = await getDb()
 
-    const plotCorners = updates.corners ? trialLayoutToPlots(updates.corners, trial.layout.rows, trial.layout.columns) : null
+    const plotCorners = (updates.corners && isGeographyValid(updates.corners)) ? trialLayoutToPlots(updates.corners, trial.layout.rows, trial.layout.columns) : null
     const originalTraits = JSON.parse(JSON.stringify(trial.traits))
 
     const retainedTraitIds = new Set(updates.traits.map(t => t.id))

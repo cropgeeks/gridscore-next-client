@@ -28,16 +28,12 @@
           </template>
         </v-card>
 
-        <v-text-field v-model="shareCode" :label="$t('formLabelTrialImportCode')" :hint="$t('formDescriptionTrialImportCode')" persistent-hint>
-          <template #append>
-            <v-btn :icon="mdiQrcodeScan" v-tooltip:top="$t('buttonScanQR')" @click="showCamera = !showCamera" />
-          </template>
-        </v-text-field>
-
-        <QrcodeStream
-          v-if="showCamera"
-          :formats="['qr_code']"
-          @detect="onDetect"
+        <QRScanInput
+          v-model="shareCode"
+          :label="$t('formLabelTrialImportCode')"
+          :hint="$t('formDescriptionTrialImportCode')"
+          :tooltip="$t('buttonScanQR')"
+          @code-scanned="getTrial"
         />
 
         <p class="text-error mt-3 mb-0" v-if="serverError"><span v-html="serverError" /></p>
@@ -92,10 +88,10 @@
   import { coreStore } from '@/stores/app'
   import { UseOnline } from '@vueuse/components'
   import { useI18n } from 'vue-i18n'
-  import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiFolderTable, mdiInformation, mdiLanDisconnect, mdiMagnify, mdiNotebookCheck, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
+  import { mdiFolderTable, mdiInformation, mdiLanDisconnect, mdiMagnify, mdiNotebookCheck, mdiNotebookPlus } from '@mdi/js'
+  import QRScanInput from '@/components/inputs/QRScanInput.vue'
 
   const compProps = defineProps<{
     code?: string
@@ -109,7 +105,6 @@
   const loadFromRemote = ref(false)
   const remoteUrl = ref<string>()
   const remoteToken = ref<string>()
-  const showCamera = ref(false)
   const bottomSheetVisible = ref(false)
   const trialGroup = ref<string>()
   const noChangeRequired = ref(false)
@@ -122,23 +117,6 @@
   const trialGroups = ref<string[]>([])
   const serverError = ref<string>()
   const infoMessage = ref<string>()
-
-  function onDetect (detectedCodes: DetectedBarcode[]) {
-    if (detectedCodes && detectedCodes.length > 0) {
-      let c = detectedCodes[0]?.rawValue
-
-      if (c) {
-        if (c.includes('/')) {
-          c = c.slice(c.lastIndexOf('/') + 1)
-        }
-
-        shareCode.value = c
-        showCamera.value = false
-
-        getTrial()
-      }
-    }
-  }
 
   function getTrial () {
     if (!shareCode.value) {

@@ -6,6 +6,7 @@
 
         <v-img
           class="ms-4"
+          style="cursor: pointer" @click="$router.push('/')"
           src="/img/gridscore-next.svg"
           max-height="40"
           max-width="40"
@@ -111,7 +112,7 @@
 
     <ConfirmModal />
     <ChangelogModal />
-    <v-snackbar-queue timeout="6000" location="top" v-model="snackbarQueue" />
+    <v-snackbar-queue timeout="4000" location="top" v-model="snackbarQueue" />
     <v-overlay
       :model-value="loading"
       class="align-center justify-center"

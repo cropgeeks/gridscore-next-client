@@ -22,13 +22,13 @@
         ref="searchField"
       />
 
-      <template v-if="firstMatch">
+      <template v-if="searchMatch">
         <GuideOrderSelector
           class="mt-5"
           v-model:walk-name="guidedWalkName"
           v-model:score-width="scoreWidth"
-          :row="firstMatch.row || 0"
-          :column="firstMatch.column || 0"
+          :row="searchMatch.row || 0"
+          :column="searchMatch.column || 0"
           :layout="trial.layout"
           @order-changed="orderSelected"
         />
@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+  import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'
@@ -63,12 +64,10 @@
   const isValidConfig = ref(false)
 
   // Stuff for selection of guided walk
-  const searchMatch = ref<CellPlus[]>([])
+  const searchMatch = ref<CellPlus>()
 
   let textSynth: SpeechSynthesis | undefined
   let geolocationWatchId: number | undefined
-
-  const firstMatch = computed(() => searchMatch.value && searchMatch.value.length > 0 ? searchMatch.value[0] : undefined)
 
   function loadTrial () {
     getTrialById(store.storeSelectedTrial || '').then(t => {
@@ -77,7 +76,7 @@
       if (row.value !== undefined && column.value !== undefined) {
         getCell(t.localId, row.value, column.value)
           .then(cell => {
-            searchMatch.value = [cell]
+            searchMatch.value = cell
           })
       }
 
@@ -106,8 +105,8 @@
   }
 
   function orderSelected (order: GuideOrderConfig) {
-    let x = firstMatch.value?.column || 0
-    let y = firstMatch.value?.row || 0
+    let x = searchMatch.value?.column || 0
+    let y = searchMatch.value?.row || 0
 
     if (order.neighbor) {
       x = (x + (order.neighbor.column || 0)) / 2
@@ -153,7 +152,7 @@
     row.value = undefined
     column.value = undefined
     scoreWidth.value = 1
-    searchMatch.value = []
+    searchMatch.value = undefined
 
     const q = route.query
     if (q) {

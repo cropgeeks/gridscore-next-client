@@ -23,7 +23,7 @@
       :prepend-inner-icon="mdiMagnify"
     >
       <template #prepend>
-        <v-btn :icon="mdiQrcodeScan" v-tooltip:top="$t('tooltipScanQRCode')" @click="showCamera = !showCamera" :color="showCamera ? 'info' : undefined" />
+        <v-btn :icon="mdiQrcodeScan" v-tooltip:top="$t('tooltipScanQRCode')" @click="toggleCamera" :color="showCamera ? 'info' : undefined" />
       </template>
 
       <template #append v-if="supportsNfc">
@@ -40,11 +40,25 @@
       </template>
     </v-autocomplete>
 
-    <QrcodeStream
-      v-if="showCamera"
-      :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
-      @detect="onDetect"
-    />
+    <v-bottom-sheet
+      v-if="scanInBottomSheet"
+      v-model="bottomSheetVisible"
+      inset
+      max-height="75vh"
+    >
+      <QrcodeStream
+        v-if="showCamera"
+        :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
+        @detect="onDetect"
+      />
+    </v-bottom-sheet>
+    <template v-else>
+      <QrcodeStream
+        v-if="showCamera"
+        :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
+        @detect="onDetect"
+      />
+    </template>
   </div>
 </template>
 
@@ -64,6 +78,7 @@
   const supportsNfc = ref(false)
   const showCamera = ref(false)
   const abortController = shallowRef<AbortController>()
+  const bottomSheetVisible = ref(false)
 
   export interface GermplasmAutoCompleteProps {
     trial: TrialPlus
@@ -71,16 +86,30 @@
     multiple?: boolean
     label?: string
     hint?: string
+    scanInBottomSheet?: boolean
   }
 
   const compProps = withDefaults(defineProps<GermplasmAutoCompleteProps>(), {
     density: 'default',
     multiple: false,
     label: 'formLabelSearch',
+    scanInBottomSheet: false,
   })
 
   const searchField = useTemplateRef('searchField')
   const performanceMode = computed(() => store.storePerformanceMode === true || trialGermplasm.value.length > 1000)
+
+  function toggleCamera () {
+    if (compProps.scanInBottomSheet) {
+      bottomSheetVisible.value = true
+
+      nextTick(() => {
+        showCamera.value = !showCamera.value
+      })
+    } else {
+      showCamera.value = !showCamera.value
+    }
+  }
 
   function getTrialGermplasm () {
     const data = getTrialDataCached()
@@ -181,6 +210,10 @@
 
   watch(() => compProps.trial, async () => {
     getTrialGermplasm()
+  })
+
+  watch(bottomSheetVisible, async () => {
+    showCamera.value = false
   })
 
   onMounted(() => {

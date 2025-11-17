@@ -14,17 +14,17 @@
                 <v-btn value="pedigree" :text="$t('formCheckboxSetupShowPedigree')" :prepend-icon="mdiFamilyTree" />
               </v-btn-toggle>
 
-              <v-textarea
+              <QRScanInput
+                v-model="areaInput"
+                textarea
                 :label="$t('formLabelAddGermplasmName')"
                 :hint="$t('formDescriptionAddGermplasm')"
-                persistent-hint
-                v-model="areaInput"
-              >
-                <template #append-inner>
-                  <v-btn :icon="mdiPlus" v-tooltip:top="$t('buttonAdd')" @click="addFromInput" />
-                </template>
-              </v-textarea>
+                :tooltip="$t('tooltipScanQRCodeAddGermplasm')"
+                :formats="['qr_code', 'code_128', 'code_39', 'ean_8', 'ean_13']"
+              />
             </div>
+
+            <v-btn :prepend-icon="mdiPlus" color="primary" :disabled="areaInput === undefined || areaInput.trim().length === 0" class="mt-2" :text="$t('buttonAdd')" @click="addFromInput" />
           </template>
         </v-card>
 
@@ -42,7 +42,7 @@
         </v-virtual-scroll>
 
         <div class="">
-          <v-btn v-if="hasErrors || hasWarnings" @click="bottomSheetVisible = true" :text="$t('formFeedbackLayout', feedback.length)" :prepend-icon="hasErrors ? mdiAlertCircle : mdiAlert" :color="hasErrors ? 'error' : 'warning'" />
+          <v-btn v-if="hasErrors || hasWarnings" @click="bottomSheetVisible = true" :text="$t('formFeedbackLayout', feedback?.length || 0)" :prepend-icon="hasErrors ? mdiAlertCircle : mdiAlert" :color="hasErrors ? 'error' : 'warning'" />
         </div>
       </template>
 
@@ -82,6 +82,7 @@
   import emitter from 'tiny-emitter/instance'
   import type { LayoutFeedback } from '@/components/setup/GermplasmLayoutTable.vue'
   import { useI18n } from 'vue-i18n'
+  import QRScanInput from '@/components/inputs/QRScanInput.vue'
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -93,7 +94,7 @@
   const newGermplasm = ref<CellMetadata[]>([])
   const visibleFields = ref<('treatment' | 'friendlyName' | 'pedigree' | 'barcode')[]>([])
   const areaInput = ref<string>()
-  const feedback = ref<LayoutFeedback[]>([])
+  const feedback = ref<LayoutFeedback[] | undefined>()
   const bottomSheetVisible = ref(false)
 
   let uniqueNames = new Set<string>()
@@ -101,13 +102,13 @@
 
   const hasErrors = computed(() => feedback.value && feedback.value.some(f => f.type === 'error'))
   const hasWarnings = computed(() => feedback.value && feedback.value.some(f => f.type === 'warning'))
-  const canContinue = computed(() => canCheck.value && hasErrors.value === false)
+  const canContinue = computed(() => canCheck.value && feedback.value && hasErrors.value === false)
   const canCheck = computed(() => newGermplasm.value.length > 0)
 
   function show () {
     dialog.value = true
     areaInput.value = undefined
-    feedback.value = []
+    feedback.value = undefined
 
     getTrialData(compProps.trial.localId || '')
       .then(data => {
@@ -127,7 +128,7 @@
   function hide () {
     newGermplasm.value = []
     areaInput.value = undefined
-    feedback.value = []
+    feedback.value = undefined
     dialog.value = false
   }
   function check () {
@@ -138,7 +139,7 @@
       const barcode = cell.barcode
       if (barcode) {
         if (barcodeSet.has(barcode)) {
-          feedback.value.push({
+          feedback.value?.push({
             type: 'error',
             message: t('formFeedbackSetupDuplicateBarcode', { columnIndex: 1, rowIndex: index + 1, germplasm: cell.germplasm, rep: cell.rep, barcode: barcode }),
           })
@@ -148,7 +149,7 @@
 
       const displayName = `${cell.germplasm}|${cell.rep}`
       if (germplasmSet.has(displayName)) {
-        feedback.value.push({
+        feedback.value?.push({
           type: 'warning',
           message: t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: 1, rowIndex: index + 1, germplasm: cell.germplasm, rep: cell.rep || 'N/A' }),
         })
@@ -158,7 +159,7 @@
     })
   }
   function save () {
-    if (!feedback.value.some(f => f.type === 'error')) {
+    if (!feedback.value?.some(f => f.type === 'error')) {
       addTrialGermplasm(compProps.trial.localId || '', newGermplasm.value)
         .then(() => {
           emitter.emit('trials-updated')
