@@ -557,7 +557,7 @@ const trialsDataToLongFormat = (data, trial, aggregate = true, includePeople = f
 }
 
 const trialsDataToMatrix = (data, trial, aggregate = true) => {
-  let result = `Line/Trait\tRep\tRow\tColumn\tDate\t${trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
+  let result = `Line/Trait\tRep\tRow\tColumn\tSet\tDate\t${trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
 
   if (aggregate) {
     Object.values(data).forEach(v => {
@@ -574,7 +574,7 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
         const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
 
         dateArray.forEach(date => {
-          result += `\n${germplasmMeta}\t${date}`
+          result += `\n${germplasmMeta}\t\t${date}`
 
           trial.traits.forEach(t => {
             const td = v.measurements[t.id]
@@ -625,9 +625,10 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
                 .filter(val => val !== undefined && val !== null && val !== '')
 
               if (values && values.length > 0) {
-                values.forEach(val => {
+                values.forEach((val, setPosition) => {
                   measurements.push({
                     traitId: t.id,
+                    setPosition,
                     date: dp.timestamp.split('T')[0],
                     value: t.dataType === 'categorical' ? t.restrictions.categories[+val] : val,
                     geography: v.geography
@@ -640,7 +641,7 @@ const trialsDataToMatrix = (data, trial, aggregate = true) => {
 
         measurements.forEach(m => {
           const values = trial.traits.map(t => `${t.id === m.traitId ? m.value : ''}`).join('\t')
-          result += `\n${germplasmMeta}\t${m.date}\t${values}`
+          result += `\n${germplasmMeta}\t${m.setPosition + 1}\t${m.date}\t${values}`
 
           if (m.geography) {
             result += getLatLngAverage(m.geography)

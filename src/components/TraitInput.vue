@@ -214,25 +214,25 @@ export default {
     }
   },
   methods: {
-    preventNonNumber: function (evt) {
-      if (evt.keyCode === 69) {
-        evt.preventDefault()
-      } else if (evt.keyCode === 110) {
-        // Comma/fullstop on keypad
-        evt.target.type = 'text'
-        const start = evt.target.selectionStart
-        const end = evt.target.selectionEnd
-        const oldValue = evt.target.value
+    preventNonNumber: function (event) {
+      if (event.keyCode === 69) {
+        event.preventDefault()
+      } else if (event.keyCode === 110) {
+        // // Comma/fullstop on keypad
+        // event.target.type = 'text'
+        // const start = event.target.selectionStart
+        // const end = event.target.selectionEnd
+        // const oldValue = event.target.value
 
-        const newValue = oldValue.slice(0, start) + '.' + oldValue.slice(end)
-        evt.target.value = newValue
-        this.value = newValue
-        
-        evt.target.selectionStart = start + 1
-        evt.target.selectionEnd = start + 1
-        evt.target.type = 'number'
+        // const newValue = oldValue.slice(0, start) + '.' + oldValue.slice(end)
+        // event.target.value = newValue
+        // this.value = newValue
 
-        evt.preventDefault()
+        // event.preventDefault()
+
+        // nextTick(() => {
+        //   event.target.selectionEnd = event.target.selectionStart = start + 1
+        // })
       }
     },
     setGps: function (latitude, longitude) {

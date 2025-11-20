@@ -407,14 +407,14 @@ export default {
     },
     exportTrialLayout: function () {
       if (this.trial.layout && this.trialData) {
-        let result = 'Germplasm\tRep\tRow\tColumn\tTreatment\tBarcode\tFriendly name'
+        let result = 'Germplasm\tRep\tRow\tColumn\tTreatment\tFriendly name\tBarcode\tPedigree'
 
         for (let row = 0; row < this.trial.layout.rows; row++) {
           for (let column = 0; column < this.trial.layout.columns; column++) {
             const c = this.trialData[`${row}|${column}`]
 
             if (c) {
-              result += `\n${c.germplasm}\t${c.rep || ''}\t${c.displayRow}\t${c.displayColumn}\t${c.treatment || ''}\t${c.barcode || ''}\t${c.friendlyName || ''}`
+              result += `\n${c.germplasm}\t${c.rep || ''}\t${c.displayRow}\t${c.displayColumn}\t${c.treatment || ''}\t${c.friendlyName || ''}\t${c.barcode || ''}\t${c.pedigree || ''}`
             }
           }
         }
