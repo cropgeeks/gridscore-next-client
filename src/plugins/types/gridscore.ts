@@ -284,15 +284,25 @@ export const enum CellCategory {
     CONTROL = 'control'
 }
 
-export const enum TraitDataType {
+export enum TraitDataType {
     int = 'int',
     float = 'float',
     range = 'range',
     categorical = 'categorical',
+    multicat = 'multicat',
     boolean = 'boolean',
     date = 'date',
     gps = 'gps',
     image = 'image',
     video = 'video',
     text = 'text',
+}
+
+export namespace TraitDataType {
+    export function isNumeric (dataType: TraitDataType): boolean {
+        return dataType === TraitDataType.int || dataType === TraitDataType.float || dataType === TraitDataType.range
+    }
+    export function isCategorical (dataType: TraitDataType): boolean {
+        return dataType === TraitDataType.categorical || dataType === TraitDataType.multicat
+    }
 }

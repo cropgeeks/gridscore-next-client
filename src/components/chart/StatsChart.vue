@@ -251,6 +251,7 @@
         case TraitDataType.image:
         case TraitDataType.video:
         case TraitDataType.text:
+        case TraitDataType.multicat:
         case TraitDataType.categorical: {
           supportsClicking = false
           chartType = 'bar'
@@ -293,13 +294,19 @@
                 m.values.forEach(v => {
                   const vConst = v
                   if (vConst !== undefined && vConst !== null && vConst !== '') {
-                    dataPointCount++
-                    let value
-                    if (compProps.trait.dataType === TraitDataType.categorical && compProps.trait.restrictions && compProps.trait.restrictions.categories) {
-                      value = compProps.trait.restrictions.categories[+vConst]
-                      keys.add(compProps.trait.restrictions.categories[+vConst] || '')
+                    let values: string[] = []
+                    const restrictions = compProps.trait.restrictions
+                    const categories = restrictions ? restrictions.categories : undefined
+                    if (compProps.trait.dataType === TraitDataType.categorical && restrictions && categories) {
+                      values = [categories[+vConst] || '']
+                      keys.add(categories[+vConst] || '')
+                    } else if (compProps.trait.dataType === TraitDataType.multicat && restrictions && categories) {
+                      vConst.split(':').forEach(vv => {
+                        values.push(categories[+vv] || '')
+                        keys.add(categories[+vv] || '')
+                      })
                     } else {
-                      value = v
+                      values = [v || '']
                       keys.add(v || '')
                     }
 
@@ -308,13 +315,19 @@
                         datapoints[selectionField] = []
                       }
 
-                      if (value !== undefined) {
-                        datapoints[selectionField]?.push(value)
+                      if (values !== undefined) {
+                        values.forEach(value => {
+                          dataPointCount++
+                          datapoints[selectionField]?.push(value)
+                        })
                       }
                     }
 
-                    if (value !== undefined) {
-                      datapoints[GENERIC_TRACE]?.push(value)
+                    if (values !== undefined) {
+                      values.forEach(value => {
+                        dataPointCount++
+                        datapoints[GENERIC_TRACE]?.push(value)
+                      })
                     }
                   }
                 })
@@ -323,7 +336,7 @@
           })
 
           let keyArray = []
-          if (compProps.trait.dataType === 'categorical' && compProps.trait.restrictions && compProps.trait.restrictions.categories) {
+          if (TraitDataType.isCategorical(compProps.trait.dataType) && compProps.trait.restrictions && compProps.trait.restrictions.categories) {
             keyArray = compProps.trait.restrictions.categories
           } else {
             keyArray = [...keys].sort()
@@ -432,7 +445,7 @@
         }
       }
 
-      if (compProps.trait.dataType === 'categorical' || compProps.trait.dataType === 'text') {
+      if (TraitDataType.isCategorical(compProps.trait.dataType) || compProps.trait.dataType === TraitDataType.text) {
         // @ts-ignore
         layout.xaxis.type = 'category'
         if (layout.xaxis.title) {
@@ -445,6 +458,12 @@
         if (layout.xaxis.title) {
           layout.xaxis.title.text = compProps.trait.name
         }
+      }
+
+      sourceFile.value = {
+        blob: new Blob([`x\t${data[0]?.x.join('\t')}\ny\t${data[0]?.y?.join('\t')}`], { type: 'text/plain' }),
+        filename: filename.value,
+        extension: 'tsv',
       }
 
       // @ts-ignore

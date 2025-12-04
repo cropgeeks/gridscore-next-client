@@ -24,8 +24,8 @@
         />
 
         <template v-if="mediaData">
-          <v-img :src="mediaData" v-if="mode === 'image'" />
-          <video class="video" controls ref="video" v-else />
+          <v-img :src="mediaData" v-if="mode === 'image'" class="media-preview" />
+          <video class="video media-preview" controls ref="video" v-else />
         </template>
 
         <template v-if="inputFile">
@@ -255,5 +255,9 @@
 }
 .video {
   max-width: 100%;
+}
+
+.media-preview {
+  max-height: 75vh;
 }
 </style>

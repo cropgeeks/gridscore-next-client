@@ -1,32 +1,32 @@
 <template>
-  <div class="mb-2" v-if="trait">
+  <div class="mb-2" v-if="trait" :key="id">
     <v-text-field
       v-if="trait.dataType === TraitDataType.text"
       :label="label"
       :readonly="isEditable === false"
-      :messages="description ? ['f'] : undefined"
+      :messages="description ? [description] : undefined"
       @keyup.enter="emit('traverse')"
       :clearable="isEditable !== false"
       v-model="model"
       ref="input"
       @change="tts"
     >
-      <template #message v-if="description">
-        <span v-html="description" />
+      <template #message="{ message }">
+        <span v-html="message" />
       </template>
     </v-text-field>
     <v-text-field
       v-if="trait.dataType === TraitDataType.gps"
       :label="label"
       readonly
-      :messages="description ? ['f'] : undefined"
+      :messages="description ? [description] : undefined"
       @keyup.enter="emit('traverse')"
       :clearable="isEditable !== false"
       v-model="model"
       ref="input"
     >
-      <template #message v-if="description">
-        <span v-html="description" />
+      <template #message="{ message }">
+        <span v-html="message" />
       </template>
       <template #append-inner>
         <UseGeolocation v-slot="{ coords: { latitude, longitude } }">
@@ -39,7 +39,7 @@
       <v-slider
         v-model="model"
         :readonly="isEditable === false"
-        :messages="description ? ['f'] : undefined"
+        :messages="description ? [description] : undefined"
         :color="(model !== null && model !== undefined) ? 'primary' : undefined"
         @wheel="$event.target.blur()"
         thumb-label
@@ -49,8 +49,8 @@
         ref="input"
         @end="tts"
       >
-        <template #message v-if="description">
-          <span v-html="description" />
+        <template #message="{ message }">
+          <span v-html="message" />
         </template>
         <template #append>
           <!-- @vue-ignore -->
@@ -77,7 +77,7 @@
       v-model="model"
       :label="label"
       :readonly="isEditable === false"
-      :messages="description ? ['f'] : undefined"
+      :messages="description ? [description] : undefined"
       @keyup.enter="setDate"
       @keyup.exact="handleDateInputChar"
       @blur="validateDate"
@@ -90,15 +90,14 @@
         <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryDateReset')" color="error" :disabled="isEditable === false || !model" variant="tonal" size="small" @click="model = undefined" :icon="mdiCancel" />
       </template>
 
-      <template #message v-if="description">
-        <span v-html="description" />
+      <template #message="{ message }">
+        <span v-html="message" />
       </template>
     </v-text-field>
     <v-number-input
-      :min="trait.restrictions?.min"
-      :max="trait.restrictions?.max"
+      :error-messages="valid ? [] : [$t('formFeedbackInputOutwithValidRange')]"
       @wheel="$event.target.blur()"
-      :messages="description ? ['f'] : undefined"
+      :messages="description ? [description] : undefined"
       :label="label"
       :readonly="isEditable === false"
       @keyup.enter="emit('traverse')"
@@ -110,16 +109,16 @@
       ref="input"
       v-else-if="trait.dataType === TraitDataType.int"
     >
-      <template #message v-if="description">
-        <span v-html="description" />
+      <template #message="{ message }">
+        <span v-html="message" />
       </template>
     </v-number-input>
     <v-number-input
-      :min="trait.restrictions?.min"
-      :max="trait.restrictions?.max"
       @wheel="$event.target.blur()"
-      :messages="description ? ['f'] : undefined"
+      :messages="description ? [description] : undefined"
+      :error-messages="valid ? [] : [$t('formFeedbackInputOutwithValidRange')]"
       :label="label"
+      :rules="rules"
       :precision="null"
       :readonly="isEditable === false"
       @keyup.enter="emit('traverse')"
@@ -130,8 +129,8 @@
       ref="input"
       v-else-if="trait.dataType === TraitDataType.float"
     >
-      <template #message v-if="description">
-        <span v-html="description" />
+      <template #message="{ message }">
+        <span v-html="message" />
       </template>
     </v-number-input>
     <template v-else-if="trait.dataType === TraitDataType.categorical">
@@ -139,14 +138,14 @@
         v-model="model"
         :label="label"
         :items="traitCategories"
-        :messages="description ? ['f'] : undefined"
+        :messages="description ? [description] : undefined"
         :readonly="isEditable === false"
         @keyup.enter="emit('traverse')"
         ref="input"
         v-if="(trait.restrictions?.categories || []).length > store.storeCategoryCountInline"
       >
-        <template #message v-if="description">
-          <span v-html="description" />
+        <template #message="{ message }">
+          <span v-html="message" />
         </template>
       </v-autocomplete>
       <div class="v-text-field" v-else>
@@ -156,6 +155,56 @@
           :disabled="isEditable === false"
           color="primary"
           variant="outlined"
+          divided
+          ref="input"
+        >
+          <v-btn
+            :value="catIndex"
+            v-for="(cat, catIndex) in (trait.restrictions?.categories || [])"
+            :key="`trait-${trait.id}-${cat}`"
+            :text="cat"
+          />
+          <v-btn
+            v-if="model !== undefined && model !== null"
+            @click="model = undefined"
+          >
+            <v-icon :icon="mdiCancel" color="error" />
+          </v-btn>
+        </v-btn-toggle>
+
+        <div class="v-input__details">
+          <div class="v-messages" v-if="description">
+            <span class="v-messages__message" v-html="description" />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template v-else-if="trait.dataType === TraitDataType.multicat">
+      <v-autocomplete
+        :label="label"
+        :items="traitCategories"
+        :messages="description ? [description] : undefined"
+        :readonly="isEditable === false"
+        multiple
+        @keyup.enter="emit('traverse')"
+        :model-value="model !== undefined ? model.split(':').map(c => +c) : []"
+        @update:model-value="v => model = (v === undefined || v === null || v.length === 0) ? undefined : v.sort().join(':')"
+        ref="input"
+        v-if="(trait.restrictions?.categories || []).length > store.storeCategoryCountInline"
+      >
+        <template #message="{ message }">
+          <span v-html="message" />
+        </template>
+      </v-autocomplete>
+      <div class="v-text-field" v-else>
+        <div class="text-subtitle-2">{{ label }}</div>
+        <v-btn-toggle
+          :model-value="model !== undefined ? model.split(':').map(c => +c) : []"
+          @update:model-value="v => model = (v === undefined || v === null || v.length === 0) ? undefined : v.sort().join(':')"
+          :disabled="isEditable === false"
+          color="primary"
+          variant="outlined"
+          multiple
           divided
           ref="input"
         >
@@ -193,6 +242,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import { mdiCalendarToday, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker } from '@mdi/js'
+  import { getId } from '@/plugins/id'
 
   const nonTtsTraitTypes = new Set([TraitDataType.gps, TraitDataType.video, TraitDataType.image, TraitDataType.date, TraitDataType.text, TraitDataType.range])
 
@@ -215,9 +265,38 @@
   const model = defineModel<string>()
   const dateInput = ref<string>('')
   const input = useTemplateRef('input')
+  const id = ref(`data-input-${getId()}`)
+
+  const valid = computed(() => {
+    const mv = model.value
+    if (mv !== undefined && mv !== null && rules.value && rules.value.length > 0) {
+      return rules.value.every(r => r(mv) === true)
+    } else {
+      return true
+    }
+  })
+
+  type ValidationRule = (value: string) => boolean
+
+  const rules: ComputedRef<ValidationRule[] | undefined> = computed(() => {
+    const restrictions = compProps.trait?.restrictions
+    if (restrictions && (restrictions.min !== undefined || restrictions.max !== undefined)) {
+      return [value => {
+        if (restrictions.min !== undefined && +value < restrictions.min) {
+          return false
+        }
+        if (restrictions.max !== undefined && +value > restrictions.max) {
+          return false
+        }
+        return true
+      }]
+    } else {
+      return undefined
+    }
+  })
 
   const traitCategories = computed(() => {
-    if (compProps.trait && compProps.trait.dataType === TraitDataType.categorical && compProps.trait.restrictions) {
+    if (compProps.trait && TraitDataType.isCategorical(compProps.trait.dataType) && compProps.trait.restrictions) {
       return (compProps.trait.restrictions?.categories || []).map((value, index) => {
         return {
           value: index,
@@ -248,9 +327,21 @@
 
       if (last) {
         // Determine the values for display purposes
-        if (compProps.trait.dataType === TraitDataType.categorical && compProps.trait.restrictions && compProps.trait.restrictions.categories) {
-          // @ts-ignore
-          values = last.values.map(v => (v !== undefined && v !== null) ? compProps.trait.restrictions.categories[v] : undefined)
+        if (TraitDataType.isCategorical(compProps.trait.dataType) && compProps.trait.restrictions && compProps.trait.restrictions.categories) {
+          if (compProps.trait.dataType === TraitDataType.categorical) {
+            // @ts-ignore
+            values = last.values.map(v => (v !== undefined && v !== null) ? compProps.trait.restrictions.categories[v] : undefined)
+          } else {
+            // @ts-ignore
+            values = last.values.map(v => {
+              if (v !== undefined && v !== null) {
+                // @ts-ignore
+                return v.split(':').map(vv => (vv !== undefined && vv !== null) ? compProps.trait.restrictions.categories[vv] : undefined).join(':')
+              } else {
+                return undefined
+              }
+            })
+          }
         } else if (compProps.trait.dataType === TraitDataType.date) {
           values = last.values.map(v => (v !== undefined && v !== null) ? new Date(v).toLocaleDateString() : undefined)
         } else {
@@ -375,18 +466,35 @@
   }
 
   function tts () {
-    // @ts-ignore
-    emitter.emit('tts', compProps.trait.dataType === TraitDataType.categorical ? compProps.trait.restrictions.categories[model.value] : model.value)
+    if (model.value !== undefined) {
+      if (compProps.trait.dataType === TraitDataType.categorical) {
+        // @ts-ignore
+        emitter.emit('tts', compProps.trait.restrictions.categories[+model.value])
+      } else if (compProps.trait.dataType === TraitDataType.multicat) {
+        // @ts-ignore
+        emitter.emit('tts', model.value.split(':').map(p => compProps.trait.restrictions.categories[+p]).join('; '))
+      } else {
+        emitter.emit('tts', model.value)
+      }
+    }
   }
 
   watch(model, async newValue => {
     if (newValue !== undefined && newValue !== null && !nonTtsTraitTypes.has(compProps.trait.dataType)) {
-      tts ()
+      tts()
+    }
+
+    if (newValue === undefined || newValue === null) {
+      // We force a new key for the input element here, because Vuetify has a bug where an input in error state
+      // does not remove the error state fully when the value is reset. Keep an eye on this and potentially remove
+      // this to improve performance again (remove "unnecessary" re-render)
+      id.value = `data-input-${getId()}`
     }
   })
 
   defineExpose({
     focus,
+    valid,
   })
 </script>
 

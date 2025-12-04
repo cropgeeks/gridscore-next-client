@@ -98,7 +98,7 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import { isGeographyValid, projectToEuclidean, type XY } from '@/plugins/location'
   import { CanvasDensity, CanvasShape, CanvasSize, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
-  import { CellCategory, type Cell } from '@/plugins/types/gridscore'
+  import { CellCategory, TraitDataType, type Cell } from '@/plugins/types/gridscore'
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
@@ -219,14 +219,17 @@
           const traitMeasurements = cell.measurements[vt[0]?.id || ''] || []
           const dp = traitMeasurements.filter(m => m.values !== undefined && m.values !== null && m.values.length > 0)
 
-          let str
-          if (vt[0]?.dataType === 'categorical' && vt[0]?.restrictions) {
+          let str: (string | undefined)[]
+          if (vt[0]?.dataType === TraitDataType.categorical && vt[0]?.restrictions) {
             // @ts-ignore
-            str = dp.map(m => m.values.map(v => vt[0]?.restrictions.categories[v])).join(', ')
+            str = dp.map(m => m.values.map(v => vt[0]?.restrictions.categories[v]))
+          } else if (vt[0]?.dataType === TraitDataType.multicat && vt[0].restrictions) {
+            // @ts-ignore
+            str = dp.map(m => m.values.map(v => v?.split(':').map(vv => vt[0]?.restrictions.categories[vv]).join(':')))
           } else {
-            str = dp.map(m => m.values).join(', ')
+            str = dp.map(m => m.values.join(', '))
           }
-          result[k] = str
+          result[k] = (str || []).slice(-10).join(', ')
         }
       })
 

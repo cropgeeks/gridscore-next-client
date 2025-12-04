@@ -227,7 +227,7 @@
                 finalValue = m
               }
 
-              if (trait.dataType === TraitDataType.int || trait.dataType === TraitDataType.float || trait.dataType === TraitDataType.range) {
+              if (TraitDataType.isNumeric(trait.dataType)) {
                 m.values.forEach(v => {
                   if (v !== undefined && v !== null) {
                     minValue = Math.min(minValue, +v)

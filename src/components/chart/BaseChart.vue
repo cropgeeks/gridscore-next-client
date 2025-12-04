@@ -34,9 +34,7 @@
 
     <slot name="card-text" />
 
-    <v-card-text>
-      <slot name="chart-content" ref="chart" />
-    </v-card-text>
+    <slot name="chart-content" ref="chart" />
 
     <v-card-actions>
       <slot name="card-actions" />

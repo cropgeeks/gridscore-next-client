@@ -20,7 +20,7 @@
                 <span v-tooltip:top="new Date(measure.timestamp).toLocaleString()">{{ getDaysAgoIn(measure.timestamp) }}</span>
               </template>
               <template #subtitle>
-                <template v-if="trait.dataType === 'categorical'">
+                <template v-if="trait.dataType === TraitDataType.categorical">
                   {{ measure.values.filter(v => v !== undefined).map((v: string) => (trait.restrictions?.categories || [])[+v]).join(', ') }}
                 </template>
                 <template v-else>
@@ -39,6 +39,7 @@
   import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
+  import { TraitDataType } from '@/plugins/types/gridscore'
 
   const compProps = defineProps<{
     cell: CellPlus

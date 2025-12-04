@@ -58,7 +58,7 @@
           </v-row>
 
           <v-combobox
-            v-show="currentTrait.dataType === TraitDataType.categorical"
+            v-show="TraitDataType.isCategorical(currentTrait.dataType)"
             class="mb-3"
             v-model="restrictions.categories"
             clearable
@@ -80,7 +80,7 @@
             </template>
           </v-combobox>
 
-          <v-row v-if="currentTrait.dataType === TraitDataType.int || currentTrait.dataType === TraitDataType.float || currentTrait.dataType === TraitDataType.range">
+          <v-row v-if="TraitDataType.isNumeric(currentTrait.dataType)">
             <v-col cols="6">
               <v-number-input
                 v-model="restrictions.min"
@@ -521,10 +521,10 @@
   })
 
   watch(() => currentTrait.value.dataType, async newValue => {
-    if (newValue !== TraitDataType.categorical) {
+    if (!TraitDataType.isCategorical(newValue)) {
       restrictions.value.categories = undefined
     }
-    if (newValue !== TraitDataType.int && newValue !== TraitDataType.float && newValue !== TraitDataType.range) {
+    if (!TraitDataType.isNumeric(newValue)) {
       restrictions.value.min = undefined
       restrictions.value.max = undefined
     }

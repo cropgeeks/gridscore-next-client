@@ -3,6 +3,7 @@
     <TraitSection
       :trait="trait"
       short-title
+      show-subtitle
     >
       <template #default>
         <slot name="default" />
@@ -30,9 +31,11 @@
   import type { Measurement, Person } from '@/plugins/types/gridscore'
   import type { TraitData } from '@/components/modals/DataEntryModal.vue'
 
+  import emitter from 'tiny-emitter/instance'
+
   const emit = defineEmits(['traverse'])
 
-  const refs = ref<{ [index: number]: Element | ComponentPublicInstance | null }>({})
+  const refs = ref<{ [index: number]: any }>({})
 
   const compProps = withDefaults(defineProps<{
     people?: Person[]
@@ -45,12 +48,21 @@
 
   const model = defineModel<TraitData>({})
 
+  const valid = computed(() => {
+    return Object.values(refs.value).every(r => r?.valid)
+  })
+
   function focus (index: number) {
+    if (index === 1) {
+      emitter.emit('tts', compProps.trait.name)
+    }
+
     // @ts-ignore
     refs.value[index]?.focus()
   }
 
   defineExpose({
     focus,
+    valid,
   })
 </script>

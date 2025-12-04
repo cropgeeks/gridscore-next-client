@@ -82,14 +82,16 @@ function getRowIndex (layout: Layout, row: number) {
 
 function toGerminateDataType (type: TraitDataType) {
   switch (type) {
-    case 'int':
-    case 'float':
-    case 'range':
+    case TraitDataType.int:
+    case TraitDataType.float:
+    case TraitDataType.range:
       return 'numeric'
-    case 'gps':
-    case 'image':
-    case 'video':
-      return 'text'
+    case TraitDataType.gps:
+    case TraitDataType.image:
+    case TraitDataType.video:
+      return TraitDataType.text
+    case TraitDataType.multicat:
+      return TraitDataType.categorical
     default:
       return type
   }
@@ -189,14 +191,14 @@ function tabularToTraits (traitString: string): Trait[] {
       group: p['Group name'],
     }
 
-    if (trait.dataType === 'categorical' && p.Categories && p.Categories.length > 0) {
+    if (trait.dataType === TraitDataType.categorical && p.Categories && p.Categories.length > 0) {
       if (!trait.restrictions) {
         trait.restrictions = {}
       }
       trait.restrictions.categories = p.Categories.split(',').map((c: string) => c.trim())
     }
 
-    if ((trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range')) {
+    if (TraitDataType.isNumeric(trait.dataType)) {
       if (p.Minimum !== undefined && p.Minimum !== null && p.Minimum !== '') {
         if (!trait.restrictions) {
           trait.restrictions = {}
@@ -397,9 +399,9 @@ function filterGermplasm (value: string, query: string, item?: InternalItem<Cell
 function checkDataMatchesTraitType (trait: Trait, value: string, checkDatesAndCategories = true) {
   const trimmed = (typeof value === 'string') ? value.trim() : value
 
-  if (trait.dataType === 'int' || trait.dataType === 'float' || trait.dataType === 'range') {
+  if (TraitDataType.isNumeric(trait.dataType)) {
     try {
-      if (!isNumber(trimmed, (trait.dataType === 'int' || trait.dataType === 'range'))) {
+      if (!isNumber(trimmed, (trait.dataType === TraitDataType.int || trait.dataType === TraitDataType.range))) {
         return false
       }
 
@@ -416,11 +418,11 @@ function checkDataMatchesTraitType (trait: Trait, value: string, checkDatesAndCa
     } catch {
       return false
     }
-  } else if (trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories && checkDatesAndCategories) {
+  } else if (trait.dataType === TraitDataType.categorical && trait.restrictions && trait.restrictions.categories && checkDatesAndCategories) {
     return trait.restrictions.categories.includes(value)
-  } else if (trait.dataType === 'date' && checkDatesAndCategories) {
+  } else if (trait.dataType === TraitDataType.date && checkDatesAndCategories) {
     return isValidDateString(value)
-  } else if (trait.dataType === 'gps') {
+  } else if (trait.dataType === TraitDataType.gps) {
     try {
       const [lat, lng] = trimmed.split(';')
 

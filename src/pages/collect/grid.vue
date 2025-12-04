@@ -1,6 +1,6 @@
 <template>
   <div v-if="trial" class="data-entry">
-    <v-toolbar flat density="compact" class="mb-3 justify-space-between align-center pa-2">
+    <v-toolbar flat density="compact" class="justify-space-between align-center pa-1">
       <v-btn-group density="compact">
         <TraitDropdown :traits="trial.traits" @trait-cutoff-changed="e => { traitCutoff = e }" />
         <JumpToDropdown />

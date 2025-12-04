@@ -83,6 +83,36 @@
               <v-btn class="flex-grow-1" :prepend-icon="mdiCursorMove" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
             </v-btn-toggle>
 
+            <div class="text-subtitle-2 mt-3">{{ $t('formLabelSettingsCategoryCountInline') }}</div>
+            <v-slider
+              v-model="categoryCountInline"
+              :hint="$t('formDescriptionSettingsCategoryCountInline')"
+              persistent-hint
+              color="primary"
+              @wheel="$event.target.blur()"
+              thumb-label
+              :min="2"
+              :max="10"
+              :step="1"
+              ref="input"
+            >
+              <template #append>
+                <!-- @vue-ignore -->
+                <v-number-input
+                  v-model="categoryCountInline"
+                  density="compact"
+                  width="100"
+                  :min="2"
+                  :max="10"
+                  :step="1"
+                  autocomplete="off"
+                  control-variant="stacked"
+                  variant="outlined"
+                  hide-details
+                />
+              </template>
+            </v-slider>
+
             <v-switch
               :label="$t('formLabelSettingsVoiceFeedback')"
               :hint="$t('formDescriptionSettingsVoiceFeedback')"
@@ -309,6 +339,7 @@
   const hideHelpInformation = ref(store.storeHideHelpInformation)
   const autoProgressInputs = ref(store.storeAutoProgressInputs)
   const voiceFeedbackEnabled = ref(store.storeVoiceFeedbackEnabled)
+  const categoryCountInline = ref(store.storeCategoryCountInline)
 
   const isSquare = computed(() => store.storeCanvasShape === CanvasShape.SQUARE)
 
@@ -367,6 +398,7 @@
   watch(showFullTraitDescription, async newValue => store.setShowFullTraitDescription(newValue))
   watch(largeButtonsForIntTraits, async newValue => store.setLargeButtonsForIntTraits(newValue))
   watch(displayMinCellWidth, async newValue => store.setDisplayMinCellWidth(newValue))
+  watch(categoryCountInline, async newValue => store.setCategoryCountInline(newValue))
   watch(plotDisplayField, async newValue => store.setPlotDisplayField(newValue))
   watch(autoSelectSearch, async newValue => store.setAutoSelectSearch(newValue))
   watch(autoSelectFirstInput, async newValue => store.setAutoSelectFirstInput(newValue))

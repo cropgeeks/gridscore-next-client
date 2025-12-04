@@ -769,6 +769,11 @@
       },
       {
         "type": "new",
+        "title": "Multi-category traits",
+        "text": "Scoring multiple values for the same categorical trait is now possible with a new trait type."
+      },
+      {
+        "type": "new",
         "title": "Plot highlighting",
         "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
       },
@@ -776,6 +781,11 @@
         "type": "new",
         "title": "Image naming configuration",
         "text": "During trial setup you can now change the set and order of parts used in image and video filenames."
+      },
+      {
+        "type": "new",
+        "title": "NFC chip support",
+        "text": "On Android and Chrome, you can now make use of the device's NFC chip scanning capabilities for plot identification."
       },
       {
         "type": "update",

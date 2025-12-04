@@ -98,6 +98,7 @@
   }
 
   function show () {
+    newComment.value = undefined
     dialog.value = true
   }
   function hide () {

@@ -1,7 +1,7 @@
 import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
 import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
 import { toLocalDateTimeString } from '@/plugins/util'
-import { mdiAlphabeticalVariant, mdiCalendar, mdiCamera, mdiCheckboxMarked, mdiDecimal, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMapMarkerMultiple, mdiNotebook, mdiNumeric, mdiSprout, mdiTag, mdiTuneVariant, mdiVideo } from '@mdi/js'
+import { mdiAlphabeticalVariant, mdiCalendar, mdiCamera, mdiCheckboxMarked, mdiDecimal, mdiFormatListChecks, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMapMarkerMultiple, mdiNotebook, mdiNumeric, mdiSprout, mdiTag, mdiTuneVariant, mdiVideo } from '@mdi/js'
 
 const gridScoreVersion = '4.0.0'
 
@@ -110,6 +110,11 @@ const dataTypes: DataType[] = [{
   shortTitle: 'traitTypeShortCategorical',
   icon: mdiFormatListNumbered,
   value: TraitDataType.categorical,
+}, {
+  title: 'traitTypeMultiCategorical',
+  shortTitle: 'traitTypeShortMultiCategorical',
+  icon: mdiFormatListChecks,
+  value: TraitDataType.multicat,
 }, {
   title: 'traitTypeBoolean',
   shortTitle: 'traitTypeShortBoolean',

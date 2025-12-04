@@ -1,7 +1,7 @@
 <template>
   <OverflowMenu
     :items="items"
-    :breakpoint="mdAndUp"
+    :breakpoint="lgAndUp"
   />
 
   <CommentModal
@@ -12,6 +12,28 @@
     @comment-deleted="deleteComment"
     ref="commentModal"
   />
+
+  <v-dialog
+    v-model="dateDialog"
+    width="unset"
+  >
+    <v-card :title="$t('buttonPickRecordingDate')">
+      <template #text>
+        <v-date-picker
+          v-model="tempRecordingDate"
+          hide-title
+          hide-header
+          color="primary"
+        />
+      </template>
+      <template #actions>
+        <v-btn @click="dateDialog = false" :text="$t('buttonCancel')" />
+        <v-spacer />
+        <v-btn v-if="recordingDate" :text="$t('buttonReset')" @click="setDate(undefined)" />
+        <v-btn :text="$t('buttonSelect')" color="primary" variant="tonal" :disabled="!tempRecordingDate" @click="setDate(tempRecordingDate)" />
+      </template>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -25,12 +47,16 @@
   import CommentModal from '@/components/modals/CommentModal.vue'
   import type { Comment } from '@/plugins/types/gridscore'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
-  import { mdiBookmark, mdiBookmarkOutline, mdiCamera, mdiCommentText, mdiDirectionsFork } from '@mdi/js'
+  import { mdiBookmark, mdiBookmarkOutline, mdiCalendar, mdiCamera, mdiCommentText, mdiDirectionsFork } from '@mdi/js'
 
   const store = coreStore()
   const router = useRouter()
   const { t } = useI18n()
-  const { mdAndUp } = useDisplay()
+  const { lgAndUp } = useDisplay()
+  const dateDialog = ref(false)
+
+  const recordingDate = defineModel<Date>('recordingDate')
+  const tempRecordingDate = ref<Date | undefined>(new Date())
 
   const commentModal = useTemplateRef('commentModal')
 
@@ -42,6 +68,15 @@
 
   const items: ComputedRef<MenuItem[]> = computed(() => {
     return [{
+      text: t('buttonPickRecordingDate'),
+      size: 'small',
+      variant: 'tonal',
+      prependIcon: mdiCalendar,
+      disabled: !compProps.trial.editable,
+      click: () => {
+        dateDialog.value = true
+      },
+    }, {
       text: compProps.cell.isMarked ? t('buttonUnbookmarkCell') : t('buttonBookmarkCell'),
       size: 'small',
       variant: 'tonal',
@@ -70,6 +105,16 @@
       visible: !compProps.isGuidedWalk,
     }]
   })
+
+  function setDate (date: Date | undefined) {
+    if (date) {
+      recordingDate.value = date
+      dateDialog.value = false
+    } else {
+      recordingDate.value = undefined
+      tempRecordingDate.value = undefined
+    }
+  }
 
   function toggleMarked () {
     const c = compProps.cell

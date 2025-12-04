@@ -174,21 +174,21 @@
             let matches = false
             switch (brapiMatch.scale.dataType) {
               case 'Date':
-                matches = t.dataType === 'date'
+                matches = t.dataType === TraitDataType.date
                 break
               case 'Text':
-                matches = t.dataType === 'text'
+                matches = t.dataType === TraitDataType.text
                 break
               case 'Numeric':
               case 'Numerical':
-                matches = t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range'
+                matches = TraitDataType.isNumeric(t.dataType)
                 break
               case 'Duration':
-                matches = t.dataType === 'int'
+                matches = t.dataType === TraitDataType.int
                 break
               case 'Nominal':
               case 'Ordinal':
-                matches = t.dataType === 'categorical'
+                matches = t.dataType === TraitDataType.categorical
                 break
             }
 

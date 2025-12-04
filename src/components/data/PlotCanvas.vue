@@ -15,7 +15,7 @@
   import { coreStore } from '@/stores/app'
 
   import emitter from 'tiny-emitter/instance'
-  import { CellCategory } from '@/plugins/types/gridscore'
+  import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTouchPosition } from '@/plugins/touchinput'
   import { categoricalColors } from '@/plugins/color'
@@ -413,14 +413,17 @@
         const traitMeasurements = cell.measurements[tt.original?.id || ''] || []
         const dp = traitMeasurements.filter(m => m.values !== undefined && m.values !== null && m.values.length > 0)
 
-        let str
-        if (tt.original.dataType === 'categorical') {
+        let str: (string | undefined)[]
+        if (tt.original.dataType === TraitDataType.categorical) {
           // @ts-ignore
-          str = dp.map(m => m.values.map(v => tt.original.restrictions.categories[v])).join(', ')
+          str = dp.map(m => m.values.map(v => tt.original.restrictions.categories[v]))
+        } else if (tt.original.dataType === TraitDataType.multicat) {
+          // @ts-ignore
+          str = dp.map(m => m.values.map(v => v?.split(':').map(vv => tt.original.restrictions.categories[vv]).join(':')))
         } else {
-          str = dp.map(m => m.values).join(', ')
+          str = dp.map(m => m.values.join(', '))
         }
-        const traitValue = fittingString(str || '', compProps.dimensions.coreWidth, false)
+        const traitValue = fittingString((str || []).slice(-10).join(', '), compProps.dimensions.coreWidth, false)
         ccctx.fillStyle = fillStyleText.value
         ccctx.fillText(traitValue, x + compProps.dimensions.cellWidth / 2, maxY + compProps.dimensions.textPartHeight - compProps.dimensions.padding + compProps.dimensions.fontSize / 2)
       }

@@ -35,6 +35,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import { mdiAlert } from '@mdi/js'
+  import { TraitDataType } from '@/plugins/types/gridscore'
 
   const requiredColumns = new Set(['Germplasm', 'Rep', 'Row', 'Column', 'Trait name', 'Date', 'Value'])
 
@@ -179,7 +180,7 @@
 
       for (const part of parts) {
         if (part !== undefined && part !== null && part !== '') {
-          if (trait.dataType === 'categorical' && trait.restrictions && trait.restrictions.categories) {
+          if (trait.dataType === TraitDataType.categorical && trait.restrictions && trait.restrictions.categories) {
             const index = trait.restrictions.categories.indexOf(part)
             values.push(`${index}`)
           } else {

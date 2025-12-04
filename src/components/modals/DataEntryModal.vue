@@ -20,6 +20,7 @@
         <v-btn-group>
           <TraitDropdown size="small" :traits="trial.traits" />
           <DataEntryActions
+            v-model:recording-date="recordingDate"
             :trial="trial"
             :cell="cell"
             :is-guided-walk="isGuidedWalk"
@@ -51,6 +52,19 @@
       </v-toolbar>
 
       <v-card-text class="pa-0">
+        <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="recordingDate && isRecordingDateToday === false">
+          <span class="text-wrap">{{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}</span>
+        </v-banner>
+        <v-banner class="pa-2" sticky style="z-index: 100;" color="error" lines="one" bg-color="error" density="compact" :icon="mdiAlert" v-if="hasData && !valid">
+          <span class="text-wrap">{{ $t('widgetDataInputOutOfBoundsDataWarning') }}</span>
+
+          <template #actions>
+            <v-btn-toggle color="error" density="compact" v-model="dataOutsideRangeAccepted">
+              <v-btn :value="true" :text="$t('genericConfirm')" :prepend-icon="dataOutsideRangeAccepted ? mdiCheckboxMarked : mdiCheckboxBlankOutline" />
+            </v-btn-toggle>
+          </template>
+        </v-banner>
+
         <v-container :fluid="isGuidedWalk">
           <v-row v-if="guidedWalk">
             <v-col cols="12" md="4" class="d-flex">
@@ -198,7 +212,7 @@
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
-  import { mdiCamera, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
+  import { mdiAlert, mdiCamera, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
 
   interface TraitGroup {
     name: string
@@ -237,7 +251,6 @@
 
   const { t } = useI18n()
   const store = coreStore()
-  const router = useRouter()
 
   const dialog = ref(false)
   const cell = ref<CellPlus>()
@@ -245,10 +258,11 @@
   const recordingDate = ref<Date>()
   const cellIndex = ref<number>(0)
   const guidedWalk = ref<GuidedWalk>()
+  const dataOutsideRangeAccepted = ref(false)
 
   const historyTrait = ref<TraitPlus>()
 
-  const refs = ref<{ [index: string]: Element | ComponentPublicInstance | null }>({})
+  const refs = ref<{ [index: string]: any }>({})
 
   const expandedTraitGroups = ref<number[]>([])
 
@@ -274,7 +288,7 @@
         prependIcon: mdiChevronLeft,
         color: 'primary',
         appendIcon: undefined,
-        disabled: guidedWalk.value.index === 0,
+        disabled: guidedWalk.value.index === 0 || !canSave.value,
       }
     } else {
       return {
@@ -294,23 +308,23 @@
           return {
             title: t('buttonNext'),
             prependIcon: undefined,
-            color: 'primary',
+            color: valid.value ? 'primary' : 'error',
             appendIcon: mdiChevronRight,
-            disabled: false,
+            disabled: !canSave.value,
           }
         } else {
           return {
             title: t('buttonFinish'),
-            color: 'primary',
+            color: valid.value ? 'primary' : 'error',
             prependIcon: mdiNotebookCheck,
             appendIcon: undefined,
-            disabled: false,
+            disabled: !canSave.value,
           }
         }
       } else {
         return {
           title: t('buttonSave'),
-          color: 'primary',
+          color: valid.value ? 'primary' : 'error',
           prependIcon: mdiContentSave,
           appendIcon: undefined,
           disabled: !canSave.value,
@@ -343,8 +357,16 @@
     }
   })
 
+  const hasData = computed(() => Object.values(cellData.value).some(cd => Object.values(cd).some(td => td !== undefined && td !== null)))
+
   const canSave = computed(() => {
-    return Object.values(cellData.value).some(cd => Object.values(cd).some(td => td !== undefined && td !== null))
+    const dataIsValid = valid.value === true || (hasData.value && dataOutsideRangeAccepted.value)
+
+    if (isGuidedWalk.value) {
+      return !hasData.value || (dataIsValid && hasData.value)
+    } else {
+      return dataIsValid && hasData.value
+    }
   })
 
   const visibleTraits = computed(() => {
@@ -353,6 +375,18 @@
     } else {
       return []
     }
+  })
+
+  const isRecordingDateToday = computed(() => {
+    const now = new Date()
+    return recordingDate.value
+      && now.getFullYear() === recordingDate.value.getFullYear()
+      && now.getMonth() === recordingDate.value.getMonth()
+      && now.getDate() === recordingDate.value.getDate()
+  })
+
+  const valid = computed(() => {
+    return Object.values(refs.value).every(r => r?.valid)
   })
 
   const traitsByGroup = computed(() => {
@@ -475,6 +509,10 @@
     }
   }
   function save (delta = 1) {
+    if (canSave.value === false) {
+      return
+    }
+
     // TODO
     const c = cell.value
     if (!compProps.trial.editable || !c) {
@@ -486,7 +524,7 @@
     const date = now
 
     // If we're not using today as the recording date, then adjust to this time of day
-    if (recordingDate.value) {
+    if (recordingDate.value && isRecordingDateToday.value === false) {
       date.setDate(recordingDate.value.getDate())
       date.setMonth(recordingDate.value.getMonth())
       date.setFullYear(recordingDate.value.getFullYear())
@@ -565,6 +603,8 @@
           cellIndex.value = 0
           if (next && next.cells && next.cells.length > 0 && next.cells[0]) {
             show(next.cells[0].y, next.cells[0].x)
+
+            nextTick(() => autofocusFirst())
           } else {
             hide()
           }
@@ -645,6 +685,7 @@
   }
 
   function show (row?: number, column?: number) {
+    dataOutsideRangeAccepted.value = false
     cellData.value = {}
 
     compProps.trial.traits.forEach(t => {
@@ -657,7 +698,7 @@
           cell.value = c
           dialog.value = true
 
-          autofocusFirst()
+          // autofocusFirst()
         })
     } else {
       dialog.value = true

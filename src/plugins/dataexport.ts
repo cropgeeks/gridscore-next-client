@@ -1,7 +1,7 @@
 import emitter from 'tiny-emitter/instance'
 import { getTrialDataCached } from '@/plugins/datastore'
 import type { TrialPlus, CellPlus, TraitPlus, RemoteConfig } from '@/plugins/types/client'
-import { EventType, type Geography, type Measurement, type Trait } from '@/plugins/types/gridscore'
+import { EventType, TraitDataType, type Geography, type Measurement, type Trait } from '@/plugins/types/gridscore'
 import { GERMINATE_EXPECTED_COLUMNS, safeTrialName, TABULAR_EXPECTED_COLUMNS, toGerminateDataType, toLocalDateString, toLocalDateTimeString } from '@/plugins/util'
 import { saveAs } from 'file-saver'
 import { i18n } from '@/plugins/vuetify'
@@ -241,6 +241,8 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
         dateArray.forEach(date => {
           trial.traits.forEach(t => {
             const td = v.measurements[t.id || '']
+            const restrictions = t.restrictions
+            const categories = restrictions ? restrictions.categories : undefined
 
             if (td) {
               const onDate = td.filter(dp => dp.timestamp.split('T')[0] === date).reduce((a: (string | undefined)[], b: Measurement) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
@@ -248,10 +250,18 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
               if (onDate.length > 0) {
                 let values
                 const last: string | undefined = onDate[onDate.length - 1]
-                if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range') {
+                if (TraitDataType.isNumeric(t.dataType)) {
                   values = `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
-                } else if (t.dataType === 'categorical' && t.restrictions && t.restrictions.categories && last !== undefined) {
-                  values = `\t${t.restrictions.categories[+last]}`
+                } else if (t.dataType === TraitDataType.categorical && restrictions && categories && last !== undefined) {
+                  values = `\t${categories[+last]}`
+                } else if (t.dataType === TraitDataType.multicat && restrictions && categories && last !== undefined) {
+                  const parts = last.split(':')
+
+                  if (parts.length > 0) {
+                    values = `\t${categories[+(parts[-1] || '')]}`
+                  } else {
+                    values = `\t`
+                  }
                 } else {
                   values = `\t${onDate[onDate.length - 1]}`
                 }
@@ -284,6 +294,8 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
 
         trial.traits.forEach(t => {
           const td = v.measurements[t.id || '']
+          const restrictions = t.restrictions
+          const categories = restrictions ? restrictions.categories : undefined
 
           if (td) {
             td.forEach(dp => {
@@ -299,22 +311,32 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
 
               if (values && values.length > 0) {
                 values.forEach(val => {
-                  result += `\n${germplasmMeta}\t${val.index + 1}\t${useTimestamps ? toLocalDateTimeString(dp.timestamp, { overallSeparator: ' ', dateSeparator: '-', timeSeparator: ':' }) : dp.timestamp.split('T')[0]}`
+                  let values: (string | undefined)[] = []
 
-                  if (v.geography) {
-                    result += getLatLngAverage(v.geography)
+                  if (t.dataType === TraitDataType.multicat) {
+                    values = val.value !== undefined ? val.value.split(':') : []
                   } else {
-                    result += '\t\t'
+                    values = [val.value]
                   }
 
-                  result += `\t${t.name}\t${(t.dataType === 'categorical' && t.restrictions && t.restrictions.categories && val.value !== undefined) ? t.restrictions.categories[+val.value] : val.value}`
+                  values.forEach(value => {
+                    result += `\n${germplasmMeta}\t${val.index + 1}\t${useTimestamps ? toLocalDateTimeString(dp.timestamp, { overallSeparator: ' ', dateSeparator: '-', timeSeparator: ':' }) : dp.timestamp.split('T')[0]}`
 
-                  if (includePeople && trial.people && trial.people.length > 0) {
-                    const person = trial.people.find(p => p.id === dp.personId)
-                    result += `\t${person ? person.name : ''}`
-                  } else {
-                    result += '\t'
-                  }
+                    if (v.geography) {
+                      result += getLatLngAverage(v.geography)
+                    } else {
+                      result += '\t\t'
+                    }
+
+                    result += `\t${t.name}\t${(TraitDataType.isCategorical(t.dataType) && restrictions && categories && value !== undefined) ? categories[+value] : value}`
+
+                    if (includePeople && trial.people && trial.people.length > 0) {
+                      const person = trial.people.find(p => p.id === dp.personId)
+                      result += `\t${person ? person.name : ''}`
+                    } else {
+                      result += '\t'
+                    }
+                  })
                 })
               }
             })
@@ -349,16 +371,20 @@ function trialsDataToMatrix (data: { [index: string]: CellPlus }, trial: TrialPl
 
           trial.traits.forEach(t => {
             const td = v.measurements[t.id || '']
+            const restrictions = t.restrictions
+            const categories = restrictions ? restrictions.categories : undefined
 
             if (td) {
               const onDate: (string | undefined)[] = td.filter(dp => dp.timestamp.split('T')[0] === date).reduce((a: (string | undefined)[], b: Measurement) => a.concat(b.values), []).filter(v => v !== undefined && v !== null) || []
 
               if (onDate.length > 0) {
                 const last: string | undefined = onDate[onDate.length - 1]
-                if (t.dataType === 'float' || t.dataType === 'int' || t.dataType === 'range') {
+                if (TraitDataType.isNumeric(t.dataType)) {
                   result += `\t${onDate.filter(val => val !== undefined).reduce((acc, val) => acc + (+val), 0) / onDate.length}`
-                } else if (t.dataType === 'categorical' && t.restrictions && t.restrictions.categories && last !== undefined) {
-                  result += `\t${t.restrictions.categories[+last]}`
+                } else if (t.dataType === TraitDataType.categorical && restrictions && categories && last !== undefined) {
+                  result += `\t${categories[+last]}`
+                } else if (t.dataType === TraitDataType.multicat && restrictions && categories && last !== undefined) {
+                  result += `\t${categories[+(last.split(':')[0] || '')]}`
                 } else {
                   result += `\t${onDate[onDate.length - 1]}`
                 }
@@ -389,6 +415,8 @@ function trialsDataToMatrix (data: { [index: string]: CellPlus }, trial: TrialPl
 
         trial.traits.forEach(t => {
           const td = v.measurements[t.id || '']
+          const restrictions = t.restrictions
+          const categories = restrictions ? restrictions.categories : undefined
 
           if (td) {
             td.forEach(dp => {
@@ -399,15 +427,30 @@ function trialsDataToMatrix (data: { [index: string]: CellPlus }, trial: TrialPl
 
               if (values && values.length > 0) {
                 values.forEach((val, setPosition) => {
-                  const value = (t.dataType === 'categorical' && t.restrictions && t.restrictions.categories && val !== undefined) ? t.restrictions.categories[+val] : val
+                  let values: (string | undefined)[] = []
+                  if (t.dataType === TraitDataType.categorical) {
+                    values = [(restrictions && categories && val !== undefined) ? categories[+val] : val]
+                  } else if (t.dataType === TraitDataType.multicat) {
+                    if (restrictions && categories && val !== undefined) {
+                      values = val.split(':').map(vv => categories[+vv])
+                    } else {
+                      values = [val]
+                    }
+                  } else {
+                    values = [val]
+                  }
 
-                  if (value !== undefined) {
-                    measurements.push({
-                      traitId: t.id || '',
-                      setPosition,
-                      date: dp.timestamp.split('T')[0] || '',
-                      value,
-                      geography: v.geography,
+                  if (values !== undefined) {
+                    values.forEach(value => {
+                      if (value !== undefined) {
+                        measurements.push({
+                          traitId: t.id || '',
+                          setPosition,
+                          date: dp.timestamp.split('T')[0] || '',
+                          value,
+                          geography: v.geography,
+                        })
+                      }
                     })
                   }
                 })

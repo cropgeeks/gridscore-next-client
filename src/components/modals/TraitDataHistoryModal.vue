@@ -1,6 +1,16 @@
 <template>
   <v-dialog v-model="dialog" max-width="min(90vw, 1024px)" scrollable>
     <v-card :title="$t('modalTitleTraitDataHistory')">
+      <v-banner class="pa-2" sticky style="z-index: 100;" color="error" lines="one" bg-color="error" density="compact" :icon="mdiAlert" v-if="dataOutsideRangeAccepted || !valid">
+        <span class="text-wrap">{{ $t('widgetDataInputOutOfBoundsDataWarning') }}</span>
+
+        <template #actions>
+          <v-btn-toggle color="error" density="compact" v-model="dataOutsideRangeAccepted">
+            <v-btn :value="true" :text="$t('genericConfirm')" :prepend-icon="dataOutsideRangeAccepted ? mdiCheckboxMarked : mdiCheckboxBlankOutline" />
+          </v-btn-toggle>
+        </template>
+      </v-banner>
+
       <v-list>
         <v-list-item><span v-html="$t('modalTextTraitDataHistory')" /></v-list-item>
         <template v-if="measurementsList && traitData">
@@ -19,6 +29,7 @@
                 :trait="trait"
                 :measurements="undefined"
                 :editable="editable && measurements.delete !== true"
+                :ref="(el) => (refs[`${trait.id}`] = el)"
               >
                 <v-chip size="small" label :prepend-icon="mdiCalendar" :text="new Date(measurements.timestamp).toLocaleString()" />
               </TraitInputSection>
@@ -45,8 +56,9 @@
         />
         <v-btn
           :text="$t(editable ? 'buttonSave' : 'buttonClose')"
+          :disabled="!valid"
           @click="validate"
-          color="primary"
+          :color="valid ? 'primary' : 'error'"
           variant="tonal"
         />
       </v-card-actions>
@@ -64,7 +76,7 @@
   import { changeTrialsData, type DataModification } from '@/plugins/idb'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiCalendar, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
+  import { mdiAlert, mdiCalendar, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
 
   const compProps = defineProps<{
     editable: boolean
@@ -73,13 +85,23 @@
     trait: TraitPlus
   }>()
 
+  const refs = ref<{ [index: string]: any }>({})
   const store = coreStore()
 
   const measurementsList = ref<HistoryMeasurement[]>([])
   const traitData = ref<TraitData[]>()
   const dialog = ref(false)
+  const dataOutsideRangeAccepted = ref(false)
+
+  const valid = computed(() => {
+    return Object.values(refs.value).every(r => r?.valid) || dataOutsideRangeAccepted.value
+  })
 
   function validate () {
+    if (valid.value === false) {
+      return
+    }
+
     // TODO
     const changes: TraitMeasurement[] = []
 
@@ -136,6 +158,7 @@
   }
 
   function show () {
+    dataOutsideRangeAccepted.value = false
     measurementsList.value = JSON.parse(JSON.stringify(compProps.cell.measurements[compProps.trait.id || ''] || []))
     traitData.value = measurementsList.value.map(m => {
       const td: TraitData = {}

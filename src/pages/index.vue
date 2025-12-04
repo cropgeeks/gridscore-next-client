@@ -7,7 +7,7 @@
 
           <p class="text-h5 my-3">{{ $t('pageHomeWelcome') }}</p>
 
-          <p class="text-subtitle-1 my-3">{{ $t('pageHomeWelcome') }}</p>
+          <p class="text-subtitle-1 my-3">{{ $t('pageHomeInstructions') }}</p>
         </v-card-text>
         <v-avatar
           class="ma-3"
