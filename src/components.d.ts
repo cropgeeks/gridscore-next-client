@@ -29,6 +29,7 @@ declare module 'vue' {
     DataEntryModal: typeof import('./components/modals/DataEntryModal.vue')['default']
     DataGrid: typeof import('./components/data/DataGrid.vue')['default']
     DataInputCloseModal: typeof import('./components/modals/DataInputCloseModal.vue')['default']
+    DataOutwithRangeBanner: typeof import('./components/util/DataOutwithRangeBanner.vue')['default']
     EventModal: typeof import('./components/modals/EventModal.vue')['default']
     FieldHubInputModal: typeof import('./components/modals/FieldHubInputModal.vue')['default']
     FieldLayoutHeatmap: typeof import('./components/chart/FieldLayoutHeatmap.vue')['default']

@@ -2,15 +2,7 @@
   <v-dialog v-model="dialog" max-width="min(90vw, 1024px)" scrollable>
     <v-card :title="$t('modalTitleTraitDataHistory')">
       <v-list>
-        <v-banner class="pa-2" sticky style="z-index: 100;" :color="dataOutsideRangeAccepted ? 'success' : 'error'" lines="one" :bg-color="dataOutsideRangeAccepted ? 'success' : 'error'" density="compact" :icon="dataOutsideRangeAccepted ? mdiCheckboxMarkedCircle : mdiAlert" v-if="dataOutsideRangeAccepted || !valid">
-          <span class="text-wrap">{{ $t('widgetDataInputOutOfBoundsDataWarning') }}</span>
-
-          <template #actions>
-            <v-btn-toggle density="compact" v-model="dataOutsideRangeAccepted">
-              <v-btn :value="true" :text="$t('genericConfirm')" :prepend-icon="dataOutsideRangeAccepted ? mdiCheckboxMarked : mdiCheckboxBlankOutline" />
-            </v-btn-toggle>
-          </template>
-        </v-banner>
+        <DataOutwithRangeBanner v-model:accepted="dataOutsideRangeAccepted" v-if="dataOutsideRangeAccepted || !valid" />
 
         <v-list-item><span v-html="$t('modalTextTraitDataHistory')" /></v-list-item>
         <template v-if="measurementsList && traitData">
@@ -76,7 +68,7 @@
   import { changeTrialsData, type DataModification } from '@/plugins/idb'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiAlert, mdiCalendar, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
+  import { mdiCalendar, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
 
   const compProps = defineProps<{
     editable: boolean

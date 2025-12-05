@@ -36,7 +36,7 @@
             :append-icon="cancelConfig.appendIcon"
             :color="cancelConfig.color"
             :disabled="cancelConfig.disabled"
-            variant="text"
+            variant="tonal"
             @click="onCancel"
           />
           <ResponsiveButton
@@ -45,7 +45,7 @@
             :append-icon="okConfig.appendIcon"
             :color="okConfig.color"
             :disabled="okConfig.disabled"
-            variant="text"
+            variant="tonal"
             @click="save()"
           />
         </v-toolbar-items>
@@ -55,15 +55,8 @@
         <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="recordingDate && isRecordingDateToday === false">
           <span class="text-wrap">{{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}</span>
         </v-banner>
-        <v-banner class="pa-2" sticky style="z-index: 100;" :color="dataOutsideRangeAccepted ? 'success' : 'error'" lines="one" :bg-color="dataOutsideRangeAccepted ? 'success' : 'error'" density="compact" :icon="dataOutsideRangeAccepted ? mdiCheckboxMarkedCircle : mdiAlert" v-if="hasData && !valid">
-          <span class="text-wrap">{{ $t('widgetDataInputOutOfBoundsDataWarning') }}</span>
 
-          <template #actions>
-            <v-btn-toggle density="compact" v-model="dataOutsideRangeAccepted">
-              <v-btn :value="true" :text="$t('genericConfirm')" :prepend-icon="dataOutsideRangeAccepted ? mdiCheckboxMarked : mdiCheckboxBlankOutline" />
-            </v-btn-toggle>
-          </template>
-        </v-banner>
+        <DataOutwithRangeBanner v-model:accepted="dataOutsideRangeAccepted" v-if="hasData && !valid" />
 
         <v-container :fluid="isGuidedWalk">
           <v-row v-if="guidedWalk">
@@ -212,7 +205,7 @@
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
-  import { mdiAlert, mdiCamera, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
+  import { mdiAlert, mdiCamera, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
 
   interface TraitGroup {
     name: string
