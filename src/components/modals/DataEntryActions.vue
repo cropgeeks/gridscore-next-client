@@ -71,6 +71,7 @@
       text: t('buttonPickRecordingDate'),
       size: 'small',
       variant: 'tonal',
+      color: recordingDate.value !== undefined ? 'warning' : undefined,
       prependIcon: mdiCalendar,
       disabled: !compProps.trial.editable,
       click: () => {

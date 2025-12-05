@@ -295,7 +295,7 @@
             <h4 class="mt-3">{{ $t('formLabelSettingsMainDisplayMode') }}</h4>
             <p>{{ $t('formDescriptionSettingsMainDisplayMode') }}</p>
 
-            <v-btn-toggle mandatory v-model="mainDisplayMode" variant="tonal" color="primary" class="d-flex">
+            <v-btn-toggle mandatory v-model="mainDisplayMode" variant="tonal" color="primary" class="d-flex" :disabled="performanceMode">
               <v-btn class="flex-grow-1" :value="MainDisplayMode.AUTO" :text="$t('buttonMainDisplayModeAuto')"><template #prepend><v-icon :icon="mdiViewModule" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeMainDisplayMode === MainDisplayMode.AUTO" /></template></v-btn>
               <v-btn class="flex-grow-1" :value="MainDisplayMode.CANVAS_ONLY" :text="$t('buttonMainDisplayModeCanvasOnly')"><template #prepend><v-icon :icon="mdiViewComfy" /></template><template #append><v-icon :icon="mdiCheck" v-if="store.storeMainDisplayMode === MainDisplayMode.CANVAS_ONLY" /></template></v-btn>
             </v-btn-toggle>

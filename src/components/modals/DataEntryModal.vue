@@ -55,11 +55,11 @@
         <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="recordingDate && isRecordingDateToday === false">
           <span class="text-wrap">{{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}</span>
         </v-banner>
-        <v-banner class="pa-2" sticky style="z-index: 100;" color="error" lines="one" bg-color="error" density="compact" :icon="mdiAlert" v-if="hasData && !valid">
+        <v-banner class="pa-2" sticky style="z-index: 100;" :color="dataOutsideRangeAccepted ? 'success' : 'error'" lines="one" :bg-color="dataOutsideRangeAccepted ? 'success' : 'error'" density="compact" :icon="dataOutsideRangeAccepted ? mdiCheckboxMarkedCircle : mdiAlert" v-if="hasData && !valid">
           <span class="text-wrap">{{ $t('widgetDataInputOutOfBoundsDataWarning') }}</span>
 
           <template #actions>
-            <v-btn-toggle color="error" density="compact" v-model="dataOutsideRangeAccepted">
+            <v-btn-toggle density="compact" v-model="dataOutsideRangeAccepted">
               <v-btn :value="true" :text="$t('genericConfirm')" :prepend-icon="dataOutsideRangeAccepted ? mdiCheckboxMarked : mdiCheckboxBlankOutline" />
             </v-btn-toggle>
           </template>
@@ -212,7 +212,7 @@
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
-  import { mdiAlert, mdiCamera, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
+  import { mdiAlert, mdiCamera, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
 
   interface TraitGroup {
     name: string
@@ -308,14 +308,14 @@
           return {
             title: t('buttonNext'),
             prependIcon: undefined,
-            color: valid.value ? 'primary' : 'error',
+            color: canSave.value ? 'primary' : 'error',
             appendIcon: mdiChevronRight,
             disabled: !canSave.value,
           }
         } else {
           return {
             title: t('buttonFinish'),
-            color: valid.value ? 'primary' : 'error',
+            color: canSave.value ? 'primary' : 'error',
             prependIcon: mdiNotebookCheck,
             appendIcon: undefined,
             disabled: !canSave.value,
@@ -324,7 +324,7 @@
       } else {
         return {
           title: t('buttonSave'),
-          color: valid.value ? 'primary' : 'error',
+          color: canSave.value ? 'primary' : 'error',
           prependIcon: mdiContentSave,
           appendIcon: undefined,
           disabled: !canSave.value,

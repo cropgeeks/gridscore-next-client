@@ -356,7 +356,7 @@
               person = compProps.people.find(p => p.id === last.personId)
             }
 
-            return t(person ? 'widgetTraitInputPreviousMeasuresTakenBy' : 'widgetTraitInputPreviousMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: compProps.trait.color, by: person?.name })
+            return t(person ? 'widgetTraitInputPreviousMeasuresTakenBy' : 'widgetTraitInputPreviousMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v || 'N/A', color: compProps.trait.color, by: person?.name })
           })[compProps.setIndex || 0]
         } else {
           return values.map(v => {
@@ -365,7 +365,7 @@
               person = compProps.people.find(p => p.id === last.personId)
             }
 
-            return t(person ? 'widgetTraitInputCurrentMeasuresTakenBy' : 'widgetTraitInputCurrentMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v, color: compProps.trait.color, by: person?.name })
+            return t(person ? 'widgetTraitInputCurrentMeasuresTakenBy' : 'widgetTraitInputCurrentMeasures', { date: new Date(last.timestamp).toLocaleDateString(), values: v || 'N/A', color: compProps.trait.color, by: person?.name })
           })[compProps.setIndex || 0]
         }
       }
