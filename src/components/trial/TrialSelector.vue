@@ -141,7 +141,7 @@
         </template>
 
         <template #footer="{ pageCount }">
-          <v-pagination v-model="page" :length="pageCount" />
+          <v-pagination v-model="page" :length="pageCount" v-if="pageCount > 1" />
         </template>
       </v-data-iterator>
     </v-card-text>

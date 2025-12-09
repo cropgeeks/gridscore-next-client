@@ -1,20 +1,36 @@
 <template>
-  <v-textarea v-model="model" :label="label" :hint="hint" :persistent-hint="hint !== undefined && hint !== ''" v-if="textarea">
+  <v-textarea v-model="model" :clearable="clearable" :label="label" :hint="hint" :persistent-hint="hint !== undefined && hint !== ''" v-if="textarea">
     <template #append-inner>
-      <v-btn :icon="mdiQrcodeScan" v-tooltip:top="localTooltip" @click="showCamera = !showCamera" />
+      <v-btn :icon="mdiQrcodeScan" v-tooltip:top="localTooltip" @click="toggleCamera" />
     </template>
   </v-textarea>
-  <v-text-field v-model="model" :label="label" :hint="hint" :persistent-hint="hint !== undefined && hint !== ''" v-else>
+  <v-text-field v-model="model" :clearable="clearable" :label="label" :hint="hint" :persistent-hint="hint !== undefined && hint !== ''" v-else>
     <template #append>
-      <v-btn :icon="mdiQrcodeScan" v-tooltip:top="localTooltip" @click="showCamera = !showCamera" />
+      <v-btn :icon="mdiQrcodeScan" v-tooltip:top="localTooltip" @click="toggleCamera" />
     </template>
   </v-text-field>
 
-  <QrcodeStream
-    v-if="showCamera"
-    :formats="formats"
-    @detect="onDetect"
-  />
+  <v-bottom-sheet
+    v-if="scanInBottomSheet"
+    v-model="bottomSheetVisible"
+    inset
+    max-height="75vh"
+  >
+    <v-sheet>
+      <QrcodeStream
+        v-if="showCamera"
+        :formats="formats"
+        @detect="onDetect"
+      />
+    </v-sheet>
+  </v-bottom-sheet>
+  <template v-else>
+    <QrcodeStream
+      v-if="showCamera"
+      :formats="formats"
+      @detect="onDetect"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -27,20 +43,36 @@
   export interface QRScanInputProps {
     label: string
     hint?: string
+    clearable?: boolean
     tooltip?: string
     textarea?: boolean
     formats?: BarcodeFormat[]
+    scanInBottomSheet?: boolean
   }
 
   const model = defineModel<string>()
 
   const showCamera = ref(false)
   const localTooltip = computed(() => compProps.tooltip || t('buttonScanQR'))
+  const bottomSheetVisible = ref(false)
 
   const compProps = withDefaults(defineProps<QRScanInputProps>(), {
     textarea: false,
     formats: () => ['qr_code'],
+    scanInBottomSheet: false,
   })
+
+  function toggleCamera () {
+    if (compProps.scanInBottomSheet) {
+      bottomSheetVisible.value = true
+
+      nextTick(() => {
+        showCamera.value = !showCamera.value
+      })
+    } else {
+      showCamera.value = !showCamera.value
+    }
+  }
 
   function onDetect (detectedCodes: DetectedBarcode[]) {
     if (detectedCodes && detectedCodes.length > 0) {
@@ -57,11 +89,16 @@
           model.value = c
         }
         showCamera.value = false
+        bottomSheetVisible.value = false
 
         nextTick(() => emit('code-scanned'))
       }
     }
   }
+
+  watch(bottomSheetVisible, async () => {
+    showCamera.value = false
+  })
 
   const emit = defineEmits(['code-scanned'])
 </script>

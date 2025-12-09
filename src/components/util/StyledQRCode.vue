@@ -25,11 +25,13 @@
     text: string
     showCode?: boolean
     isTrialCode?: boolean
+    size?: number
   }
 
   const compProps = withDefaults(defineProps<StyledQRCodeProps>(), {
     isTrialCode: true,
     showCode: true,
+    size: 300,
   })
 
   const code = computed(() => {
@@ -77,8 +79,8 @@
         if (!codeWriter) {
           codeWriter = new QRCodeStyling({
             margin: store.storeIsDarkMode ? 20 : 0,
-            width: 300,
-            height: 300,
+            width: compProps.size,
+            height: compProps.size,
             data: code.value,
             // type: 'svg', // We don't use the SVG option, because we want people to be able to right-click and copy QR codes.
             dotsOptions: {

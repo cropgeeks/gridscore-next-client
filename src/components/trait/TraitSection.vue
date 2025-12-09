@@ -24,7 +24,7 @@
     </template>
     <template #subtitle v-if="showSubtitle && (trait.description || (trait.restrictions && (trait.restrictions.min !== undefined || trait.restrictions.max !== undefined)) || trait.timeframe)">
       <div class="d-flex flex-column">
-        <div :class="store.storeShowFullTraitDescription ? 'text-wrap' : undefined" v-if="trait.description">{{ trait.description }}</div>
+        <div :class="store.storeShowFullTraitDescription ? 'text-wrap' : 'text-clamp-1'" v-if="trait.description">{{ trait.description }}</div>
         <v-chip-group v-if="trait.restrictions || trait.timeframe">
           <v-chip label size="x-small" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)" :prepend-icon="mdiGreaterThanOrEqual" :text="trait.restrictions.min" />
           <v-chip label size="x-small" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)" :prepend-icon="mdiLessThanOrEqual" :text="trait.restrictions.max" />

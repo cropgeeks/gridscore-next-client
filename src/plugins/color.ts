@@ -99,7 +99,13 @@ const categoricalColors = {
   HighlightDark: ['#001C7F', '#B1400D', '#12711C', '#8C0800', '#591E71', '#592F0D', '#A23582', '#3C3C3C', '#B8850A', '#006374'],
 }
 
-const THEME_COLORS = ['#00a0f1', '#5ec418', '#910080', '#ff7c00', '#c5e000']
+const THEME_COLORS = [
+  { hex: '#00a0f1', name: 'Irrigation Blue' },
+  { hex: '#5ec418', name: 'Vigor Green' },
+  { hex: '#910080', name: 'Berry Magenta' },
+  { hex: '#ff7c00', name: 'Stress Amber' },
+  { hex: '#c5e000', name: 'Emergence Lime' },
+]
 
 function validateColorName (color: string) {
   const style = new Option().style

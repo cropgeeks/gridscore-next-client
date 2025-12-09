@@ -1,6 +1,18 @@
 <template>
   <v-container>
-    <h1 class="text-h4 mb-3">{{ $t('pageSettingsTitle') }}</h1>
+    <div class="d-flex flex-wrap justify-space-between">
+      <h1 class="text-h4 mb-3">{{ $t('pageSettingsTitle') }}</h1>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn v-bind="props" :text="$t('buttonImportExport')" :prepend-icon="mdiShare" />
+        </template>
+
+        <v-list>
+          <v-list-item :title="$t('tabTitleSettingsShareExport')" :prepend-icon="mdiExport" @click="share('export')" />
+          <v-list-item :title="$t('tabTitleSettingsShareImport')" :prepend-icon="mdiImport" @click="share('import')" />
+        </v-list>
+      </v-menu>
+    </div>
     <v-divider class="mb-3" />
     <p>{{ $t('pageSettingsText') }}</p>
 
@@ -17,8 +29,8 @@
 
             <v-row>
               <v-col v-for="color in THEME_COLORS" :key="`theme-color-${color}`">
-                <v-sheet v-ripple height="75" rounded class="theme-color d-flex justify-center align-center pa-4" :color="color" :border="store.storeThemeColor === color ? 'lg' : undefined" @click="store.setThemeColor(color)">
-                  {{ color }}
+                <v-sheet v-ripple height="75" rounded class="theme-color d-flex justify-center align-center text-center pa-4" :color="color.hex" :border="store.storeThemeColor === color.hex ? 'lg' : undefined" @click="store.setThemeColor(color.hex)">
+                  {{ color.name }}
                 </v-sheet>
               </v-col>
             </v-row>
@@ -144,6 +156,28 @@
               color="primary"
               v-model="autoProgressInputs"
             />
+
+            <div class="mt-3">
+              <QRScanInput
+                v-model="enterBarcode"
+                clearable
+                :label="$t('formLabelSettingsEnterBarcode')"
+                :hint="$t('formDescriptionSettingsEnterBarcode')"
+                :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e', 'ean_13']"
+                :tooltip="$t('tooltipScanQRCode')"
+                scan-in-bottom-sheet
+              />
+
+              <QRScanInput
+                v-model="escapeBarcode"
+                clearable
+                :label="$t('formLabelSettingsEscapeBarcode')"
+                :hint="$t('formDescriptionSettingsEscapeBarcode')"
+                :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e', 'ean_13']"
+                :tooltip="$t('tooltipScanQRCode')"
+                scan-in-bottom-sheet
+              />
+            </div>
           </template>
         </v-card>
       </v-col>
@@ -303,6 +337,23 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-bottom-sheet
+      v-model="shareBottomSheetVisible"
+      inset
+      scrollable
+      max-height="75vh"
+    >
+      <v-card
+        :title="$t(shareConfig === 'export' ? 'tabTitleSettingsShareExport' : 'tabTitleSettingsShareImport')"
+      >
+        <template #subtitle><span class="text-wrap">{{ $t(shareConfig === 'export' ? 'tabTextSettingsShareExport' : 'tabTextSettingsShareImport') }}</span></template>
+
+        <template #text>
+          <SettingsShareContent :share-config="shareConfig" v-if="shareConfig" @data-changed="update" />
+        </template>
+      </v-card>
+    </v-bottom-sheet>
   </v-container>
 </template>
 
@@ -311,11 +362,14 @@
   import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
-  import { mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDesktopTowerMonitor, mdiGestureTap, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDesktopTowerMonitor, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const store = coreStore()
   const { t } = useI18n()
+
+  const shareBottomSheetVisible = ref(false)
+  const shareConfig = ref<'import' | 'export' | undefined>()
 
   const performanceMode = ref<boolean>(store.storePerformanceMode)
   const locale = ref<string>(store.storeLocale)
@@ -340,6 +394,8 @@
   const autoProgressInputs = ref(store.storeAutoProgressInputs)
   const voiceFeedbackEnabled = ref(store.storeVoiceFeedbackEnabled)
   const categoryCountInline = ref(store.storeCategoryCountInline)
+  const enterBarcode = ref(store.storeEnterBarcode)
+  const escapeBarcode = ref(store.escapeBarcode)
 
   const isSquare = computed(() => store.storeCanvasShape === CanvasShape.SQUARE)
 
@@ -359,6 +415,40 @@
     }]
   })
 
+  function update () {
+    performanceMode.value = store.storePerformanceMode
+    locale.value = store.storeLocale
+    theme.value = store.storeTheme
+    canvasShape.value = store.storeCanvasShape
+    canvasSize.value = store.storeCanvasSize
+    canvasDensity.value = store.storeCanvasDensity
+    mainDisplayMode.value = store.storeMainDisplayMode
+    traitColors.value = store.storeTraitColors || []
+    currentTraitColor.value = '#000000'
+    currentTraitIndex.value = undefined
+    gpsEnabled.value = store.storeGpsEnabled
+    navigationMode.value = store.storeNavigationMode
+    displayMarkerIndicators.value = store.storeDisplayMarkerIndicators
+    showFullTraitDescription.value = store.storeShowFullTraitDescription
+    largeButtonsForIntTraits.value = store.storeLargeButtonsForIntTraits
+    displayMinCellWidth.value = store.storeDisplayMinCellWidth
+    plotDisplayField.value = store.storePlotDisplayField
+    autoSelectSearch.value = store.storeAutoSelectSearch
+    autoSelectFirstInput.value = store.storeAutoSelectFirstInput
+    hideHelpInformation.value = store.storeHideHelpInformation
+    autoProgressInputs.value = store.storeAutoProgressInputs
+    voiceFeedbackEnabled.value = store.storeVoiceFeedbackEnabled
+    categoryCountInline.value = store.storeCategoryCountInline
+    enterBarcode.value = store.storeEnterBarcode
+    escapeBarcode.value = store.storeEscapeBarcode
+
+    shareBottomSheetVisible.value = false
+  }
+
+  function share (config: 'import' | 'export') {
+    shareConfig.value = config
+    shareBottomSheetVisible.value = true
+  }
   function deleteColor (index: number) {
     traitColors.value.splice(index, 1)
     currentTraitIndex.value = undefined
@@ -405,6 +495,8 @@
   watch(autoProgressInputs, async newValue => store.setAutoProgressInputs(newValue))
   watch(voiceFeedbackEnabled, async newValue => store.setVoiceFeedbackEnabled(newValue))
   watch(hideHelpInformation, async newValue => store.setHideHelpInformation(newValue))
+  watch(enterBarcode, async newValue => store.setEnterBarcode(newValue))
+  watch(escapeBarcode, async newValue => store.setEscapeBarcode(newValue))
   watch(performanceMode, async newValue => {
     store.setPerformanceMode(newValue)
     window.location.reload()

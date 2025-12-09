@@ -449,6 +449,14 @@ ol:not([class]) li:not([class])
   flex: unset;
 }
 
+.text-clamp-1 {
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .no-select {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */

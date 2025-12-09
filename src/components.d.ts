@@ -62,6 +62,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     RowHeader: typeof import('./components/data/RowHeader.vue')['default']
     SearchResultModal: typeof import('./components/modals/SearchResultModal.vue')['default']
+    SettingsShareContent: typeof import('./components/util/SettingsShareContent.vue')['default']
     SpeechRecognitionTextarea: typeof import('./components/inputs/SpeechRecognitionTextarea.vue')['default']
     StatsChart: typeof import('./components/chart/StatsChart.vue')['default']
     StyledQRCode: typeof import('./components/util/StyledQRCode.vue')['default']

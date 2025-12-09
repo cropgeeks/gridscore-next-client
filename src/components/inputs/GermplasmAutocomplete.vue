@@ -48,11 +48,13 @@
       inset
       max-height="75vh"
     >
-      <QrcodeStream
-        v-if="showCamera"
-        :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
-        @detect="onDetect"
-      />
+      <v-sheet>
+        <QrcodeStream
+          v-if="showCamera"
+          :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
+          @detect="onDetect"
+        />
+      </v-sheet>
     </v-bottom-sheet>
     <template v-else>
       <QrcodeStream
@@ -148,6 +150,7 @@
         setMatch(c)
 
         showCamera.value = false
+        bottomSheetVisible.value = false
       }
     }
   }

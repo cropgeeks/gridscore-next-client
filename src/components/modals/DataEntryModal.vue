@@ -206,6 +206,7 @@
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
   import { mdiAlert, mdiCamera, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
+  import { KeySequenceListener } from '@/plugins/types/KeySequenceListener'
 
   interface TraitGroup {
     name: string
@@ -252,6 +253,8 @@
   const cellIndex = ref<number>(0)
   const guidedWalk = ref<GuidedWalk>()
   const dataOutsideRangeAccepted = ref(false)
+
+  let keyListener: KeySequenceListener | undefined
 
   const historyTrait = ref<TraitPlus>()
 
@@ -431,6 +434,26 @@
 
     nextTick(() => traitDataHistoryModal.value?.show())
   }
+
+  watch(dialog, async newValue => {
+    if (newValue) {
+      // Listen to escape and enter barcodes/inputl
+      if (store.storeEscapeBarcode || store.storeEnterBarcode) {
+        keyListener = new KeySequenceListener(store.storeEnterBarcode, store.storeEscapeBarcode)
+        keyListener.escape = () => {
+          nextTick(() => onCancel())
+        }
+        keyListener.enter = () => {
+          if (canSave.value) {
+            nextTick(() => save())
+          }
+        }
+      }
+    } else {
+      keyListener?.destroy()
+      keyListener = undefined
+    }
+  })
 
   watch(traitsByGroup, async newValue => {
     expandedTraitGroups.value = newValue ? Object.keys(newValue).map((v, index) => index) : []

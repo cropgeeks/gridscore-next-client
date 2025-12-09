@@ -32,7 +32,7 @@ export const coreStore = defineStore('core', {
     rippleEnabled: true,
     transitionsEnabled: 'yes' as 'yes' | 'no',
     mediaMode: undefined as 'image' | 'video' | undefined,
-    themeColor: THEME_COLORS[0] as string,
+    themeColor: ((THEME_COLORS && THEME_COLORS[0]) ? THEME_COLORS[0].hex : '#00a0f1') as string,
     uniqueClientId: null as (string | null),
     runCount: 0,
     serverUrl: null as (string | null),
@@ -67,8 +67,8 @@ export const coreStore = defineStore('core', {
     hideTraitCircles: true,
     hiddenTraits: [] as string[],
     showFullTraitDescription: true,
-    escapeBarcode: null as (string | null),
-    enterBarcode: null as (string | null),
+    escapeBarcode: undefined as (string | undefined),
+    enterBarcode: undefined as (string | undefined),
     autoSelectSearch: false,
     autoSelectFirstInput: true,
     autoProgressInputs: true,
@@ -114,8 +114,8 @@ export const coreStore = defineStore('core', {
     storeHomeWidgetOrder: (state): string[] => state.homeWidgetOrder,
     storePlotDisplayField: (state): PlotDisplayField => state.plotDisplayField,
     storeSelectedTrialPerson: (state): string | undefined => state.selectedTrialPerson,
-    storeEscapeBarcode: (state): string | null => state.escapeBarcode,
-    storeEnterBarcode: (state): string | null => state.enterBarcode,
+    storeEscapeBarcode: (state): string | undefined => state.escapeBarcode,
+    storeEnterBarcode: (state): string | undefined => state.enterBarcode,
     storeAutoSelectSearch: (state): boolean => state.autoSelectSearch,
     storeAutoSelectFirstInput: (state): boolean => state.autoSelectFirstInput,
     storeAutoProgressInputs: (state): boolean => state.autoProgressInputs,
@@ -177,10 +177,10 @@ export const coreStore = defineStore('core', {
     setSelectedTrialPerson (newSelectedTrialPerson: string | undefined) {
       this.selectedTrialPerson = newSelectedTrialPerson
     },
-    setEscapeBarcode (newEscapeBarcode: string | null) {
+    setEscapeBarcode (newEscapeBarcode: string | undefined) {
       this.escapeBarcode = newEscapeBarcode
     },
-    setEnterBarcode (newEnterBarcode: string | null) {
+    setEnterBarcode (newEnterBarcode: string | undefined) {
       this.enterBarcode = newEnterBarcode
     },
     setAutoSelectSearch (newAutoSelectSearch: boolean) {

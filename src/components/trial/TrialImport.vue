@@ -33,6 +33,7 @@
           :label="$t('formLabelTrialImportCode')"
           :hint="$t('formDescriptionTrialImportCode')"
           :tooltip="$t('buttonScanQR')"
+          scan-in-bottom-sheet
           @code-scanned="getTrial"
         />
 
