@@ -1,9 +1,9 @@
 export class KeySequenceListener {
-  enterSequence: string | null
-  escapeSequence: string | null
+  enterSequence: string | undefined
+  escapeSequence: string | undefined
   currentSequence = ''
 
-  constructor (enterSequence: string | null, escapeSequence: string | null) {
+  constructor (enterSequence: string | undefined, escapeSequence: string | undefined) {
     this.enterSequence = enterSequence
     this.escapeSequence = escapeSequence
 

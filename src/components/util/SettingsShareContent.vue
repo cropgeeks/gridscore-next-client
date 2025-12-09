@@ -155,7 +155,7 @@
             store.setPlotDisplayField(parsed.df)
           }
           if (parsed.tc) {
-            const traitColors = parsed.tc.split(',').map(c => `#${c}`)
+            const traitColors = parsed.tc.split(',').map((c: string) => `#${c}`)
             store.setTraitColors(traitColors)
           }
 
