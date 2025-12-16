@@ -113,6 +113,7 @@ async function init () {
   emitter.on('plot-comments-changed', updateCellCache)
   emitter.on('trial-properties-changed', updateTrialInformation)
   emitter.on('plot-marked-changed', updateCellCache)
+  emitter.on('plot-locked-changed', updateCellCache)
   emitter.on('plot-data-changed', updateCellCache)
 
   if (coreStore().storeSelectedTrial) {

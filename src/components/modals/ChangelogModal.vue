@@ -176,7 +176,7 @@
 <style>
 .changelog-list-item .v-list-item-subtitle {
   white-space: normal !important;
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
 }
 </style>

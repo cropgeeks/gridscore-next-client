@@ -5,10 +5,10 @@
     scrollable
     fullscreen
     :transition="store.storePerformanceMode ? false : 'dialog-bottom-transition'"
-    @after-enter="autofocusFirst"
+    @after-enter="onModalShown"
     v-if="cell"
   >
-    <v-card>
+    <v-card v-if="modalShown">
       <v-toolbar>
         <v-btn
           :icon="mdiClose"
@@ -52,6 +52,10 @@
       </v-toolbar>
 
       <v-card-text class="pa-0">
+        <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="cell.isLocked === true">
+          <span class="text-wrap">{{ $t('widgetDataInputLockedWarning') }}</span>
+        </v-banner>
+
         <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="recordingDate && isRecordingDateToday === false">
           <span class="text-wrap">{{ $t('modalTextNotTodayWarning', { date: recordingDate.toLocaleDateString() }) }}</span>
         </v-banner>
@@ -119,7 +123,54 @@
                     {{ group.name }} <v-badge inline :content="getNumberWithSuffix(group.traits.length, 1)" />
                   </template>
                   <template #text>
+                    <DynamicScroller
+                      v-if="group.traits.length > 20"
+                      :items="group.traits"
+                      :min-item-size="100"
+                      key-field="id"
+                      class="scrolled-content"
+                    >
+                      <template #default="{ item, index, active }">
+                        <DynamicScrollerItem
+                          :item="item"
+                          :active="active"
+                          :size-dependencies="[
+                            item.message,
+                          ]"
+                          :data-index="index"
+                        >
+                          <TraitInputSection
+                            v-model="cellData[item.id || '']"
+                            v-if="cellData[item.id || '']"
+                            :trait="item"
+                            :editable="isEditable || false"
+                            :measurements="cell.measurements[item.id || '']"
+                            :people="trial.people"
+                            @traverse="(setIndex: number) => traverse(item, index, group.traits, setIndex)"
+                            :ref="(el) => (refs[`${item.id}`] = el)"
+                            @valid-changed="v => setValid(item.id || '', v)"
+                          >
+                            <v-btn
+                              :icon="mdiHistory"
+                              size="small"
+                              class="mb-1"
+                              :disabled="!hasHistoricData[item.id || '']"
+                              v-tooltip:top="$t('tooltipViewTraitDataHistory')"
+                              @click="showHistory(item)"
+                            />
+                            <v-btn
+                              :icon="mdiCamera"
+                              size="small"
+                              class="mb-1"
+                              v-tooltip:top="$t('buttonTagPhoto')"
+                              @click="emitter.emit('tag-media', cell.row || 0, cell.column || 0, 'image', [item.id || ''])"
+                            />
+                          </TraitInputSection>
+                        </DynamicScrollerItem>
+                      </template>
+                    </DynamicScroller>
                     <template
+                      v-else
                       v-for="(trait, traitIndex) in group.traits"
                       :key="`trait-group-${group.name}-trait-${trait.id}`"
                     >
@@ -127,11 +178,12 @@
                         v-model="cellData[trait.id || '']"
                         v-if="cellData[trait.id || '']"
                         :trait="trait"
-                        :editable="trial.editable || false"
+                        :editable="isEditable || false"
                         :measurements="cell.measurements[trait.id || '']"
                         :people="trial.people"
                         @traverse="(setIndex: number) => traverse(trait, traitIndex, group.traits, setIndex)"
                         :ref="(el) => (refs[`${trait.id}`] = el)"
+                        @valid-changed="v => setValid(trait.id || '', v)"
                       >
                         <v-btn
                           :icon="mdiHistory"
@@ -175,7 +227,7 @@
       :trial="trial"
       :trait="historyTrait"
       :cell="cell"
-      :editable="trial.editable || false"
+      :editable="isEditable || false"
       ref="traitDataHistoryModal"
       v-if="historyTrait"
     />
@@ -189,6 +241,9 @@
 </template>
 
 <script setup lang="ts">
+  import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+  import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
   import { changeTrialsData, getCell, getTrialValidPlots, type DataModification } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
@@ -247,6 +302,7 @@
   const store = coreStore()
 
   const dialog = ref(false)
+  const modalShown = ref(false)
   const cell = ref<CellPlus>()
   const cellData = ref<CellData>({})
   const recordingDate = ref<Date>()
@@ -259,6 +315,7 @@
   const historyTrait = ref<TraitPlus>()
 
   const refs = ref<{ [index: string]: any }>({})
+  const itemsValid = ref<{ [index: string]: boolean }>({})
 
   const expandedTraitGroups = ref<number[]>([])
 
@@ -298,39 +355,29 @@
   })
 
   const okConfig = computed(() => {
-    if (compProps.trial.editable) {
-      if (isGuidedWalk.value && guidedWalk.value) {
-        if (guidedWalk.value.index < guidedWalk.value.order.length - 1) {
-          return {
-            title: t('buttonNext'),
-            prependIcon: undefined,
-            color: canSave.value ? 'primary' : 'error',
-            appendIcon: mdiChevronRight,
-            disabled: !canSave.value,
-          }
-        } else {
-          return {
-            title: t('buttonFinish'),
-            color: canSave.value ? 'primary' : 'error',
-            prependIcon: mdiNotebookCheck,
-            appendIcon: undefined,
-            disabled: !canSave.value,
-          }
+    if (isGuidedWalk.value && guidedWalk.value) {
+      if (guidedWalk.value.index < guidedWalk.value.order.length - 1) {
+        return {
+          title: t('buttonNext'),
+          prependIcon: undefined,
+          color: canSave.value ? 'primary' : 'error',
+          appendIcon: mdiChevronRight,
+          disabled: !canSave.value,
         }
       } else {
         return {
-          title: t('buttonSave'),
+          title: t('buttonFinish'),
           color: canSave.value ? 'primary' : 'error',
-          prependIcon: mdiContentSave,
+          prependIcon: mdiNotebookCheck,
           appendIcon: undefined,
           disabled: !canSave.value,
         }
       }
     } else {
       return {
-        title: t('buttonClose'),
-        color: undefined,
-        prependIcon: mdiCancel,
+        title: t(isEditable.value ? 'buttonSave' : 'buttonClose'),
+        color: canSave.value ? 'primary' : 'error',
+        prependIcon: mdiContentSave,
         appendIcon: undefined,
         disabled: !canSave.value,
       }
@@ -352,6 +399,8 @@
       lg: 12,
     }
   })
+
+  const isEditable = computed(() => compProps.trial.isLocked !== true && compProps.trial.editable === true && cell.value?.isLocked !== true)
 
   const hasData = computed(() => Object.values(cellData.value).some(cd => Object.values(cd).some(td => td !== undefined && td !== null)))
 
@@ -382,7 +431,7 @@
   })
 
   const valid = computed(() => {
-    return Object.values(refs.value).every(r => r?.valid)
+    return Object.values(itemsValid.value).every(v => v === true)
   })
 
   const traitsByGroup = computed(() => {
@@ -421,6 +470,10 @@
     return groups
   })
 
+  function setValid (traitId: string, valid: boolean) {
+    itemsValid.value[traitId] = valid
+  }
+
   function onCancel () {
     if (isGuidedWalk.value) {
       save(-1)
@@ -437,8 +490,8 @@
 
   watch(dialog, async newValue => {
     if (newValue) {
-      // Listen to escape and enter barcodes/inputl
-      if (store.storeEscapeBarcode || store.storeEnterBarcode) {
+      // Listen to escape and enter barcodes/input
+      if (compProps.trial && isEditable.value && (store.storeEscapeBarcode || store.storeEnterBarcode)) {
         keyListener = new KeySequenceListener(store.storeEnterBarcode, store.storeEscapeBarcode)
         keyListener.escape = () => {
           nextTick(() => onCancel())
@@ -503,7 +556,7 @@
   })
 
   function confirmClose () {
-    if (!compProps.trial.editable) {
+    if (!isEditable.value) {
       hide()
     } else {
       if (isGuidedWalk.value) {
@@ -529,9 +582,18 @@
       return
     }
 
+    if (!isEditable.value) {
+      if (guidedWalk.value) {
+        handleGuidedWalkStep(delta)
+      } else {
+        hide()
+      }
+      return
+    }
+
     // TODO
     const c = cell.value
-    if (!compProps.trial.editable || !c) {
+    if (!isEditable.value || !c) {
       hide()
       return
     }
@@ -687,6 +749,12 @@
     }
   }
 
+  function onModalShown () {
+    modalShown.value = true
+
+    nextTick(() => autofocusFirst())
+  }
+
   function autofocusFirst () {
     if (store.storeAutoSelectFirstInput && traitsByGroup.value && traitsByGroup.value.length > 0) {
       nextTick(() => {
@@ -703,9 +771,11 @@
   function show (row?: number, column?: number) {
     dataOutsideRangeAccepted.value = false
     cellData.value = {}
+    itemsValid.value = {}
 
     compProps.trial.traits.forEach(t => {
       cellData.value[t.id || ''] = {}
+      itemsValid.value[t.id || ''] = true
     })
 
     if (row !== undefined && column !== undefined) {
@@ -722,6 +792,7 @@
   }
   function hide () {
     dialog.value = false
+    modalShown.value = false
     emit('hide')
   }
 
@@ -748,3 +819,9 @@
     hide,
   })
 </script>
+
+<style scoped>
+  .scrolled-content {
+    max-height: 80vh;
+  }
+</style>

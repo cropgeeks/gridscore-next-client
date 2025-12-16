@@ -345,8 +345,8 @@ function getLegacyTrialByCode (remoteUrl: string, shareCode: string) {
   return axiosCall({ baseUrl: remoteUrl, url: `config/${shareCode}`, method: 'get' })
 }
 
-function synchronizeTrial (remoteConfig: RemoteConfig | undefined, shareCode: string, transactions?: Transaction) {
-  return axiosCall<TrialPlus>({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trial/${shareCode}/transaction`, params: transactions, method: 'post' })
+function synchronizeTrial (remoteConfig: RemoteConfig | undefined, shareCode: string, transactions?: Transaction, lockOverride?: boolean) {
+  return axiosCall<TrialPlus>({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trial/${shareCode}/transaction${lockOverride ? '?lock-override=true' : ''}`, params: transactions, method: 'post' })
 }
 
 function exportToGerminate (remoteConfig: RemoteConfig | undefined, shareCode: string, aggregate = true) {

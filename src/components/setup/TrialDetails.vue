@@ -173,7 +173,7 @@
       usedMediaFilenameChips.value = (model.value.mediaFilenameFormat || []).map(p => mediaFilenameParts.find(op => op.id === p)).filter(p => p !== undefined)
       unusedMediaFilenameChips.value = mediaFilenameParts.filter(p => !usedMediaFilenameChips.value.some(op => op.id === p.id))
       group.value = model.value.group?.name
-      peopleCutoffIndex.value = (model.value.people || []).length
+      peopleCutoffIndex.value = (compProps.isClone || !compProps.isEdit) ? 0 : (model.value.people || []).length
     }
   })
 

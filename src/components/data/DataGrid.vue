@@ -62,24 +62,25 @@
               :style="getStyle(cell)"
             >
               <template v-if="cell">
-                <v-icon :icon="mdiBookmark" class="grid-icon bookmark" v-if="cell.isMarked" />
-                <v-icon :icon="mdiMessageText" class="mdi-flip-h grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
-                <v-icon :icon="mdiCheckboxMarked" class="grid-icon check" v-if="store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
-                <div class="cell-text my-1">{{ cell[store.storePlotDisplayField] }}</div>
+                <v-icon size="20" :icon="mdiBookmark" class="grid-icon bookmark" v-if="cell.isMarked" />
+                <v-icon size="20" :icon="mdiLock" class="grid-icon lock" v-if="cell.isLocked" />
+                <v-icon size="20" :icon="mdiMessageText" class="mdi-flip-h grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
+                <v-icon size="20" :icon="mdiCheckboxMarked" class="grid-icon check" v-if="store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
+                <div class="cell-text my-1" :style="cell.isLocked ? { color: fillStyleHiddenTrait } : undefined">{{ cell[store.storePlotDisplayField] }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0 && (!traitCutoff || !cell.latestDates || !cell.latestDates[trait.id] || (cell.latestDates[trait.id] > traitCutoff))">
                     <template v-if="trait.allowRepeats">
-                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-square-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-if="store.storeCanvasShape === CanvasShape.SQUARE">
+                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-square-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: cell.isLocked ? fillStyleHiddenTrait : trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-if="store.storeCanvasShape === CanvasShape.SQUARE">
                         <path d="M 1,15 15,1 v 14 z m 15,1 V 0 H 0 v 16 z" />
                       </svg>
-                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-circle-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-else>
+                      <svg xmlns="http://www.w3.org/2000/svg" :key="`cell-${row.index}-${column.index}-circle-trait-full-${trait.id}`" :width="circleDiameter" :height="circleDiameter" fill="currentColor" :style="[{ color: cell.isLocked ? fillStyleHiddenTrait : trait.color }, circleStyle]" class="circle circle-full" viewBox="0 0 16 16" v-else>
                         <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16" />
                       </svg>
                     </template>
-                    <span class="circle circle-full" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="[{ background: trait.color }, circleStyle]" v-else />
+                    <span class="circle circle-full" :key="`cell-${row.index}-${column.index}-trait-full-${trait.id}`" :style="[{ background: cell.isLocked ? fillStyleHiddenTrait : trait.color }, circleStyle]" v-else />
                   </template>
                   <template v-else>
-                    <span class="circle circle-empty" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="[{ borderColor: trait.color }, circleStyle]" />
+                    <span class="circle circle-empty" :key="`cell-${row.index}-${column.index}-trait-empty-${trait.id}`" :style="[{ borderColor: cell.isLocked ? fillStyleHiddenTrait : trait.color }, circleStyle]" />
                   </template>
                 </template>
                 <div class="cell-text" v-if="visibleTraits.length === 1">
@@ -104,7 +105,7 @@
   import { useI18n } from 'vue-i18n'
   import emitter from 'tiny-emitter/instance'
   import { categoricalColors } from '@/plugins/color'
-  import { mdiCircle, mdiNavigation, mdiRecordCircleOutline, mdiBookmark, mdiMessageText, mdiCheckboxMarked } from '@mdi/js'
+  import { mdiCircle, mdiNavigation, mdiRecordCircleOutline, mdiLock, mdiBookmark, mdiMessageText, mdiCheckboxMarked } from '@mdi/js'
 
   const { n } = useI18n()
   const store = coreStore()
@@ -145,9 +146,10 @@
   const markers = ref<Marker[]>([])
 
   let timeout: number | undefined
-  let scrollToElementOnTraitToggle: HTMLElement | undefined
+  let scrollToElementOnTraitToggle: Element | undefined
   let gridProjection: ((x: number, y: number) => XY) | undefined
 
+  const fillStyleHiddenTrait = computed(() => store.storeIsDarkMode ? '#2c2c2c' : '#d3d3d3')
   const highlightColors = computed(() => store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel)
 
   const userPosition = computed(() => {
@@ -610,6 +612,24 @@
     })
   })
 
+  watch(() => store.storeHiddenTraits, async () => {
+    const x = window.innerWidth / 2
+    const y = window.innerHeight / 2
+
+    let element = document.elementFromPoint(x, y)
+
+    while (element !== null && !element.classList.contains('cell') && element.tagName.toLowerCase() !== 'body') {
+      element = element.parentElement
+    }
+
+    if (element) {
+      // When traits are toggled, maintain the scroll position of the element currently in the center
+      scrollToElementOnTraitToggle = element
+    } else {
+      scrollToElementOnTraitToggle = undefined
+    }
+  }, { flush: 'sync' })
+
   onMounted(() => {
     window.addEventListener('resize', updateDimensions)
 
@@ -745,6 +765,11 @@
   position: absolute;
   top: 0;
   right: 5px;
+}
+.cell .lock {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
 }
 .cell .comment {
   position: absolute;

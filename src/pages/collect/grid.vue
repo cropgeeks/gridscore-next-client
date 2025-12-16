@@ -7,7 +7,8 @@
 
         <OverflowMenu
           :items="overflowItems"
-          :breakpoint="mdAndUp"
+          :breakpoint="smAndUp"
+          :text-breakpoint="mdAndUp"
         />
         <v-menu activator="#grid-media-mode">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)" id="media-mode-dropdown">
@@ -68,7 +69,9 @@
           </v-list>
         </v-menu>
       </v-btn-group>
-      <v-btn v-if="trial.transactionCount !== undefined && trial.transactionCount > 0" :prepend-icon="mdiCloudUpload" @click="synchronize" color="info" variant="tonal" :text="$t('toolbarSyncInfo', trial.transactionCount)" />
+
+      <TrialTransactionStatusButton />
+
       <GermplasmAutocomplete
         :trial="trial"
         v-model="searchMatch"
@@ -133,7 +136,7 @@
   import { useDisplay } from 'vuetify'
 
   const store = coreStore()
-  const { mdAndUp } = useDisplay()
+  const { mdAndUp, smAndUp } = useDisplay()
   const { t } = useI18n()
 
   const trial = ref<TrialPlus>()
@@ -272,10 +275,6 @@
         }
       }, null, options)
     }
-  }
-
-  function synchronize () {
-    // TODO
   }
 
   function selectSearch () {

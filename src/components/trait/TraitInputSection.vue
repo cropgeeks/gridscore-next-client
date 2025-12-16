@@ -22,6 +22,7 @@
       :key="`${trait.id}-${setIndex}`"
       @traverse="emit('traverse', setIndex)"
       :ref="(el) => (refs[setIndex] = el)"
+      @valid-changed="v => inputsValid[setIndex - 1] = v"
     />
   </div>
 </template>
@@ -33,9 +34,10 @@
 
   import emitter from 'tiny-emitter/instance'
 
-  const emit = defineEmits(['traverse'])
+  const emit = defineEmits(['traverse', 'valid-changed'])
 
   const refs = ref<{ [index: number]: any }>({})
+  const inputsValid = ref<boolean[]>([])
 
   const compProps = withDefaults(defineProps<{
     people?: Person[]
@@ -49,7 +51,7 @@
   const model = defineModel<TraitData>({})
 
   const valid = computed(() => {
-    return Object.values(refs.value).every(r => r?.valid)
+    return inputsValid.value.every(v => v === true)
   })
 
   function focus (index: number) {
@@ -61,8 +63,17 @@
     refs.value[index]?.focus()
   }
 
+  function updateValid () {
+    inputsValid.value = Array.from(new Array(compProps.trait.setSize)).map(() => true)
+  }
+
+  onMounted(() => updateValid())
+
+  watch(model, async () => updateValid())
+
+  watch(valid, async newValue => emit('valid-changed', newValue))
+
   defineExpose({
     focus,
-    valid,
   })
 </script>

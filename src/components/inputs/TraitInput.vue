@@ -257,7 +257,7 @@
     editable?: boolean
   }>()
 
-  const emit = defineEmits(['traverse'])
+  const emit = defineEmits(['traverse', 'valid-changed'])
 
   const store = coreStore()
   // const date = useDate()
@@ -492,9 +492,10 @@
     }
   })
 
+  watch(valid, async newValue => emit('valid-changed', newValue))
+
   defineExpose({
     focus,
-    valid,
   })
 </script>
 

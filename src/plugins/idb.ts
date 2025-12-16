@@ -37,7 +37,7 @@ function getStore () {
 
 async function getDb () {
   return new Promise<IDBPDatabase>((resolve, reject) => {
-    openDB('gridscore-next-' + window.location.pathname, 8, {
+    openDB('gridscore-next-' + window.location.pathname, 9, {
       upgrade: (db, oldVersion, newVersion, transaction) => {
         let trials
         let data
@@ -101,6 +101,10 @@ async function getDb () {
           data.createIndex('barcode', 'barcode', { unique: false })
           data.createIndex('treatment', 'treatment', { unique: false })
         }
+        if (oldVersion < 9) {
+          data = transaction.objectStore('trials')
+          data.createIndex('isLocked', 'isLocked', { unique: false })
+        }
       },
     }).then(db => resolve(db))
   })
@@ -161,6 +165,35 @@ async function deleteTrial (localId: string) {
       .then(() => {
         return db.delete('transactions', localId)
       })
+  } else {
+    return new Promise<void>(resolve => resolve())
+  }
+}
+
+async function lockTrial (localId: string, lock: boolean) {
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    trial.isLocked = lock
+
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = logTransactions(trial) ? ((await db.get('transactions', localId)) || getEmptyTransaction(localId)) : null
+
+      if (transaction.trialLockedTransaction !== undefined && transaction.trialLockedTransaction === !lock) {
+        // Status has been flipped back to what it was before last synchronization
+        delete transaction.trialLockedTransaction
+      } else {
+        // Status has been changed
+        transaction.trialLockedTransaction = lock
+      }
+
+      // Store it back
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('trials', trial)
   } else {
     return new Promise<void>(resolve => resolve())
   }
@@ -405,6 +438,7 @@ async function addTrial (trial: TrialPlus): Promise<string> {
     group: copy.group || null,
     layout: copy.layout,
     traits: copy.traits,
+    isLocked: copy.isLocked,
     brapiConfig: copy.brapiConfig,
     createdOn: copy.createdOn || new Date().toISOString(),
     updatedOn: copy.updatedOn || new Date().toISOString(),
@@ -452,6 +486,7 @@ async function addTrial (trial: TrialPlus): Promise<string> {
           geography: cell.geography,
           comments: cell.comments || [],
           isMarked: cell.isMarked,
+          isLocked: cell.isLocked,
           categories: cell.categories || [],
         })
       }
@@ -568,6 +603,8 @@ async function getTrials (includeTransactions?: boolean, ids?: string[]): Promis
             t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
             t.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
             t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
+            t.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
+            t.transactionCount += transaction.trialLockedTransaction !== undefined
             t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
             t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
             t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
@@ -701,6 +738,8 @@ async function getTrialById (localId: string) {
           trial.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
           trial.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
           trial.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
+          trial.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
+          trial.transactionCount += transaction.trialLockedTransaction !== undefined
           trial.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
           trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
           trial.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
@@ -802,6 +841,37 @@ async function setPlotMarked (trialId: string, row: number, column: number, isMa
       } else {
         // Else, there isn't a value OR it's the same, so just set it again
         transaction.plotMarkedTransactions[`${row}|${column}`] = isMarked
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    return db.put('data', cell)
+  }
+}
+
+async function setPlotLocked (trialId: string, row: number, column: number, isLocked: boolean) {
+  const trial = await getTrialById(trialId)
+  const cell = await getCell(trialId, row, column)
+
+  if (trial && cell) {
+    if (isLocked) {
+      cell.isLocked = isLocked
+    } else {
+      delete cell.isLocked
+    }
+    cell.updatedOn = new Date().toISOString()
+    const db = await getDb()
+
+    if (logTransactions(trial)) {
+      const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+      if (transaction.plotLockedTransactions[`${row}|${column}`] !== undefined && transaction.plotLockedTransactions[`${row}|${column}`] !== null && transaction.plotLockedTransactions[`${row}|${column}`] !== isLocked) {
+        // If there is a marking value and it's not the same as the new one, they cancel each other out, so remove the transaction item
+        delete transaction.plotLockedTransactions[`${row}|${column}`]
+      } else {
+        // Else, there isn't a value OR it's the same, so just set it again
+        transaction.plotLockedTransactions[`${row}|${column}`] = isLocked
       }
 
       await db.put('transactions', transaction)
@@ -1092,6 +1162,7 @@ function getEmptyTransaction (trialId: string): Transaction {
     plotCommentAddedTransactions: {},
     plotCommentDeletedTransactions: {},
     plotMarkedTransactions: {},
+    plotLockedTransactions: {},
     plotTraitDataChangeTransactions: {},
     plotGeographyChangeTransactions: {},
     plotDetailsChangeTransaction: {},
@@ -1105,6 +1176,7 @@ function getEmptyTransaction (trialId: string): Transaction {
     trialTraitAddedTransactions: [],
     trialTraitDeletedTransactions: [],
     traitChangeTransactions: [],
+    trialLockedTransaction: undefined,
     trialEditTransaction: null,
     brapiIdChangeTransaction: {
       germplasmBrapiIds: {},
@@ -1467,7 +1539,7 @@ async function addTrialGermplasm (trialId: string, germplasm: CellMetadata[]) {
         measurements: {} as { [index: string]: Measurement[] },
         geography: {},
         comments: [],
-        categories: []
+        categories: [],
       }
 
       trial.traits.forEach((t: Trait) => {
@@ -1514,6 +1586,7 @@ export {
   getTrialValidPlots,
   getTransactionForTrial,
   setPlotMarked,
+  setPlotLocked,
   addPlotComment,
   deletePlotComment,
   addTrialComment,
@@ -1523,4 +1596,5 @@ export {
   updateTrialBrapiConfig,
   updateGermplasmBrapiIds,
   updateTraitBrapiIds,
+  lockTrial,
 }

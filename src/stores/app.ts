@@ -39,7 +39,7 @@ export const coreStore = defineStore('core', {
     locale: 'en-GB',
     darkMode: null as (boolean | null),
     systemTheme: 'dark',
-    theme: 'system',
+    theme: 'light',
     hideCitationMessage: false,
     hideHelpInformation: false,
     highlightControls: true,

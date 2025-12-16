@@ -1,13 +1,14 @@
 <template>
   <OverflowMenu
     :items="items"
-    :breakpoint="lgAndUp"
+    :breakpoint="mdAndUp"
+    :text-breakpoint="lgAndUp"
   />
 
   <CommentModal
     type="plot"
     :comments="cell.comments"
-    :editable="trial.editable || false"
+    :editable="isEditable || false"
     @comment-added="addNewComment"
     @comment-deleted="deleteComment"
     ref="commentModal"
@@ -37,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
-  import { addPlotComment, deletePlotComment, setPlotMarked } from '@/plugins/idb'
-  import type { CellPlus, TrialPlus } from '@/plugins/types/client'
+  import { addPlotComment, deletePlotComment, setPlotLocked, setPlotMarked } from '@/plugins/idb'
+  import { ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
 
   import emitter from 'tiny-emitter/instance'
@@ -47,12 +48,12 @@
   import CommentModal from '@/components/modals/CommentModal.vue'
   import type { Comment } from '@/plugins/types/gridscore'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
-  import { mdiBookmark, mdiBookmarkOutline, mdiCalendar, mdiCamera, mdiCommentText, mdiDirectionsFork } from '@mdi/js'
+  import { mdiBookmark, mdiBookmarkOutline, mdiCalendar, mdiCamera, mdiCommentText, mdiDirectionsFork, mdiLockAlert, mdiLockOpen } from '@mdi/js'
 
   const store = coreStore()
   const router = useRouter()
   const { t } = useI18n()
-  const { lgAndUp } = useDisplay()
+  const { mdAndUp, lgAndUp } = useDisplay()
   const dateDialog = ref(false)
 
   const recordingDate = defineModel<Date>('recordingDate')
@@ -66,14 +67,16 @@
     isGuidedWalk: boolean
   }>()
 
+  const isEditable = computed(() => compProps.trial.isLocked !== true && compProps.trial.editable && compProps.cell.isLocked !== true)
+
   const items: ComputedRef<MenuItem[]> = computed(() => {
-    return [{
+    const result: MenuItem[] = [{
       text: t('buttonPickRecordingDate'),
       size: 'small',
       variant: 'tonal',
       color: recordingDate.value !== undefined ? 'warning' : undefined,
       prependIcon: mdiCalendar,
-      disabled: !compProps.trial.editable,
+      disabled: !isEditable.value,
       click: () => {
         dateDialog.value = true
       },
@@ -84,7 +87,7 @@
       color: compProps.cell.isMarked ? 'primary' : undefined,
       prependIcon: compProps.cell.isMarked ? mdiBookmark : mdiBookmarkOutline,
       click: toggleMarked,
-      disabled: !compProps.trial.editable,
+      disabled: !isEditable.value,
     }, {
       text: t('buttonTagPhoto'),
       prependIcon: mdiCamera,
@@ -105,6 +108,20 @@
       click: onGuidedWalk,
       visible: !compProps.isGuidedWalk,
     }]
+
+    if (compProps.trial && (compProps.trial.shareStatus === ShareStatus.NOT_SHARED || compProps.trial.shareStatus === ShareStatus.OWNER)) {
+      result.splice(1, 0, {
+        text: compProps.cell.isLocked ? t('buttonReactivateCell') : t('buttonDeactivateCell'),
+        size: 'small',
+        variant: 'tonal',
+        color: compProps.cell.isLocked ? 'warning' : undefined,
+        prependIcon: compProps.cell.isLocked ? mdiLockAlert : mdiLockOpen,
+        click: toggleLocked,
+        disabled: !compProps.trial.editable || compProps.trial.isLocked === true,
+      })
+    }
+
+    return result
   })
 
   function setDate (date: Date | undefined) {
@@ -135,6 +152,27 @@
       setPlotMarked(store.storeSelectedTrial || '', c.row || 0, c.column || 0, true)
         .then(() => emitter.emit('plot-marked-changed', c.row, c.column, store.storeSelectedTrial))
       emitter.emit('plausible-event', { key: 'plot-marked', props: { marked: true } })
+    }
+  }
+
+  function toggleLocked () {
+    const c = compProps.cell
+    if (!c) {
+      return
+    }
+
+    if (c.isLocked) {
+      // Remove it reactively from the cell
+      c.isLocked = false
+      setPlotLocked(store.storeSelectedTrial || '', c.row || 0, c.column || 0, false)
+        .then(() => emitter.emit('plot-locked-changed', c.row, c.column, store.storeSelectedTrial))
+      emitter.emit('plausible-event', { key: 'plot-locked', props: { locked: false } })
+    } else {
+      // Add it this way, because the cell may not have it
+      c.isLocked = true
+      setPlotLocked(store.storeSelectedTrial || '', c.row || 0, c.column || 0, true)
+        .then(() => emitter.emit('plot-locked-changed', c.row, c.column, store.storeSelectedTrial))
+      emitter.emit('plausible-event', { key: 'plot-locked', props: { locked: true } })
     }
   }
 

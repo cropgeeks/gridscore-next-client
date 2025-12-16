@@ -37,8 +37,9 @@
     "vue-i18n": "^11.1.12",
     "vue-qrcode-reader": "^5.7.3",
     "vue-router": "^4.5.1",
+    "vue-virtual-scroller": "^2.0.0-beta.8",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.10.9"
+    "vuetify": "^3.11.4"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",

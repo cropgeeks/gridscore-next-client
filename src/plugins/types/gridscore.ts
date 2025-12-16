@@ -9,6 +9,7 @@ export interface Trial {
     comments?: Comment[];
     events?: Event[];
     people: Person[];
+    isLocked?: boolean;
     remoteUrl?: string;
     remoteToken?: string;
     layout: Layout;
@@ -80,6 +81,7 @@ export interface CellMetadata {
 export interface Cell extends CellMetadata {
     brapiId?: string;
     isMarked: boolean;
+    isLocked?: boolean;
     geography?: Geography;
     measurements: { [index: string]: Measurement[] };
     comments: Comment[];
@@ -229,6 +231,7 @@ export interface Transaction {
     plotCommentAddedTransactions: { [index: string]: PlotCommentContent[] };
     plotCommentDeletedTransactions: { [index: string]: PlotCommentContent[] };
     plotMarkedTransactions: { [index: string]: boolean };
+    plotLockedTransactions?: { [index: string]: boolean };
     plotTraitDataChangeTransactions: { [index: string]: TraitMeasurement[] };
     plotGeographyChangeTransactions: { [index: string]: PlotGeographyContent };
     plotDetailsChangeTransaction: { [index: string]: PlotDetailContent };
@@ -243,6 +246,7 @@ export interface Transaction {
     trialTraitDeletedTransactions: Trait[];
     traitChangeTransactions: TraitEditContent[];
     trialEditTransaction?: TrialContent | null;
+    trialLockedTransaction?: boolean;
     brapiIdChangeTransaction: BrapiIdChangeContent;
     brapiConfigChangeTransaction: BrapiConfig;
 }

@@ -90,6 +90,7 @@ declare module 'vue' {
     TrialShareModal: typeof import('./components/modals/TrialShareModal.vue')['default']
     TrialSynchonizationModal: typeof import('./components/modals/TrialSynchonizationModal.vue')['default']
     TrialTraits: typeof import('./components/setup/TrialTraits.vue')['default']
+    TrialTransactionStatusButton: typeof import('./components/util/TrialTransactionStatusButton.vue')['default']
     UpdateTrialDataModal: typeof import('./components/modals/UpdateTrialDataModal.vue')['default']
     UpdateTrialMetadataModal: typeof import('./components/modals/UpdateTrialMetadataModal.vue')['default']
     VScroll: typeof import('./components/data/VScroll.vue')['default']

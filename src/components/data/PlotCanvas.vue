@@ -38,6 +38,8 @@
   bookmarkImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="bookmark check fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84" %3E%3Cg %3E%3Cpath fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
   const controlImg = new Image()
   controlImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="bookmark check fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84" %3E%3Cg %3E%3Cpath fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm10.03 4.97a.75.75 0 0 1 .011 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.75.75 0 0 1 1.08-.022z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
+  const lockImg = new Image()
+  lockImg.src = 'data:image/svg+xml,%3Csvg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="bookmark check fill" xmlns="http://www.w3.org/2000/svg" fill="%238e8c84" %3E%3Cg %3E%3Cpath fill-rule="evenodd" d="M 8,12.190476 A 1.5238095,1.5238095 0 0 0 9.52381,10.666667 C 9.52381,9.820952 8.838095,9.142857 8,9.142857 A 1.5238095,1.5238095 0 0 0 6.4761906,10.666667 1.5238095,1.5238095 0 0 0 8,12.190476 m 4.571429,-6.8571427 a 1.5238095,1.5238095 0 0 1 1.523809,1.5238095 V 14.47619 A 1.5238095,1.5238095 0 0 1 12.571429,16 H 3.4285715 A 1.5238095,1.5238095 0 0 1 1.904762,14.47619 V 6.8571428 c 0,-0.8457142 0.6857143,-1.5238095 1.5238095,-1.5238095 H 4.1904763 V 3.8095238 A 3.8095238,3.8095238 0 0 1 8,0 3.8095238,3.8095238 0 0 1 11.809524,3.8095238 v 1.5238095 h 0.761905 M 8,1.5238095 A 2.2857143,2.2857143 0 0 0 5.7142858,3.8095238 V 5.3333333 H 10.285714 V 3.8095238 A 2.2857143,2.2857143 0 0 0 8,1.5238095 Z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E'
 
   const compProps = defineProps<{
     dimensions: Dimensions
@@ -359,7 +361,7 @@
     if (store.storePlotDisplayField !== null) {
       // @ts-ignore
       const text = fittingString(cell[store.storePlotDisplayField] || 'N/A', compProps.dimensions.coreWidth)
-      ccctx.fillStyle = fillStyleText.value
+      ccctx.fillStyle = cell.isLocked ? fillStyleHiddenTrait.value : fillStyleText.value
       ccctx.fillText(text, x + compProps.dimensions.cellWidth / 2, y + compProps.dimensions.padding + compProps.dimensions.fontSize / 2)
       maxY = y + compProps.dimensions.padding + compProps.dimensions.fontSize / 2
     } else {
@@ -398,7 +400,7 @@
           }
 
           if (ctx) {
-            offscreenCanvas.value?.copyToCanvas(trait.originalIndex, fill, count, ctx, targetX, targetY)
+            offscreenCanvas.value?.copyToCanvas(cell.isLocked === true ? compProps.trial.traits.length : trait.originalIndex, fill, count, ctx, targetX, targetY)
           }
         }
         maxY = targetY
@@ -432,6 +434,9 @@
     // Add a bookmark symbol if required
     if (cell.isMarked) {
       drawBookmark(x + compProps.dimensions.cellWidth - 20, y)
+    }
+    if (cell.isLocked) {
+      drawLock(x + 5, y + compProps.dimensions.cellHeight - 20)
     }
     if (cell.comments && cell.comments.length > 0) {
       drawComment(x + 5, y + 5)
@@ -473,6 +478,9 @@
   }
   function drawControl (x: number, y: number) {
     ctx?.drawImage(controlImg, x, y)
+  }
+  function drawLock (x: number, y: number) {
+    ctx?.drawImage(lockImg, x, y)
   }
 
   function scrollTo (x: number | undefined, y: number | undefined) {

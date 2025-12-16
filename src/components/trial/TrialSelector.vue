@@ -127,6 +127,7 @@
                 @share="shareTrial(trial.raw)"
                 @delete="deleteTrialLocal(trial.raw)"
                 @load="loadTrial(trial.raw)"
+                @lock="lockSelectedTrial(trial.raw)"
                 @add-trait="addTrait(trial.raw)"
                 @add-person="addPerson(trial.raw)"
                 @add-metadata="addMetadata(trial.raw)"
@@ -156,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-  import { addTrialPeople, addTrialTraits, deleteTrial, getTrials } from '@/plugins/idb'
+  import { addTrialPeople, addTrialTraits, deleteTrial, getTrials, lockTrial } from '@/plugins/idb'
   import { TrialListType, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import TrialCard from '@/components/trial/TrialCard.vue'
@@ -372,10 +373,12 @@
       trials = [selectedTrial.value]
     }
 
+    emitter.emit('show-loading', true)
     Promise.all(trials.map(t => addTrialTraits(t.localId || '', traits)))
       .then(() => {
         emitter.emit('trials-updated')
         emitter.emit('plausible-event', { key: 'traits-added', props: { count: traits.length } })
+        emitter.emit('show-loading', false)
       })
   }
 
@@ -402,6 +405,15 @@
     await store.setSelectedTrial(trial.localId)
 
     router.push('/collect/grid')
+  }
+
+  function lockSelectedTrial (trial: TrialPlus) {
+    const lockStatus = trial.isLocked === undefined ? true : !trial.isLocked
+    lockTrial(trial.localId || '', lockStatus)
+      .then(() => {
+        emitter.emit('trials-updated')
+        emitter.emit('plausible-event', { key: 'trial-locked', props: { lock: lockStatus } })
+      })
   }
 
   function deleteSelectedTrials () {

@@ -55,11 +55,13 @@
     <!-- Empty table to trick Vuetify into loading the styling -->
     <v-table />
     <v-card class="mt-3" :disabled="isEdit === true">
-      <div class="v-table v-table--striped-odd v-table--density-default">
-        <div class="v-table__wrapper table-max-height">
-          <table id="grid-table" />
+      <v-form @submit.prevent ref="tableForm">
+        <div class="v-table v-table--striped-odd v-table--density-default">
+          <div class="v-table__wrapper table-max-height">
+            <table id="grid-table" />
+          </div>
         </div>
-      </div>
+      </v-form>
     </v-card>
 
     <v-btn @click="checkData" class="my-5" :disabled="isEdit === true" color="primary" :prepend-icon="mdiPlaylistCheck" :text="$t('buttonCheckOverData')" />
@@ -171,6 +173,7 @@
   const dataImportConfig = ref<DataImportConfig>()
   const inputModal = useTemplateRef('inputModal')
   const fieldbookInputModal = useTemplateRef('fieldbookInputModal')
+  const tableForm = useTemplateRef('tableForm')
   const feedback = ref<LayoutFeedback[]>([])
   const bottomSheetVisible = ref(false)
   const tableHasModifications = ref(false)
@@ -341,10 +344,13 @@
     }
     parent.appendChild(element)
 
-    element.addEventListener('change', () => {
+    return element
+  }
+
+  function addChangeListener () {
+    tableForm.value?.addEventListener('change', () => {
       tableHasModifications.value = true
     }, { once: true })
-    return element
   }
 
   function markAll (mark: boolean) {
@@ -426,6 +432,8 @@
     }
 
     table.innerHTML = ''
+
+    addChangeListener()
 
     // Create the head and header row
     const tHead = createElement(table, 'thead')
@@ -569,26 +577,6 @@
       const ids = new Map()
       for (let row = 0; row < trial.layout.rows; row++) {
         for (let column = 0; column < trial.layout.columns; column++) {
-          const tableRep = (document.querySelector(`#rep-${row}-${column}`) as HTMLInputElement).value
-          const tableBrapiId = (document.querySelector(`#brapiId-${row}-${column}`) as HTMLInputElement).value
-          const tableControl = (document.querySelector(`#control-${row}-${column}`) as HTMLInputElement).checked
-
-          if (!gridData.value[`${row}|${column}`]) {
-            gridData.value[`${row}|${column}`] = {
-              germplasm: '',
-              rep: undefined,
-              friendlyName: undefined,
-              treatment: undefined,
-              pedigree: undefined,
-              barcode: undefined,
-              categories: [],
-              brapiId: undefined,
-              isMarked: false,
-              measurements: {},
-              comments: [],
-            }
-          }
-
           const random = getRandomGivenName()
           let rep = 1
 
@@ -600,27 +588,16 @@
           }
 
           const displayRow = getRowLabel(trial.layout, row)
-          const displayColumn = getColumnLabel(trial.layout, column)
+          const displayColumn = getColumnLabel(trial.layout, column);
 
-          const cell = gridData.value[`${row}|${column}`]
-
-          if (cell) {
-            cell.germplasm = `GS-${displayRow}|${displayColumn}`;
-            (document.querySelector(`#germplasm-${row}-${column}`) as HTMLInputElement).value = `GS-${displayRow}|${displayColumn}`;
-            (document.querySelector(`#rep-${row}-${column}`) as HTMLInputElement).value = `${rep}`;
-            (document.querySelector(`#friendlyName-${row}-${column}`) as HTMLInputElement).value = random || '';
-            (document.querySelector(`#pedigree-${row}-${column}`) as HTMLInputElement).value = `${getRandomGivenName()} x ${getRandomGivenName()}`;
-            (document.querySelector(`#barcode-${row}-${column}`) as HTMLInputElement).value = `b-${displayRow}|${displayColumn}`;
-            // (document.querySelector(`#treatment-${row}-${column}`) as HTMLInputElement).value = row < Math.ceil(trial.layout.rows / 2) ? 'Untreated' : 'High nitrogen'
-            // Set the value from the table here, this is important, because the direct input into the table is not synchronized with the `germplasm` 2d array until the user hits save or loads another input (here)
-            cell.rep = `${rep || tableRep}`
-            cell.brapiId = tableBrapiId
-            cell.categories = tableControl ? [CellCategory.CONTROL] : []
-          }
+          // Update the table. Crucually, we don't yet update the underlying data
+          (document.querySelector(`#germplasm-${row}-${column}`) as HTMLInputElement).value = `GS-${displayRow}|${displayColumn}`;
+          (document.querySelector(`#rep-${row}-${column}`) as HTMLInputElement).value = `${rep}`;
+          (document.querySelector(`#friendlyName-${row}-${column}`) as HTMLInputElement).value = random || '';
+          (document.querySelector(`#pedigree-${row}-${column}`) as HTMLInputElement).value = `${getRandomGivenName()} x ${getRandomGivenName()}`;
+          (document.querySelector(`#barcode-${row}-${column}`) as HTMLInputElement).value = `b-${displayRow}|${displayColumn}`;
         }
       }
-
-      emit('data-changed', gridData.value)
     })
   }
 

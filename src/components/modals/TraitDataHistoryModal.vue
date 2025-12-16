@@ -19,9 +19,11 @@
               <TraitInputSection
                 v-model="traitData[mIndex]"
                 :trait="trait"
+                :is-locked="cell.isLocked === true"
                 :measurements="undefined"
                 :editable="editable && measurements.delete !== true"
                 :ref="(el) => (refs.push(el))"
+                @valid-changed="v => setValid(`${mIndex}`, v)"
               >
                 <v-chip size="small" label :prepend-icon="mdiCalendar" :text="new Date(measurements.timestamp).toLocaleString()" />
               </TraitInputSection>
@@ -85,9 +87,12 @@
   const dialog = ref(false)
   const dataOutsideRangeAccepted = ref(false)
 
-  const valid = computed(() => {
-    return Object.values(refs.value).every(r => r?.valid) || dataOutsideRangeAccepted.value
-  })
+  const valid = computed(() => Object.values(itemsValid.value).every(v => v === true) || dataOutsideRangeAccepted.value)
+  const itemsValid = ref<{ [index: string]: boolean }>({})
+
+  function setValid (traitId: string, valid: boolean) {
+    itemsValid.value[traitId] = valid
+  }
 
   function validate () {
     if (valid.value === false) {
@@ -150,10 +155,13 @@
   }
 
   function show () {
+    itemsValid.value = {}
+
     refs.value = []
     dataOutsideRangeAccepted.value = false
     measurementsList.value = JSON.parse(JSON.stringify(compProps.cell.measurements[compProps.trait.id || ''] || []))
-    traitData.value = measurementsList.value.map(m => {
+    traitData.value = measurementsList.value.map((m, i) => {
+      itemsValid.value[`${i}`] = true
       const td: TraitData = {}
       m.values.forEach((v, i) => {
         td[`${i + 1}`] = (v === null || v === '') ? undefined : v

@@ -3,6 +3,7 @@
     <ResponsiveButton
       v-for="(item, index) in visibleItems"
       :key="`menu-item-${index}`"
+      :breakpoint="textBreakpoint"
       v-bind="item"
       @click="item.click()"
     />
@@ -44,6 +45,7 @@
   const compProps = defineProps<{
     items: MenuItem[]
     breakpoint: boolean
+    textBreakpoint: boolean
   }>()
 
   const visibleItems = computed(() => compProps.items.filter(i => i.visible !== false))

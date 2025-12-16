@@ -66,9 +66,9 @@
         <div>
           <v-card-title class="text-h5">{{ $t('pageHomeTitleCitation') }}</v-card-title>
 
-          <v-card-subtitle class="text-wrap">
+          <v-card-text>
             <div v-html="$t('pageHomeTextCitation')" />
-          </v-card-subtitle>
+          </v-card-text>
         </div>
       </div>
     </v-card>

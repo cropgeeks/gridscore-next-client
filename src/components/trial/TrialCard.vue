@@ -1,5 +1,8 @@
 <template>
-  <v-card :title="trial.name" :variant="isSelected ? 'outlined' : undefined" class="d-flex flex-column flex-grow-1">
+  <v-card :variant="isSelected ? 'outlined' : undefined" class="d-flex flex-column flex-grow-1">
+    <template #title>
+      <span v-tooltip:top="trial.name">{{ trial.name }}</span>
+    </template>
     <template #prepend>
       <slot name="prepend">
         <v-btn v-tooltip:top="$t(shareStatusConfig?.text || '')" :color="getTraitColor(shareStatusConfig?.colorIndex || 0)" :icon="shareStatusConfig?.icon" @click="emit('share')" :disabled="!canShare" />
@@ -17,11 +20,12 @@
     <v-card-text class="pb-0">
       <div class="d-flex flex-row flex-wrap ga-2">
         <v-chip v-if="trial.updatedOn" :prepend-icon="mdiCalendarEdit" variant="tonal" color="primary" label v-tooltip:bottom="new Date(trial.updatedOn).toLocaleString()" :text="formatTimeAgo(trial.updatedOn)" />
+        <v-chip v-if="trial.isLocked" :prepend-icon="mdiLockAlert" variant="tonal" color="warning" label v-tooltip:bottom="$t('widgetDataInputLockedWarning')" :text="$t('widgetDataInputLockedChip')" />
         <slot name="chips" />
       </div>
     </v-card-text>
 
-    <v-list variant="tonal" v-if="horizontal" :disabled="!interactive">
+    <v-list variant="tonal" class="pb-0" v-if="horizontal" :disabled="!interactive">
       <v-row no-gutters>
         <v-col cols="12" sm="6" md="4" lg="3">
           <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
@@ -49,8 +53,7 @@
         </v-col>
       </v-row>
     </v-list>
-
-    <v-list variant="tonal" slim :disabled="!interactive" v-else>
+    <v-list variant="tonal" class="pb-0" slim :disabled="!interactive" v-else>
       <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
       <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
@@ -76,9 +79,11 @@
                   :editable="trial.editable || false"
                   :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
                   :is-list-mode="trial.layout.columns === 1"
+                  :is-locked="trial.isLocked"
                   :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
                   @delete="emit('delete')"
                   @edit="emit('edit')"
+                  @lock="emit('lock')"
                   @synchronize="emit('synchronize')"
                   @duplicate="emit('duplicate')"
                   @add-trait="emit('add-trait')"
@@ -101,9 +106,11 @@
           :editable="trial.editable || false"
           :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
           :is-list-mode="trial.layout.columns === 1"
+          :is-locked="trial.isLocked"
           :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
           @delete="emit('delete')"
           @edit="emit('edit')"
+          @lock="emit('lock')"
           @synchronize="emit('synchronize')"
           @duplicate="emit('duplicate')"
           @add-trait="emit('add-trait')"
@@ -123,7 +130,7 @@
     <CommentModal
       type="trial"
       :comments="trial.comments || []"
-      :editable="trial.editable || false"
+      :editable="canEdit || false"
       @comment-added="addNewComment"
       @comment-deleted="deleteComment"
       ref="commentModal"
@@ -131,7 +138,7 @@
 
     <EventModal
       :events="trial.events || []"
-      :editable="trial.editable || false"
+      :editable="canEdit || false"
       @event-added="addNewEvent"
       @event-deleted="deleteEvent"
       ref="eventModal"
@@ -148,7 +155,7 @@
   import TrialOptionsDropdown from '@/components/trial/TrialOptionsDropdown.vue'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiAccountMultiple, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
+  import { mdiAccountMultiple, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLockAlert, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
   import CommentModal from '@/components/modals/CommentModal.vue'
   import { addTrialComment, addTrialEvent, deleteTrialComment, deleteTrialEvent } from '@/plugins/idb'
   import type { Comment, Event } from '@/plugins/types/gridscore'
@@ -179,9 +186,11 @@
     horizontal: false,
   })
 
-  const emit = defineEmits(['share', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm'])
+  const emit = defineEmits(['lock', 'share', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm'])
   const commentModal = useTemplateRef('commentModal')
   const eventModal = useTemplateRef('eventModal')
+
+  const canEdit = computed(() => compProps.trial.editable === true && compProps.trial.isLocked !== true)
 
   const trialDuration = computed(() => {
     if (compProps.trial && compProps.trial.createdOn && compProps.trial.updatedOn) {

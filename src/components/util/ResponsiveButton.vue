@@ -1,5 +1,5 @@
 <template>
-  <v-btn v-bind="compProps" :text="text" :prepend-icon="prependIcon" :append-icon="appendIcon" v-if="breakpoint || mdAndUp" />
+  <v-btn v-bind="compProps" :text="text" :prepend-icon="prependIcon" :append-icon="appendIcon" v-if="breakpoint || (breakpoint === undefined && mdAndUp)" />
   <v-btn v-bind="compProps" class="small-btn" :prepend-icon="undefined" :append-icon="undefined" v-tooltip:top="text" v-else>
     <v-icon :icon="prependIcon" v-if="prependIcon" />
     <v-icon :icon="appendIcon" v-else-if="appendIcon" />

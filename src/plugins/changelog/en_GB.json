@@ -774,8 +774,18 @@
       },
       {
         "type": "new",
+        "title": "Improved performance of large trials",
+        "text": "For very large trials - either large number of germplasm, or large number of traits, or both - we have made improvements to GridScore that should make the data collection a lot smoother."
+      },
+      {
+        "type": "new",
         "title": "Plot highlighting",
         "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
+      },
+      {
+        "type": "new",
+        "title": "Plot locking",
+        "text": "Plots can now be locked by the trial owner. Locked plots cannot be edited until unlocked. They are also skipped in guided walks and are shown in muted colours in the main display."
       },
       {
         "type": "new",

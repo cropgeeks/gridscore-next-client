@@ -105,6 +105,10 @@ const THEME_COLORS = [
   { hex: '#910080', name: 'Berry Magenta' },
   { hex: '#ff7c00', name: 'Stress Amber' },
   { hex: '#c5e000', name: 'Emergence Lime' },
+  { hex: '#ff007a', name: 'Blossom Glow' },
+  { hex: '#222183', name: 'Nocturnal Shade' },
+  { hex: '#c83831', name: 'Iron Rust' },
+  { hex: '#fff600', name: 'Pollen Gold' },
 ]
 
 function validateColorName (color: string) {

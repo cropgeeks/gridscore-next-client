@@ -2,6 +2,16 @@
   <v-dialog v-model="dialog" max-width="min(75vw, 720px)" scrollable>
     <UseOnline v-slot="{ isOnline }">
       <v-card :title="$t('modalTitleTrialSynchronization')">
+        <v-banner class="pa-2" sticky style="z-index: 100;" :color="lockOverride ? 'success' : 'error'" :lines="lines" :bg-color="lockOverride ? 'success' : 'error'" density="compact" :icon="lockOverride ? mdiCheckboxMarkedCircle : mdiAlert" @click="toggleVisibility" v-if="showAskForLockOverride">
+          <template #text>{{ $t('widgetDataSynchronizationLockOverrideWarning') }}</template>
+
+          <template #actions>
+            <v-btn-toggle density="compact" v-model="lockOverride">
+              <v-btn :value="true" :text="$t('genericConfirm')" :prepend-icon="lockOverride ? mdiCheckboxMarked : mdiCheckboxBlankOutline" @click.stop.prevent />
+            </v-btn-toggle>
+          </template>
+        </v-banner>
+
         <template #text>
           <v-alert
             v-if="isOnline === false"
@@ -31,6 +41,10 @@
                 <!-- PERSON ADDED -->
                 <v-list-item v-if="transaction.trialPersonAddedTransactions && transaction.trialPersonAddedTransactions.length > 0" :prepend-icon="mdiAccountPlus" :title="$t('transactionTypePeopleAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePeopleAddedCount', Object.keys(transaction.trialPersonAddedTransactions).length) }}</span></template>
+                </v-list-item>
+                <!-- PLOT LOCKED CHANGED -->
+                <v-list-item v-if="transaction.trialLockedTransaction !== undefined" :prepend-icon="mdiLockAlert" :title="$t('transactionTypeTrialLockedChanged')">
+                  <template #subtitle><span class="text-wrap">{{ $t(transaction.trialLockedTransaction ? 'buttonDeactivateTrial' : 'buttonReactivateTrial') }}</span></template>
                 </v-list-item>
                 <!-- TRAIT DETAILS CHANGED -->
                 <v-list-item v-if="transaction.traitChangeTransactions && transaction.traitChangeTransactions.length > 0" :prepend-icon="mdiTagEdit" :title="$t('transactionTypeTraitsModified')">
@@ -72,6 +86,10 @@
                 <!-- PLOT MARKED CHANGED -->
                 <v-list-item v-if="transaction.plotMarkedTransactions && Object.keys(transaction.plotMarkedTransactions).length > 0" :prepend-icon="mdiBookmark" :title="$t('transactionTypePlotMarkedChanged')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotMarkedChangedCount', Object.keys(transaction.plotMarkedTransactions).length) }}</span></template>
+                </v-list-item>
+                <!-- PLOT LOCKED CHANGED -->
+                <v-list-item v-if="transaction.plotLockedTransactions && Object.keys(transaction.plotLockedTransactions).length > 0" :prepend-icon="mdiLockAlert" :title="$t('transactionTypePlotLockedChanged')">
+                  <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotLockedChangedCount', Object.keys(transaction.plotLockedTransactions).length) }}</span></template>
                 </v-list-item>
                 <!-- TRIAL COMMENT ADDED -->
                 <v-list-item v-if="transaction.trialCommentAddedTransactions && Object.keys(transaction.trialCommentAddedTransactions).length > 0" :prepend-icon="mdiCommentPlus" :title="$t('transactionTypeTrialCommentAdded')">
@@ -117,7 +135,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn :text="$t('buttonCancel')" :prepend-icon="mdiCancel" @click="hide" />
-          <v-btn :text="$t('buttonSynchronize')" :prepend-icon="mdiDatabaseSync" @click="askToSynchronize" :disabled="isOnline === false" color="primary" variant="tonal" />
+          <v-btn :text="$t('buttonSynchronize')" :prepend-icon="mdiDatabaseSync" @click="askToSynchronize" :disabled="isOnline === false || !canContinue" color="primary" variant="tonal" />
         </v-card-actions>
       </v-card>
     </UseOnline>
@@ -134,7 +152,7 @@
   import { useI18n } from 'vue-i18n'
   import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountPlus, mdiBookmark, mdiCancel, mdiCloudDownload, mdiCommentMinus, mdiCommentPlus, mdiDatabaseSync, mdiDelete, mdiFlagMinus, mdiFlagPlus, mdiLanDisconnect, mdiNotebookEdit, mdiTableEdit, mdiTableRowPlusAfter, mdiTagEdit, mdiTagPlus, mdiTextBoxEdit, mdiVectorPolylineEdit } from '@mdi/js'
+  import { mdiAccountPlus, mdiAlert, mdiBookmark, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiCloudDownload, mdiCommentMinus, mdiCommentPlus, mdiDatabaseSync, mdiDelete, mdiFlagMinus, mdiFlagPlus, mdiLanDisconnect, mdiLockAlert, mdiNotebookEdit, mdiTableEdit, mdiTableRowPlusAfter, mdiTagEdit, mdiTagPlus, mdiTextBoxEdit, mdiVectorPolylineEdit } from '@mdi/js'
 
   const { t } = useI18n()
 
@@ -144,11 +162,23 @@
   const transaction = ref<Transaction>()
   const serverError = ref<string>()
 
+  const showAskForLockOverride = ref(false)
+  const lockOverride = ref(false)
+
   const dialog = ref(false)
+  const lines = ref<'one' | undefined>('one')
+
+  const canContinue = computed(() => showAskForLockOverride.value === false || lockOverride.value === true)
+
+  function toggleVisibility () {
+    lines.value = lines.value ? undefined : 'one'
+  }
 
   function show (t: TrialPlus) {
     trial.value = t
     serverError.value = undefined
+    showAskForLockOverride.value = false
+    lockOverride.value = false
 
     getTransactionForTrial(t.localId || '')
       .then(t => {
@@ -198,7 +228,7 @@
       }
     }
 
-    synchronizeTrial(remoteConfig, trial.value?.shareCodes ? (trial.value?.shareCodes.ownerCode || trial.value?.shareCodes.editorCode || trial.value?.shareCodes.viewerCode) : '', transaction.value)
+    synchronizeTrial(remoteConfig, trial.value?.shareCodes ? (trial.value?.shareCodes.ownerCode || trial.value?.shareCodes.editorCode || trial.value?.shareCodes.viewerCode) : '', transaction.value, lockOverride.value)
       .then(result => {
         if (!result) {
           return
@@ -234,9 +264,15 @@
       })
       .catch(err => {
         console.log(err)
-        if (err && err.status === 404) {
-          // Handle missing trials
-          emitter.emit('show-missing-trial', tr)
+        if (err) {
+          if (err.status === 404) {
+            // Handle missing trials
+            emitter.emit('show-missing-trial', tr)
+          } else if (err.status === 409) {
+            // User tried to make changes to a locked trial or cell
+            showAskForLockOverride.value = true
+            lockOverride.value = false
+          }
         }
       })
       .finally(() => {
