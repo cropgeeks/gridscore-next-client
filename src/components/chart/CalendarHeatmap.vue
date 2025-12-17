@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
   import { getPrimaryColor } from '@/plugins/color'
-import type { DownloadBlob } from '@/plugins/file'
+  import type { DownloadBlob } from '@/plugins/file'
   import { getId } from '@/plugins/id'
   import type { TrialPlus } from '@/plugins/types/client'
   import { toLocalDateString } from '@/plugins/util'
@@ -114,8 +114,9 @@ import type { DownloadBlob } from '@/plugins/file'
       const y = months.value.concat()
 
       if (isHorizontal.value) {
+        const copy = z.concat().reverse()
         // @ts-ignore
-        z = z[0].map((col, i) => z.reverse().map(row => row[i]))
+        z = z[0].map((col, i) => copy.map(row => row[i]))
       }
 
       const data = [{

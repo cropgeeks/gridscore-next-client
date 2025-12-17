@@ -48,6 +48,7 @@
   import { coreStore } from '@/stores/app'
   import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiFileImage } from '@mdi/js'
   import Plotly from 'plotly.js/lib/core'
+  import { useI18n } from 'vue-i18n'
 
   const emit = defineEmits(['update:loading', 'force-redraw'])
 
@@ -80,6 +81,7 @@
   })
 
   const store = coreStore()
+  const { locale } = useI18n()
 
   const localLoading = ref(false)
   const interactive = defineModel('interactive')
@@ -125,7 +127,7 @@
   }
 
   watch(() => store.storeIsDarkMode, async () => nextTick(() => emit('force-redraw')))
-  watch(() => store.storeLocale, async () => nextTick(() => emit('force-redraw')))
+  watch(locale, async () => nextTick(() => emit('force-redraw')))
 
   watch(interactive, async newValue => {
     const element = document.querySelector(`#${compProps.chartId}`)
