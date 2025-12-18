@@ -272,6 +272,8 @@
       return
     }
 
+    tableHasModifications.value = true
+
     const table = content.split('\n').filter(n => n !== null && n.length > 0).map(r => r.split('\t').map(v => v.trim()))
 
     for (let row = 0; row < model.value.layout.rows; row++) {
@@ -327,6 +329,7 @@
   }
 
   function updateTableFromFile (grid: Grid) {
+    tableHasModifications.value = true
     gridData.value = grid
     update()
   }
@@ -355,6 +358,7 @@
 
   function markAll (mark: boolean) {
     if (model.value) {
+      tableHasModifications.value = true
       for (let row = 0; row < model.value.layout.rows; row++) {
         for (let column = 0; column < model.value.layout.columns; column++) {
           (document.querySelector(`#control-${row}-${column}`) as HTMLInputElement).checked = mark
@@ -380,6 +384,7 @@
       }
     }
 
+    tableHasModifications.value = true
     checkName.value = undefined
   }
 
@@ -599,6 +604,8 @@
         }
       }
     })
+
+    tableHasModifications.value = true
   }
 
   function toggleFieldVisibility () {

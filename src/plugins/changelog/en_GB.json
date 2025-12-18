@@ -785,7 +785,12 @@
       {
         "type": "new",
         "title": "Plot locking",
-        "text": "Plots can now be locked by the trial owner. Locked plots cannot be edited until unlocked. They are also skipped in guided walks and are shown in muted colours in the main display."
+        "text": "Plots can now be locked by the trial owner. Locked plots cannot be edited until unlocked. They are shown in muted colours in the main display."
+      },
+      {
+        "type": "new",
+        "title": "Trial locking",
+        "text": "Similarly, a whole trial can be locked. This will prevent any further modifications of the trial. If collecting data on multiple devices, one final synchronization from those devices will be allowed."
       },
       {
         "type": "new",
@@ -798,7 +803,7 @@
         "text": "On Android and Chrome, you can now make use of the device's NFC chip scanning capabilities for plot identification."
       },
       {
-        "type": "update",
+        "type": "new",
         "title": "Dedicated guided walk and scan input page",
         "text": "In addition to the main data display grid you can now use a dedicated guided walk page as well as a barcode-focussed input page to enter data more efficiently."
       },

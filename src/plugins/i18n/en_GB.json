@@ -846,7 +846,7 @@
   "tabTextSettingsShareExport": "The QR code below will let others load your settings and overwrite their own settings.",
   "tabTitleSettingsShareImport": "Load other settings",
   "tabTextSettingsShareImport": "Use your camera to scan another user's settings. These will overwrite your own settings.",
-  "tabTitleAllTrials": "All trials ({count})",
+  "tabTitleAllTrials": "All trials",
   "tabTitleUncategorizedTrials": "Ungrouped trials",
   "toastTitleBrapiError": "BrAPI error",
   "toastTextBrapiTimeout": "The request has timed out. Please try again later.",

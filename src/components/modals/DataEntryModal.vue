@@ -508,6 +508,37 @@
     }
   })
 
+  watch(visibleTraits, async newValue => {
+    const traitIds = new Set(newValue.map(t => t.id || ''))
+
+    // Remove any mapping entry for traits that have been hidden
+    Object.keys(refs.value).forEach(k => {
+      if (!traitIds.has(k)) {
+        delete refs.value[k]
+      }
+    })
+    Object.keys(itemsValid.value).forEach(k => {
+      if (!traitIds.has(k)) {
+        delete itemsValid.value[k]
+      }
+    })
+    Object.keys(cellData.value).forEach(k => {
+      if (!traitIds.has(k)) {
+        delete cellData.value[k]
+      }
+    })
+
+    // Then restore the state for any trait that has been shown
+    newValue.forEach(t => {
+      if (!cellData.value[t.id || '']) {
+        cellData.value[t.id || ''] = {}
+      }
+      if (!itemsValid.value[t.id || '']) {
+        itemsValid.value[t.id || ''] = true
+      }
+    })
+  })
+
   watch(traitsByGroup, async newValue => {
     expandedTraitGroups.value = newValue ? Object.keys(newValue).map((v, index) => index) : []
   }, { immediate: true })

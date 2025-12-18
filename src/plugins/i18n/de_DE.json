@@ -836,7 +836,7 @@
   "tabTextSettingsShareExport": "Der QR-Code unten kann von anderen genutzt werden um deine Einstellungen zu laden und ihre eigenen zu überschreiben.",
   "tabTitleSettingsShareImport": "Andere Einstellungen laden",
   "tabTextSettingsShareImport": "Nutze deine Kamera um die Einstellungen von jemand anders zu laden. Deren Einstellungen werden deine überschreiben.",
-  "tabTitleAllTrials": "Alle Versuche ({count})",
+  "tabTitleAllTrials": "Alle Versuche",
   "tabTitleUncategorizedTrials": "Nicht gruppierte Versuche",
   "toastTitleBrapiError": "BrAPI-Fehler",
   "toastTextBrapiTimeout": "Die Anfrage hat das Zeitlimit überschritten. Bitte später erneut versuchen.",

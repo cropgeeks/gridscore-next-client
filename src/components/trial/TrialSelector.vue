@@ -71,7 +71,7 @@
     <v-card-text>
       <p>{{ $t('widgetTrialSelectorText') }}</p>
 
-      <v-chip-group mandatory column filter multiple variant="flat" color="primary" v-model="selectedGroups">
+      <v-chip-group mandatory column filter variant="tonal" color="primary" v-model="selectedGroup">
         <v-chip
           v-for="group in trialGroups"
           :key="`trial-groups-${group.name}`"
@@ -186,6 +186,7 @@
     localUpdateCount: number
   }
 
+  const ALL_TRIALS = '__ALL__'
   const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
 
   const store = coreStore()
@@ -200,7 +201,7 @@
   const selectedTrials = ref<TrialPlus[]>([])
   const selectedTrial = ref<TrialPlus>()
   const page = ref(1)
-  const selectedGroups = ref<number[]>([])
+  const selectedGroup = ref<number>()
   const loading = ref(false)
   const sortField = ref('updatedOn')
   const sortDescending = ref(true)
@@ -244,36 +245,53 @@
   })
 
   const visibleTrials = computed(() => {
-    const selectedGroupsNames = new Set(selectedGroups.value.map(gi => trialGroups.value[gi]?.id))
-    const hasUngrouped = selectedGroupsNames.has(UNCATEGORIZED_TRIALS)
-    return (trials.value || []).filter(t => {
-      let result = true
-      if (filterForWarning.value) {
-        switch (filterForWarning.value) {
-          case 'local':
-            result &&= (t.hasLocalUpdate || false)
-            break
-          case 'remote':
-            result &&= (t.hasRemoteUpdate || false)
-            break
-          case 'expiry':
-            result &&= (t.showExpiryWarning || false)
-            break
-        }
-      }
-      if (t.group && t.group.name) {
-        result &&= selectedGroupsNames.has(t.group.name)
-      } else {
-        result &&= hasUngrouped
-      }
+    if (selectedGroup.value === undefined) {
+      return []
+    }
 
-      return result
-    })
+    const selectedGroupName = trialGroups.value[selectedGroup.value]?.id
+    const isUngrouped = selectedGroupName === UNCATEGORIZED_TRIALS
+
+    if (selectedGroupName === ALL_TRIALS) {
+      return (trials.value || [])
+    } else {
+      return (trials.value || []).filter(t => {
+        let result = true
+        if (filterForWarning.value) {
+          switch (filterForWarning.value) {
+            case 'local':
+              result &&= (t.hasLocalUpdate || false)
+              break
+            case 'remote':
+              result &&= (t.hasRemoteUpdate || false)
+              break
+            case 'expiry':
+              result &&= (t.showExpiryWarning || false)
+              break
+          }
+        }
+        if (t.group && t.group.name) {
+          result &&= selectedGroupName === t.group.name
+        } else {
+          result &&= isUngrouped
+        }
+
+        return result
+      })
+    }
   })
 
   const trialGroups: ComputedRef<TrialGroup[]> = computed(() => {
     if (trials.value) {
       const result: { [index: string]: TrialGroup } = {}
+      result[ALL_TRIALS] = {
+        id: ALL_TRIALS,
+        name: t('tabTitleAllTrials'),
+        trialCount: 0,
+        expiryWarningCount: 0,
+        remoteUpdateCount: 0,
+        localUpdateCount: 0,
+      }
       result[UNCATEGORIZED_TRIALS] = {
         id: UNCATEGORIZED_TRIALS,
         name: t('tabTitleUncategorizedTrials'),
@@ -282,6 +300,8 @@
         remoteUpdateCount: 0,
         localUpdateCount: 0,
       }
+
+      const all = result[ALL_TRIALS]
 
       trials.value.forEach(t => {
         let g = result[UNCATEGORIZED_TRIALS]
@@ -308,6 +328,11 @@
           g.localUpdateCount += t.hasLocalUpdate ? 1 : 0
           g.expiryWarningCount += t.showExpiryWarning ? 1 : 0
         }
+
+        all.trialCount++
+        all.remoteUpdateCount += t.hasRemoteUpdate ? 1 : 0
+        all.localUpdateCount += t.hasLocalUpdate ? 1 : 0
+        all.expiryWarningCount += t.showExpiryWarning ? 1 : 0
       })
 
       if (result[UNCATEGORIZED_TRIALS].trialCount === 0) {
@@ -536,8 +561,8 @@
       })
   }
 
-  watch(trialGroups, async newValue => {
-    selectedGroups.value = newValue.map((g, index) => index)
+  watch(trialGroups, async () => {
+    selectedGroup.value = 0
   })
   watch(trialDisplayMode, async newValue => {
     store.setTrialListArrangement(newValue)

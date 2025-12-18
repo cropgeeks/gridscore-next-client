@@ -303,11 +303,11 @@
         weight: 1,
       })
       geoJsonLayer.addTo(map)
-    }
 
-    // Get the bounds and fit the map to them
-    if (bounds && bounds.isValid()) {
-      map.fitBounds(bounds, { padding: [50, 50] })
+      // Get the bounds and fit the map to them
+      if (bounds && bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50] })
+      }
     }
   }
 

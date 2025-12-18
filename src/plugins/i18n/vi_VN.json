@@ -517,7 +517,7 @@
   "tabTextSettingsShareExport": "Mã QR bên dưới sẽ cho phép người khác tải cài đặt của bạn và ghi đè cài đặt của riêng họ.",
   "tabTitleSettingsShareImport": "Tải các cài đặt khác",
   "tabTextSettingsShareImport": "Sử dụng máy ảnh của bạn để quét cài đặt của người dùng khác. Chúng sẽ ghi đè lên cài đặt của riêng bạn.",
-  "tabTitleAllTrials": "Tất cả các thí nghiệm ({count})",
+  "tabTitleAllTrials": "Tất cả các thí nghiệm",
   "tabTitleUncategorizedTrials": "Các thí nghiệm chưa được nhóm ({count})",
   "toastTitleBrapiError": "lỗi BrAPI",
   "toastTextBrapiTimeout": "Yêu cầu đã hết thời gian chờ. Vui lòng thử lại sau.",

@@ -31,6 +31,7 @@
             <v-avatar
               class="ma-3"
               rounded="0"
+              variant="text"
               size="72"
             >
               <v-icon size="72" :color="banner.color">{{ banner.icon }}</v-icon>
