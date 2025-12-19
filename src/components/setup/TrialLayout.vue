@@ -114,10 +114,13 @@
   const cornerPointMap = useTemplateRef('cornerPointMap')
   const layoutMarkers = useTemplateRef('layoutMarkers')
 
-  const isValid: ComputedRef<boolean> = computed(() => areDimensionsValid.value && isGermplasmValid.value && areCornersValid.value)
+  const isValid: ComputedRef<boolean> = computed(() => areDimensionsValid.value && isGermplasmValid.value && areCornersValid.value && areLabelsValid.value)
   const areDimensionsValid: ComputedRef<boolean> = computed(() => model.value?.layout.rows !== undefined && model.value.layout.rows !== null && model.value.layout.columns !== undefined && model.value.layout.columns !== null)
   const isGermplasmValid: ComputedRef<boolean> = computed(() => germplasmLayoutTable.value?.isValid || false)
   const areCornersValid: ComputedRef<boolean> = computed(() => cornerPointMap.value?.isValid || false)
+  const areLabelsValid: ComputedRef<boolean> = computed(() => {
+    return (model.value?.layout.columnLabels.every(cl => cl !== undefined && cl !== null) && model.value.layout.rowLabels.every(rl => rl !== undefined && rl !== null) && model.value?.layout.columnLabels.length === model.value?.layout.columns && model.value?.layout.rowLabels.length === model.value?.layout.rows) || false
+  })
 
   function checkLeave (callback: () => void) {
     if (stepperIndex.value === 2) {

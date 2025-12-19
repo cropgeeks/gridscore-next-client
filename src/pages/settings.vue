@@ -29,7 +29,7 @@
 
             <v-row>
               <v-col v-for="color in THEME_COLORS" :key="`theme-color-${color}`">
-                <v-sheet v-ripple height="75" rounded class="theme-color d-flex justify-center align-center text-center pa-4" :color="color.hex" :border="store.storeThemeColor === color.hex ? 'lg' : undefined" @click="store.setThemeColor(color.hex)">
+                <v-sheet v-ripple height="75" rounded class="theme-color d-flex justify-center align-center text-center pa-4" :color="color.hex" :border="store.storeThemeColor === color.hex ? 'lg' : undefined" @click="notifyThemeColor(color.hex)">
                   {{ color.name }}
                 </v-sheet>
               </v-col>
@@ -52,7 +52,7 @@
             <v-btn-toggle mandatory v-model="theme" variant="tonal" color="primary" class="d-flex">
               <v-btn class="flex-grow-1" :prepend-icon="mdiWhiteBalanceSunny" value="light" :text="$t('menuItemThemeLight')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'light'" /></template></v-btn>
               <v-btn class="flex-grow-1" :prepend-icon="mdiWeatherNight" value="dark" :text="$t('menuItemThemeDark')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'dark'" /></template></v-btn>
-              <v-btn class="flex-grow-1" :prepend-icon="mdiDesktopTowerMonitor" value="system" :text="$t('menuItemThemeSystem')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'system'" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiBrightnessAuto" value="system" :text="$t('menuItemThemeSystem')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTheme === 'system'" /></template></v-btn>
             </v-btn-toggle>
 
             <h4 class="mt-3">{{ $t('formLabelSettingsPerformanceMode') }}</h4>
@@ -134,6 +134,14 @@
             />
 
             <v-switch
+              :label="$t('formLabelSettingsRestrictInputToMarked')"
+              :hint="$t('formDescriptionSettingsRestrictInputToMarked')"
+              persistent-hint
+              color="primary"
+              v-model="restrictInputToMarked"
+            />
+
+            <v-switch
               :label="$t('formLabelSettingsAutoSelectSearch')"
               :hint="$t('formDescriptionSettingsAutoSelectSearch')"
               persistent-hint
@@ -204,7 +212,7 @@
                 @click="changeColor(index)"
               >
                 <template #prepend>
-                  <v-icon :icon="mdiCircle" :color="color" />
+                  <v-icon :icon="isSquare ? mdiSquare : mdiCircle" :color="color" />
                 </template>
                 <template #close><v-icon :icon="mdiCloseCircle" @click.stop="deleteColor(index)" /></template>
               </v-chip>
@@ -362,8 +370,10 @@
   import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
-  import { mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDesktopTowerMonitor, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
+
+  import emitter from 'tiny-emitter/instance'
 
   const store = coreStore()
   const { t } = useI18n()
@@ -396,6 +406,7 @@
   const categoryCountInline = ref(store.storeCategoryCountInline)
   const enterBarcode = ref(store.storeEnterBarcode)
   const escapeBarcode = ref(store.escapeBarcode)
+  const restrictInputToMarked = ref(store.storeRestrictInputToMarked)
 
   const isSquare = computed(() => store.storeCanvasShape === CanvasShape.SQUARE)
 
@@ -441,6 +452,7 @@
     categoryCountInline.value = store.storeCategoryCountInline
     enterBarcode.value = store.storeEnterBarcode
     escapeBarcode.value = store.storeEscapeBarcode
+    restrictInputToMarked.value = store.storeRestrictInputToMarked
 
     shareBottomSheetVisible.value = false
   }
@@ -469,35 +481,110 @@
   function setTraitColors (palette: string[]) {
     traitColors.value = palette.concat()
   }
+  function notifyThemeColor (hex: string) {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { themeColor: hex } })
+    store.setThemeColor(hex)
+  }
 
   watch(currentTraitIndex, async newValue => {
     if (newValue === undefined) {
       currentTraitColor.value = '#000000'
     }
   })
-  watch(traitColors, async newValue => store.setTraitColors(newValue))
-  watch(locale, async newValue => store.setLocale(newValue))
-  watch(theme, async newValue => store.setTheme(newValue))
-  watch(canvasShape, async newValue => store.setCanvasShape(newValue))
-  watch(canvasSize, async newValue => store.setCanvasSize(newValue))
-  watch(canvasDensity, async newValue => store.setCanvasDensity(newValue))
-  watch(gpsEnabled, async newValue => store.setGpsEnabled(newValue))
-  watch(navigationMode, async newValue => store.setNavigationMode(newValue))
-  watch(mainDisplayMode, async newValue => store.setMainDisplayMode(newValue))
-  watch(displayMarkerIndicators, async newValue => store.setDisplayMarkerIndicators(newValue))
-  watch(showFullTraitDescription, async newValue => store.setShowFullTraitDescription(newValue))
-  watch(largeButtonsForIntTraits, async newValue => store.setLargeButtonsForIntTraits(newValue))
-  watch(displayMinCellWidth, async newValue => store.setDisplayMinCellWidth(newValue))
-  watch(categoryCountInline, async newValue => store.setCategoryCountInline(newValue))
-  watch(plotDisplayField, async newValue => store.setPlotDisplayField(newValue))
-  watch(autoSelectSearch, async newValue => store.setAutoSelectSearch(newValue))
-  watch(autoSelectFirstInput, async newValue => store.setAutoSelectFirstInput(newValue))
-  watch(autoProgressInputs, async newValue => store.setAutoProgressInputs(newValue))
-  watch(voiceFeedbackEnabled, async newValue => store.setVoiceFeedbackEnabled(newValue))
-  watch(hideHelpInformation, async newValue => store.setHideHelpInformation(newValue))
-  watch(enterBarcode, async newValue => store.setEnterBarcode(newValue))
-  watch(escapeBarcode, async newValue => store.setEscapeBarcode(newValue))
+  watch(traitColors, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { traitColors: newValue } })
+    store.setTraitColors(newValue)
+  })
+  watch(locale, async newValue => {
+    emitter.emit('plausible-event', { key: 'locale-changed', props: { locale: newValue } })
+    store.setLocale(newValue)
+  })
+  watch(theme, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { theme: newValue } })
+    store.setTheme(newValue)
+  })
+  watch(canvasShape, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasShape: newValue } })
+    store.setCanvasShape(newValue)
+  })
+  watch(canvasSize, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasSize: newValue } })
+    store.setCanvasSize(newValue)
+  })
+  watch(canvasDensity, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { canvasDensity: newValue } })
+    store.setCanvasDensity(newValue)
+  })
+  watch(gpsEnabled, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { gpsEnabled: newValue } })
+    store.setGpsEnabled(newValue)
+  })
+  watch(navigationMode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { navigationMode: newValue } })
+    store.setNavigationMode(newValue)
+  })
+  watch(mainDisplayMode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { mainDisplayMode: newValue } })
+    store.setMainDisplayMode(newValue)
+  })
+  watch(displayMarkerIndicators, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMarkerIndicators: newValue } })
+    store.setDisplayMarkerIndicators(newValue)
+  })
+  watch(showFullTraitDescription, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { showFullTraitDescription: newValue } })
+    store.setShowFullTraitDescription(newValue)
+  })
+  watch(largeButtonsForIntTraits, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { largeButtonsForIntTraits: newValue } })
+    store.setLargeButtonsForIntTraits(newValue)
+  })
+  watch(displayMinCellWidth, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { displayMinCellWidth: newValue } })
+    store.setDisplayMinCellWidth(newValue)
+  })
+  watch(categoryCountInline, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { categoryCountInline: newValue } })
+    store.setCategoryCountInline(newValue)
+  })
+  watch(plotDisplayField, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { plotDisplayField: newValue } })
+    store.setPlotDisplayField(newValue)
+  })
+  watch(autoSelectSearch, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { autoSelectSearch: newValue } })
+    store.setAutoSelectSearch(newValue)
+  })
+  watch(autoSelectFirstInput, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { autoSelectFirst: newValue } })
+    store.setAutoSelectFirstInput(newValue)
+  })
+  watch(autoProgressInputs, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { autoProgressInputs: newValue } })
+    store.setAutoProgressInputs(newValue)
+  })
+  watch(voiceFeedbackEnabled, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { voiceFeedbackEnabled: newValue } })
+    store.setVoiceFeedbackEnabled(newValue)
+  })
+  watch(hideHelpInformation, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { hideHelpInformation: newValue } })
+    store.setHideHelpInformation(newValue)
+  })
+  watch(enterBarcode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { enterBarcode: newValue } })
+    store.setEnterBarcode(newValue)
+  })
+  watch(escapeBarcode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { escapeBarcode: newValue } })
+    store.setEscapeBarcode(newValue)
+  })
+  watch(restrictInputToMarked, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { restrictInputToMarked: newValue } })
+    store.setRestrictInputToMarked(newValue)
+  })
   watch(performanceMode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { performanceMode: newValue } })
     store.setPerformanceMode(newValue)
     window.location.reload()
   })

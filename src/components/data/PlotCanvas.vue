@@ -19,6 +19,7 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTouchPosition } from '@/plugins/touchinput'
   import { categoricalColors } from '@/plugins/color'
+  import { useI18n } from 'vue-i18n'
 
   interface DragConfig {
     active: boolean
@@ -52,6 +53,7 @@
 
   const emit = defineEmits(['origin-changed'])
 
+  const { t } = useI18n()
   const store = coreStore()
 
   let gridProjection: any
@@ -65,7 +67,6 @@
   const isDrawing = ref(false)
   const origin = ref<XY>({ x: 0, y: 0 })
   const followGps = ref(false)
-  const showRestrictionToast = ref(false)
   const drag = ref<DragConfig>({
     active: false,
     start: undefined,
@@ -810,7 +811,11 @@
           const anyMarked = compProps.markedColumns.includes(true) || compProps.markedRows.includes(true)
 
           if (anyMarked && !compProps.markedColumns[column] && !compProps.markedRows[row]) {
-            showRestrictionToast.value = true
+            // Show toast
+            emitter.emit('show-snackbar', {
+              text: t('toastDataInputRestrictedTitle'),
+              color: 'warning',
+            })
             return
           }
         }

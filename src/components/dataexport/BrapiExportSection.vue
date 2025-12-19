@@ -12,7 +12,7 @@
             <p :class="allGermplasmValidDbId ? 'text-success' : 'text-error'">{{ $t('pageBrapiExportBrapiGermplasmIdText', { count: germplasmWithBrapiDbIds.count, total: germplasmWithBrapiDbIds.total }) }}</p>
           </template>
           <template #actions>
-            <v-btn variant="tonal" :color="allGermplasmValidDbId ? undefined : 'primary'" :disabled="germplasmLoading || allGermplasmValidDbId" @click="searchBrapiGermplasmMatches" :prepend-icon="mdiMagnify" :text="$t('buttonUpdate')" />
+            <v-btn variant="tonal" :color="allGermplasmValidDbId ? undefined : 'primary'" :disabled="!validBrapiUrl || germplasmLoading || allGermplasmValidDbId" @click="searchBrapiGermplasmMatches" :prepend-icon="mdiMagnify" :text="$t('buttonUpdate')" />
           </template>
         </v-card>
       </v-col>
@@ -25,7 +25,7 @@
             <p :class="allTraitsValidDbId ? 'text-success' : 'text-error'">{{ $t('pageBrapiExportBrapiTraitIdText', { count: traitsWithBrapiDbIds.count, total: traitsWithBrapiDbIds.total }) }}</p>
           </template>
           <template #actions>
-            <v-btn variant="tonal" :color="allTraitsValidDbId ? undefined : 'primary'" :disabled="traitsLoading || allTraitsValidDbId" @click="searchBrapiTraitMatches" :prepend-icon="mdiMagnify" :text="$t('buttonUpdate')" />
+            <v-btn variant="tonal" :color="allTraitsValidDbId ? undefined : 'primary'" :disabled="!validBrapiUrl || traitsLoading || allTraitsValidDbId" @click="searchBrapiTraitMatches" :prepend-icon="mdiMagnify" :text="$t('buttonUpdate')" />
             <template v-if="traitLookupRanAtLeastOnce && !allTraitsValidDbId">
               <v-spacer />
               <v-btn variant="tonal" color="primary" @click="writeTraitsWithoutBrapiId" :prepend-icon="mdiCloudPlus" :text="$t('buttonUpload')" />
@@ -71,6 +71,8 @@
 
   const allGermplasmValidDbId = computed(() => germplasmWithBrapiDbIds.value !== undefined && germplasmWithBrapiDbIds.value.count === germplasmWithBrapiDbIds.value.total)
   const allTraitsValidDbId = computed(() => traitsWithBrapiDbIds.value !== undefined && traitsWithBrapiDbIds.value.count === traitsWithBrapiDbIds.value.total)
+
+  const validBrapiUrl = computed(() => compProps.trial && compProps.trial.brapiConfig && compProps.trial.brapiConfig.url)
 
   function updateBrapiGermplasmDbIdCounts () {
     const trialData = getTrialDataCached()

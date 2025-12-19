@@ -496,7 +496,6 @@
   "pageExportTrialFormatTabDataCardTitle": "Xuất dữ liệu",
   "pageExportTrialFormatTabDataCardSubtitle": "Xuất dữ liệu đã thu thập thành tệp văn bản được phân cách bằng tab. Tệp này có thể được nhập vào các công cụ khác.",
   "pageExportTrialFormatGerminate": "Nếu bạn đang sử dụng Germinate và muốn xuất dữ liệu của mình ở <a href='https://github.com/germinateplatform/germinate-data-templates'> Định dạng mẫu dữ liệu nảy mầm </a> thì GridScore có thể thực hiện tất cả công việc cho bạn. Chỉ cần nhấp vào nút bên dưới để gửi dữ liệu của bạn đến máy chủ GridScore để xử lý. Một liên kết tải xuống sẽ xuất hiện khi dữ liệu đã sẵn sàng.",
-  "pageExportTrialFormatBrapi": "Dữ liệu có thể được xuất trực tiếp sang máy chủ tương thích với BrAPI nếu bạn có quyền ghi vào hệ thống. Sử dụng nút bên dưới để cung cấp URL BrAPI và mã thông báo xác thực, sau đó chọn chương trình, thí nghiệm và nghiên cứu để nhập dữ liệu vào. Xin lưu ý rằng hình ảnh, video và nhận xét không thể được xuất sang Germinate bằng cơ chế này.",
   "pageExportTrialFormatBrapiGermplasmIdTitle": "Tra cứu Id nguồn gen/giống trong cở sở dữ liệu",
   "pageExportTrialFormatBrapiGermplasmIdText": "{count} / {total} nguồn gen/giống trong thí nghiệm này có ID trong cơ sở dữ liệu của BrAPI hợp lệ. Sử dụng nút bên dưới để chạy truy vấn đối với máy chủ BrAPI nhằm kiểm tra kết quả trùng khớp.",
   "pageExportTrialFormatBrapiTraitIdTitle": "Tra cứu Id đặc tính trong cơ sở dữ liệu",

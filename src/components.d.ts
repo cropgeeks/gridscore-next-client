@@ -43,6 +43,7 @@ declare module 'vue' {
     HelpCard: typeof import('./components/util/HelpCard.vue')['default']
     HScroll: typeof import('./components/data/HScroll.vue')['default']
     JumpToDropdown: typeof import('./components/util/JumpToDropdown.vue')['default']
+    LabelEditor: typeof import('./components/setup/LabelEditor.vue')['default']
     LayoutDimensions: typeof import('./components/setup/LayoutDimensions.vue')['default']
     LayoutMarkers: typeof import('./components/setup/LayoutMarkers.vue')['default']
     LineChart: typeof import('./components/chart/LineChart.vue')['default']

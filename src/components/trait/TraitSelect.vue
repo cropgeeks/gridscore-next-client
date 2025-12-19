@@ -16,20 +16,23 @@
   >
     <template #item="{ props, item }">
       <v-list-item v-bind="props" slim :title="item.raw.name">
-        <template #prepend><v-icon :color="item.raw.color" :icon="mdiCircle" /></template>
+        <template #prepend><v-icon :color="item.raw.color" :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" /></template>
       </v-list-item>
     </template>
     <template #selection="{ item }">
       <v-list-item slim :title="item.raw.name">
-        <template #prepend><v-icon :color="item.raw.color" :icon="mdiCircle" /></template>
+        <template #prepend><v-icon :color="item.raw.color" :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" /></template>
       </v-list-item>
     </template>
   </v-select>
 </template>
 
 <script setup lang="ts">
-  import type { TraitPlus } from '@/plugins/types/client'
-  import { mdiCircle } from '@mdi/js'
+  import { CanvasShape, type TraitPlus } from '@/plugins/types/client'
+  import { coreStore } from '@/stores/app'
+  import { mdiCircle, mdiSquare } from '@mdi/js'
+
+  const store = coreStore()
 
   const selectedTraits = defineModel<TraitPlus[] | TraitPlus>()
 

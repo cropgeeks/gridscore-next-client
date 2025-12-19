@@ -11,8 +11,7 @@
 
     <UseOnline v-slot="{ isOnline }">
       <v-tabs
-        color="primary"
-        bg-color="surface"
+        bg-color="primary"
         v-model="tab"
         center-active
         grow

@@ -1,7 +1,7 @@
 <template>
   <v-list-item v-if="trait" slim class="px-1">
     <template #prepend>
-      <v-icon :icon="mdiCircle" :color="trait.color" size="x-large" />
+      <v-icon :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" :color="trait.color" size="x-large" />
     </template>
     <template #title>
       <div class="d-flex flex-wrap align-center justify-space-between ga-2">
@@ -38,9 +38,9 @@
 
 <script setup lang="ts">
   import { dataTypeMap } from '@/plugins/constants'
-  import type { TraitPlus } from '@/plugins/types/client'
+  import { CanvasShape, type TraitPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiCircle, mdiGreaterThanOrEqual, mdiLessThanOrEqual, mdiRepeat, mdiRepeatOff, mdiSetSplit } from '@mdi/js'
+  import { mdiCircle, mdiSquare, mdiGreaterThanOrEqual, mdiLessThanOrEqual, mdiRepeat, mdiRepeatOff, mdiSetSplit } from '@mdi/js'
 
   const store = coreStore()
 

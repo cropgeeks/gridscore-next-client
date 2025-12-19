@@ -11,24 +11,25 @@ Everything in GridScore evolves around trials. They are the main data unit. At a
 ## Trial metadata
 <img src="img/setup.png" style="max-width: 100%;" alt="Trial setup screen">
 
-The screenshot above shows the trial setup screen. We have reduced the clutter of the setup screen by splitting it into separate sections and showing overviews on this main setup view. The two bits of information that can be specified here are the `name` and `description` of the trial.
+The screenshot above shows the trial setup screen. We have reduced the clutter of the setup screen by splitting it into separate sections and taking you through them one step at a time. The following information can be specified here.
 
-- **Name**: This should ideally be a unique and distinctive, yet short name for your trial. It often makes sense to include the trial year and maybe a project code in the name.
-- **Description**: This is where you can add more information about the trial. Anything that may be useful while using GridScore out in the field or that should be included once the trial is exported.
-- **Group**: Trials can be grouped into logical sets. Pick one of the already existing groups or type in a new group name.
+- **Trial name**: This should ideally be a unique and distinctive, yet short name for your trial. It often makes sense to include the trial year and maybe a project code in the name.
+- **Trial description**: This is where you can add more information about the trial. Anything that may be useful while using GridScore out in the field or that should be included once the trial is exported.
+- **Trial group**: Trials can be grouped into logical sets. Pick one of the already existing groups or type in a new group name.
 - **People involved**: People involved in the creation of the trial or the data collection can optionally be defined.
+- **User filename parts**: This determines the format of any media files that are recorded for a plot. Add or remove parts to achieve the format you want.
 
-The two cards below the text fields summarize the two other areas that need to be provided for the trial. These include the `trial layout` (including dimensions, germplasm information, geographic information and visual markers) as well as the `traits` (including their data types, restrictions and groupings).
-
-Click on the `Define` or `Change` button within each card to specify the respective information.
+Once you specified at least the `Trial name`, you can progress to the `Trial layout` section
 
 ## Trial layout
-The trial layout screen is where everything related to the trial dimensions, the contained germplasm as well as optional features like corner points and visual markers are defined. Use the tabs to switch between them.
+The trial layout screen is where everything related to the trial dimensions, the contained germplasm as well as optional features like corner points and visual markers are defined. Use the vertical navigation to switch between them.
 
 ### Dimensions
 <img src="img/setup-layout.png" style="max-width: 100%;" alt="Trial layout">
 
 The trial dimensions need to be defined before anything else can be specified. They tell GridScore how many rows and columns you have in your trial.
+
+First, you have to decide whether your trial is laid out in a grid-like fashion or if you just want to score your data based off a list of germplasm entries.
 
 If your trial is rectangular, then specify the total number of rows and columns in the trial. It's possible to leave individual cells/plots empty on the next screen, so you can achieve trials that have odd shapes.
 
@@ -36,7 +37,7 @@ If your trial does not follow a rectangular layout, you can still use GridScore,
 
 In addition to the dimensionality, you can choose in which order rows and columns are numbered. By default, GridScore will number them from the top-left corner, starting at row 1, column 1. You can switch both the row and column order separately to change this behavior to better suit your needs. If, for example, you are counting rows and columns from the bottom-left corner, reverse the row order to go from bottom to top, but keep the column order the same. This used to be a global setting in the old GridScore, but we realized that everyone working on the same trial will be using the same ordering while they may use different orderings for individual trials.
 
-To give you even more customization options, the actual labels for rows and columns can also be adjusted. You can drag and drop the labels around after clicking on `Show labels` and you can change the label text by enabling `Edit labels`. This gives you the maximum amount of flexibility. A possible use case are guard rows that are technically numbered, but you may not want to include these in your trial setup. For example, if you have 8 columns and a guard column in the middle, then you can set the number of columns to 8 which will give you default labels `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`. You can then adjust this by changing the text of `5`, `6`, `7`, `8` to `6`, `7`, `8`, `9`. In the end you have column labels `1`-`4` and `6`-`9`.
+To give you even more customization options, the actual labels for rows and columns can also be adjusted. You can drag and drop the labels around after clicking on `Edit labels` and you can also change the label text. This gives you the maximum amount of flexibility. A possible use case are guard rows that are technically numbered, but you may not want to include these in your trial setup. For example, if you have 8 columns and a guard column in the middle, then you can set the number of columns to 8 which will give you default labels `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`. You can then adjust this by changing the text of `5`, `6`, `7`, `8` to `6`, `7`, `8`, `9`. In the end you have column labels `1`-`4` and `6`-`9`.
 
 > NOTE: If you're importing a trial design from FielDHub, please make sure to select 'bottom to top' for the row order.
 
@@ -50,6 +51,8 @@ Once the dimensions have been specified, GridScore needs to know which germplasm
 - **Control/Check**: By ticking this box, you're marking the plot as a control or check. This allows GridScore to highlight these plots in the main data display as well as all visualizations so it's easier to compare the rest of your data to just those controls/checks.
 
 Please note that the combination of `Germplasm identifier` and `Rep number` should be unique for each cell/plot. This means you should not use, for example, `Heris` and `2` as the germplasm identifier and rep number more than once. If you do, GridScore will show a warning, but you will be able to proceed.
+
+You can enable additional input fields to store more meta-data alongside each plot. These include `Treatment`, `Friendly name`, `Barcode` and `Pedigree`.
 
 #### Marking as checks/controls
 
@@ -84,6 +87,8 @@ Dialog    2   1   2
 ```
 
 Please note that the file has to be tab-delimited and not space-delimited as used here for clearer display.
+
+> Once you specified the germplasm information click `Check data validity` so that GridScore can run over your information and check if everything looks ok.
 
 ### Trial corners
 <img src="img/setup-corners.png" style="max-width: 100%;" alt="Trial corner points">
@@ -128,6 +133,8 @@ The list of added traits will be shown to the right of the form (or below on sma
 Once you are happy with your selection, use the `Save` button in the top right corner.
 
 ## Creating the trial
+
+<img src="img/setup-confirmation.png" style="max-width: 100%;" alt="Trial setup confirmation">
 
 Once all the required information has been specified, you are able to create the trial using the `Create trial` button at the bottom of the trial metadata screen. The new trial will be added to your list of local trials and can be selected/loaded from the home screen.
 

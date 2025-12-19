@@ -20,6 +20,8 @@
             <template #prepend><v-icon :icon="mdiSortAscending" class="mdi-flip-v" /></template>
           </v-btn>
         </v-btn-toggle>
+
+        <LabelEditor v-model="model.rowLabels" orientation="vertical" />
       </v-col>
       <v-col cols="12" md="6" v-if="layoutType === 'grid'">
         <NumberInputWithFallback
@@ -42,6 +44,8 @@
             <template #prepend><v-icon :icon="mdiSortAscending" class="sort-rtl" /></template>
           </v-btn>
         </v-btn-toggle>
+
+        <LabelEditor v-model="model.columnLabels" orientation="horizontal" />
       </v-col>
     </v-row>
 
@@ -53,6 +57,7 @@
   import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
   import { DisplayOrder, type Layout } from '@/plugins/types/gridscore'
   import { mdiAlert, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSortAscending } from '@mdi/js'
+  import LabelEditor from '@/components/setup/LabelEditor.vue'
 
   const model = defineModel<Layout>()
   const layoutType = defineModel<'grid' | 'list'>('layoutType')

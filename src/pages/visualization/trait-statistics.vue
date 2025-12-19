@@ -9,16 +9,18 @@
         <v-col cols="12" md="6">
           <TraitSelect
             v-model="selectedTraits"
+            class="mt-7"
             multiple
             :traits="trial.traits"
           />
         </v-col>
         <v-col cols="12" md="6">
+          <div class="text-subtitle-2 mt-3">{{ $t('pageVisualizationHighlight') }}</div>
           <v-btn-toggle
             v-model="selectionMode"
             color="primary"
             variant="tonal"
-            class="d-flex mb-4"
+            class="d-flex mb-5"
           >
             <v-btn class="flex-grow-1" value="germplasm" :prepend-icon="mdiSprout" :text="$t('tooltipChartHeatmapGermplasm')" />
             <v-btn class="flex-grow-1" value="reps" :disabled="!trialReps || trialReps.length === 0" :prepend-icon="mdiFormatListNumbered" :text="$t('tooltipChartHeatmapRep')" />
