@@ -5,8 +5,8 @@ import emitter from 'tiny-emitter/instance'
 
 import axios from 'axios'
 import { gridScoreVersion } from '@/plugins/constants'
-import type { RemoteConfig, TrialPlus } from './types/client'
-import type { Transaction, TrialTimestamp, TrialUpdateCheck } from './types/gridscore'
+import type { RemoteConfig, TrialPlus } from '@/plugins/types/client'
+import type { ArchiveInformation, CaptchaContent, Transaction, TrialTimestamp, TrialUpdateCheck } from './types/gridscore'
 
 interface InternalResult {
   trial: TrialPlus
@@ -357,12 +357,12 @@ function exportToShapefile (remoteConfig: RemoteConfig | undefined, shareCode: s
   return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trial/${shareCode}/export/shapefile`, method: 'get' })
 }
 
-function extendTrialPeriod (remoteConfig: RemoteConfig | undefined, shareCode: string, captcha: string) {
+function extendTrialPeriod (remoteConfig: RemoteConfig | undefined, shareCode: string, captcha: CaptchaContent) {
   return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trial/${shareCode}/renew`, method: 'post', params: captcha })
 }
 
 function checkTrialArchiveExists (remoteConfig: RemoteConfig | undefined, shareCode: string) {
-  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trial/${shareCode}/export/archive/exists`, method: 'get' })
+  return axiosCall<ArchiveInformation>({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trial/${shareCode}/export/archive/exists`, method: 'get' })
 }
 
 function postTraitImage (remoteConfig: RemoteConfig | undefined, shareCode: string, traitId: string, formData: any) {

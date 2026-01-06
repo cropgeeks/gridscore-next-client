@@ -25,7 +25,7 @@
           <slot name="list-prepend" />
           <v-list-item :disabled="!canDownload" @click="downloadChart('png')" :title="$t('buttonDownloadPng')" :prepend-icon="mdiFileImage" v-if="compProps.supportsPngDownload" />
           <v-list-item :disabled="!canDownload" @click="downloadChart('svg')" :title="$t('buttonDownloadSvg')" :prepend-icon="mdiFileCode" v-if="compProps.supportsSvgDownload" />
-          <v-list-item :disabled="!canDownload" @click="downloadSource" :title="$t('buttonDownloadFile')" :prepend-icon="mdiFileDocument" v-if="compProps.supportsFileDownload" />
+          <v-list-item :disabled="!canDownload || !sourceFile" @click="downloadSource" :title="$t('buttonDownloadFile')" :prepend-icon="mdiFileDocument" v-if="compProps.supportsFileDownload" />
           <slot name="list-append" />
         </v-list>
       </v-menu>

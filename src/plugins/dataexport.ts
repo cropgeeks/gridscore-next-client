@@ -311,15 +311,15 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
 
               if (values && values.length > 0) {
                 values.forEach(val => {
-                  let values: (string | undefined)[] = []
+                  let valuesss: (string | undefined)[] = []
 
                   if (t.dataType === TraitDataType.multicat) {
-                    values = val.value !== undefined ? val.value.split(':') : []
+                    valuesss = val.value !== undefined ? val.value.split(':') : []
                   } else {
-                    values = [val.value]
+                    valuesss = [val.value]
                   }
 
-                  values.forEach(value => {
+                  valuesss.forEach(value => {
                     result += `\n${germplasmMeta}\t${val.index + 1}\t${useTimestamps ? toLocalDateTimeString(dp.timestamp, { overallSeparator: ' ', dateSeparator: '-', timeSeparator: ':' }) : dp.timestamp.split('T')[0]}`
 
                     if (v.geography) {

@@ -251,6 +251,16 @@ export interface Transaction {
     brapiConfigChangeTransaction: BrapiConfig;
 }
 
+export interface ArchiveInformation {
+    trialExportedOn: string;
+    trialUpdatedOn: string;
+    fileSize: number;
+}
+
+export interface CaptchaContent {
+    captcha: string;
+}
+
 export const enum EventType {
     WEATHER = 'WEATHER',
     MANAGEMENT = 'MANAGEMENT',

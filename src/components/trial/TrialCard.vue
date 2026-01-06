@@ -21,6 +21,7 @@
       <div class="d-flex flex-row flex-wrap ga-2">
         <v-chip v-if="trial.updatedOn" :prepend-icon="mdiCalendarEdit" variant="tonal" color="primary" label v-tooltip:bottom="new Date(trial.updatedOn).toLocaleString()" :text="formatTimeAgo(trial.updatedOn)" />
         <v-chip v-if="trial.isLocked" :prepend-icon="mdiLockAlert" variant="tonal" color="warning" label v-tooltip:bottom="$t('widgetDataInputLockedWarning')" :text="$t('widgetDataInputLockedChip')" />
+        <v-chip v-if="trial.showExpiryWarning" :disabled="!interactive" :prepend-icon="mdiCalendarAlert" variant="tonal" color="error" label :text="$t('widgetTrialSelectorTrialExpiryWarning')" @click="emit('extend-lifetime')" />
         <slot name="chips" />
       </div>
     </v-card-text>
@@ -37,7 +38,10 @@
           <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
         </v-col>
         <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')"><template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template></v-list-item>
+          <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
+            <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
+            <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
+          </v-list-item>
         </v-col>
         <v-col cols="12" sm="6" md="4" lg="3">
           <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
@@ -49,7 +53,7 @@
           <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
         </v-col>
         <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiCalendarExpandHorizontal" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
+          <v-list-item :prepend-icon="mdiCalendarRange" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
         </v-col>
       </v-row>
     </v-list>
@@ -57,11 +61,14 @@
       <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
       <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')"><template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
+        <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
+        <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
+      </v-list-item>
       <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
       <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiCalendarExpandHorizontal" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
+      <v-list-item :prepend-icon="mdiCalendarRange" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
     </v-list>
 
     <v-card-actions v-if="showActions">
@@ -143,6 +150,22 @@
       @event-deleted="deleteEvent"
       ref="eventModal"
     />
+
+    <v-dialog v-model="trialTimeFrameModal" max-width="min(90vw, 1024px)">
+      <v-card :title="$t('modalTitleTraitTimeframe')">
+        <template #text>
+          <p>{{ $t('modalTextTraitTimeframe') }}</p>
+
+          <TraitTimeframeChart
+            :trial="compProps.trial"
+          />
+        </template>
+        <template #actions>
+          <v-spacer />
+          <v-btn :text="$t('buttonClose')" color="primary" variant="tonal" @click="trialTimeFrameModal = false" />
+        </template>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -155,7 +178,7 @@
   import TrialOptionsDropdown from '@/components/trial/TrialOptionsDropdown.vue'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiAccountMultiple, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLockAlert, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
+  import { mdiAccountMultiple, mdiCalendarAlert, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCalendarRange, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLockAlert, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
   import CommentModal from '@/components/modals/CommentModal.vue'
   import { addTrialComment, addTrialEvent, deleteTrialComment, deleteTrialEvent } from '@/plugins/idb'
   import type { Comment, Event } from '@/plugins/types/gridscore'
@@ -164,6 +187,7 @@
   const store = coreStore()
 
   const menuShown = ref(false)
+  const trialTimeFrameModal = ref(false)
 
   export interface TrialCardProps {
     trial: TrialPlus
@@ -186,11 +210,13 @@
     horizontal: false,
   })
 
-  const emit = defineEmits(['lock', 'share', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm'])
+  const emit = defineEmits(['lock', 'share', 'extend-lifetime', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm'])
   const commentModal = useTemplateRef('commentModal')
   const eventModal = useTemplateRef('eventModal')
 
   const canEdit = computed(() => compProps.trial.editable === true && compProps.trial.isLocked !== true)
+
+  const hasTimeframeTraits = computed(() => compProps.trial?.traits.some(t => t.timeframe))
 
   const trialDuration = computed(() => {
     if (compProps.trial && compProps.trial.createdOn && compProps.trial.updatedOn) {

@@ -309,11 +309,7 @@
   })
 
   const isEditable = computed(() => {
-    if (compProps.editable !== undefined) {
-      return compProps.editable
-    } else {
-      return compProps.trait.editable
-    }
+    return (compProps.editable === undefined || compProps.editable === true) && compProps.trait.editable
   })
 
   const description = computed(() => {

@@ -93,6 +93,7 @@
             <v-list-item :prepend-icon="mdiGradientHorizontal" :title="$t('menuVisualizationHeatmap')" to="/visualization/heatmap" />
             <v-list-item :prepend-icon="mdiChartGantt" :title="$t('menuVisualizationStatistics')" to="/visualization/trait-statistics" />
             <v-list-item :prepend-icon="mdiChartTimeline" :title="$t('menuVisualizationTrialStatistics')" to="/visualization/trial-statistics" />
+            <v-list-item :prepend-icon="mdiChartTimelineVariant" :title="$t('menuVisualizationTimeline')" to="/visualization/timeline" />
             <v-list-item :prepend-icon="mdiMap" :title="$t('menuVisualizationMap')" to="/visualization/map" />
           </v-list-group>
 
@@ -132,6 +133,7 @@
     </v-overlay>
 
     <TrialSynchonizationModal />
+    <TrialMissingModal />
 
     <v-dialog
       v-model="updateExists"
@@ -166,7 +168,7 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
-  import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()

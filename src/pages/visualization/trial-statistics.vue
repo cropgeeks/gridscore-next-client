@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <h1 class="text-h4 mb-3">{{ $t('pageDataStatisticsTitle') }}</h1>
     <v-divider class="mb-3" />
     <p>{{ $t('pageDataStatisticsText') }}</p>

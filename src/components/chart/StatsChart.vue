@@ -52,7 +52,7 @@
 
   const GENERIC_TRACE = '~~GENERIC_TRACE~~'
 
-  interface Datapoint {
+  export interface Datapoint {
     displayColumn: number
     displayRow: number
     row: number

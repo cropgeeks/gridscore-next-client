@@ -10,8 +10,8 @@
     :multiple="multiple"
     :chips="multiple"
     clearable
-    :label="$t('formLabelHeatmapTrait')"
-    :hint="$t('formDescriptionHeatmapTrait')"
+    :label="$t(label)"
+    :hint="$t(hint)"
     persistent-hint
   >
     <template #item="{ props, item }">
@@ -39,9 +39,13 @@
   interface TraitSelectProps {
     traits: TraitPlus[]
     multiple?: boolean
+    label?: string
+    hint?: string
   }
 
   withDefaults(defineProps<TraitSelectProps>(), {
     multiple: false,
+    label: 'formLabelHeatmapTrait',
+    hint: 'formDescriptionHeatmapTrait',
   })
 </script>

@@ -808,6 +808,11 @@
         "text": "In addition to the main data display grid you can now use a dedicated guided walk page as well as a barcode-focussed input page to enter data more efficiently."
       },
       {
+        "type": "update",
+        "title": "Timeline charts",
+        "text": "We have reworked the timeline charts to allow for more meaningful data visualization. You can now highlight specific germplasm, reps or treatments."
+      },
+      {
         "type": "bugfix",
         "title": "Image saving issues",
         "text": "In previous versions there have been issues with saving images on some devices. This has now been resolved."

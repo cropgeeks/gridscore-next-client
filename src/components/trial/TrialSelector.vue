@@ -71,28 +71,30 @@
     <v-card-text>
       <p>{{ $t('widgetTrialSelectorText') }}</p>
 
-      <v-chip-group mandatory column filter variant="tonal" color="primary" v-model="selectedGroup">
-        <v-chip
-          v-for="group in trialGroups"
-          :key="`trial-groups-${group.name}`"
-          label
-          :text="group.name"
-        >
-          <template #append>
-            <v-badge inline :content="getNumberWithSuffix(group.trialCount, 1)" />
-          </template>
-        </v-chip>
-      </v-chip-group>
+      <template v-if="!searchTerm">
+        <v-chip-group mandatory column filter variant="tonal" color="primary" v-model="selectedGroup">
+          <v-chip
+            v-for="group in trialGroups"
+            :key="`trial-groups-${group.name}`"
+            label
+            :text="group.name"
+          >
+            <template #append>
+              <v-badge inline :content="getNumberWithSuffix(group.trialCount, 1)" />
+            </template>
+          </v-chip>
+        </v-chip-group>
 
-      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? mdiCheck : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" :prepend-icon="mdiCloudDownload" @click="filterWarning('remote')">
-        <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</span></template>
-      </v-card>
-      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? mdiCheck : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" :prepend-icon="mdiCloudUpload" @click="filterWarning('local')">
-        <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</span></template>
-      </v-card>
-      <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? mdiCheck : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" :prepend-icon="mdiCalendarAlert" @click="filterWarning('expiry')">
-        <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</span></template>
-      </v-card>
+        <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? mdiCheck : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" :prepend-icon="mdiCloudDownload" @click="filterWarning('remote')">
+          <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</span></template>
+        </v-card>
+        <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? mdiCheck : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" :prepend-icon="mdiCloudUpload" @click="filterWarning('local')">
+          <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</span></template>
+        </v-card>
+        <v-card class="my-2 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? mdiCheck : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" :prepend-icon="mdiCalendarAlert" @click="filterWarning('expiry')">
+          <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</span></template>
+        </v-card>
+      </template>
     </v-card-text>
 
     <v-card-text>
@@ -132,6 +134,7 @@
                 @add-person="addPerson(trial.raw)"
                 @add-metadata="addMetadata(trial.raw)"
                 @add-germplasm="addGermplasm(trial.raw)"
+                @extend-lifetime="extendLifetime(trial.raw)"
                 @add-data="addData(trial.raw)"
                 @duplicate="router.push(`/setup/${trial.raw.localId}/clone`)"
                 @edit="router.push(`/setup/${trial.raw.localId}/edit`)"
@@ -148,6 +151,7 @@
     </v-card-text>
 
     <TrialShareModal :trial="selectedTrial" ref="trialShareModal" v-if="selectedTrial" />
+    <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial" />
     <AddTraitModal ref="addTraitModal" v-if="selectedTrialsEditable" @traits-added="addTraitsToSelectedTrials" />
     <AddPersonModal ref="addPersonModal" v-if="selectedTrialsEditable" @person-added="addPersonToSelectedTrials" />
     <AddTrialGermplasmModal :trial="selectedTrial" ref="addGermplasmModal" v-if="selectedTrial && selectedTrialsEditable" />
@@ -210,6 +214,7 @@
   const addTraitModal = useTemplateRef('addTraitModal')
   const addPersonModal = useTemplateRef('addPersonModal')
   const addGermplasmModal = useTemplateRef('addGermplasmModal')
+  const trialExpirationModal = useTemplateRef('trialExpirationModal')
   const updateTrialMetadataModal = useTemplateRef('updateTrialMetadataModal')
   const updateTrialDataModal = useTemplateRef('updateTrialDataModal')
 
@@ -252,24 +257,25 @@
     const selectedGroupName = trialGroups.value[selectedGroup.value]?.id
     const isUngrouped = selectedGroupName === UNCATEGORIZED_TRIALS
 
-    if (selectedGroupName === ALL_TRIALS) {
+    if (filterForWarning.value) {
+      return (trials.value || []).filter(t => {
+        if (filterForWarning.value) {
+          switch (filterForWarning.value) {
+            case 'local':
+              return (t.hasLocalUpdate || false)
+            case 'remote':
+              return (t.hasRemoteUpdate || false)
+            case 'expiry':
+              return (t.showExpiryWarning || false)
+          }
+        }
+        return true
+      })
+    } else if (selectedGroupName === ALL_TRIALS) {
       return (trials.value || [])
     } else {
       return (trials.value || []).filter(t => {
         let result = true
-        if (filterForWarning.value) {
-          switch (filterForWarning.value) {
-            case 'local':
-              result &&= (t.hasLocalUpdate || false)
-              break
-            case 'remote':
-              result &&= (t.hasRemoteUpdate || false)
-              break
-            case 'expiry':
-              result &&= (t.showExpiryWarning || false)
-              break
-          }
-        }
         if (t.group && t.group.name) {
           result &&= selectedGroupName === t.group.name
         } else {
@@ -351,6 +357,12 @@
     } else {
       filterForWarning.value = type
     }
+  }
+
+  function extendLifetime (trial: TrialPlus) {
+    selectedTrial.value = trial
+
+    nextTick(() => trialExpirationModal.value?.show())
   }
 
   function addGermplasm (trial: TrialPlus) {
@@ -560,6 +572,11 @@
         loading.value = false
       })
   }
+
+  watch(searchTerm, async () => {
+    selectedGroup.value = 0
+    filterForWarning.value = undefined
+  })
 
   watch(trialGroups, async () => {
     selectedGroup.value = 0
