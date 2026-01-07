@@ -152,6 +152,10 @@
 
         trial.value = result
 
+        if (trial.value.group) {
+          trialGroup.value = trial.value.group.name || ''
+        }
+
         const match = existingTrials.value.filter(t => {
           if (t.shareCodes && result.shareCodes) {
             if (t.shareCodes.ownerCode && result.shareCodes.ownerCode && (t.shareCodes.ownerCode === result.shareCodes.ownerCode)) {

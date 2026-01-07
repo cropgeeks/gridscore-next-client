@@ -2,6 +2,16 @@
   <div>
     <v-row>
       <v-col cols="12" md="6">
+        <v-alert
+          v-if="isDisabledDueToEdit"
+          class="mb-5"
+          color="warning"
+          :icon="mdiTagPlus"
+          :text="$t('widgetBannerTraitsAddViaCardWarning')"
+          variant="tonal"
+          border="start"
+        />
+
         <v-form @submit.prevent="addTrait">
           <v-text-field
             class="mb-3"
@@ -10,6 +20,7 @@
             :label="$t('formLabelTraitName')"
             :hint="$t('formDescriptionTraitName')"
             :error-messages="formState.name ? [formState.name] : undefined"
+            :disabled="isDisabledDueToEdit"
             persistent-hint
             required
             @keyup.exact.enter="addTrait"
@@ -19,6 +30,7 @@
             class="mb-3"
             v-model="currentTrait.description"
             :prepend-inner-icon="mdiTextLong"
+            :disabled="isDisabledDueToEdit"
             :label="$t('formLabelTraitDescription')"
             :hint="$t('formDescriptionTraitDescription')"
             persistent-hint
@@ -30,7 +42,7 @@
                 class="mb-3"
                 v-model="currentTrait.dataType"
                 :items="dts"
-                :disabled="!canEdit"
+                :disabled="isDisabledDueToEdit || !canEdit"
                 :hint="$t('formDescriptionTraitDataType')"
                 :prepend-inner-icon="dts.find(dt => dt.value === currentTrait.dataType)?.icon"
                 persistent-hint
@@ -45,6 +57,7 @@
                 class="mb-3"
                 v-model="group.name"
                 list="trait-groups"
+                :disabled="isDisabledDueToEdit"
                 :prepend-inner-icon="mdiTagText"
                 :label="$t('formLabelTraitGroup')"
                 :hint="$t('formDescriptionTraitGroup')"
@@ -65,7 +78,7 @@
             chips
             multiple
             counter
-            :disabled="!canEdit"
+            :disabled="isDisabledDueToEdit || !canEdit"
             :delimiters="['\n']"
             :messages="formState.categories ? undefined : ['f']"
             :prepend-inner-icon="mdiTagMultiple"
@@ -85,7 +98,7 @@
               <v-number-input
                 v-model="restrictions.min"
                 class="mb-3"
-                :disabled="!canEdit"
+                :disabled="isDisabledDueToEdit || !canEdit"
                 :prepend-inner-icon="mdiFormatVerticalAlignBottom"
                 :label="$t('formLabelTraitRestrictionsMin')"
                 :hint="$t('formDescriptionTraitRestrictionsMin')"
@@ -97,7 +110,7 @@
               <v-number-input
                 v-model="restrictions.max"
                 class="mb-3"
-                :disabled="!canEdit"
+                :disabled="isDisabledDueToEdit || !canEdit"
                 :prepend-inner-icon="mdiFormatVerticalAlignTop"
                 :label="$t('formLabelTraitRestrictionsMax')"
                 :hint="$t('formDescriptionTraitRestrictionsMax')"
@@ -111,7 +124,7 @@
             v-model="currentTrait.setSize"
             class="mb-3"
             :min="1"
-            :disabled="!canEdit"
+            :disabled="isDisabledDueToEdit || !canEdit"
             :prepend-inner-icon="mdiSetSplit"
             :label="$t('formLabelTraitSetSize')"
             :hint="$t('formDescriptionTraitSetSize')"
@@ -122,7 +135,7 @@
             v-model="currentTrait.allowRepeats"
             color="primary"
             class="mb-3"
-            :disabled="!canEdit"
+            :disabled="isDisabledDueToEdit || !canEdit"
             :prepend-icon="mdiTimelinePlus"
             :label="$t('formLabelTraitAllowRepeats')"
             :hint="$t('formDescriptionTraitAllowRepeats')"
@@ -133,7 +146,7 @@
             v-model="timeframeSet"
             color="primary"
             class="mb-3"
-            :disabled="!canEdit"
+            :disabled="isDisabledDueToEdit || !canEdit"
             :prepend-icon="mdiCalendarExpandHorizontal"
             :label="$t('formLabelTraitTimeframe')"
             :hint="$t('formDescriptionTraitTimeframe')"
@@ -152,7 +165,7 @@
             </template>
 
             <template #text>
-              <v-btn-toggle v-model="timeframe.type" :disabled="!canEdit" variant="tonal" class="mb-3">
+              <v-btn-toggle v-model="timeframe.type" :disabled="isDisabledDueToEdit || !canEdit" variant="tonal" class="mb-3">
                 <v-btn :value="TimeframeType.SUGGEST" color="warning" :text="$t('formSelectOptionTraitTimeframeSuggest')" :prepend-icon="mdiAlert" />
                 <v-btn :value="TimeframeType.ENFORCE" color="error" :text="$t('formSelectOptionTraitTimeframeEnforce')" :prepend-icon="mdiMinusCircle" />
               </v-btn-toggle>
@@ -164,7 +177,7 @@
                     :hint="$t('formDescriptionTraitTimeframeStart')"
                     persistent-hint
                     prepend-icon=""
-                    :disabled="!canEdit"
+                    :disabled="isDisabledDueToEdit || !canEdit"
                     :max="timeframe.end"
                     :prepend-inner-icon="mdiCalendarStart"
                     clearable
@@ -178,7 +191,7 @@
                     :hint="$t('formDescriptionTraitTimeframeEnd')"
                     persistent-hint
                     prepend-icon=""
-                    :disabled="!canEdit"
+                    :disabled="isDisabledDueToEdit || !canEdit"
                     :min="timeframe.start"
                     :prepend-inner-icon="mdiCalendarEnd"
                     clearable
@@ -190,7 +203,7 @@
             </template>
           </v-card>
 
-          <v-btn class="my-5" color="primary" :disabled="!currentTrait || !currentTrait.name || currentTrait.name.trim().length === 0" :prepend-icon="currentTrait.id ? mdiTagEdit : mdiTagPlus" :text="$t(currentTrait.id ? 'buttonUpdate' : 'buttonAdd')" @click="addTrait" />
+          <v-btn class="my-5" color="primary" :disabled="isDisabledDueToEdit || !currentTrait || !currentTrait.name || currentTrait.name.trim().length === 0" :prepend-icon="currentTrait.id ? mdiTagEdit : mdiTagPlus" :text="$t(currentTrait.id ? 'buttonUpdate' : 'buttonAdd')" @click="addTrait" />
         </v-form>
       </v-col>
       <v-col cols="12" md="6">
@@ -205,11 +218,11 @@
 
                 <v-list>
                   <v-list-subheader>{{ $t('dropdownSectionImportTraits') }}</v-list-subheader>
-                  <v-list-item @click="importExportStart(false, 'json')">{{ $t('dropdownOptionImportTraitsJson') }}</v-list-item>
-                  <v-list-item @click="importExportStart(false, 'germinate')">{{ $t('dropdownOptionImportTraitsGerminate') }}</v-list-item>
-                  <v-list-item @click="importExportStart(false, 'tabular')">{{ $t('dropdownOptionImportTraitsTabular') }}</v-list-item>
-                  <v-list-item @click="traitImportFromTrialModal?.show()">{{ $t('dropdownOptionImportTraitsOtherTrial') }}</v-list-item>
-                  <v-list-item @click="traitImportFromBrapiModal?.show()">{{ $t('dropdownOptionImportTraitsBrapi') }}</v-list-item>
+                  <v-list-item :disabled="isEdit" @click="importExportStart(false, 'json')">{{ $t('dropdownOptionImportTraitsJson') }}</v-list-item>
+                  <v-list-item :disabled="isEdit" @click="importExportStart(false, 'germinate')">{{ $t('dropdownOptionImportTraitsGerminate') }}</v-list-item>
+                  <v-list-item :disabled="isEdit" @click="importExportStart(false, 'tabular')">{{ $t('dropdownOptionImportTraitsTabular') }}</v-list-item>
+                  <v-list-item :disabled="isEdit" @click="traitImportFromTrialModal?.show()">{{ $t('dropdownOptionImportTraitsOtherTrial') }}</v-list-item>
+                  <v-list-item :disabled="isEdit" @click="traitImportFromBrapiModal?.show()">{{ $t('dropdownOptionImportTraitsBrapi') }}</v-list-item>
 
                   <v-list-subheader>{{ $t('dropdownSectionExportTraits') }}</v-list-subheader>
                   <v-list-item :disabled="!model || model.length === 0" @click="importExportStart(true, 'json')">{{ $t('dropdownOptionExportTraitsJson') }}</v-list-item>
@@ -224,83 +237,92 @@
           </template>
         </v-card>
         <template v-if="model && model.length > 0">
-          <v-card
-            v-for="(trait, traitIndex) in model"
-            :key="`trait-${trait.id}`"
-            class="mb-3"
-            variant="tonal"
-            :color="trait.id === currentTrait?.id ? 'primary' : undefined"
-            @click="setTrait(trait)"
+          <draggable
+            v-model="model"
+            item-key="id"
+            handle=".drag-handle"
           >
-            <template #title>
-              <div class="d-flex justify-space-between align-center">
-                <span>{{ trait.name }}</span>
-                <v-chip label size="small" color="primary" :prepend-icon="dts.find(dt => dt.value === trait.dataType)?.icon" :text="dts.find(dt => dt.value === trait.dataType)?.shortTitle" />
-              </div>
+            <template #item="{ element, index }">
+              <v-card
+                class="mb-3"
+                variant="tonal"
+                :color="element.id === currentTrait?.id ? 'primary' : undefined"
+                @click="setTrait(element)"
+              >
+                <template #title>
+                  <div class="d-flex justify-space-between align-center">
+                    <span>{{ element.name }}</span>
+                    <div>
+                      <v-chip label size="small" color="primary" :prepend-icon="dts.find(dt => dt.value === element.dataType)?.icon" :text="dts.find(dt => dt.value === element.dataType)?.shortTitle" />
+                      <v-icon class="drag-handle" :icon="mdiDrag" />
+                    </div>
+                  </div>
+                </template>
+                <template #subtitle>
+                  <span class="text-wrap" v-if="element.description">{{ element.description }}</span>
+                </template>
+
+                <template #text>
+                  <div class="mb-2">
+                    <v-chip
+                      label
+                      class="me-2"
+                      size="small"
+                      :text="$t(element.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
+                      :prepend-icon="element.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
+                    />
+
+                    <v-chip
+                      label
+                      class="me-2"
+                      size="small"
+                      :text="$t('formFeedbackTraitSetSize', { count: element.setSize })"
+                      :prepend-icon="mdiSetSplit"
+                    />
+
+                    <v-chip
+                      v-if="element.group && element.group.name"
+                      label
+                      class="me-2"
+                      size="small"
+                      :text="element.group.name"
+                      :prepend-icon="mdiTagText"
+                    />
+                  </div>
+                  <div v-if="element.timeframe" class="mb-2">
+                    <v-chip
+                      label
+                      size="small"
+                      class="me-2"
+                      :text="$t(element.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
+                      :prepend-icon="element.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
+                    />
+                    <v-chip
+                      v-if="element.timeframe.start"
+                      label
+                      size="small"
+                      class="me-2"
+                      :text="element.timeframe.start"
+                      :prepend-icon="mdiCalendarStart"
+                    />
+                    <v-chip
+                      v-if="element.timeframe.end"
+                      label
+                      size="small"
+                      class="me-2"
+                      :text="element.timeframe.end"
+                      :prepend-icon="mdiCalendarEnd"
+                    />
+                  </div>
+
+                  <v-btn-group variant="tonal">
+                    <v-btn :text="$t('buttonDuplicate')" color="info" :disabled="isEdit" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(element)" />
+                    <v-btn :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
+                  </v-btn-group>
+                </template>
+              </v-card>
             </template>
-            <template #subtitle>
-              <span class="text-wrap" v-if="trait.description">{{ trait.description }}</span>
-            </template>
-
-            <template #text>
-              <div class="mb-2">
-                <v-chip
-                  label
-                  class="me-2"
-                  size="small"
-                  :text="$t(trait.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
-                  :prepend-icon="trait.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
-                />
-
-                <v-chip
-                  label
-                  class="me-2"
-                  size="small"
-                  :text="$t('formFeedbackTraitSetSize', { count: trait.setSize })"
-                  :prepend-icon="mdiSetSplit"
-                />
-
-                <v-chip
-                  v-if="trait.group && trait.group.name"
-                  label
-                  class="me-2"
-                  size="small"
-                  :text="trait.group.name"
-                  :prepend-icon="mdiTagText"
-                />
-              </div>
-              <div v-if="trait.timeframe" class="mb-2">
-                <v-chip
-                  label
-                  size="small"
-                  class="me-2"
-                  :text="$t(trait.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
-                  :prepend-icon="trait.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
-                />
-                <v-chip
-                  v-if="trait.timeframe.start"
-                  label
-                  size="small"
-                  class="me-2"
-                  :text="trait.timeframe.start"
-                  :prepend-icon="mdiCalendarStart"
-                />
-                <v-chip
-                  v-if="trait.timeframe.end"
-                  label
-                  size="small"
-                  class="me-2"
-                  :text="trait.timeframe.end"
-                  :prepend-icon="mdiCalendarEnd"
-                />
-              </div>
-
-              <v-btn-group variant="tonal">
-                <v-btn :text="$t('buttonDuplicate')" color="info" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(trait)" />
-                <v-btn :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(trait.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(traitIndex)" />
-              </v-btn-group>
-            </template>
-          </v-card>
+          </draggable>
         </template>
         <p v-else>{{ $t('pageTrialTraitListEmpty') }}</p>
       </v-col>
@@ -324,10 +346,11 @@
   import GenericAddEditFormModal from '@/components/modals/GenericAddEditFormModal.vue'
   import TraitImportFromTrialModal from '@/components/modals/TraitImportFromTrialModal.vue'
   import TraitImportFromBrapiModal from '@/components/modals/TraitImportFromBrapiModal.vue'
+  import draggable from 'vuedraggable'
 
   import emitter from 'tiny-emitter/instance'
   import { germinateToTraits, jsonToTraits, tabularToTraits } from '@/plugins/util'
-  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
+  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
   import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
 
   const { t } = useI18n()
@@ -454,6 +477,8 @@
       inputAutoSelectAll: true,
     }]
   })
+
+  const isDisabledDueToEdit = computed(() => compProps.isEdit === true && (currentTrait.value === undefined || currentTrait.value.id === undefined))
 
   const canEdit = computed(() => compProps.isEdit === false || currentTrait.value.id === undefined || !initialTraitIds.value.has(currentTrait.value.id || ''))
 
@@ -848,3 +873,9 @@
     isValid,
   })
 </script>
+
+<style scoped>
+.drag-handle:hover {
+  cursor: move;
+}
+</style>

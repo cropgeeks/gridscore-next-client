@@ -5,6 +5,7 @@
 export interface Trial {
     name: string;
     description?: string;
+    group?: Group
     traits: Trait[];
     comments?: Comment[];
     events?: Event[];
@@ -244,6 +245,7 @@ export interface Transaction {
     trialGermplasmWithMetadataAddedTransactions: CellMetadata[];
     trialTraitAddedTransactions: Trait[];
     trialTraitDeletedTransactions: Trait[];
+    traitOrderTransaction: string[];
     traitChangeTransactions: TraitEditContent[];
     trialEditTransaction?: TrialContent | null;
     trialLockedTransaction?: boolean;

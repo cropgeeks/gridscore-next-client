@@ -49,7 +49,15 @@
       </v-col>
     </v-row>
 
-    <v-alert class="mt-3" color="warning" variant="tonal" :icon="mdiAlert" :text="$t('pageTrialLayoutDimensionsFielDHubNotice')" v-if="layoutType === 'grid'" />
+    <v-alert
+      v-if="layoutType === 'grid'"
+      class="mt-3"
+      color="warning"
+      :icon="mdiAlert"
+      :text="$t('pageTrialLayoutDimensionsFielDHubNotice')"
+      variant="tonal"
+      border="start"
+    />
   </div>
 </template>
 

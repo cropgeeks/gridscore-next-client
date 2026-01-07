@@ -1145,6 +1145,7 @@
   "widgetDataInputOutOfBoundsDataWarning": "Es wurden Daten außerhalb der gültigen Datenbereiche angegeben. These Bereiche existieren nicht ohne Grund. Bitte bestätigen, dass diese Werte trotzdem akzeptiert werden sollen.",
   "widgetDataInputLockedWarning": "Dieser Eintrag wurde vom Versuchsbesitzer gesperrt.",
   "widgetDataInputLockedChip": "Gesperrt vom Besitzer",
+  "widgetBannerTraitsAddViaCardWarning": "Neue Merkmale können durch die Versuchskarte auf der Startseite hinzugefügt werden. Hier können nur bereits existierende Merkmale bearbeitet werden.",
   "areaUnitMeter": "Quadratmeter",
   "areaUnitKilometer": "Quadratkilometer",
   "areaUnitHectare": "Hektar",

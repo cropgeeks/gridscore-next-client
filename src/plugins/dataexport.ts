@@ -148,10 +148,10 @@ function traitsToGridScore (traits: TraitPlus[]): string {
 }
 
 function traitsToGerminate (traits: Trait[]): string {
-  let text = GERMINATE_EXPECTED_COLUMNS.join('\t')
+  let text = `${GERMINATE_EXPECTED_COLUMNS.join('\t')}\tSet size\tIs timeseries\tTrait category`
 
   traits.forEach(t => {
-    text += `\n${t.name}\t\t${t.description || ''}\t${toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}`
+    text += `\n${t.name}\t\t${t.description || ''}\t${toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}\t${t.group ? t.group.name : ''}`
   })
 
   return text
@@ -222,7 +222,7 @@ function exportDataTab (trial: TrialPlus, tabConfig: TabExportConfig, direction:
 }
 
 function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: TrialPlus, aggregate = true, includePeople = false, useTimestamps = false) {
-  let result = 'Germplasm\tRep\tRow\tColumn\tSet entry\tDate\tLatitude\tLongitude\tTrait\tValue'
+  let result = 'Germplasm\tRep\tRow\tColumn\tSet entry\tDate\tLatitude\tLongitude\tTrait group\tTrait\tValue'
 
   if (aggregate) {
     Object.values(data).forEach(v => {
@@ -274,7 +274,7 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
                   result += '\t\t'
                 }
 
-                result += `\t${t.name}\t${values}`
+                result += `\t${t.group ? t.group.name : ''}\t${t.name}\t${values}`
               }
             }
           })

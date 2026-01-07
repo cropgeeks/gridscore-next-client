@@ -229,7 +229,7 @@ async function updateTrialBrapiConfig (localId: string, brapiConfig: BrapiConfig
 }
 
 async function updateTrialProperties (localId: string, updates: TrialModification) {
-  const trial = await getTrialById(localId)
+  const trial: TrialPlus = await getTrialById(localId)
 
   updates = JSON.parse(JSON.stringify(updates))
 
@@ -237,13 +237,16 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
     const db = await getDb()
 
     const plotCorners = (updates.corners && isGeographyValid(updates.corners)) ? trialLayoutToPlots(updates.corners, trial.layout.rows, trial.layout.columns) : null
-    const originalTraits = JSON.parse(JSON.stringify(trial.traits))
+    const originalTraits: TraitPlus[] = JSON.parse(JSON.stringify(trial.traits))
+
+    const oldOrderedIds = originalTraits.map(t => t.id).join('|')
+    const newOrderedIds = updates.traits.map(t => t.id).join('|')
 
     const retainedTraitIds = new Set(updates.traits.map(t => t.id))
     const traitsToRemove = originalTraits.filter((t: Trait) => !retainedTraitIds.has(t.id))
 
     if (traitsToRemove && traitsToRemove.length > 0) {
-      clearTraitImageCache(JSON.parse(JSON.stringify(trial)), traitsToRemove.map((t: Trait) => t.id))
+      clearTraitImageCache(JSON.parse(JSON.stringify(trial)), traitsToRemove.map((t: Trait) => t.id || ''))
     }
 
     trial.name = updates.name
@@ -276,6 +279,10 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
         }
       }
 
+      if (oldOrderedIds !== newOrderedIds) {
+        transaction.traitOrderTransaction = updates.traits.map(t => t.id || '')
+      }
+
       if (!transaction.traitChangeTransactions) {
         transaction.traitChangeTransactions = []
       }
@@ -292,7 +299,7 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
         const match = originalTraits.find((ot: Trait) => ot.id === t.id)
 
         // If either the name, the description, the group or whether it has an image or not has changed, then store in the transaction.
-        if (match.name !== t.name || match.description !== t.description || JSON.stringify(match.group) !== JSON.stringify(t.group) || match.hasImage !== t.hasImage) {
+        if (match && (match.name !== t.name || match.description !== t.description || JSON.stringify(match.group) !== JSON.stringify(t.group) || match.hasImage !== t.hasImage)) {
           const transMatch = transaction.traitChangeTransactions.find(tr => tr.id === t.id)
 
           if (transMatch) {
@@ -387,6 +394,10 @@ async function addTrialTraits (trialId: string, traits: Trait[]) {
       const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
 
       transaction.trialTraitAddedTransactions.push(...traits)
+
+      if (transaction.traitOrderTransaction && transaction.traitOrderTransaction.length > 0) {
+        transaction.traitOrderTransaction.push(...traits.map(t => t.id))
+      }
 
       await db.put('transactions', transaction)
     }
@@ -617,6 +628,7 @@ async function getTrials (includeTransactions?: boolean, ids?: string[]): Promis
             t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
             t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
             t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
+            t.transactionCount += (transaction.traitOrderTransaction || []).length > 0
           }
 
           return t
@@ -752,6 +764,7 @@ async function getTrialById (localId: string) {
           trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
           trial.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
           trial.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
+          trial.transactionCount += (transaction.traitOrderTransaction || []).length > 0
         }
 
         return trial
@@ -1176,6 +1189,7 @@ function getEmptyTransaction (trialId: string): Transaction {
     trialTraitAddedTransactions: [],
     trialTraitDeletedTransactions: [],
     traitChangeTransactions: [],
+    traitOrderTransaction: [],
     trialLockedTransaction: undefined,
     trialEditTransaction: null,
     brapiIdChangeTransaction: {

@@ -1155,6 +1155,7 @@
   "widgetHelpToolbarInstallInstructionsButton": "Installation instructions",
   "widgetHelpInformationTitle": "Getting started",
   "widgetHelpInformationText": "Below are some useful links in case you need support with GridScore.",
+  "widgetBannerTraitsAddViaCardWarning": "Add new traits via the trial card on the home page. You can only edit existing traits here.",
   "areaUnitMeter": "Square metres",
   "areaUnitKilometer": "Square kilometres",
   "areaUnitHectare": "Hectare",

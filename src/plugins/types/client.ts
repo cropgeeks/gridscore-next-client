@@ -10,10 +10,6 @@ export interface TraitPlus extends Trait {
   visible?: boolean
 }
 
-export interface TrialGroup {
-  name: string
-}
-
 export interface Geolocation {
   lat?: number
   lng?: number
@@ -36,7 +32,6 @@ export interface TrialPlus extends Trial {
   shareStatus?: ShareStatus
   mediaFilenameFormat?: string[]
   transactionCount?: number
-  group?: TrialGroup
   hasRemoteUpdate?: boolean
   hasLocalUpdate?: boolean
   showExpiryWarning?: boolean

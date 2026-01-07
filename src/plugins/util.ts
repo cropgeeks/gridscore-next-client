@@ -152,6 +152,12 @@ function germinateToTraits (traitString: string): Trait[] {
         trait.allowRepeats = p['Is timeseries'] === 'true'
       }
 
+      if (p['Trait category']) {
+        trait.group = {
+          name: p['Trait category']
+        }
+      }
+
       return trait
     })
 
