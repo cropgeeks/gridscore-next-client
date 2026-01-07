@@ -1,7 +1,7 @@
 import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
 import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
-import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type TrialGroup } from '@/plugins/types/client'
+import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation } from '@/plugins/types/client'
 import { getColumnLabel, getRowLabel } from '@/plugins/util'
 import { getId } from '@/plugins/id'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
@@ -21,7 +21,7 @@ export interface TrialModification {
   name: string
   description?: string
   socialShareConfig?: SocialShareConfig
-  group?: TrialGroup
+  group?: Group
   markers?: Markers
   corners?: Corners
   traits: Trait[]
