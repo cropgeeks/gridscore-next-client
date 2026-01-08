@@ -20,10 +20,10 @@
 
 <script setup lang="ts">
   import { CELL_CATEGORIES } from '@/plugins/constants'
-  import type { MiniCell } from '@/plugins/types/client'
+  import type { CellPlus, MiniCell } from '@/plugins/types/client'
   import { mdiBarcode, mdiEyeCheck, mdiFamilyTree, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSprinklerFire, mdiSprout } from '@mdi/js'
 
   defineProps<{
-    cell: MiniCell
+    cell: MiniCell | CellPlus
   }>()
 </script>
