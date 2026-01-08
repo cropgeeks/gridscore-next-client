@@ -366,10 +366,17 @@
             const toCopy = sourceData[k]
 
             t.traits.forEach((tt: TraitPlus) => {
-              if (toCopy && toCopy.measurements[tt.id || '']) {
-                c.measurements[tt.id || ''] = JSON.parse(JSON.stringify(toCopy.measurements[tt.id || '']))
+              if (copyData.value) {
+                if (toCopy && toCopy.measurements[tt.id || '']) {
+                  c.measurements[tt.id || ''] = JSON.parse(JSON.stringify(toCopy.measurements[tt.id || '']))
+                } else {
+                  c.measurements[tt.id || ''] = []
+                }
+
+                c.comments = (toCopy?.comments || []).concat()
               } else {
                 c.measurements[tt.id || ''] = []
+                c.comments = []
               }
 
               if (tt.dataType === TraitDataType.boolean) {
@@ -379,7 +386,6 @@
                 }, tt.restrictions)
               }
             })
-            c.comments = []
           }
         })
       }

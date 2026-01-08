@@ -16,7 +16,7 @@
     prependIcon?: string | undefined
     appendIcon?: string | undefined
     disabled?: boolean
-    breakpoint?: boolean
+    breakpoint?: boolean | undefined
     active?: boolean
     variant?: 'flat' | 'text' | 'elevated' | 'outlined' | 'plain' | 'tonal' | undefined
     size?: 'x-small' | 'small' | 'default' | 'large' | 'x-large'

@@ -65,7 +65,7 @@
                 <v-icon size="20" :icon="mdiBookmark" class="grid-icon bookmark" v-if="cell.isMarked" />
                 <v-icon size="20" :icon="mdiLock" class="grid-icon lock" v-if="cell.isLocked" />
                 <v-icon size="20" :icon="mdiMessageText" class="mdi-flip-h grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
-                <v-icon size="20" :icon="mdiCheckboxMarked" class="grid-icon check" v-if="store.storeHighlightControls && cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
+                <v-icon size="20" :icon="mdiCheckboxMarked" class="grid-icon check" v-if="cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
                 <div class="cell-text my-1" :style="cell.isLocked ? { color: fillStyleHiddenTrait } : undefined">{{ cell[store.storePlotDisplayField] }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0 && (!traitCutoff || !cell.latestDates || !cell.latestDates[trait.id] || (cell.latestDates[trait.id] > traitCutoff))">
@@ -299,6 +299,9 @@
       switch (store.storeHighlightConfig.type) {
         case 'controls':
           isHighlighted = cell.categories && cell.categories.includes(CellCategory.CONTROL)
+          break
+        case 'bookmarks':
+          isHighlighted = cell.isMarked || false
           break
         case 'reps': {
           const index = (store.storeHighlightConfig.reps || []).indexOf(cell.rep || '')

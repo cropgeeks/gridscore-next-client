@@ -4,6 +4,15 @@
     <v-divider class="mb-3" />
     <p>{{ $t('pageVisualizationTimelineText') }}</p>
 
+    <v-row v-if="trial">
+      <v-col cols="12" lg="6">
+        <PlotTraitCompletionChart class="mb-5" :trial="trial" :traits="singleValueTraits" v-if="singleValueTraits.length > 0" />
+      </v-col>
+      <v-col cols="12" :lg="singleValueTraits.length > 0 ? 6 : 12">
+        <TraitDatapointCountChart class="mb-5" :trial="trial" />
+      </v-col>
+    </v-row>
+
     <div v-if="trial && multiValueTraits && multiValueTraits.length > 0">
       <h2>{{ $t('pageVisualizationRepeatTraitsTitle') }}</h2>
       <p>{{ $t('pageVisualizationRepeatTraitsText') }}</p>
@@ -75,14 +84,16 @@
         :trait="trait"
         :trial="trial"
         :user-selection="userSelection"
-        class="mb-3"
+        class="my-5"
       />
     </div>
   </v-container>
 </template>
 
 <script lang="ts" setup>
+  import PlotTraitCompletionChart from '@/components/chart/PlotTraitCompletionChart.vue'
   import type { UserSelection } from '@/components/chart/StatsChart.vue'
+import TraitDatapointCountChart from '@/components/chart/TraitDatapointCountChart.vue'
   import TraitTimelineChart from '@/components/chart/TraitTimelineChart.vue'
   import { getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
@@ -122,6 +133,14 @@
         }
       default:
         return undefined
+    }
+  })
+
+  const singleValueTraits = computed(() => {
+    if (trial.value) {
+      return trial.value.traits.filter(t => !t.allowRepeats)
+    } else {
+      return []
     }
   })
 

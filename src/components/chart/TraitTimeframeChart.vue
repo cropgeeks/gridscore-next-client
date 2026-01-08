@@ -163,6 +163,7 @@
           font: {
             color: store.storeIsDarkMode ? '#ecf0f1' : '#2c3e50',
           },
+          arrowcolor: store.storeIsDarkMode ? '#ecf0f1' : '#2c3e50',
         }],
       }
 

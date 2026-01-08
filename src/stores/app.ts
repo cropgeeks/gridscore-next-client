@@ -15,7 +15,7 @@ export interface PlausibleConfig {
 }
 
 export interface HighlightConfig {
-  type: 'controls' | 'reps' | 'germplasm' | 'treatments' | undefined
+  type: 'controls' | 'reps' | 'germplasm' | 'treatments' | 'bookmarks' | undefined
   germplasm?: string
   treatments?: string[]
   reps?: string[]

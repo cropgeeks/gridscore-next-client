@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Cell, Measurement, Trait, Trial } from '@/plugins/types/gridscore'
+import type { Cell, CellMetadata, Measurement, Trait, Trial } from '@/plugins/types/gridscore'
 
 export interface TraitPlus extends Trait {
   color?: string
@@ -48,14 +48,13 @@ export interface CellPlus extends Cell {
   displayRow?: number
 }
 
-export interface MiniCell {
+export interface MiniCell extends CellMetadata {
   row: number
   column: number
-  germplasm: string
   displayName?: string
-  rep?: string
   displayRow?: number
   displayColumn?: number
+  categories: string[];
 }
 
 export interface BrapiImportCell {

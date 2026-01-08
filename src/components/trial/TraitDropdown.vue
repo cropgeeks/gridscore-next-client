@@ -4,6 +4,7 @@
       <ResponsiveButton
         v-bind="props"
         variant="tonal"
+        :breakpoint="undefined"
         :size="size || 'default'"
         :prepend-icon="mdiTagMultiple"
         :text="$t('toolbarTraitVisibility')"

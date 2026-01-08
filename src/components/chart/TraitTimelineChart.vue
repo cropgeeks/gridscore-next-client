@@ -254,6 +254,10 @@
             x: new Date(e.timestamp || 0),
             y: 1,
             text: e.content,
+            font: {
+              color: store.storeIsDarkMode ? '#ecf0f1' : '#2c3e50',
+            },
+            arrowcolor: store.storeIsDarkMode ? '#ecf0f1' : '#2c3e50',
             showarrow: true,
             arrowhead: 7,
             ax: 0,

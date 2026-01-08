@@ -4,6 +4,7 @@
       <ResponsiveButton
         v-bind="props"
         variant="tonal"
+        :breakpoint="undefined"
         :prepend-icon="mdiArrowExpandAll"
         :text="$t('toolbarJumpTo')"
       />

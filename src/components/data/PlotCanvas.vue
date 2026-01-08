@@ -301,6 +301,9 @@
         case 'controls':
           isHighlighted = cell.categories && cell.categories.includes(CellCategory.CONTROL)
           break
+        case 'bookmarks':
+          isHighlighted = cell.isMarked || false
+          break
         case 'reps': {
           const index = (store.storeHighlightConfig.reps || []).indexOf(cell.rep || '')
           isHighlighted = index !== -1

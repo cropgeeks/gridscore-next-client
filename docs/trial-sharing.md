@@ -14,7 +14,8 @@ To achieve this, we use our GridScore server to facilitate data synchronization 
 
 A trial can be shared from the `Home` screen of GridScore. Identify your trial in the list of local trials (or by using the search bar), then use the cog menu to select the `Share` option.
 
-<img src="img/home-trial-settings.png" style="max-width: 50%;" alt="Trial settings">
+<img src="img/home-trial-settings.png" style="max-width: 49%;" alt="Trial settings">
+<img src="img/home-trial-settings2.png" style="max-width: 49%;" alt="Trial settings expanded">
 
 The window that opens will explain the whole process again. If you are happy with what you read here, click the `Generate share codes` button.
 
@@ -36,7 +37,7 @@ Generally, once a trial has been shared, everyone who has access to the trial is
 
 ## Synchronizing local changes
 
-<img src="img/sharing-synchronization.png" style="max-width: 50%;" alt="Trial synchronization">
+<img src="img/sharing-synchronization.png" style="max-width: 100%;" alt="Trial synchronization">
 
 Everyone with access to the trial and permissions to record data can now go and collect trials data and add comments. GridScore will keep a transaction log of all changes that are made. On the `Home` screen, trials with local changes will have a turquoise earmark in the top right corner with a cloud upload icon. Clicking on this icon will open a modal window showing all local changes.
 
@@ -63,7 +64,7 @@ To synchronize these changes, use the `Synchronize` button. This will send the t
 
 ## Loading remote changes
 
-<img src="img/sharing-remote-changes.png" style="max-width: 50%;" alt="Trial remote changes">
+<img src="img/sharing-remote-changes.png" style="max-width: 100%;" alt="Trial remote changes">
 
 If you haven't modified the trial locally, but someone else has recorded new data or changed properties, a yellow earmark will appear with a cloud download icon. Clicking on it will again open the synchronization modal, but this time, it'll inform you that there are remote changes that you can load to update your local trial. This is always recommended before you go out and record new data.
 
@@ -84,9 +85,9 @@ The GridScore server will store your data for a period of time. After a while, w
 
 There are several things you can do before a trial is archived. If you trial is complete, you can export the data for the trial in any of the export formats specified on the <a href="exporting-data.html">exporting data</a> page.
 
-<img src="img/sharing-expiration-captcha.png" style="max-width: 50%;" alt="Trial expiration captcha">
+<img src="img/sharing-expiration-captcha.png" style="max-width: 100%;" alt="Trial expiration captcha">
 
-You can also extend the lifetime of your trial by clicking on the red banner which will open the trial expiration modal window. Here you are again informed about the expiration date. To extend the lifetime of a trial, we ask you to provide what's called a Captcha. This tries to make sure that it's actually a human trying to extend the lifetime and not some automated task. You need to enter the combination of letters and numbers into the text box. If you find it difficult to read the text from the image, use the arrow button to get a different Captcha.
+You can also extend the lifetime of your trial by clicking on the red banner which will open the trial expiration modal window. Here you are again informed about the expiration date. To extend the lifetime of a trial, we ask you to provide something called a Captcha. This tries to make sure that it's actually a human trying to extend the lifetime and not some automated task. You need to enter the combination of letters and numbers into the text box. If you find it difficult to read the text from the image, use the circular arrow button to get a different Captcha.
 
 Once the server verifies your input, the inactive lifetime of the trial will be reset.
 
@@ -94,7 +95,7 @@ Once the server verifies your input, the inactive lifetime of the trial will be 
 
 If the inactive lifetime of a trial expires without being extended, the trial will be archived. This means, we export all the information of the trial, zip it up and then remove it from the database. Whenever you try to synchronize the trial after this date or export to Germinate templates, you will get a notification telling you there is an archive available for you to download.
 
-<img src="img/sharing-expiration-archive.png" style="max-width: 50%;" alt="Trial expiration archive">
+<img src="img/sharing-expiration-archive.png" style="max-width: 100%;" alt="Trial expiration archive">
 
 You will not be able to synchronize your trial after this date as it'll have been an extremely long time since the last time it has been active.
 

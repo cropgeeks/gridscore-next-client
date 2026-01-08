@@ -17,7 +17,7 @@
           <template #default="{ items }">
             <template
               v-for="(comment, i) in items"
-              :key="`changelog-entry-${i}`"
+              :key="`comment-entry-${i}`"
             >
               <v-card :prepend-icon="mdiCalendar" :title="new Date(comment.raw.timestamp).toLocaleDateString()" class="mb-4">
                 <template #append>

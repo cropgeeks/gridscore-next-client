@@ -3,14 +3,15 @@ import { coreStore } from '@/stores/app'
 
 import emitter from 'tiny-emitter/instance'
 import { CellCategory, type Cell } from '@/plugins/types/gridscore'
-import type { CellPlus, MiniCell, TrialPlus } from '@/plugins/types/client'
+import type { CellPlus, TrialPlus } from '@/plugins/types/client'
 
 let trial: TrialPlus | undefined = undefined
 let trialData: { [key: string]: CellPlus } | undefined = undefined
 let trialGermplasm: CellPlus[] | undefined = undefined
 let trialReps: string[] = []
 let trialTreatments: string[] = []
-let trialControls: MiniCell[] = []
+let trialControls: Set<string> = new Set()
+let trialBookmarks: Set<string> = new Set()
 
 async function loadTrialData () {
   const store = coreStore()
@@ -23,7 +24,8 @@ async function loadTrialData () {
       const allGermplasm: CellPlus[] = []
       const reps = new Set<string>()
       const treatments = new Set<string>()
-      const controls: MiniCell[] = []
+      const controls: Set<string> = new Set()
+      const bookmarks: Set<string> = new Set()
 
       Object.values(trialData).forEach(c => {
         if (c) {
@@ -46,15 +48,10 @@ async function loadTrialData () {
           })
 
           if (c.categories.includes(CellCategory.CONTROL)) {
-            controls.push({
-              row: c.row || 0,
-              column: c.column || 0,
-              germplasm: c.germplasm,
-              rep: c.rep,
-              displayColumn: c.displayColumn,
-              displayRow: c.displayRow,
-              displayName: c.displayName,
-            })
+            controls.add(`${c.row}|${c.column}`)
+          }
+          if (c.isMarked) {
+            bookmarks.add(`${c.row}|${c.column}`)
           }
         }
       })
@@ -65,7 +62,8 @@ async function loadTrialData () {
       trialGermplasm = allGermplasm
       trialReps = [...reps].sort((a, b) => a ? a.localeCompare(b, store.storeLocale || 'en', { numeric: true, sensitivity: 'base' }) : -1)
       trialTreatments = [...treatments].sort((a, b) => a.localeCompare(b, store.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
-      trialControls = controls.concat()
+      trialControls = controls
+      trialBookmarks = bookmarks
 
       emitter.emit('trial-data-loaded')
     } catch {
@@ -108,11 +106,23 @@ function updateCellCache (row: number, column: number, trialId: string) {
   }
 }
 
+function updateMarked (row: number, column: number, trialId: string) {
+  const key = `${row}|${column}`
+
+  if (trialBookmarks.has(key)) {
+    trialBookmarks.delete(key)
+  } else {
+    trialBookmarks.add(key)
+  }
+
+  updateCellCache(row, column, trialId)
+}
+
 async function init () {
   emitter.on('trial-selected', loadTrialData)
   emitter.on('plot-comments-changed', updateCellCache)
   emitter.on('trial-properties-changed', updateTrialInformation)
-  emitter.on('plot-marked-changed', updateCellCache)
+  emitter.on('plot-marked-changed', updateMarked)
   emitter.on('plot-locked-changed', updateCellCache)
   emitter.on('plot-data-changed', updateCellCache)
 
@@ -134,7 +144,11 @@ function getTrialTreatmentsCached () {
 }
 
 function getTrialControlsCached () {
-  return JSON.parse(JSON.stringify(trialControls))
+  return new Set<string>(trialControls)
+}
+
+function getTrialBookmarksCached () {
+  return new Set<string>(trialBookmarks)
 }
 
 function getTrialDataCached () {
@@ -151,6 +165,7 @@ export {
   getTrialRepsCached,
   getTrialTreatmentsCached,
   getTrialControlsCached,
+  getTrialBookmarksCached,
   getTrialDataCached,
   getTrialCached,
   loadTrialData,

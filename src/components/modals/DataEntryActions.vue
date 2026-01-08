@@ -200,7 +200,6 @@
       .then(() => {
         emitter.emit('plot-comments-changed', compProps.cell.row || 0, compProps.cell.column || 0, compProps.cell.trialId || 0)
         emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'added' } })
-        // this.$emit('comments-changed')
       })
   }
 
@@ -209,7 +208,6 @@
       .then(() => {
         emitter.emit('plot-comments-changed', compProps.cell.row || 0, compProps.cell.column || 0, compProps.cell.trialId || 0)
         emitter.emit('plausible-event', { key: 'plot-comment', props: { type: 'deleted' } })
-        // this.$emit('comments-changed')
       })
   }
 </script>

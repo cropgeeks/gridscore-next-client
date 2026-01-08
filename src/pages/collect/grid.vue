@@ -8,7 +8,7 @@
         <OverflowMenu
           :items="overflowItems"
           :breakpoint="smAndUp"
-          :text-breakpoint="mdAndUp"
+          :text-breakpoint="lgAndUp"
         />
         <v-menu activator="#grid-media-mode">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)" id="media-mode-dropdown">
@@ -25,9 +25,10 @@
         </v-menu>
         <v-menu :close-on-content-click="false" activator="#grid-highlight">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
-            <v-list-item :title="$t('formLabelPlotHighlightNothing')" :prepend-icon="mdiMarkerCancel" :append-icon="store.storeHighlightConfig.type === undefined ? mdiCheck : undefined" @click="setHighlight(undefined)" />
-            <v-list-item v-if="trialControls && trialControls.length > 0" :title="$t('formLabelPlotHighlightControls')" :prepend-icon="mdiCheckboxMarked" :append-icon="store.storeHighlightConfig.type === 'controls' ? mdiCheck : undefined" @click="setHighlight('controls')" />
-            <v-list-item v-if="trialTreatments && trialTreatments.length > 0" :prepend-icon="mdiSprinklerFire" :append-icon="store.storeHighlightConfig.type === 'treatments' ? mdiCheck : undefined">
+            <v-list-item :title="$t('formLabelPlotHighlightNothing')" :prepend-icon="mdiMarkerCancel" :active="store.storeHighlightConfig.type === undefined" :append-icon="store.storeHighlightConfig.type === undefined ? mdiCheck : undefined" @click="setHighlight(undefined)" />
+            <v-list-item v-if="trialControls && trialControls.size > 0" :title="$t('formLabelPlotHighlightControls')" :prepend-icon="mdiCheckboxMarked" :active="store.storeHighlightConfig.type === 'controls'" :append-icon="store.storeHighlightConfig.type === 'controls' ? mdiCheck : undefined" @click="setHighlight('controls')" />
+            <v-list-item v-if="trialBookmarks && trialBookmarks.size > 0" :title="$t('formLabelPlotHighlightBookmarks')" :prepend-icon="mdiBookmark" :active="store.storeHighlightConfig.type === 'bookmarks'" :append-icon="store.storeHighlightConfig.type === 'bookmarks' ? mdiCheck : undefined" @click="setHighlight('bookmarks')" />
+            <v-list-item v-if="trialTreatments && trialTreatments.length > 0" :prepend-icon="mdiSprinklerFire" :active="store.storeHighlightConfig.type === 'treatments'" :append-icon="store.storeHighlightConfig.type === 'treatments' ? mdiCheck : undefined">
               <v-select
                 :label="$t('formLabelPlotHighlightTreatments')"
                 multiple
@@ -42,7 +43,7 @@
                 </template>
               </v-select>
             </v-list-item>
-            <v-list-item v-if="trialReps && trialReps.length > 0" :prepend-icon="mdiFormatListNumbered" :append-icon="store.storeHighlightConfig.type === 'reps' ? mdiCheck : undefined">
+            <v-list-item v-if="trialReps && trialReps.length > 0" :prepend-icon="mdiFormatListNumbered" :active="store.storeHighlightConfig.type === 'reps'" :append-icon="store.storeHighlightConfig.type === 'reps' ? mdiCheck : undefined">
               <v-select
                 :label="$t('formLabelPlotHighlightReps')"
                 multiple
@@ -57,7 +58,7 @@
                 </template>
               </v-select>
             </v-list-item>
-            <v-list-item :prepend-icon="mdiSprout" :append-icon="store.storeHighlightConfig.type === 'germplasm' ? mdiCheck : undefined">
+            <v-list-item :prepend-icon="mdiSprout" :active="store.storeHighlightConfig.type === 'germplasm'" :append-icon="store.storeHighlightConfig.type === 'germplasm' ? mdiCheck : undefined">
               <v-text-field
                 v-model="highlightSearch"
                 :label="$t('formLabelPlotHighlightName')"
@@ -108,6 +109,7 @@
     </v-menu>
 
     <SearchResultModal ref="searchResultModal" :list="searchResults" v-if="searchResults && searchResults.length > 0" />
+    <PlotCommentListModal :trial="trial" ref="plotCommentListModal" />
 
     <MediaModal :trial="trial" />
     <TrialPersonSelectModal :trial="trial" v-if="trial && hasTrialPeople" />
@@ -124,11 +126,11 @@
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
   import { categoricalColors } from '@/plugins/color'
-  import { getTrialControlsCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
+  import { getTrialControlsCached, getTrialBookmarksCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
-  import { MainDisplayMode, type MiniCell, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
+  import { MainDisplayMode, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountMultiple, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCloudUpload, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
+  import { mdiAccountMultiple, mdiBookmark, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCommentMultiple, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
@@ -136,7 +138,7 @@
   import { useDisplay } from 'vuetify'
 
   const store = coreStore()
-  const { mdAndUp, smAndUp } = useDisplay()
+  const { lgAndUp, smAndUp } = useDisplay()
   const { t } = useI18n()
 
   const trial = ref<TrialPlus>()
@@ -147,7 +149,8 @@
   const searchMatch = ref<CellPlus>()
   const trialReps = ref<string[]>([])
   const trialTreatments = ref<string[]>([])
-  const trialControls = ref<MiniCell[]>([])
+  const trialControls = ref<Set<string>>(new Set())
+  const trialBookmarks = ref<Set<string>>(new Set())
 
   // Highlighting stuff
   const selectedReps = ref<string[]>([])
@@ -156,10 +159,9 @@
   const highlightColors = computed(() => store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel)
 
   // TODO: ADD!
-  // @ts-ignore
-  const germplasmSearch = useTemplateRef('germplasmSearch')
   const dataEntryModal = useTemplateRef('dataEntryModal')
   const searchResultModal = useTemplateRef('searchResultModal')
+  const plotCommentListModal = useTemplateRef('plotCommentListModal')
 
   let textSynth: SpeechSynthesis | undefined = undefined
   let geolocationWatchId: number | undefined = undefined
@@ -168,6 +170,13 @@
 
   const overflowItems: ComputedRef<MenuItem[]> = computed(() => {
     const result: MenuItem[] = [{
+      text: t('toolbarPlotComments'),
+      id: 'grid-comments',
+      prependIcon: mdiCommentMultiple,
+      variant: 'tonal',
+      size: undefined,
+      click: () => plotCommentListModal.value?.show(),
+    }, {
       text: t('toolbarPlotHighlight'),
       id: 'grid-highlight',
       color: store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined ? 'primary' : undefined,
@@ -217,8 +226,6 @@
       updateLocalCaches()
 
       startGeoTracking()
-
-      nextTick(() => selectSearch())
     })
   }
 
@@ -242,6 +249,7 @@
       trialReps.value = getTrialRepsCached()
       trialTreatments.value = getTrialTreatmentsCached()
       trialControls.value = getTrialControlsCached()
+      trialBookmarks.value = getTrialBookmarksCached()
 
       if (store.storeHighlightConfig && store.storeHighlightConfig.type !== undefined) {
         ignoreReps(() => {
@@ -274,12 +282,6 @@
           }
         }
       }, null, options)
-    }
-  }
-
-  function selectSearch () {
-    if (store.storeAutoSelectSearch && germplasmSearch.value) {
-      germplasmSearch.value.focus()
     }
   }
 
@@ -321,7 +323,7 @@
     }
   }
 
-  function setHighlight (type: 'controls' | 'reps' | 'germplasm' | 'treatments' | undefined) {
+  function setHighlight (type: 'controls' | 'reps' | 'germplasm' | 'treatments' | 'bookmarks' | undefined) {
     ignoreReps(() => {
       selectedReps.value = []
     })
