@@ -19,7 +19,7 @@
       </v-list>
     </v-menu>
 
-    <GermplasmAutocomplete
+    <CellAutocomplete
       :trial="trial"
       class="mt-5"
       v-model="searchMatch"
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-  import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
+  import CellAutocomplete from '@/components/inputs/CellAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'

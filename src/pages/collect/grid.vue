@@ -73,7 +73,7 @@
 
       <TrialTransactionStatusButton />
 
-      <GermplasmAutocomplete
+      <CellAutocomplete
         :trial="trial"
         v-model="searchMatch"
         scan-in-bottom-sheet
@@ -118,7 +118,7 @@
 
 <script setup lang="ts">
   import DataGrid from '@/components/data/DataGrid.vue'
-  import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
+  import CellAutocomplete from '@/components/inputs/CellAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'

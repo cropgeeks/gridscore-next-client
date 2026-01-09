@@ -167,7 +167,8 @@
       }
 
       if (compProps.trial.events && compProps.trial.events.length > 0) {
-        compProps.trial.events.forEach(e => {
+        compProps.trial.events.forEach((e, i) => {
+          const ay = 20 + (i / Math.max(1, (compProps.trial.events || []).length - 1)) * 20
           layout.annotations.push({
             yref: 'paper',
             x: new Date(e.timestamp || 0),
@@ -180,7 +181,7 @@
             showarrow: true,
             arrowhead: 7,
             ax: 0,
-            ay: -40,
+            ay: -ay,
           })
           layout.shapes.push({
             type: 'line',

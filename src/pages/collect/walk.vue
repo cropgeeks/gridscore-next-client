@@ -14,7 +14,7 @@
 
       <p>{{ $t('modalTextGuidedWalk') }}</p>
 
-      <GermplasmAutocomplete
+      <CellAutocomplete
         :trial="trial"
         class="mt-5"
         :label="$t('formLabelSelectStartingPlot')"
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-  import GermplasmAutocomplete from '@/components/inputs/GermplasmAutocomplete.vue'
+  import CellAutocomplete from '@/components/inputs/CellAutocomplete.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'

@@ -2,6 +2,7 @@
   <v-card
     :model-value:loading="localLoading"
     @update:loading="notifyLoading"
+    class="d-flex flex-column flex-grow-1"
   >
     <v-toolbar density="comfortable" color="surface" class="trait-toolbar">
       <v-toolbar-title class="ms-4">
@@ -35,10 +36,6 @@
     <slot name="card-text" />
 
     <slot name="chart-content" ref="chart" />
-
-    <v-card-actions>
-      <slot name="card-actions" />
-    </v-card-actions>
   </v-card>
 </template>
 

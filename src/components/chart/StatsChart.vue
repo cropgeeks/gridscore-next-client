@@ -12,12 +12,14 @@
       :filename="filename"
     >
       <template #toolbar-title>
-        <TraitSection :trait="trait" :show-subtitle="false" />
+        <TraitSection :trait="trait" short-title :show-subtitle="false" />
       </template>
       <template #card-text>
-        <v-card-text>
-          <v-alert color="warning" :text="$t(message)" variant="tonal" :icon="mdiAlert" class="my-5" v-if="message" />
+        <v-card-text v-if="message">
+          <v-alert color="warning" :text="$t(message)" variant="tonal" :icon="mdiAlert" class="my-5" />
         </v-card-text>
+
+        <slot name="card-text" />
       </template>
 
       <template #chart-content>
@@ -71,7 +73,7 @@
   }
 
   export interface UserSelection {
-    type: 'germplasm' | 'reps' | 'treatments'
+    type: 'cell' | 'germplasm' | 'reps' | 'treatments'
     selectedItems: string[]
   }
 
@@ -152,8 +154,11 @@
 
               if (compProps.userSelection && compProps.userSelection.type) {
                 switch (compProps.userSelection.type) {
-                  case 'germplasm':
+                  case 'cell':
                     selectionField = cell.displayName || cell.germplasm
+                    break
+                  case 'germplasm':
+                    selectionField = cell.germplasm
                     break
                   case 'reps':
                     selectionField = cell.rep || ''
@@ -276,8 +281,11 @@
 
               if (compProps.userSelection && compProps.userSelection.type) {
                 switch (compProps.userSelection.type) {
-                  case 'germplasm':
+                  case 'cell':
                     selectionField = cell.displayName || cell.germplasm
+                    break
+                  case 'germplasm':
+                    selectionField = cell.germplasm
                     break
                   case 'reps':
                     selectionField = cell.rep || ''
@@ -385,6 +393,7 @@
         margin: {
           l: 30,
           r: 30,
+          t: 0,
         },
         legend: {
           traceorder: 'reversed',

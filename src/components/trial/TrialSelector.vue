@@ -578,6 +578,12 @@
     filterForWarning.value = undefined
   })
 
+  watch(filterForWarning, async newValue => {
+    if (newValue) {
+      selectedGroup.value = 0
+    }
+  })
+
   watch(trialGroups, async () => {
     selectedGroup.value = 0
   })

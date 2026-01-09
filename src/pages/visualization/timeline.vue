@@ -5,10 +5,10 @@
     <p>{{ $t('pageVisualizationTimelineText') }}</p>
 
     <v-row v-if="trial">
-      <v-col cols="12" lg="6">
-        <PlotTraitCompletionChart class="mb-5" :trial="trial" :traits="singleValueTraits" v-if="singleValueTraits.length > 0" />
+      <v-col class="d-flex" cols="12" :lg="multiValueTraits.length > 0 ? 6 : 12">
+        <PlotTraitCompletionChart class="mb-5" :trial="trial" :traits="trial.traits" />
       </v-col>
-      <v-col cols="12" :lg="singleValueTraits.length > 0 ? 6 : 12">
+      <v-col class="d-flex" cols="12" lg="6" v-if="multiValueTraits.length > 0">
         <TraitDatapointCountChart class="mb-5" :trial="trial" />
       </v-col>
     </v-row>
@@ -40,7 +40,7 @@
             <v-btn class="flex-grow-1" value="treatments" :disabled="!trialTreatments || trialTreatments.length === 0" :prepend-icon="mdiSprinklerFire" :text="$t('tooltipChartHeatmapTreatment')" />
           </v-btn-toggle>
 
-          <GermplasmAutocomplete
+          <CellAutocomplete
             v-if="selectionMode === 'germplasm'"
             :trial="trial"
             v-model="selectedGermplasm"
@@ -93,7 +93,7 @@
 <script lang="ts" setup>
   import PlotTraitCompletionChart from '@/components/chart/PlotTraitCompletionChart.vue'
   import type { UserSelection } from '@/components/chart/StatsChart.vue'
-import TraitDatapointCountChart from '@/components/chart/TraitDatapointCountChart.vue'
+  import TraitDatapointCountChart from '@/components/chart/TraitDatapointCountChart.vue'
   import TraitTimelineChart from '@/components/chart/TraitTimelineChart.vue'
   import { getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'

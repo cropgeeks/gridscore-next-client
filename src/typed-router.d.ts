@@ -33,6 +33,7 @@ declare module 'vue-router/auto-routes' {
     '/trial/import/example': RouteRecordInfo<'/trial/import/example', '/trial/import/example', Record<never, never>, Record<never, never>>,
     '/visualization/heatmap': RouteRecordInfo<'/visualization/heatmap', '/visualization/heatmap', Record<never, never>, Record<never, never>>,
     '/visualization/map': RouteRecordInfo<'/visualization/map', '/visualization/map', Record<never, never>, Record<never, never>>,
+    '/visualization/performance': RouteRecordInfo<'/visualization/performance', '/visualization/performance', Record<never, never>, Record<never, never>>,
     '/visualization/timeline': RouteRecordInfo<'/visualization/timeline', '/visualization/timeline', Record<never, never>, Record<never, never>>,
     '/visualization/trait-statistics': RouteRecordInfo<'/visualization/trait-statistics', '/visualization/trait-statistics', Record<never, never>, Record<never, never>>,
     '/visualization/trial-statistics': RouteRecordInfo<'/visualization/trial-statistics', '/visualization/trial-statistics', Record<never, never>, Record<never, never>>,
@@ -107,6 +108,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/visualization/map.vue': {
       routes: '/visualization/map'
+      views: never
+    }
+    'src/pages/visualization/performance.vue': {
+      routes: '/visualization/performance'
       views: never
     }
     'src/pages/visualization/timeline.vue': {

@@ -5,10 +5,12 @@
       :items="trialGermplasm"
       auto-select-first
       item-value="artificialId"
+      item-title="displayName"
       :label="$t(label)"
       :hide-details="hint === undefined"
       :autofocus="store.storeAutoSelectSearch !== false"
       :density="density"
+      return-object
       clearable
       :readonly="abortController !== undefined"
       :multiple="multiple"
@@ -18,7 +20,7 @@
       autocomplete="off"
       :hint="hint"
       :persistent-hint="hint !== undefined"
-      :custom-filter="filterGermplasm"
+      :custom-filter="filterCells"
       ref="searchField"
       :prepend-inner-icon="mdiMagnify"
     >
@@ -33,8 +35,10 @@
       <template #item="{ props, item }">
         <v-list-item
           v-bind="props"
-          :title="item.raw"
-        />
+          :title="`${item.raw.displayName} (${$t('formLabelFieldLayoutRowColumn', { row: item.raw.displayRow || 1, column: item.raw.displayColumn || 1 })})`"
+        >
+          <template #title v-if="performanceMode === false"><PlotInformation :cell="item.raw" /></template>
+        </v-list-item>
       </template>
     </v-autocomplete>
 
@@ -63,11 +67,12 @@
 </template>
 
 <script setup lang="ts">
-  import { getTrialDataCached } from '@/plugins/datastore'
-  import type { TrialPlus } from '@/plugins/types/client'
-  import { filterGermplasm } from '@/plugins/util'
+  import { getTrialDataCached, getTrialGermplasmCached } from '@/plugins/datastore'
+  import type { CellPlus, TrialPlus } from '@/plugins/types/client'
+  import { filterCells } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { mdiMagnify, mdiNfcVariant, mdiQrcodeScan } from '@mdi/js'
+  import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
 
   import emitter from 'tiny-emitter/instance'
@@ -76,8 +81,8 @@
   const store = coreStore()
   const { t } = useI18n()
 
-  const searchMatch = defineModel<string[] | string>()
-  const trialGermplasm = ref<string[]>([])
+  const searchMatch = defineModel<CellPlus[] | CellPlus>()
+  const trialGermplasm = ref<CellPlus[]>([])
   const supportsNfc = ref(false)
   const showCamera = ref(false)
   const abortController = shallowRef<AbortController>()
@@ -102,6 +107,7 @@
   })
 
   const searchField = useTemplateRef('searchField')
+  const performanceMode = computed(() => store.storePerformanceMode === true || trialGermplasm.value.length > 1000)
 
   function toggleCamera () {
     if (compProps.scanInBottomSheet) {
@@ -119,14 +125,7 @@
     const data = getTrialDataCached()
 
     if (data && compProps.trial) {
-      const nameSet = new Set<string>()
-
-      Object.values(data).forEach(v => {
-        if (v) {
-          nameSet.add(v.germplasm)
-        }
-      })
-      trialGermplasm.value = [...nameSet].sort((a, b) => a.localeCompare(b))
+      trialGermplasm.value = getTrialGermplasmCached()
     }
   }
 
@@ -159,7 +158,13 @@
   function setMatch (matchString: string) {
     const lower = matchString.trim().toLowerCase()
 
-    const matches = trialGermplasm.value.filter(item => item.toLowerCase().includes(lower))
+    const matches = trialGermplasm.value.filter(item => {
+      const barcode = (item.barcode || '').toLowerCase()
+      const displayName = (item.displayName || '').toLowerCase()
+      const germplasm = (item.germplasm || '').toLowerCase()
+
+      return barcode.includes(lower) || displayName.includes(lower) || germplasm.includes(lower)
+    })
 
     if (matches.length > 0) {
       searchMatch.value = compProps.multiple ? matches : matches[0]

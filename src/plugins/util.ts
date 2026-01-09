@@ -154,7 +154,7 @@ function germinateToTraits (traitString: string): Trait[] {
 
       if (p['Trait category']) {
         trait.group = {
-          name: p['Trait category']
+          name: p['Trait category'],
         }
       }
 
@@ -389,7 +389,15 @@ function isValidDateString (dateString: string) {
   return d.toISOString().slice(0, 10) === dateString
 }
 
-function filterGermplasm (value: string, query: string, item?: InternalItem<CellPlus>): FilterMatch {
+function filterGermplasm (value: string, query: string, item?: InternalItem<string>): FilterMatch {
+  if (query && query.length > 0 && item && item.raw) {
+    return item.raw.toLowerCase().includes(query.toLowerCase())
+  } else {
+    return false
+  }
+}
+
+function filterCells (value: string, query: string, item?: InternalItem<CellPlus>): FilterMatch {
   if (query && query.length > 0 && item && item.raw) {
     const lower = query.toLowerCase()
     const barcode = (item.raw.barcode || '').toLowerCase()
@@ -450,6 +458,7 @@ export {
   getColumnLabel,
   getColumnIndex,
   filterGermplasm,
+  filterCells,
   getRowIndex,
   jsonToTraits,
   germinateToTraits,
