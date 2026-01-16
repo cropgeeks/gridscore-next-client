@@ -205,10 +205,10 @@ export interface TrialEventContent {
 
 export interface TraitEditContent {
     id: string;
-    name: string;
+    name?: string;
     description?: string;
     group?: string | null;
-    hasImage: boolean;
+    hasImage?: boolean;
     imageUrl?: string | undefined;
     timestamp: string;
 }

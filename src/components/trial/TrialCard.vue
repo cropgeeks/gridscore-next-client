@@ -87,6 +87,7 @@
                   :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
                   :is-list-mode="trial.layout.columns === 1"
                   :is-locked="trial.isLocked"
+                  :is-shared="trial.shareStatus !== ShareStatus.NOT_SHARED"
                   :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
                   @delete="emit('delete')"
                   @edit="emit('edit')"
@@ -94,6 +95,7 @@
                   @synchronize="emit('synchronize')"
                   @duplicate="emit('duplicate')"
                   @add-trait="emit('add-trait')"
+                  @add-trait-reference-image="emit('add-trait-reference-image')"
                   @add-person="emit('add-person')"
                   @add-germplasm="emit('add-germplasm')"
                   @add-data="emit('add-data')"
@@ -114,6 +116,7 @@
           :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
           :is-list-mode="trial.layout.columns === 1"
           :is-locked="trial.isLocked"
+          :is-shared="trial.shareStatus !== ShareStatus.NOT_SHARED"
           :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
           @delete="emit('delete')"
           @edit="emit('edit')"
@@ -121,6 +124,7 @@
           @synchronize="emit('synchronize')"
           @duplicate="emit('duplicate')"
           @add-trait="emit('add-trait')"
+          @add-trait-reference-image="emit('add-trait-reference-image')"
           @add-person="emit('add-person')"
           @add-germplasm="emit('add-germplasm')"
           @add-data="emit('add-data')"
@@ -210,7 +214,7 @@
     horizontal: false,
   })
 
-  const emit = defineEmits(['lock', 'share', 'extend-lifetime', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm'])
+  const emit = defineEmits(['lock', 'share', 'extend-lifetime', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm', 'add-trait-reference-image'])
   const commentModal = useTemplateRef('commentModal')
   const eventModal = useTemplateRef('eventModal')
 

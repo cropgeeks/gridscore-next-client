@@ -49,6 +49,7 @@ You can highlight certain groups of germplasm/plots against the whole data to co
 - `Plot`: Compare a specific plot (germplasm + rep combination) against the rest of the data.
 - `Rep`: Highlight the performance of individual reps (all plots in that rep) against the remaining data.
 - `Treatment`: Highlight the performance of individual treatments (all plots with that treatment) against the remaining data.
+- `Controls`: Highlight the controls that were used in the trial against the remaining data.
 
 <img src="img/visualization-statistics-germplasm.png" style="max-width: 100%;" alt="Trait statistics visualization by germplasm">
 
@@ -110,7 +111,18 @@ This page is similar to the trait statistics page, but focusses mainly on the pe
 
 The map visualization shows your data in a geographic context. If corner points have been defined, the trial layout will be shown on the map, otherwise individual GPS coordinates will be shown. Selecting a plot or a map marker shows data recorded at this location.
 
+You can use the control above the map to highlight specific types of plots including: `Germplasm`, `Plots`, `Reps`, `Treatments` and `Controls`.
+
 <img src="img/visualization-map.png" style="max-width: 100%;" alt="Map data visualization">
-<img src="img/visualization-map2.png" style="max-width: 100%;" alt="Map data visualization">
+<img src="img/visualization-map-germplasm.png" style="max-width: 100%;" alt="Map data visualization - germplasm highlight">
+<img src="img/visualization-map-plot.png" style="max-width: 100%;" alt="Map data visualization - plot highlight">
+<img src="img/visualization-map-rep.png" style="max-width: 100%;" alt="Map data visualization - rep highlight">
+<img src="img/visualization-map-treatments.png" style="max-width: 100%;" alt="Map data visualization - treatment highlight">
+<img src="img/visualization-map-controls.png" style="max-width: 100%;" alt="Map data visualization - control highlight">
+<img src="img/visualization-map2.png" style="max-width: 100%;" alt="Map data visualization - data for plot">
+
+If no corner points have been defined for a trial, the center point of each plot will be shown as a circle instead. The highlighting still works in this case.
+
+<img src="img/visualization-map-treatments-no-corners.png" style="max-width: 100%;" alt="Map data visualization - treatment highlight no corners">
 
 <a href="index.html" class="btn btn-dark">Home</a>

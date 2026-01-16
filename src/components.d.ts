@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddPersonModal: typeof import('./components/modals/AddPersonModal.vue')['default']
     AddTraitModal: typeof import('./components/modals/AddTraitModal.vue')['default']
+    AddTraitReferenceImageModal: typeof import('./components/modals/AddTraitReferenceImageModal.vue')['default']
     AddTrialGermplasmModal: typeof import('./components/modals/AddTrialGermplasmModal.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     ArrowDirectionGrid: typeof import('./components/util/ArrowDirectionGrid.vue')['default']
@@ -42,6 +43,7 @@ declare module 'vue' {
     GpsTraitMap: typeof import('./components/trait/GpsTraitMap.vue')['default']
     GuideOrderSelector: typeof import('./components/trial/GuideOrderSelector.vue')['default']
     HelpCard: typeof import('./components/util/HelpCard.vue')['default']
+    HighlightSelect: typeof import('./components/util/HighlightSelect.vue')['default']
     HScroll: typeof import('./components/data/HScroll.vue')['default']
     JumpToDropdown: typeof import('./components/util/JumpToDropdown.vue')['default']
     LabelEditor: typeof import('./components/setup/LabelEditor.vue')['default']
@@ -103,6 +105,7 @@ declare module 'vue' {
     TrialTransactionStatusButton: typeof import('./components/util/TrialTransactionStatusButton.vue')['default']
     UpdateTrialDataModal: typeof import('./components/modals/UpdateTrialDataModal.vue')['default']
     UpdateTrialMetadataModal: typeof import('./components/modals/UpdateTrialMetadataModal.vue')['default']
+    UploadTraitImageModal: typeof import('./components/modals/UploadTraitImageModal.vue')['default']
     VScroll: typeof import('./components/data/VScroll.vue')['default']
   }
 }

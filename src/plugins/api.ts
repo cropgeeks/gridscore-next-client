@@ -369,6 +369,10 @@ function postTraitImage (remoteConfig: RemoteConfig | undefined, shareCode: stri
   return axiosForm({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trait/${shareCode}/${traitId}/img`, method: 'post', formData })
 }
 
+function deleteTraitImage (remoteConfig: RemoteConfig | undefined, shareCode: string, traitId: string) {
+  return axiosForm({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trait/${shareCode}/${traitId}/img`, method: 'delete' })
+}
+
 export {
   axiosCall,
   getServerSettings,
@@ -383,4 +387,5 @@ export {
   extendTrialPeriod,
   checkTrialArchiveExists,
   postTraitImage,
+  deleteTraitImage,
 }

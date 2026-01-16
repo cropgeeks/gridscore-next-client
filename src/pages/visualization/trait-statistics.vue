@@ -15,64 +15,12 @@
           />
         </v-col>
         <v-col cols="12" md="6">
-          <div class="text-subtitle-2 mt-3">{{ $t('pageVisualizationHighlight') }}</div>
-          <v-btn-toggle
-            v-model="selectionMode"
-            color="primary"
-            variant="tonal"
-            class="d-flex mb-5"
-          >
-            <v-btn class="flex-grow-1" value="germplasm" :prepend-icon="mdiSprout" :text="$t('tooltipChartHeatmapGermplasm')" />
-            <v-btn class="flex-grow-1" value="cell" :prepend-icon="mdiViewGridPlus" :text="$t('tooltipChartHeatmapPlot')" />
-            <v-btn class="flex-grow-1" value="reps" :disabled="!trialReps || trialReps.length === 0" :prepend-icon="mdiFormatListNumbered" :text="$t('tooltipChartHeatmapRep')" />
-            <v-btn class="flex-grow-1" value="treatments" :disabled="!trialTreatments || trialTreatments.length === 0" :prepend-icon="mdiSprinklerFire" :text="$t('tooltipChartHeatmapTreatment')" />
-          </v-btn-toggle>
-
-          <GermplasmAutocomplete
-            v-if="selectionMode === 'germplasm'"
+          <HighlightSelect
             :trial="trial"
-            v-model="selectedGermplasm"
-            :label="$t('formLabelStatisticsGermplasm')"
-            :hint="$t('formDescriptionStatisticsGermplasm')"
-            multiple
+            v-model:cells="selectedCells"
+            allow-control-select
+            ref="highlightSelection"
           />
-
-          <CellAutocomplete
-            v-else-if="selectionMode === 'cell'"
-            :trial="trial"
-            v-model="selectedCells"
-            :label="$t('formLabelStatisticsPlots')"
-            :hint="$t('formDescriptionStatisticsPlots')"
-            multiple
-          />
-
-          <v-select
-            v-else-if="selectionMode === 'treatments'"
-            :label="$t('formLabelStatisticsTreatments')"
-            :hint="$t('formDescriptionStatisticsTreatments')"
-            multiple
-            clearable
-            v-model="selectedTreatments"
-            :items="trialTreatments"
-          >
-            <template #selection="{ item }">
-              <v-chip density="compact" :text="item.title" variant="flat" />
-            </template>
-          </v-select>
-
-          <v-select
-            v-else-if="selectionMode === 'reps'"
-            :label="$t('formLabelStatisticsReps')"
-            :hint="$t('formDescriptionStatisticsReps')"
-            multiple
-            clearable
-            v-model="selectedReps"
-            :items="trialReps"
-          >
-            <template #selection="{ item }">
-              <v-chip density="compact" :text="item.title" variant="flat" />
-            </template>
-          </v-select>
         </v-col>
       </v-row>
 
@@ -88,7 +36,7 @@
           <StatsChart
             :trial="trial"
             :trait="trait"
-            :user-selection="userSelection"
+            :user-selection="highlightSelection?.userSelection"
             @cell-clicked="(row: number, column: number) => showBottomSheet(row, column, trait)"
             v-else
           />
@@ -111,62 +59,27 @@
 </template>
 
 <script setup lang="ts">
-  import StatsChart, { type UserSelection } from '@/components/chart/StatsChart.vue'
-  import CellAutocomplete from '@/components/inputs/CellAutocomplete.vue'
+  import StatsChart from '@/components/chart/StatsChart.vue'
   import PlotDataInformation from '@/components/plot/PlotDataInformation.vue'
   import GpsTraitMap from '@/components/trait/GpsTraitMap.vue'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
-  import { getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { TraitDataType } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
-  import { mdiFormatListNumbered, mdiSprinklerFire, mdiSprout, mdiViewGridPlus } from '@mdi/js'
 
   const store = coreStore()
 
-  const selectionMode = ref<'cell' | 'germplasm' | 'reps' | 'treatments'>()
   const trial = ref<TrialPlus>()
   const selectedTraits = ref<TraitPlus[]>([])
-  const selectedGermplasm = ref<string[]>([])
   const selectedCells = ref<CellPlus[]>([])
-  const selectedReps = ref<string[]>([])
-  const selectedTreatments = ref<string[]>([])
   const bottomSheetVisible = ref(false)
   const featuredCell = ref<CellPlus>()
   const featuredTrait = ref<TraitPlus>()
 
-  const trialReps = ref<string[]>([])
-  const trialTreatments = ref<string[]>([])
+  const highlightSelection = useTemplateRef('highlightSelection')
 
   const selectedCellNames = computed(() => selectedCells.value.map(g => g.displayName || g.germplasm))
-
-  const userSelection: ComputedRef<UserSelection | undefined> = computed(() => {
-    switch (selectionMode.value) {
-      case 'cell':
-        return {
-          type: 'cell',
-          selectedItems: selectedCells.value.map(g => g.displayName || g.germplasm),
-        }
-      case 'germplasm':
-        return {
-          type: 'germplasm',
-          selectedItems: selectedGermplasm.value.concat(),
-        }
-      case 'reps':
-        return {
-          type: 'reps',
-          selectedItems: selectedReps.value,
-        }
-      case 'treatments':
-        return {
-          type: 'treatments',
-          selectedItems: selectedTreatments.value,
-        }
-      default:
-        return undefined
-    }
-  })
 
   function showBottomSheet (row: number, column: number, trait: TraitPlus) {
     getCell(store.storeSelectedTrial || '', row, column)
@@ -180,19 +93,10 @@
       })
   }
 
-  watch(selectionMode, async () => {
-    selectedCells.value = []
-    selectedReps.value = []
-    selectedTreatments.value = []
-  })
-
   onMounted(() => {
     getTrialById(store.storeSelectedTrial || '')
       .then(t => {
         trial.value = t
-
-        trialReps.value = getTrialRepsCached()
-        trialTreatments.value = getTrialTreatmentsCached()
       })
   })
 </script>

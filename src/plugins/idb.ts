@@ -2,7 +2,7 @@ import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
 import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation } from '@/plugins/types/client'
-import { getColumnLabel, getRowLabel } from '@/plugins/util'
+import { getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl } from '@/plugins/util'
 import { getId } from '@/plugins/id'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
 import { isGeographyValid, trialLayoutToPlots } from '@/plugins/location'
@@ -361,6 +361,55 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
   }
 }
 
+async function updateTrialTraitImage (localId: string, trait: TraitPlus, hasImage: boolean) {
+  const trial: TrialPlus = await getTrialById(localId)
+
+  if (trial) {
+    const db = await getDb()
+
+    const match = trial.traits.find(t => t.id === trait.id)
+
+    if (match) {
+      match.hasImage = hasImage
+    }
+
+    if (logTransactions(trial)) {
+      const transaction: Transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
+
+      if (!transaction.traitChangeTransactions) {
+        transaction.traitChangeTransactions = []
+      }
+
+      const transMatch = transaction.traitChangeTransactions.find(tr => tr.id === trait.id)
+
+      if (transMatch) {
+        // If there is an old transaction entry, update it
+        transMatch.hasImage = hasImage
+        transMatch.imageUrl = trait.imageUrl
+      } else {
+        // Else, add a new one
+        transaction.traitChangeTransactions.push({
+          id: trait.id || '',
+          name: trait.name,
+          description: trait.description,
+          group: trait.group?.name,
+          hasImage,
+          imageUrl: trait.imageUrl,
+          timestamp: new Date().toISOString(),
+        })
+      }
+
+      await db.put('transactions', transaction)
+    }
+
+    await db.put('trials', trial)
+
+    return new Promise(resolve => resolve(trial))
+  } else {
+    return new Promise<void>(resolve => resolve())
+  }
+}
+
 async function getTrialValidPlots (trialId: string): Promise<string[]> {
   const trial = await getTrialById(trialId)
 
@@ -542,8 +591,16 @@ async function getTrials (includeTransactions?: boolean, ids?: string[]): Promis
               trial.layout.columnOrder = DisplayOrder.LEFT_TO_RIGHT
             }
 
+            const trialImageConfig = {
+              serverUrl: getServerUrl(trial),
+              priorityShareCode: getPriorityShareCode(trial),
+            }
+
             if (trial.traits) {
               trial.traits.forEach((t: TraitPlus, i: number) => {
+                if (t.hasImage === true && !t.imageUrl) {
+                  t.imageUrl = `${trialImageConfig.serverUrl}trait/${trialImageConfig.priorityShareCode}/${t.id}/img`
+                }
                 t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
                 t.progress = 0
                 t.editable = true
@@ -607,34 +664,39 @@ async function getTrials (includeTransactions?: boolean, ids?: string[]): Promis
         .then((transaction: Transaction) => {
           t.transactionCount = 0
           if (transaction) {
-            // Sum up all individual transaction types
-            t.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-            t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-            t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-            t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
-            t.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
-            t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
-            t.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
-            t.transactionCount += transaction.trialLockedTransaction !== undefined
-            t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
-            t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
-            t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
-            t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
-            t.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
-            t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
-            t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
-            t.transactionCount += transaction.trialEditTransaction ? 1 : 0
-            t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
-            t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
-            t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
-            t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
-            t.transactionCount += (transaction.traitOrderTransaction || []).length > 0
+            setTransactionCount(t, transaction)
           }
 
           return t
         })
     }))
   }
+}
+
+function setTransactionCount (t: TrialPlus, transaction: Transaction) {
+  // Sum up all individual transaction types
+  t.transactionCount = 0
+  t.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+  t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+  t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+  t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
+  t.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
+  t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
+  t.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
+  t.transactionCount += transaction.trialLockedTransaction !== undefined ? 1 : 0
+  t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
+  t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
+  t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
+  t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
+  t.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
+  t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
+  t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
+  t.transactionCount += transaction.trialEditTransaction ? 1 : 0
+  t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
+  t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
+  t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
+  t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
+  t.transactionCount += (transaction.traitOrderTransaction || []).length > 0 ? 1 : 0
 }
 
 async function updateTrial (localId: string, updatedTrial: TrialPlus) {
@@ -682,8 +744,16 @@ async function getTrialById (localId: string) {
       trial.layout.columnOrder = DisplayOrder.LEFT_TO_RIGHT
     }
 
+    const trialImageConfig = {
+      serverUrl: getServerUrl(trial),
+      priorityShareCode: getPriorityShareCode(trial),
+    }
+
     if (trial.traits) {
       trial.traits.forEach((t: TraitPlus, i: number) => {
+        if (t.hasImage === true && !t.imageUrl) {
+          t.imageUrl = `${trialImageConfig.serverUrl}trait/${trialImageConfig.priorityShareCode}/${t.id}/img`
+        }
         t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
         t.progress = 0
         t.editable = true
@@ -743,28 +813,7 @@ async function getTrialById (localId: string) {
       .then((transaction: Transaction) => {
         trial.transactionCount = 0
         if (transaction) {
-          // Sum up all individual transaction types
-          trial.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-          trial.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-          trial.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-          trial.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
-          trial.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
-          trial.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
-          trial.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
-          trial.transactionCount += transaction.trialLockedTransaction !== undefined
-          trial.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
-          trial.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
-          trial.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
-          trial.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
-          trial.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
-          trial.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
-          trial.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
-          trial.transactionCount += transaction.trialEditTransaction ? 1 : 0
-          trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
-          trial.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
-          trial.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
-          trial.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
-          trial.transactionCount += (transaction.traitOrderTransaction || []).length > 0
+          setTransactionCount(trial, transaction)
         }
 
         return trial
@@ -1586,6 +1635,7 @@ export {
   initDb,
   getTrials,
   updateTrialProperties,
+  updateTrialTraitImage,
   getCell,
   getTrialById,
   getTrialData,

@@ -127,7 +127,8 @@
             :active="isActive"
             color="primary"
             height="4"
-            indeterminate
+            :indeterminate="loadingProgress === undefined"
+            :model-value="loadingProgress"
           />
         </template>
       </v-card>
@@ -180,6 +181,7 @@
 
   const drawer = ref(true)
   const loading = ref(false)
+  const loadingProgress = ref<number>()
   const snackbarQueue = ref<SnackbarQueueMessage[]>([])
   const selectedTrial = ref<TrialPlus>()
 
@@ -208,8 +210,9 @@
     snackbarQueue.value.push(message)
   }
 
-  function showLoading (visible: boolean) {
+  function showLoading (visible: boolean, progress?: number) {
     loading.value = visible
+    loadingProgress.value = progress
   }
 
   function loadTrialInfo () {
@@ -487,5 +490,27 @@ code {
 
 .mdi-flip-v {
   transform: scaleY(-1);
+}
+
+.mdi-rotate-45, .mdi-rotate-45:before {
+  transform: rotate(45deg);
+}
+.mdi-rotate-90, .mdi-rotate-90:before {
+  transform: rotate(90deg);
+}
+.mdi-rotate-135, .mdi-rotate-135:before {
+  transform: rotate(135deg);
+}
+.mdi-rotate-180, .mdi-rotate-180:before {
+  transform: rotate(180deg);
+}
+.mdi-rotate-225, .mdi-rotate-225:before {
+  transform: rotate(225deg);
+}
+.mdi-rotate-270, .mdi-rotate-270:before {
+  transform: rotate(270deg);
+}
+.mdi-rotate-315, .mdi-rotate-315:before {
+  transform: rotate(315deg);
 }
 </style>

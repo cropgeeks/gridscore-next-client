@@ -4,7 +4,7 @@
     <v-divider class="mb-3" />
     <p>{{ $t('pageVisualizationMapText') }}</p>
 
-    <MapComponent show-controls />
+    <MapComponent />
   </v-container>
 </template>
 

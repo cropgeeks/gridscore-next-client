@@ -266,7 +266,7 @@
                   <div class="mb-2">
                     <v-chip
                       label
-                      class="me-2"
+                      class="me-2 mb-1"
                       size="small"
                       :text="$t(element.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
                       :prepend-icon="element.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
@@ -274,7 +274,7 @@
 
                     <v-chip
                       label
-                      class="me-2"
+                      class="me-2 mb-1"
                       size="small"
                       :text="$t('formFeedbackTraitSetSize', { count: element.setSize })"
                       :prepend-icon="mdiSetSplit"
@@ -283,7 +283,7 @@
                     <v-chip
                       v-if="element.group && element.group.name"
                       label
-                      class="me-2"
+                      class="me-2 mb-1"
                       size="small"
                       :text="element.group.name"
                       :prepend-icon="mdiTagText"
@@ -293,7 +293,7 @@
                     <v-chip
                       label
                       size="small"
-                      class="me-2"
+                      class="me-2 mb-1"
                       :text="$t(element.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
                       :prepend-icon="element.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
                     />
@@ -301,7 +301,7 @@
                       v-if="element.timeframe.start"
                       label
                       size="small"
-                      class="me-2"
+                      class="me-2 mb-1"
                       :text="element.timeframe.start"
                       :prepend-icon="mdiCalendarStart"
                     />
@@ -309,16 +309,16 @@
                       v-if="element.timeframe.end"
                       label
                       size="small"
-                      class="me-2"
+                      class="me-2 mb-1"
                       :text="element.timeframe.end"
                       :prepend-icon="mdiCalendarEnd"
                     />
                   </div>
-
-                  <v-btn-group variant="tonal">
-                    <v-btn :text="$t('buttonDuplicate')" color="info" :disabled="isEdit" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(element)" />
-                    <v-btn :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
-                  </v-btn-group>
+                </template>
+                <template #actions>
+                  <v-btn variant="tonal" :text="$t('buttonDuplicate')" color="info" :disabled="isEdit" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(element)" />
+                  <v-spacer />
+                  <v-btn variant="tonal" :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
                 </template>
               </v-card>
             </template>

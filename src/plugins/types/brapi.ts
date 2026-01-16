@@ -312,11 +312,11 @@ export interface Observation extends BrapiObject {
     collector?: string;
     externalReferences?: Reference[];
     geoCoordinates?: CoordinateElement<GeometryElement<any>>;
-    germplasmDbId: string;
+    germplasmDbId?: string;
     germplasmName?: string;
     observationDbId?: string;
     observationTimeStamp?: string;
-    observationUnitDbId: string;
+    observationUnitDbId?: string;
     observationUnitName?: string;
     observationVariableDbId: string;
     observationVariableName?: string;
@@ -334,7 +334,7 @@ export interface ObservationUnit extends BrapiObject {
     germplasmName?: string;
     locationDbId?: string;
     locationName?: string;
-    observationUnitDbId: string;
+    observationUnitDbId?: string;
     observationUnitName?: string;
     observationUnitPUI?: string;
     observationUnitPosition?: ObservationUnitPosition;

@@ -47,10 +47,8 @@ There are a few sub-pages that contain specific information about how GridScore 
 - <a href="tagging-images.html">Tagging images</a>
 - <a href="trial-sharing.html">Data/Trial sharing</a>
 - <a href="visualizing-data.html">Visualizing data</a>
-- <a href="geographic-data.html">Geographic data</a>
 - <a href="exporting-data.html">Exporting data</a>
 - <a href="accessing-images.html">Accessing images</a>
-- <a href="legacy-data.html">Legacy data migration</a>
 - <a href="self-hosting.html">Self-hosting GridScore</a>
 
 

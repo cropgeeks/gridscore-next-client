@@ -34,20 +34,51 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <BrapiStudySelect
+      class="mt-3"
+      v-model:program="brapiProgram"
+      v-model:trial="brapiTrial"
+      v-model:study="brapiStudy"
+      ref="brapiStudySelect"
+      v-if="allGermplasmValidDbId && allTraitsValidDbId"
+    />
+
+    <template v-if="showForcePlotCreation">
+      <v-alert
+        :color="forcePlotCreation === false ? 'error' : 'success'"
+        :icon="mdiViewGridPlus"
+        density="compact"
+        variant="tonal"
+        border="start"
+      >
+        <template #prepend>
+          <v-icon :icon="mdiViewGridPlus" class="mdi-rotate-315" />
+        </template>
+        <template #text>
+          <div>{{ $t('errorMessageBrapiExportMissingPlots') }}</div>
+          <v-checkbox v-model="forcePlotCreation" hide-details :label="$t('formLabelBrapiExportForcePlotCreation')" />
+        </template>
+      </v-alert>
+    </template>
+
+    <v-btn class="mt-5" :prepend-icon="mdiCloudUpload" color="primary" :text="$t('buttonSendData')" :disabled="!canProceed || brapiCallLoading" @click="sendData" />
   </div>
 </template>
 
 <script setup lang="ts">
   import BrapiConfig from '@/components/util/BrapiConfig.vue'
-  import { brapiDefaultCatchHandler, brapiPostGermplasmSearch, brapiPostObservationVariables, brapiPostObservationVariableSearch } from '@/plugins/brapi'
+  import { brapiDefaultCatchHandler, brapiPostGermplasmSearch, brapiPostObservationData, brapiPostObservationVariables, brapiPostObservationVariableSearch } from '@/plugins/brapi'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { updateGermplasmBrapiIds, updateTraitBrapiIds } from '@/plugins/idb'
-  import type { ObservationVariable, Scale } from '@/plugins/types/brapi'
+  import type { Program, Study, Trial, ObservationVariable, Scale } from '@/plugins/types/brapi'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { TraitDataType } from '@/plugins/types/gridscore'
-  import { mdiCloudPlus, mdiMagnify } from '@mdi/js'
+  import { mdiCloudPlus, mdiCloudUpload, mdiMagnify, mdiViewGridPlus } from '@mdi/js'
+  import { AxiosError } from 'axios'
 
   import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -59,6 +90,9 @@
     itemsWithoutId: string[]
   }
 
+  const brapiStudySelect = useTemplateRef('brapiStudySelect')
+
+  const { t } = useI18n()
   const emit = defineEmits(['trigger-reload-trial'])
 
   const germplasmWithBrapiDbIds = ref<Counts>()
@@ -67,12 +101,24 @@
   const traitsLoading = ref(false)
   const traitLookupRanAtLeastOnce = ref(false)
 
+  const brapiCallLoading = ref(false)
+  const brapiProgram = ref<Program>()
+  const brapiTrial = ref<Trial>()
+  const brapiStudy = ref<Study>()
+
+  const showForcePlotCreation = ref(false)
+  const forcePlotCreation = ref(false)
+
   let trialData: { [index: string]: CellPlus } | undefined
 
   const allGermplasmValidDbId = computed(() => germplasmWithBrapiDbIds.value !== undefined && germplasmWithBrapiDbIds.value.count === germplasmWithBrapiDbIds.value.total)
   const allTraitsValidDbId = computed(() => traitsWithBrapiDbIds.value !== undefined && traitsWithBrapiDbIds.value.count === traitsWithBrapiDbIds.value.total)
 
   const validBrapiUrl = computed(() => compProps.trial && compProps.trial.brapiConfig && compProps.trial.brapiConfig.url)
+
+  const canProceed = computed(() => {
+    return brapiProgram.value && brapiTrial.value && brapiStudy.value && allGermplasmValidDbId.value && allTraitsValidDbId.value && (!showForcePlotCreation.value || forcePlotCreation.value)
+  })
 
   function updateBrapiGermplasmDbIdCounts () {
     const trialData = getTrialDataCached()
@@ -130,6 +176,30 @@
       count,
       total,
       itemsWithoutId,
+    }
+  }
+
+  function sendData () {
+    if (brapiProgram.value && brapiTrial.value && brapiStudy.value) {
+      brapiCallLoading.value = true
+      brapiPostObservationData(compProps.trial, brapiProgram.value, brapiTrial.value, brapiStudy.value, forcePlotCreation.value)
+        .catch(e => {
+          if (e instanceof AxiosError && e.code === '406') {
+            showForcePlotCreation.value = true
+          }
+          emitter.emit('show-loading', false)
+          brapiCallLoading.value = false
+        })
+        .finally(() => {
+          emitter.emit('show-loading', false)
+          brapiCallLoading.value = false
+          showForcePlotCreation.value = false
+
+          emitter.emit('show-snackbar', {
+            text: t('toastTextBrapiSendDataSuccessful'),
+            color: 'success',
+          })
+        })
     }
   }
 
@@ -294,6 +364,21 @@
     }).catch(brapiDefaultCatchHandler).finally(() => {
       germplasmLoading.value = false
     })
+
+    brapiPostGermplasmSearch({
+      accessionNumbers: germplasmWithBrapiDbIds.value?.itemsWithoutId,
+    }).then(result => {
+      const map = new Map<string, string>()
+      if (result) {
+        result.forEach(g => {
+          map.set(g.accessionNumber.toLowerCase(), g.germplasmDbId)
+        })
+
+        updateBrapiGermplasmDbIdsInDatabase(map)
+      }
+    }).catch(brapiDefaultCatchHandler).finally(() => {
+      germplasmLoading.value = false
+    })
   }
 
   function updateBrapiGermplasmDbIdsInDatabase (map: Map<string, string>) {
@@ -330,6 +415,8 @@
 
   function triggerTrialReload () {
     emit('trigger-reload-trial')
+
+    brapiStudySelect.value?.updatePrograms()
   }
 
   function update () {
@@ -338,6 +425,12 @@
   }
 
   watch(() => compProps.trial, async () => update())
+
+  watch(showForcePlotCreation, async newValue => {
+    if (newValue === true) {
+      forcePlotCreation.value = false
+    }
+  })
 
   onMounted(() => {
     trialData = getTrialDataCached()

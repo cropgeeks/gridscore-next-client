@@ -34,7 +34,8 @@
   import scatter from 'plotly.js/lib/scatter'
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
-  import type { UserSelection } from '@/components/chart/StatsChart.vue'
+  import type { UserSelection } from '@/components/util/HighlightSelect.vue'
+  import { CellCategory } from '@/plugins/types/gridscore'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
@@ -139,6 +140,9 @@
               break
             case 'treatments':
               selectionField = c.treatment || ''
+              break
+            case 'controls':
+              selectionField = (c.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : ''
               break
           }
 

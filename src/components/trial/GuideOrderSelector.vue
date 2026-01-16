@@ -102,7 +102,7 @@
       </v-col>
     </v-row>
 
-    <v-btn color="primary" :disabled="!valid" variant="tonal" @click="emit('order-changed', { order: walkName, scoreWidth: scoreWidth, neighbor: neighbor })" :text="$t('buttonStart')" :prepend-icon="mdiAccountArrowRight" />
+    <v-btn color="primary" :disabled="!valid" variant="tonal" @click="emit('order-changed', { order: walkName, scoreWidth: scoreWidth, neighbor: { row: neighbor?.value.y || 0, column: neighbor?.value.x || 0 } })" :text="$t('buttonStart')" :prepend-icon="mdiAccountArrowRight" />
   </div>
 </template>
 

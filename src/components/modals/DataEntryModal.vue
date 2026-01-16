@@ -8,7 +8,7 @@
     @after-enter="onModalShown"
     v-if="cell"
   >
-    <v-card v-if="modalShown">
+    <v-card>
       <v-toolbar>
         <v-btn
           :icon="mdiClose"
@@ -302,7 +302,6 @@
   const store = coreStore()
 
   const dialog = ref(false)
-  const modalShown = ref(false)
   const cell = ref<CellPlus>()
   const cellData = ref<CellData>({})
   const recordingDate = ref<Date>()
@@ -781,8 +780,6 @@
   }
 
   function onModalShown () {
-    modalShown.value = true
-
     nextTick(() => autofocusFirst())
   }
 
@@ -823,7 +820,6 @@
   }
   function hide () {
     dialog.value = false
-    modalShown.value = false
     emit('hide')
   }
 

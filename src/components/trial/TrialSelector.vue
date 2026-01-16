@@ -131,6 +131,7 @@
                 @load="loadTrial(trial.raw)"
                 @lock="lockSelectedTrial(trial.raw)"
                 @add-trait="addTrait(trial.raw)"
+                @add-trait-reference-image="addTraitReferenceImage(trial.raw)"
                 @add-person="addPerson(trial.raw)"
                 @add-metadata="addMetadata(trial.raw)"
                 @add-germplasm="addGermplasm(trial.raw)"
@@ -153,6 +154,7 @@
     <TrialShareModal :trial="selectedTrial" ref="trialShareModal" v-if="selectedTrial" />
     <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial" />
     <AddTraitModal ref="addTraitModal" v-if="selectedTrialsEditable" @traits-added="addTraitsToSelectedTrials" />
+    <AddTraitReferenceImageModal :trial="selectedTrial" ref="addTraitReferenceImageModal" v-if="selectedTrial" />
     <AddPersonModal ref="addPersonModal" v-if="selectedTrialsEditable" @person-added="addPersonToSelectedTrials" />
     <AddTrialGermplasmModal :trial="selectedTrial" ref="addGermplasmModal" v-if="selectedTrial && selectedTrialsEditable" />
     <UpdateTrialMetadataModal :trial="selectedTrial" ref="updateTrialMetadataModal" v-if="selectedTrial" />
@@ -217,6 +219,7 @@
   const trialExpirationModal = useTemplateRef('trialExpirationModal')
   const updateTrialMetadataModal = useTemplateRef('updateTrialMetadataModal')
   const updateTrialDataModal = useTemplateRef('updateTrialDataModal')
+  const addTraitReferenceImageModal = useTemplateRef('addTraitReferenceImageModal')
 
   const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
 
@@ -423,7 +426,12 @@
     selectedTrial.value = trial
 
     nextTick(() => addTraitModal.value?.show())
-    nextTick(() => addTraitModal.value?.show())
+  }
+
+  function addTraitReferenceImage (trial?: TrialPlus) {
+    selectedTrial.value = trial
+
+    nextTick(() => addTraitReferenceImageModal.value?.show())
   }
 
   function addPerson (trial?: TrialPlus) {

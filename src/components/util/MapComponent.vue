@@ -1,23 +1,35 @@
 <template>
-  <div ref="mapElement" class="location-map map">
-    <v-bottom-sheet
-      v-model="bottomSheetVisible"
-      inset
-      scrollable
-      max-height="75vh"
-      v-if="selectedFeature && trial"
-    >
-      <v-card :title="selectedFeature.displayName || selectedFeature.germplasm">
-        <PlotDataInformation :trial="trial" :cell="selectedFeature" />
-      </v-card>
-    </v-bottom-sheet>
+  <div v-if="trial">
+    <v-row>
+      <v-col cols="12" xl="6">
+        <HighlightSelect
+          :trial="trial"
+          ref="highlightSelection"
+          allow-control-select
+        />
+      </v-col>
+    </v-row>
+
+    <div ref="mapElement" class="location-map map mt-5">
+      <v-bottom-sheet
+        v-model="bottomSheetVisible"
+        inset
+        scrollable
+        max-height="75vh"
+        v-if="selectedFeature && trial"
+      >
+        <v-card :title="selectedFeature.displayName || selectedFeature.germplasm">
+          <PlotDataInformation :trial="trial" :cell="selectedFeature" />
+        </v-card>
+      </v-bottom-sheet>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { coreStore } from '@/stores/app'
 
-  import L, { type TileLayer, type Map } from 'leaflet'
+  import L, { type TileLayer, type Map, type Circle } from 'leaflet'
   import 'leaflet/dist/leaflet.css'
   import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
   import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -35,6 +47,7 @@
 
   import 'leaflet.markercluster'
   import { LocateControl } from 'leaflet.locatecontrol'
+  import { categoricalColors } from '@/plugins/color'
 
   // Set the leaflet marker icon
   // @ts-ignore
@@ -45,20 +58,11 @@
     shadowUrl: shadowUrl,
   })
 
-  export interface MapComponentProps {
-    showControls?: boolean
-    highlightCheck?: (cell: CellPlus) => boolean
-  }
-
-  const compProps = withDefaults(defineProps<MapComponentProps>(), {
-    showControls: false,
-    highlightCheck: (cell: CellPlus) => false,
-  })
-
   const store = coreStore()
 
   const trial = ref<TrialPlus>()
 
+  const highlightSelection = useTemplateRef('highlightSelection')
   const mapElement = useTemplateRef('mapElement')
   let clusterer: any
   const selectedFeature = ref<CellPlus>()
@@ -68,6 +72,10 @@
   let map: Map
   // let geoJsonLayer: L.GeoJSON<any, any> | undefined = undefined
   let trialData: { [index: string]: CellPlus } | undefined = {}
+  let circles: Circle[] = []
+  let highlightColors: { [index: string]: string } = {}
+
+  const userSelection = computed(() => highlightSelection.value?.userSelection)
 
   function updateThemeLayer () {
     if (themeLayer) {
@@ -176,6 +184,9 @@
   }
 
   function update () {
+    circles.forEach(c => c.removeFrom(map))
+    circles = []
+
     // Remove the old geojson layer if required
     if (clusterer) {
       clusterer.clearLayers()
@@ -183,6 +194,7 @@
       // @ts-ignore
       clusterer = L.markerClusterGroup({
         chunkedLoading: true,
+        disableClusteringAtZoom: 16,
       })
     }
 
@@ -197,6 +209,7 @@
               displayName: trialData[td].displayName,
               germplasm: trialData[td].germplasm,
               rep: trialData[td].rep,
+              treatment: trialData[td].treatment,
               row,
               column,
               categories: trialData[td].categories || [],
@@ -210,32 +223,34 @@
       // Create the geojson and the layer, then add to the map
       const geoJson = plotInfoToGeoJson(plotInfo)
 
-      if (!trial.value?.layout.corners) {
-        const checks = plotInfo.filter(pi => compProps.highlightCheck(pi.properties) && pi.center)
-
-        checks.forEach(c => {
-          L.circle(c.center, { radius: 5, fillColor: '#910080', color: '#910080', fillOpacity: 0.3, weight: 0 }).addTo(map)
-        })
-      }
+      highlightColors = {}
 
       if (geoJson) {
         // @ts-ignore
         const geoJsonLayer = L.geoJSON(geoJson, {
           style: feature => {
-            let color = '#00a0f1'
+            if (feature) {
+              const color = getColor(feature.properties)
 
-            if (compProps.showControls && store.storeHighlightControls && feature?.properties.categories.includes(CellCategory.CONTROL)) {
-              color = '#910080'
+              return {
+                fillColor: color,
+                color,
+                weight: 1,
+              }
+            } else {
+              return {}
             }
-            if (feature && feature.properties && compProps.highlightCheck(feature.properties)) {
-              color = '#910080'
-            }
-
-            return {
+          },
+          pointToLayer(feature, latlng) {
+            const color = getColor(feature.properties)
+            return L.circleMarker(latlng, {
+              radius: 8,
               fillColor: color,
               color,
               weight: 1,
-            }
+              opacity: 1,
+              fillOpacity: 0.5,
+            })
           },
           onEachFeature: (feature, layer) => {
             layer.bindTooltip(feature.properties.displayName || feature.properties.germplasm)
@@ -263,13 +278,54 @@
     }
   }
 
+  function getColor (properties: any) {
+    let color: string | undefined = '#aaaaaa'
+
+    if (properties && userSelection.value && userSelection.value.type) {
+      let selectionField: string
+      switch (userSelection.value.type) {
+        case 'cell':
+          selectionField = properties.displayName || properties.germplasm
+          break
+        case 'germplasm':
+          selectionField = properties.germplasm
+          break
+        case 'reps':
+          selectionField = properties.rep || ''
+          break
+        case 'treatments':
+          selectionField = properties.treatment || ''
+          break
+        case 'controls':
+          selectionField = (properties.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : 'N/A'
+          break
+      }
+
+      if (userSelection.value.selectedItems.includes(selectionField)) {
+        color = highlightColors[selectionField]
+
+        if (!color) {
+          color = categoricalColors.D3schemeCategory10[Object.keys(highlightColors).length % categoricalColors.D3schemeCategory10.length] || '#910080'
+          highlightColors[selectionField] = color
+        }
+      }
+    }
+
+    return color
+  }
+
   watch(() => store.storeIsDarkMode, async () => updateThemeLayer())
 
-  watch(trial, async () => update())
+  watch(trial, async () => {
+    nextTick(() => {
+      initMap()
+      update()
+    })
+  })
+
+  watch(userSelection, async () => update(), { deep: true })
 
   onMounted(() => {
-    initMap()
-
     updateTrialDataCache()
     emitter.on('trial-data-loaded', updateTrialDataCache)
   })

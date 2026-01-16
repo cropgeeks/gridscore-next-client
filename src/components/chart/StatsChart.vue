@@ -46,6 +46,7 @@
   import { hexToRgba, invertHex } from '@/plugins/color'
   import { coreStore } from '@/stores/app'
   import { CELL_CATEGORIES } from '@/plugins/constants'
+  import type { UserSelection } from '@/components/util/HighlightSelect.vue'
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
     bar,
@@ -70,11 +71,6 @@
     date: string
     timestamp: string
     categories: string[]
-  }
-
-  export interface UserSelection {
-    type: 'cell' | 'germplasm' | 'reps' | 'treatments'
-    selectedItems: string[]
   }
 
   const compProps = defineProps<{
@@ -165,6 +161,9 @@
                     break
                   case 'treatments':
                     selectionField = cell.treatment || ''
+                    break
+                  case 'controls':
+                    selectionField = (cell.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : ''
                     break
                 }
 
@@ -292,6 +291,9 @@
                     break
                   case 'treatments':
                     selectionField = cell.treatment || ''
+                    break
+                  case 'controls':
+                    selectionField = (cell.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : ''
                     break
                 }
 

@@ -4,7 +4,7 @@ import { autoType, tsvParse } from 'd3-dsv'
 import { i18n } from '@/plugins/vuetify'
 import { coreStore } from '@/stores/app'
 import type { FilterMatch, InternalItem } from 'vuetify'
-import type { CellPlus, TrialPlus } from '@/plugins/types/client'
+import { ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
 
 export const GERMINATE_EXPECTED_COLUMNS = ['Name', 'Short Name', 'Description', 'Data Type', 'Unit Name', 'Unit Abbreviation', 'Unit Descriptions', 'Trait categories (comma separated)', 'Min (only for numeric traits)', 'Max (only for numeric traits)']
 export const TABULAR_EXPECTED_COLUMNS = ['Name', 'Description', 'Data Type', 'Allow repeats', 'Set size', 'Group name', 'Categories', 'Minimum', 'Maximum', 'Timeframe type', 'Timeframe start', 'Timeframe end', 'BrAPI ID']
@@ -164,6 +164,32 @@ function germinateToTraits (traitString: string): Trait[] {
     return traits
   } catch {
     throw new Error('Invalid Germinate trait format')
+  }
+}
+
+function getServerUrl (trial: TrialPlus) {
+  if (trial) {
+    const store = coreStore()
+    let baseUrl = trial.remoteUrl || store.storeServerUrl || ''
+
+    if (!baseUrl.endsWith('/')) {
+      baseUrl += '/'
+    }
+    if (!baseUrl.endsWith('api/')) {
+      baseUrl += 'api/'
+    }
+
+    return baseUrl
+  } else {
+    return undefined
+  }
+}
+
+function getPriorityShareCode (trial: TrialPlus) {
+  if (trial && trial.shareStatus !== ShareStatus.NOT_SHARED && trial.shareCodes) {
+    return trial.shareCodes.ownerCode || trial.shareCodes.editorCode || trial.shareCodes.viewerCode
+  } else {
+    return undefined
   }
 }
 
@@ -475,4 +501,6 @@ export {
   isNumber,
   checkDataMatchesTraitType,
   safeTrialName,
+  getServerUrl,
+  getPriorityShareCode,
 }

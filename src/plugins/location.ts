@@ -297,7 +297,7 @@ function getPlotGeoCoordinates (cell: any) {
     }
   }
 
-  return null
+  return undefined
 }
 
 // TODO: Determine type
