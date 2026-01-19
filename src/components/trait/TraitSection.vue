@@ -11,7 +11,7 @@
             <template v-if="showDetails">
               <v-chip size="small" label :text="$t((shortTitle ? dataTypeMap[trait.dataType]?.shortTitle : dataTypeMap[trait.dataType]?.title) || '')" :prepend-icon="dataTypeMap[trait.dataType]?.icon" />
 
-              <v-chip label size="small" v-tooltip:top="$t('tooltipTraitImageClickToView')" @click="referenceImageSheetVisible = true">
+              <v-chip label size="small" v-tooltip:top="$t('tooltipTraitImageClickToView')" @click="referenceImageSheetVisible = true" v-if="trait.imageUrl">
                 <v-icon :icon="mdiImageSearch" />
               </v-chip>
 

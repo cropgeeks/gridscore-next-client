@@ -67,6 +67,10 @@
                 <v-list-item v-if="transaction.trialGermplasmAddedTransactions && transaction.trialGermplasmAddedTransactions.length > 0" :prepend-icon="mdiTableRowPlusAfter" :title="$t('transactionTypeGermplasmAdded')">
                   <template #subtitle><span class="text-wrap">{{ transaction.trialGermplasmAddedTransactions.join(', ') }}</span></template>
                 </v-list-item>
+                <!-- GERMPLASM ADDED -->
+                <v-list-item v-if="transaction.trialGermplasmWithMetadataAddedTransactions && transaction.trialGermplasmWithMetadataAddedTransactions.length > 0" :prepend-icon="mdiTableRowPlusAfter" :title="$t('transactionTypeGermplasmAdded')">
+                  <template #subtitle><span class="text-wrap">{{ transaction.trialGermplasmWithMetadataAddedTransactions.map(gp => gp.germplasm).join(', ') }}</span></template>
+                </v-list-item>
                 <!-- PLOT COMMENT ADDED -->
                 <v-list-item v-if="transaction.plotCommentAddedTransactions && Object.keys(transaction.plotCommentAddedTransactions).length > 0" :prepend-icon="mdiCommentPlus" :title="$t('transactionTypePlotCommentAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePlotCommentAddedCount', Object.keys(transaction.plotCommentAddedTransactions).length) }}</span></template>

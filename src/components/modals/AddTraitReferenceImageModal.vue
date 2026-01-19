@@ -33,18 +33,25 @@
                     cols="12"
                     md="6"
                     lg="4"
+                    class="d-flex"
                   >
                     <v-card
-                      class="mb-3"
+                      class="mb-3 d-flex flex-column"
                       variant="tonal"
                     >
                       <v-img
                         :key="`trait-image-${trait.id}-${imageId}`"
-                        height="200px"
+                        height="150px"
+                        max-height="150px"
+                        class="bg-surface-variant"
                         :src="trait.imageUrl"
                         cover
-                        v-if="trait.hasImage === true && trait.imageUrl"
-                      />
+                      >
+                        <div class="d-flex align-center justify-space-around h-100">
+                          <v-btn :color="trait.imageUrl ? 'warning' : 'success'" :icon="trait.imageUrl ? mdiImageRefresh : mdiImagePlus" @click="showUploadForTrait(trait)" />
+                          <v-btn :icon="mdiImageRemove" color="error" v-if="trait.imageUrl" @click="deleteImageForTrait(trait)" />
+                        </div>
+                      </v-img>
                       <v-card-title>
                         <div class="d-flex justify-space-between align-center flex-wrap">
                           <span>{{ trait.name }}</span>
@@ -57,7 +64,7 @@
                         <span class="text-wrap" v-if="trait.description">{{ trait.description }}</span>
                       </v-card-subtitle>
 
-                      <v-card-text>
+                      <v-card-text class="flex-grow-1 align-self-end">
                         <div class="mb-2">
                           <v-chip
                             label
@@ -110,11 +117,6 @@
                           />
                         </div>
                       </v-card-text>
-                      <v-card-actions>
-                        <v-btn variant="tonal" :text="$t(trait.imageUrl ? 'buttonReplace' : 'buttonUpload')" color="primary" :prepend-icon="trait.imageUrl ? mdiImageRefresh : mdiImagePlus" @click.stop="showUploadForTrait(trait)" />
-                        <v-spacer />
-                        <v-btn variant="tonal" :text="$t('buttonDelete')" color="error" :prepend-icon="mdiImageRemove" @click.stop="deleteImageForTrait(trait)" v-if="trait.imageUrl" />
-                      </v-card-actions>
                     </v-card>
                   </v-col>
                 </v-row>

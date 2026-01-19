@@ -160,7 +160,8 @@
   }
   function save () {
     if (!feedback.value?.some(f => f.type === 'error')) {
-      addTrialGermplasm(compProps.trial.localId || '', newGermplasm.value)
+      const gp = isProxy(newGermplasm.value) ? toRaw(newGermplasm.value) : newGermplasm.value
+      addTrialGermplasm(compProps.trial.localId || '', gp)
         .then(() => {
           emitter.emit('trials-updated')
           hide()

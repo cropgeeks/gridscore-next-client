@@ -662,6 +662,7 @@ function setTransactionCount (t: TrialPlus, transaction: Transaction) {
   t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
   t.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
   t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
+  t.transactionCount += transaction.trialGermplasmWithMetadataAddedTransactions ? transaction.trialGermplasmWithMetadataAddedTransactions.length : 0
   t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
   t.transactionCount += transaction.trialEditTransaction ? 1 : 0
   t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0

@@ -22,7 +22,7 @@ Another example would be visual reference images for cereal growth stages.
 
 Before adding reference images for traits to GridScore, the trial in question has to have been shared before. If it hasn't been shared yet, GridScore will disable the option to add reference images. The reason for this is simple: reference images are stored on the GridScore server and associated with the trial identifier to make them available to every trial participant.
 
-To actually add a reference image to a trait, identify the correct trial from the home screen. Use the options menu (cog icon) show all available actions for this trial. Under `Add` you will find `Add trait reference image`. Selecting this option opens a new window which shows all traits grouped by their group. From here, you can upload one reference image per trait using the `Upload` button at the bottom of the trait card.
+To actually add a reference image to a trait, identify the correct trial from the home screen. Use the options menu (cog icon) show all available actions for this trial. Under `Add` you will find `Add trait reference image`. Selecting this option opens a new window which shows all traits grouped by their group. From here, you can upload one reference image per trait using the green circular button in the middle of the grey area of the trait card.
 
 <img src="img/reference-image-trial.png" style="max-width: 100%;" alt="Add reference image to trial">
 
@@ -34,7 +34,7 @@ The window that now opens lets you pick an image file from your local device. Th
 
 <img src="img/reference-image-trial-modal-img.png" style="max-width: 100%;" alt="Add reference image to trial">
 
-Back on the trial reference image window, a small preview of the image should now be displayed within the trait card.
+Back on the trial reference image window, a small preview of the image should now be displayed within the trait card. You can choose a different image using the yellow button overlaying the image or delete the reference image using the red button.
 
 <img src="img/reference-image-trial-modal-w-img.png" style="max-width: 100%;" alt="Add reference image to trial">
 
