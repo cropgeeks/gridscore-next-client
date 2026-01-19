@@ -7,7 +7,7 @@
         <v-file-input
           v-model="inputFile"
           :label="$t('formLabelImageFile')"
-          accept="image/*"
+          accept="image/jpeg,image/png"
           ref="imageInput"
         />
 
@@ -32,6 +32,7 @@
   import { updateTraitImageCache } from '@/plugins/traitcache'
   import type { TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { mdiAlert } from '@mdi/js'
+  import Compressor from 'compressorjs'
 
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
@@ -61,8 +62,21 @@
     }
 
     if (newValue) {
-      // Convert to base64 for displaying
-      mediaData.value = URL.createObjectURL(newValue)
+      new Compressor(newValue, {
+        quality: 0.6,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        resize: 'contain',
+        // The compression process is asynchronous,
+        // which means you have to access the `result` in the `success` hook function.
+        success(result) {
+          // Convert to base64 for displaying
+          mediaData.value = URL.createObjectURL(result)
+        },
+        error(err) {
+          console.log(err.message)
+        },
+      })
     } else {
       mediaData.value = undefined
     }

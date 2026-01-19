@@ -10,24 +10,11 @@
             <span class="text-h6" :style="{ color: trait.color }">{{ trait.name }}</span>
             <template v-if="showDetails">
               <v-chip size="small" label :text="$t((shortTitle ? dataTypeMap[trait.dataType]?.shortTitle : dataTypeMap[trait.dataType]?.title) || '')" :prepend-icon="dataTypeMap[trait.dataType]?.icon" />
-              <v-menu v-if="trait.hasImage && imageUrl" location="bottom">
-                <template #activator="{ props }">
-                  <v-chip
-                    v-bind="props"
-                    label
-                    size="small"
-                    v-tooltip:top="$t('tooltipTraitImageClickToView')"
-                  >
-                    <v-icon :icon="mdiImageSearch" />
-                  </v-chip>
-                </template>
 
-                <v-card>
-                  <v-card-text>
-                    <img :src="imageUrl" class="d-inline-block reference-image" crossorigin="anonymous" @click="imageFullscreen = true">
-                  </v-card-text>
-                </v-card>
-              </v-menu>
+              <v-chip label size="small" v-tooltip:top="$t('tooltipTraitImageClickToView')" @click="referenceImageSheetVisible = true">
+                <v-icon :icon="mdiImageSearch" />
+              </v-chip>
+
               <v-chip size="small" label v-tooltip:top="$t(trait.allowRepeats ? 'tooltipTraitAllowRepeatsTrue' : 'tooltipTraitAllowRepeatsFalse')">
                 <v-icon :icon="trait.allowRepeats ? mdiRepeat : mdiRepeatOff" />
               </v-chip>
@@ -54,26 +41,17 @@
       </template>
     </v-list-item>
 
-    <v-dialog
-      v-model="imageFullscreen"
-      transition="dialog-bottom-transition"
-      fullscreen
+    <v-bottom-sheet
+      v-model="referenceImageSheetVisible"
+      max-height="90vh"
       v-if="trait.hasImage && imageUrl"
-      @click="imageFullscreen = false"
     >
       <v-card>
-        <v-toolbar>
-          <v-btn
-            :icon="mdiClose"
-            @click="imageFullscreen = false"
-          />
-        </v-toolbar>
-
-        <v-card-text>
-          <img :src="imageUrl" class="d-inline-block reference-image-fullscreen" crossorigin="anonymous">
-        </v-card-text>
+        <template #text>
+          <v-img :src="imageUrl" crossorigin="anonymous" @click="referenceImageSheetVisible = false" />
+        </template>
       </v-card>
-    </v-dialog>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -86,7 +64,7 @@
 
   const store = coreStore()
 
-  const imageFullscreen = ref(false)
+  const referenceImageSheetVisible = ref(false)
 
   export interface TraitSectionProps {
     trial?: TrialPlus

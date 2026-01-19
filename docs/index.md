@@ -43,6 +43,7 @@ There are a few sub-pages that contain specific information about how GridScore 
 - <a href="overview.html">Interface overview</a>
 - <a href="settings.html">Settings</a>
 - <a href="trial-setup.html">Trial setup</a>
+- <a href="trait-reference-images.html">Trait reference images</a>
 - <a href="collecting-data.html">Collecting data</a>
 - <a href="tagging-images.html">Tagging images</a>
 - <a href="trial-sharing.html">Data/Trial sharing</a>

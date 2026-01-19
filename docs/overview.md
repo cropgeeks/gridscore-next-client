@@ -39,8 +39,11 @@ Once you have created or imported some trials, they will be listed on the front 
 - **Share**: The `Share` option allows you to share the given trial with others or simply another device using QR codes. The mechanism is explained on the dedicated <a href="trial-sharing.html">trial sharing</a> page.
 - **Duplicate trial**: You can duplicate an existing trial. While doing so, you can make modifications to the layout and traits. You can also decide whether you want to copy any existing data across or start with a blank trial. There is a dedicated page explaining the <a href="trial-duplication.html">trial duplication</a> in more detail.
 - **Lock trial**: The trial owner can at any point lock the whole trial to prevent data entry and manipulation. It should be noted that if working on a shared trial, each user/data collector will be able to synchronize one last time before the trial is locked.
-- **Add trait**: Trial owners and editors can add more traits at a later date if they have not been included in the initial trial setup. GridScore shows the exact same trait definition screen as during the trial setup, so you should be familiar with the process.
-- **Add person**: More people can be added to an existing trial if required.
+- **Add**: Options for adding new entries to a trial
+  - **Add trait**: Trial owners and editors can add more traits at a later date if they have not been included in the initial trial setup. GridScore shows the exact same trait definition screen as during the trial setup, so you should be familiar with the process.
+  - **Add trait reference image**
+  - **Add person**: More people can be added to an existing trial if required.
+  - **Add germplasm**: For trials with just a single column (basically lists), GridScore allows adding new germplasm to the bottom of the list. The interface for this is the same as when defining the germplasm for a new trial during the <a href="trial-setup.html">setup</a>.
 - **Edit trial**: The owners of the trial (see <a href="trial-sharing.html"> sharing page</a>) can make certain changes to a trial like changing name and description of the trial and the contained traits as well as adjust trial corner points and visual markers.
 - **Import data**: Sometimes you want to import pre-existing data into GridScore and you can do this right here. There's a <a href="data-import.html">dedicated page</a> to explain this.
 - **Delete**: At any time, you can delete any trial from your local device. Be aware that any unsynchronized changes made to a shared trial will be lost, so synchronize before you delete a trial. This trial will not be deleted from any other device it has been shared with and it will still exist on the GridScore server until it expires.

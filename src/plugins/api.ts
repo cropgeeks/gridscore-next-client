@@ -370,7 +370,7 @@ function postTraitImage (remoteConfig: RemoteConfig | undefined, shareCode: stri
 }
 
 function deleteTraitImage (remoteConfig: RemoteConfig | undefined, shareCode: string, traitId: string) {
-  return axiosForm({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trait/${shareCode}/${traitId}/img`, method: 'delete' })
+  return axiosCall({ baseUrl: remoteConfig ? (remoteConfig.remoteUrl || undefined) : undefined, remoteToken: remoteConfig ? remoteConfig.token : undefined, url: `trait/${shareCode}/${traitId}/img`, method: 'delete' })
 }
 
 export {

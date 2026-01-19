@@ -46,7 +46,7 @@
                         v-if="trait.hasImage === true && trait.imageUrl"
                       />
                       <v-card-title>
-                        <div class="d-flex justify-space-between align-center">
+                        <div class="d-flex justify-space-between align-center flex-wrap">
                           <span>{{ trait.name }}</span>
                           <div>
                             <v-chip label size="small" color="primary" :prepend-icon="dts.find(dt => dt.value === trait.dataType)?.icon" :text="dts.find(dt => dt.value === trait.dataType)?.shortTitle" />
@@ -111,7 +111,7 @@
                         </div>
                       </v-card-text>
                       <v-card-actions>
-                        <v-btn variant="tonal" :text="$t('buttonUpload')" color="primary" :prepend-icon="mdiImagePlus" @click.stop="showUploadForTrait(trait)" />
+                        <v-btn variant="tonal" :text="$t(trait.imageUrl ? 'buttonReplace' : 'buttonUpload')" color="primary" :prepend-icon="trait.imageUrl ? mdiImageRefresh : mdiImagePlus" @click.stop="showUploadForTrait(trait)" />
                         <v-spacer />
                         <v-btn variant="tonal" :text="$t('buttonDelete')" color="error" :prepend-icon="mdiImageRemove" @click.stop="deleteImageForTrait(trait)" v-if="trait.imageUrl" />
                       </v-card-actions>
@@ -141,7 +141,7 @@
   import type { TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { TimeframeType } from '@/plugins/types/gridscore'
   import { getPriorityShareCode, getServerUrl } from '@/plugins/util'
-  import { mdiAlert, mdiCalendarEnd, mdiCalendarStart, mdiClose, mdiImagePlus, mdiImageRemove, mdiMinusCircle, mdiSetSplit, mdiTagText, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
+  import { mdiAlert, mdiCalendarEnd, mdiCalendarStart, mdiClose, mdiImagePlus, mdiImageRefresh, mdiImageRemove, mdiMinusCircle, mdiSetSplit, mdiTagText, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
   import UploadTraitImageModal from '@/components/modals/UploadTraitImageModal.vue'
   import { updateTrialTraitImage } from '@/plugins/idb'
@@ -241,9 +241,33 @@
           match.imageUrl = undefined
         }
       })
+      .then(refreshTrialInfo)
+      .catch(async e => {
+        console.log(e, e.status)
+        if (e.status === 404) {
+          const match = compProps.trial.traits.find(tt => tt.id === t.id)
+
+          if (match) {
+            match.hasImage = false
+            match.imageUrl = undefined
+          }
+          // Delete then save to idb.
+          updateTrialTraitImage(compProps.trial.localId || '', t, false)
+            .then(refreshTrialInfo)
+        }
+      })
       .finally(() => {
         emitter.emit('show-loading', false)
       })
+  }
+
+  async function refreshTrialInfo () {
+    emitter.emit('trials-updated')
+    emitter.emit('trial-selected')
+
+    await store.setSelectedTrial(compProps.trial.localId || '')
+
+    imageId.value = getId()
   }
 
   function updateTrait () {
@@ -263,14 +287,7 @@
       }
 
       updateTrialTraitImage(compProps.trial.localId || '', t, true)
-        .then(async () => {
-          emitter.emit('trials-updated')
-          emitter.emit('trial-selected')
-
-          await store.setSelectedTrial(compProps.trial.localId || '')
-
-          imageId.value = getId()
-        })
+        .then(refreshTrialInfo)
     }
   }
 

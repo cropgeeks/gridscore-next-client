@@ -371,35 +371,7 @@ async function updateTrialTraitImage (localId: string, trait: TraitPlus, hasImag
 
     if (match) {
       match.hasImage = hasImage
-    }
-
-    if (logTransactions(trial)) {
-      const transaction: Transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
-
-      if (!transaction.traitChangeTransactions) {
-        transaction.traitChangeTransactions = []
-      }
-
-      const transMatch = transaction.traitChangeTransactions.find(tr => tr.id === trait.id)
-
-      if (transMatch) {
-        // If there is an old transaction entry, update it
-        transMatch.hasImage = hasImage
-        transMatch.imageUrl = trait.imageUrl
-      } else {
-        // Else, add a new one
-        transaction.traitChangeTransactions.push({
-          id: trait.id || '',
-          name: trait.name,
-          description: trait.description,
-          group: trait.group?.name,
-          hasImage,
-          imageUrl: trait.imageUrl,
-          timestamp: new Date().toISOString(),
-        })
-      }
-
-      await db.put('transactions', transaction)
+      match.imageUrl = undefined
     }
 
     await db.put('trials', trial)
