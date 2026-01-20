@@ -29,6 +29,7 @@
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
   import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
+  import { getThemeColor } from '@/plugins/util'
 
   const { t } = useI18n()
   const store = coreStore()
@@ -144,7 +145,7 @@
         }
 
         // Draw the circle
-        ctx.fillStyle = store.storeTraitColors[1 % store.storeTraitColors.length] || '#00acef'
+        ctx.fillStyle = getThemeColor(1) || '#00acef'
         ctx.beginPath()
         ctx.arc(finalX, finalY, 6, 0, 2 * Math.PI)
         ctx.fill()

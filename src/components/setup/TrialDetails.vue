@@ -50,7 +50,7 @@
             @click:close="deletePerson(personIndex)"
           >
             <template #prepend>
-              <v-icon v-for="type in person.types" :key="`person-${personIndex}-${type}`" :icon="personTypes[type]?.icon" :color="getTraitColor(personTypes[type]?.colorIndex || 0)" />
+              <v-icon v-for="type in person.types" :key="`person-${personIndex}-${type}`" :icon="personTypes[type]?.icon" :color="getThemeColor(personTypes[type]?.colorIndex || 0)" />
             </template>
           </v-chip>
         </div>
@@ -118,7 +118,7 @@
   import { getTrialGroups } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
   import { personTypes } from '@/plugins/types/types'
-  import { getTraitColor } from '@/plugins/util'
+  import { getThemeColor } from '@/plugins/util'
   import { mdiAccountPlus, mdiFolderTable, mdiTextLong, mdiTextShort, mdiUndoVariant } from '@mdi/js'
   import draggable from 'vuedraggable'
 

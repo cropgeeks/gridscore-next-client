@@ -142,6 +142,7 @@
                           <TraitInputSection
                             v-model="cellData[item.id || '']"
                             v-if="cellData[item.id || '']"
+                            :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
                             :trait="item"
                             :editable="isEditable || false"
                             :measurements="cell.measurements[item.id || '']"
@@ -177,6 +178,7 @@
                       <TraitInputSection
                         v-model="cellData[trait.id || '']"
                         v-if="cellData[trait.id || '']"
+                        :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
                         :trait="trait"
                         :editable="isEditable || false"
                         :measurements="cell.measurements[trait.id || '']"

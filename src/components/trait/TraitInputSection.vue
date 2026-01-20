@@ -12,6 +12,7 @@
 
     <TraitInput
       v-model="model[`${setIndex}`]"
+      :cell="cell"
       :people="people"
       :trait="trait"
       :measurements="measurements"
@@ -28,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { TraitPlus } from '@/plugins/types/client'
+  import type { MiniCell, TraitPlus } from '@/plugins/types/client'
   import type { Measurement, Person } from '@/plugins/types/gridscore'
   import type { TraitData } from '@/components/modals/DataEntryModal.vue'
 
@@ -40,6 +41,7 @@
   const inputsValid = ref<boolean[]>([])
 
   const compProps = withDefaults(defineProps<{
+    cell: MiniCell
     people?: Person[]
     trait: TraitPlus
     measurements: Measurement[] | undefined

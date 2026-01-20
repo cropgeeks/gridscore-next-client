@@ -93,6 +93,8 @@
     trial: TrialPlus
   }>()
 
+  type ResultCallback = (filename: string) => void
+
   const dialog = ref(false)
   const inputFile = ref<File>()
   const inputFileDate = ref<Date>()
@@ -101,6 +103,7 @@
   const selectedTraits = ref<TraitPlus[]>([])
   const mode = ref<'image' | 'video'>('image')
   const postfix = ref<string>()
+  const resultCallback = ref<ResultCallback>()
 
   const imageInput = useTemplateRef('imageInput')
   const videoInput = useTemplateRef('videoInput')
@@ -112,20 +115,26 @@
   const filename = computed(() => {
     const c = cell.value
 
-    if (!c || !inputFile.value) {
-      return ''
+    if (!inputFile.value) {
+      return 'NA'
     }
 
     const parts = compProps.trial.mediaFilenameFormat || mediaFilenameParts.map(p => p.id)
     const extension = inputFile.value.name.includes('.') ? `.${inputFile.value.name.split('.').pop()}` : ''
 
-    const mapped = parts.map(p => {
-      if (p === 'trait' && selectedTraits.value.length > 0) {
-        return selectedTraits.value.map(t => mediaFilenameParts.find(op => op.id === p)?.extract(compProps.trial, c, t)).join('-')
-      } else {
-        return mediaFilenameParts.find(op => op.id === p)?.extract(compProps.trial, c, undefined, inputFileDate.value)
-      }
-    }).filter(p => p !== undefined && p.length > 0)
+    let mapped: string[] = []
+
+    if (c) {
+      mapped = parts.map(p => {
+        if (p === 'trait' && selectedTraits.value.length > 0) {
+          return selectedTraits.value.map(t => mediaFilenameParts.find(op => op.id === p)?.extract(compProps.trial, c, t)).join('-')
+        } else {
+          return mediaFilenameParts.find(op => op.id === p)?.extract(compProps.trial, c, undefined, inputFileDate.value) || ''
+        }
+      }).filter(p => p !== undefined && p.length > 0)
+    } else {
+      mapped.push(compProps.trial.name)
+    }
 
     if (postfix.value && postfix.value.trim().length > 0) {
       mapped.push(postfix.value.trim())
@@ -187,11 +196,14 @@
         color: 'warning',
       })
 
+      resultCallback.value?.(filename.value)
+
       hide()
     }
   }
-  function show (row: number, column: number, type: 'image' | 'video' = 'image', traitIds?: string[]) {
+  function show (row: number, column: number, type: 'image' | 'video' = 'image', traitIds?: string[], rc?: ResultCallback) {
     mode.value = type
+    resultCallback.value = rc
 
     if (traitIds && traitIds.length > 0) {
       selectedTraits.value = compProps.trial.traits.filter(t => traitIds.includes(t.id || ''))

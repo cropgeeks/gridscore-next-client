@@ -70,6 +70,16 @@
             </v-col>
           </v-row>
 
+          <TraitInput
+            :label="$t('formLabelTraitExample')"
+            :trait="exampleTrait"
+            bg-color="surface-variant"
+            :cell="{ row: -1, column: -1, germplasm: '', categories: [] }"
+            editable
+            :measurements="[]"
+            v-model="exampleTraitValue"
+          />
+
           <v-combobox
             v-show="TraitDataType.isCategorical(currentTrait.dataType)"
             class="mb-3"
@@ -331,6 +341,9 @@
     <TraitImportFromBrapiModal ref="traitImportFromBrapiModal" @traits-selected="addTraitsFromOtherTrial" />
     <TraitImportFromTrialModal ref="traitImportFromTrialModal" @traits-selected="addTraitsFromOtherTrial" />
     <GenericAddEditFormModal :ok-title="formContent.okTitle" :title="formContent.title" :fields="formFields" :item="formContent" :notify="importExport" ref="formModal" />
+
+    <!-- @vue-ignore -->
+    <MediaModal :trial="{ localId: 'setup', name: 'setup', traits: [] }" />
   </div>
 </template>
 
@@ -352,6 +365,7 @@
   import { germinateToTraits, jsonToTraits, tabularToTraits } from '@/plugins/util'
   import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
   import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
+  import TraitInput from '@/components/inputs/TraitInput.vue'
 
   const { t } = useI18n()
   const store = coreStore()
@@ -391,6 +405,7 @@
   const categoryInput = useTemplateRef('categoryInput')
   const formModal = useTemplateRef('formModal')
 
+  const exampleTraitValue = ref<string>()
   const initialTraitIds = ref<Set<string>>(new Set())
   const formState = ref<FormState>({})
   const trials = ref<TrialPlus[]>([])
@@ -476,6 +491,41 @@
       hint: description,
       inputAutoSelectAll: true,
     }]
+  })
+
+  const exampleTrait: ComputedRef<TraitPlus> = computed(() => {
+    const result: TraitPlus = {
+      name: 'Example',
+      dataType: currentTrait.value.dataType,
+      allowRepeats: false,
+      setSize: 1,
+      editable: true,
+    }
+
+    switch (currentTrait.value.dataType) {
+      case TraitDataType.categorical:
+      case TraitDataType.multicat:
+        result.restrictions = {
+          categories: ['a', 'b', 'c'],
+        }
+        break
+      case TraitDataType.boolean:
+        result.dataType = TraitDataType.categorical
+        result.restrictions = {
+          categories: ['true', 'false'],
+        }
+        break
+      case TraitDataType.int:
+      case TraitDataType.float:
+      case TraitDataType.range:
+        result.restrictions = {
+          min: 0,
+          max: 10,
+        }
+        break
+    }
+
+    return result
   })
 
   const isDisabledDueToEdit = computed(() => compProps.isEdit === true && (currentTrait.value === undefined || currentTrait.value.id === undefined))
@@ -867,6 +917,10 @@
         restrictions.value.categories.push(...(event.clipboardData!.getData('text')!.split('\n').map(x => x.trim()).filter(x => x.length > 0) || []))
       }
     })
+  })
+
+  watch(() => currentTrait.value.dataType, async () => {
+    exampleTraitValue.value = undefined
   })
 
   defineExpose({

@@ -282,6 +282,7 @@
   "formDescriptionTraitTimeframeEnd": "Das Ende der Zeitspanne. Falls erzwungen ist keine Dateneingabe nach diesem Datum möglich.",
   "formLabelTraitTimeframeEnd": "Zeitspannenende",
   "formLabelTraitTimeframeType": "Zeitspannentyp",
+  "formLabelTraitExample": "Beispiel für Merkmalsdatentyp",
   "formDescriptionTraitTimeframeType": "Wähle ob die Zeitspanne als Hinweis dienen soll oder erzwungen werden soll. Erzwingen bedeutet, dass es nicht möglich ist Daten außerhalb der Zeitspanne einzugeben, während Hinweise dem Benutzer nur als Information angezeigt werden.",
   "formSelectOptionTraitTimeframeSuggest": "Hinweis",
   "formSelectOptionTraitTimeframeEnforce": "Erzwingen",

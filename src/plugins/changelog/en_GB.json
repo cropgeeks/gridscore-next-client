@@ -813,6 +813,11 @@
         "text": "We have reworked the timeline charts to allow for more meaningful data visualization. You can now highlight specific germplasm, reps or treatments."
       },
       {
+        "type": "update",
+        "title": "Full Typescript support",
+        "text": "GridScore now uses Typescript wherever possible to improve the type-safety of data handled in the app. This should reduce the potential for bugs and errors."
+      },
+      {
         "type": "bugfix",
         "title": "Image saving issues",
         "text": "In previous versions there have been issues with saving images on some devices. This has now been resolved."

@@ -1,4 +1,4 @@
-name: Docker CI NEXT
+name: Docker CI Vuetify
 
 # Docker CI builds on master branch push.
 # Only builds AMD build to increase development speed.

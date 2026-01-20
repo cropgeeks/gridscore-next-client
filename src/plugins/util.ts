@@ -5,6 +5,7 @@ import { i18n } from '@/plugins/vuetify'
 import { coreStore } from '@/stores/app'
 import type { FilterMatch, InternalItem } from 'vuetify'
 import { ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
+import { categoricalColors } from './color'
 
 export const GERMINATE_EXPECTED_COLUMNS = ['Name', 'Short Name', 'Description', 'Data Type', 'Unit Name', 'Unit Abbreviation', 'Unit Descriptions', 'Trait categories (comma separated)', 'Min (only for numeric traits)', 'Max (only for numeric traits)']
 export const TABULAR_EXPECTED_COLUMNS = ['Name', 'Description', 'Data Type', 'Allow repeats', 'Set size', 'Group name', 'Categories', 'Minimum', 'Maximum', 'Timeframe type', 'Timeframe start', 'Timeframe end', 'BrAPI ID']
@@ -30,6 +31,10 @@ function isNumber (value: string, isInt = false) {
   } catch {
     return false
   }
+}
+
+function getThemeColor (index: number) {
+  return categoricalColors.GridScoreDefault[index % categoricalColors.GridScoreDefault.length] || '#00acef'
 }
 
 function getTraitColor (index: number) {
@@ -491,6 +496,7 @@ export {
   toGerminateDataType,
   tabularToTraits,
   getTraitColor,
+  getThemeColor,
   toLocalDateString,
   toLocalDateTimeString,
   padZerosTo,

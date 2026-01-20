@@ -5,7 +5,7 @@
     </template>
     <template #prepend>
       <slot name="prepend">
-        <v-btn v-tooltip:top="$t(shareStatusConfig?.text || '')" :color="getTraitColor(shareStatusConfig?.colorIndex || 0)" :icon="shareStatusConfig?.icon" @click="emit('share')" :disabled="!canShare" />
+        <v-btn v-tooltip:top="$t(shareStatusConfig?.text || '')" :color="getThemeColor(shareStatusConfig?.colorIndex || 0)" :icon="shareStatusConfig?.icon" @click="emit('share')" :disabled="!canShare" />
       </slot>
     </template>
     <template #append v-if="trial.hasLocalUpdate || trial.hasRemoteUpdate">
@@ -177,7 +177,7 @@
   import { getNumberWithSuffix } from '@/plugins/formatting'
   import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
   import { shareStatusTypes } from '@/plugins/types/types'
-  import { formatTimeAgo, getTraitColor, toLocalDateString } from '@/plugins/util'
+  import { formatTimeAgo, getThemeColor, toLocalDateString } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import TrialOptionsDropdown from '@/components/trial/TrialOptionsDropdown.vue'
 

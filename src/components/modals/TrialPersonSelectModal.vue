@@ -18,10 +18,10 @@
             @click="selectPerson(person)"
           >
             <template #prepend>
-              <v-avatar variant="tonal" :color="getTraitColor(personIndex)" :text="getAvatarContent(person)" />
+              <v-avatar variant="tonal" :color="getThemeColor(personIndex)" :text="getAvatarContent(person)" />
             </template>
             <template #append>
-              <v-icon v-for="type in person.types" :key="`person-${person.id}-${type}`" :icon="personTypes[type]?.icon" :color="getTraitColor(personTypes[type]?.colorIndex || 0)" />
+              <v-icon v-for="type in person.types" :key="`person-${person.id}-${type}`" :icon="personTypes[type]?.icon" :color="getThemeColor(personTypes[type]?.colorIndex || 0)" />
             </template>
           </v-list-item>
         </template>
@@ -34,7 +34,7 @@
   import type { TrialPlus } from '@/plugins/types/client'
   import type { Person } from '@/plugins/types/gridscore'
   import { personTypes } from '@/plugins/types/types'
-  import { getTraitColor } from '@/plugins/util'
+  import { getThemeColor } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
 
   import emitter from 'tiny-emitter/instance'

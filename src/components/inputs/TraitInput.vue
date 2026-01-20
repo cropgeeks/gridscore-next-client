@@ -4,6 +4,7 @@
       v-if="trait.dataType === TraitDataType.text"
       :label="label"
       :readonly="isEditable === false"
+      :bg-color="bgColor"
       :messages="description ? [description] : undefined"
       @keyup.enter="emit('traverse')"
       :clearable="isEditable !== false"
@@ -16,9 +17,48 @@
       </template>
     </v-text-field>
     <v-text-field
+      v-if="trait.dataType === TraitDataType.image"
+      :label="label"
+      readonly
+      :bg-color="bgColor"
+      :messages="description ? [description] : undefined"
+      @keyup.enter="emit('traverse')"
+      :clearable="isEditable !== false"
+      v-model="model"
+      ref="input"
+      @change="tts"
+    >
+      <template #message="{ message }">
+        <span v-html="message" />
+      </template>
+      <template #append-inner>
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryTakeImage')" :disabled="isEditable === false" variant="tonal" size="small" @click="recordImage('image')" :icon="mdiCamera" />
+      </template>
+    </v-text-field>
+    <v-text-field
+      v-if="trait.dataType === TraitDataType.video"
+      :label="label"
+      readonly
+      :bg-color="bgColor"
+      :messages="description ? [description] : undefined"
+      @keyup.enter="emit('traverse')"
+      :clearable="isEditable !== false"
+      v-model="model"
+      ref="input"
+      @change="tts"
+    >
+      <template #message="{ message }">
+        <span v-html="message" />
+      </template>
+      <template #append-inner>
+        <v-btn class="ms-1" v-tooltip:top="$t('tooltipDataEntryTakeVideo')" :disabled="isEditable === false" variant="tonal" size="small" @click="recordImage('video')" :icon="mdiVideo" />
+      </template>
+    </v-text-field>
+    <v-text-field
       v-if="trait.dataType === TraitDataType.gps"
       :label="label"
       readonly
+      :bg-color="bgColor"
       :messages="description ? [description] : undefined"
       @keyup.enter="emit('traverse')"
       :clearable="isEditable !== false"
@@ -39,6 +79,7 @@
       <v-slider
         v-model="model"
         :readonly="isEditable === false"
+        :bg-color="bgColor"
         :messages="description ? [description] : undefined"
         :color="(model !== null && model !== undefined) ? 'primary' : undefined"
         @wheel="$event.target.blur()"
@@ -77,6 +118,7 @@
       v-model="model"
       :label="label"
       :readonly="isEditable === false"
+      :bg-color="bgColor"
       :messages="description ? [description] : undefined"
       @keyup.enter="setDate"
       @keyup.exact="handleDateInputChar"
@@ -100,6 +142,7 @@
       :messages="description ? [description] : undefined"
       :label="label"
       :readonly="isEditable === false"
+      :bg-color="bgColor"
       @keyup.enter="emit('traverse')"
       control-variant="split"
       :model-value="model !== undefined ? +model : undefined"
@@ -121,6 +164,7 @@
       :rules="rules"
       :precision="null"
       :readonly="isEditable === false"
+      :bg-color="bgColor"
       @keyup.enter="emit('traverse')"
       control-variant="split"
       :model-value="model !== undefined ? +model : undefined"
@@ -139,6 +183,7 @@
         :label="label"
         :items="traitCategories"
         :messages="description ? [description] : undefined"
+        :bg-color="bgColor"
         :readonly="isEditable === false"
         @keyup.enter="emit('traverse')"
         ref="input"
@@ -154,6 +199,7 @@
           v-model="model"
           :disabled="isEditable === false"
           color="primary"
+          :base-color="bgColor"
           variant="outlined"
           divided
           ref="input"
@@ -185,6 +231,7 @@
         :items="traitCategories"
         :messages="description ? [description] : undefined"
         :readonly="isEditable === false"
+        :bg-color="bgColor"
         multiple
         @keyup.enter="emit('traverse')"
         :model-value="model !== undefined ? model.split(':').map(c => +c) : []"
@@ -204,6 +251,7 @@
           :disabled="isEditable === false"
           color="primary"
           variant="outlined"
+          :base-color="bgColor"
           multiple
           divided
           ref="input"
@@ -233,7 +281,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { TraitPlus } from '@/plugins/types/client'
+  import type { MiniCell, TraitPlus } from '@/plugins/types/client'
   import { type Measurement, type Person, TraitDataType } from '@/plugins/types/gridscore'
   import { getDate, getToday, isValidDateString, toLocalDateString } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
@@ -241,7 +289,7 @@
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiCalendarToday, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker } from '@mdi/js'
+  import { mdiCalendarToday, mdiCamera, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker, mdiVideo } from '@mdi/js'
   import { getId } from '@/plugins/id'
 
   const nonTtsTraitTypes = new Set([TraitDataType.gps, TraitDataType.video, TraitDataType.image, TraitDataType.date, TraitDataType.text, TraitDataType.range])
@@ -249,9 +297,11 @@
   const { t } = useI18n()
 
   const compProps = defineProps<{
+    cell: MiniCell
     people?: Person[]
     trait: TraitPlus
     label: string
+    bgColor?: string
     measurements: Measurement[] | undefined
     setIndex?: number
     editable?: boolean
@@ -382,6 +432,12 @@
     if (isEditable.value && (event.key === '-' || event.key === '+' || !isNaN(event.key))) {
       dateInput.value += event.key
     }
+  }
+
+  function recordImage (type: string) {
+    emitter.emit('tag-media', compProps.cell.row || 0, compProps.cell.column || 0, type, [], (filename: string) => {
+      model.value = filename
+    })
   }
 
   function setDateDelta (delta: number) {
