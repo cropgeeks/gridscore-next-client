@@ -44,6 +44,7 @@
     <v-bottom-sheet
       v-model="referenceImageSheetVisible"
       max-height="90vh"
+      inset
       v-if="trait.hasImage && imageUrl"
     >
       <v-card>
