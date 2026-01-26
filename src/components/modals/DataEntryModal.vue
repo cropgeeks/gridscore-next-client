@@ -678,6 +678,8 @@
           const column = c.column
           const trialId = compProps.trial.localId
 
+          store.setPreviouslyScoredPlot({ row: c.row || 0, column: c.column || 0 })
+
           if (guidedWalk.value) {
             handleGuidedWalkStep(delta)
           } else {

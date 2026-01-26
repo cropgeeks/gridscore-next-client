@@ -15,10 +15,15 @@ export interface PlausibleConfig {
 }
 
 export interface HighlightConfig {
-  type: 'controls' | 'reps' | 'germplasm' | 'treatments' | 'bookmarks' | undefined
+  type: 'controls' | 'reps' | 'germplasm' | 'treatments' | 'bookmarks' | 'previous' | undefined
   germplasm?: string
   treatments?: string[]
   reps?: string[]
+}
+
+export interface RowColumn {
+  row: number
+  column: number
 }
 
 let name = import.meta.env.VUE_APP_INSTANCE_NAME
@@ -66,6 +71,7 @@ export const coreStore = defineStore('core', {
     trialListArrangement: TrialListType.GRID as TrialListType,
     hideTraitCircles: true,
     hiddenTraits: [] as string[],
+    previouslyScoredPlot: undefined as (RowColumn | undefined),
     showFullTraitDescription: true,
     escapeBarcode: undefined as (string | undefined),
     enterBarcode: undefined as (string | undefined),
@@ -130,6 +136,7 @@ export const coreStore = defineStore('core', {
     storeSelectedTrial: (state): string | undefined => state.selectedTrial,
     storeHideTraitCircles: (state): boolean => state.hideTraitCircles || false,
     storeHiddenTraits: (state): string[] => state.hiddenTraits,
+    storePreviouslyScoredPlot: (state): RowColumn | undefined => state.previouslyScoredPlot,
     storePlausible: (state): PlausibleConfig => state.plausible,
     storeServerUrl: (state): string | null => state.serverUrl,
     storeBrapiConfig: (state): BrapiConfig => state.brapiConfig,
@@ -171,6 +178,9 @@ export const coreStore = defineStore('core', {
     setHideTraitCircles (newHideTraitCircles: boolean) {
       this.hideTraitCircles = newHideTraitCircles
     },
+    setPreviouslyScoredPlot (newPreviouslyScoredPlot: RowColumn | undefined) {
+      this.previouslyScoredPlot = newPreviouslyScoredPlot
+    },
     setHiddenTraits (newHiddenTraits: string[]) {
       this.hiddenTraits = newHiddenTraits
     },
@@ -198,6 +208,7 @@ export const coreStore = defineStore('core', {
       this.mediaMode = undefined
       this.selectedTrial = newSelectedTrial
       this.hiddenTraits = []
+      this.previouslyScoredPlot = undefined
       this.hideTraitCircles = false
       this.highlightConfig = {
         type: undefined,

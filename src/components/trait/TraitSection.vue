@@ -34,8 +34,8 @@
           <v-chip-group v-if="trait.restrictions || trait.timeframe">
             <v-chip label size="x-small" v-if="trait.restrictions && (trait.restrictions.min !== undefined) && (trait.restrictions.min !== null)" :prepend-icon="mdiGreaterThanOrEqual" :text="trait.restrictions.min" />
             <v-chip label size="x-small" v-if="trait.restrictions && (trait.restrictions.max !== undefined) && (trait.restrictions.max !== null)" :prepend-icon="mdiLessThanOrEqual" :text="trait.restrictions.max" />
-            <v-chip label size="x-small" v-tooltip:bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :base-color="trait.editable ? 'muted' : 'error'" v-if="trait.timeframe && trait.timeframe.start" :prepend-icon="mdiGreaterThanOrEqual" :text="trait.timeframe.start" />
-            <v-chip label size="x-small" v-tooltip:bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :base-color="trait.editable ? 'muted' : 'error'" v-if="trait.timeframe && trait.timeframe.end" :prepend-icon="mdiLessThanOrEqual" :text="trait.timeframe.end" />
+            <v-chip label size="x-small" :variant="trait.editable ? 'tonal' : 'flat'" v-tooltip:bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :base-color="trait.editable ? 'muted' : 'error'" v-if="trait.timeframe && trait.timeframe.start" :prepend-icon="mdiGreaterThanOrEqual" :text="trait.timeframe.start" />
+            <v-chip label size="x-small" :variant="trait.editable ? 'tonal' : 'flat'" v-tooltip:bottom="$t(trait.editable ? 'tooltipTraitTimeframeOutwithSuggest' : 'tooltipTraitTimeframeOutwithEnforce')" :base-color="trait.editable ? 'muted' : 'error'" v-if="trait.timeframe && trait.timeframe.end" :prepend-icon="mdiLessThanOrEqual" :text="trait.timeframe.end" />
           </v-chip-group>
         </div>
       </template>

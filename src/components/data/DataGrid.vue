@@ -318,6 +318,9 @@
         case 'germplasm':
           isHighlighted = (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
           break
+        case 'previous':
+          isHighlighted = store.storePreviouslyScoredPlot?.row === cell.row && store.storePreviouslyScoredPlot?.column === cell.column
+          break
       }
 
       if (isHighlighted) {

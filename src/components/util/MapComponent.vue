@@ -159,6 +159,7 @@
       const latLng = e.latlng
 
       // TODO
+      // console.log(latLng)
     })
 
     L.control.layers(baseMaps).addTo(map)

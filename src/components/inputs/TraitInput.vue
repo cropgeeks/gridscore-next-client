@@ -79,9 +79,9 @@
       <v-slider
         v-model="model"
         :readonly="isEditable === false"
-        :bg-color="bgColor"
+        :thumb-color="bgColor"
         :messages="description ? [description] : undefined"
-        :color="(model !== null && model !== undefined) ? 'primary' : undefined"
+        :color="(model !== null && model !== undefined) ? (bgColor || 'primary') : undefined"
         @wheel="$event.target.blur()"
         thumb-label
         :min="trait.restrictions?.min"
@@ -200,7 +200,7 @@
           :disabled="isEditable === false"
           color="primary"
           :base-color="bgColor"
-          variant="outlined"
+          :variant="bgColor ? 'tonal' : 'outlined'"
           divided
           ref="input"
         >
@@ -250,8 +250,8 @@
           @update:model-value="v => model = (v === undefined || v === null || v.length === 0) ? undefined : v.sort().join(':')"
           :disabled="isEditable === false"
           color="primary"
-          variant="outlined"
           :base-color="bgColor"
+          :variant="bgColor ? 'tonal' : 'outlined'"
           multiple
           divided
           ref="input"
@@ -303,6 +303,7 @@
     label: string
     bgColor?: string
     measurements: Measurement[] | undefined
+    hint?: string
     setIndex?: number
     editable?: boolean
   }>()
@@ -363,7 +364,9 @@
   })
 
   const description = computed(() => {
-    if (compProps.trait && compProps.measurements && compProps.measurements && compProps.measurements.length > 0) {
+    if (compProps.hint) {
+      return compProps.hint
+    } else if (compProps.trait && compProps.measurements && compProps.measurements && compProps.measurements.length > 0) {
       // Sort them by date
       const sorted = compProps.measurements.concat().sort((a, b) => a.timestamp.localeCompare(b.timestamp))
 

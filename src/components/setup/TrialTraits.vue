@@ -72,8 +72,9 @@
 
           <TraitInput
             :label="$t('formLabelTraitExample')"
+            :hint="$t('formDescriptionTraitExample')"
             :trait="exampleTrait"
-            bg-color="surface-variant"
+            bg-color="warning"
             :cell="{ row: -1, column: -1, germplasm: '', categories: [] }"
             editable
             :measurements="[]"
@@ -506,7 +507,7 @@
       case TraitDataType.categorical:
       case TraitDataType.multicat:
         result.restrictions = {
-          categories: ['a', 'b', 'c'],
+          categories: (restrictions.value.categories && restrictions.value.categories.length > 0) ? restrictions.value.categories : [t('widgetExampleTraitCatValueOne'), t('widgetExampleTraitCatValueTwo'), t('widgetExampleTraitCatValueThree')],
         }
         break
       case TraitDataType.boolean:
@@ -518,10 +519,15 @@
       case TraitDataType.int:
       case TraitDataType.float:
       case TraitDataType.range:
-        result.restrictions = {
-          min: 0,
-          max: 10,
-        }
+        result.restrictions = (restrictions.value && (restrictions.value.min !== undefined || restrictions.value.max !== undefined))
+          ? {
+            min: restrictions.value.min,
+            max: restrictions.value.max,
+          }
+          : {
+            min: 0,
+            max: 10,
+          }
         break
     }
 
@@ -733,7 +739,7 @@
       }
     }
 
-    if (restrictions.value && restrictions.value.min !== undefined && restrictions.value.max !== undefined && restrictions.value.min > restrictions.value.max) {
+    if (restrictions.value && restrictions.value.min !== undefined && restrictions.value.max !== undefined && restrictions.value.min >= restrictions.value.max) {
       formState.value.min = t('formFeedbackTraitInvalidMinMax')
       formState.value.max = t('formFeedbackTraitInvalidMinMax')
     }
@@ -922,6 +928,10 @@
   watch(() => currentTrait.value.dataType, async () => {
     exampleTraitValue.value = undefined
   })
+
+  watch(restrictions, async () => {
+    exampleTraitValue.value = undefined
+  }, { deep: true })
 
   defineExpose({
     isValid,

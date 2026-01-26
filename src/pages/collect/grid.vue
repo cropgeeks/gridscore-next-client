@@ -26,6 +26,7 @@
         <v-menu :close-on-content-click="false" activator="#grid-highlight">
           <v-list slim density="compact" min-width="300" max-width="min(500px, 75vw)">
             <v-list-item :title="$t('formLabelPlotHighlightNothing')" :prepend-icon="mdiMarkerCancel" :active="store.storeHighlightConfig.type === undefined" :append-icon="store.storeHighlightConfig.type === undefined ? mdiCheck : undefined" @click="setHighlight(undefined)" />
+            <v-list-item :title="$t('formLabelPlotHighlightPrevious')" :prepend-icon="mdiBookArrowLeft" :active="store.storeHighlightConfig.type === 'previous'" :append-icon="store.storeHighlightConfig.type === 'previous' ? mdiCheck : undefined" @click="setHighlight('previous')" />
             <v-list-item v-if="trialControls && trialControls.size > 0" :title="$t('formLabelPlotHighlightControls')" :prepend-icon="mdiCheckboxMarked" :active="store.storeHighlightConfig.type === 'controls'" :append-icon="store.storeHighlightConfig.type === 'controls' ? mdiCheck : undefined" @click="setHighlight('controls')" />
             <v-list-item v-if="trialBookmarks && trialBookmarks.size > 0" :title="$t('formLabelPlotHighlightBookmarks')" :prepend-icon="mdiBookmark" :active="store.storeHighlightConfig.type === 'bookmarks'" :append-icon="store.storeHighlightConfig.type === 'bookmarks' ? mdiCheck : undefined" @click="setHighlight('bookmarks')" />
             <v-list-item v-if="trialTreatments && trialTreatments.length > 0" :prepend-icon="mdiSprinklerFire" :active="store.storeHighlightConfig.type === 'treatments'" :append-icon="store.storeHighlightConfig.type === 'treatments' ? mdiCheck : undefined">
@@ -130,7 +131,7 @@
   import { getTrialById } from '@/plugins/idb'
   import { MainDisplayMode, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountMultiple, mdiBookmark, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCommentMultiple, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
+  import { mdiAccountMultiple, mdiBookArrowLeft, mdiBookmark, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCommentMultiple, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
@@ -270,9 +271,11 @@
   }
 
   function startGeoTracking () {
+    console.log('start geotracking', store.storeGpsEnabled, navigator.geolocation, geolocationWatchId)
     if (navigator.geolocation && store.storeGpsEnabled && !geolocationWatchId) {
       const options = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20_000 }
       geolocationWatchId = navigator.geolocation.watchPosition(position => {
+        console.log(position)
         if (position && position.coords) {
           geolocation.value = {
             lat: position.coords.latitude,
@@ -281,7 +284,9 @@
             heading: position.coords.heading || undefined,
           }
         }
-      }, null, options)
+      }, e => {
+        console.error(e)
+      }, options)
     }
   }
 
@@ -323,7 +328,7 @@
     }
   }
 
-  function setHighlight (type: 'controls' | 'reps' | 'germplasm' | 'treatments' | 'bookmarks' | undefined) {
+  function setHighlight (type: 'controls' | 'reps' | 'germplasm' | 'treatments' | 'bookmarks' | 'previous' | undefined) {
     ignoreReps(() => {
       selectedReps.value = []
     })
