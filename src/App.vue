@@ -125,6 +125,8 @@
 
     <ConfirmModal />
 
+    <ServerMessageModal />
+
     <BToastOrchestrator />
   </div>
 </template>
@@ -143,7 +145,7 @@ import { loadLanguageAsync, locales } from '@/plugins/i18n'
 import { init } from '@/plugins/datastore'
 import { axiosCall, getServerSettings } from '@/plugins/api'
 import Plausible from 'plausible-tracker'
-import { useToast } from 'bootstrap-vue-next'
+import { useToast, BToastOrchestrator } from 'bootstrap-vue-next'
 
 import { getId } from '@/plugins/id'
 import { gridScoreVersion } from '@/plugins/constants'
@@ -153,6 +155,7 @@ import { getTrialById, initDb } from '@/plugins/idb'
 import emitter from 'tiny-emitter/instance'
 import { mapState, mapStores } from 'pinia'
 import { coreStore } from '@/store'
+import ServerMessageModal from '@/components/modals/ServerMessageModal.vue'
 
 // Set base URL based on environment
 let baseUrl = './api/'

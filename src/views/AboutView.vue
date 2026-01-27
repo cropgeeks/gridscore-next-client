@@ -10,7 +10,8 @@
             <h1 class="display-4 text-center text-md-start">{{ $t('appTitle') }}</h1>
             <p class="lead text-center text-md-start"><IBiTag /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
             <p class="lead text-center text-md-start" v-if="storeDeviceConfigString"><IBiLaptop /> {{ storeDeviceConfigString }}</p>
-            <p class="text-center text-md-start mb-0"><IBiInfoCircle /> <a href="#" @click.prevent="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
+            <p class="text-center text-md-start"><IBiInfoCircle /> <a href="#" @click.prevent="$refs.changelogModal.show()">{{ $t('pageAboutChangelog') }}</a></p>
+            <p class="text-center text-md-start mb-0"><IBiChatLeftDotsFill /> <a href="#" @click.prevent="showServerMessages">{{ $t('pageAboutServerMessages') }}</a></p>
           </b-col>
         </b-row>
       </div>
@@ -172,6 +173,11 @@ export default {
     },
     removeUrlParam: function () {
       this.$router.replace({ query: null })
+    },
+    showServerMessages: function () {
+      this.coreStore.setServerMessagesCheckedOn(undefined)
+
+      emitter.emit('show-server-messages', true)
     }
   },
   mounted: function () {

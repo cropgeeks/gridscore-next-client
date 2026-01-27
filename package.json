@@ -53,6 +53,7 @@
     "@babel/eslint-parser": "~7.12.16",
     "@iconify-json/bi": "^1.1.23",
     "@types/plotly.js": "^2.35.2",
+    "@types/semver": "^7.7.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/compiler-sfc": "^3.4.26",
     "@vue/eslint-config-typescript": "~13.0.0",

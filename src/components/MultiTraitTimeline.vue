@@ -329,7 +329,8 @@ export default {
           zeroline: true,
           showline: true,
           title: { text: this.$t('widgetChartTimeseriesAxisTitleTime'), font: { color: this.storeDarkMode ? 'white' : 'black' } },
-          tickfont: { color: this.storeDarkMode ? 'white' : 'black' }
+          tickfont: { color: this.storeDarkMode ? 'white' : 'black' },
+          range: [sortedDates[0], sortedDates[sortedDates.length - 1]]
         },
         yaxis: {
           automargin: true,

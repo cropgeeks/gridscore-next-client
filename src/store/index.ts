@@ -56,6 +56,7 @@ export const coreStore = defineStore('core', {
     autoProgressInputs: true,
     categoryCountInline: 4,
     toolbarHiddenAfterInstallShown: false,
+    serverMessagesCheckedOn: undefined as (string | undefined),
     mainDisplayMode: MAIN_DISPLAY_MODE_AUTO,
     plausible: {
       plausibleDomain: null,
@@ -99,6 +100,7 @@ export const coreStore = defineStore('core', {
     storeMainDisplayMode: (state): string => state.mainDisplayMode || MAIN_DISPLAY_MODE_AUTO,
     storeTrialListMode: (state): string => state.trialListMode,
     storeTrialListArrangement: (state): string => state.trialListArrangement,
+    storeServerMessagesCheckedOn: (state): string | undefined => state.serverMessagesCheckedOn,
     storeMapLayer: (state): string => state.mapLayer,
     storeSelectedTrial: (state): string | null => state.selectedTrial,
     storeHideTraitCircles: (state): boolean => state.hideTraitCircles || false,
@@ -173,6 +175,9 @@ export const coreStore = defineStore('core', {
     },
     setMainDisplayMode: function (newMainDisplayMode: string) {
       this.mainDisplayMode = newMainDisplayMode
+    },
+    setServerMessagesCheckedOn: function (newServerMessagesCheckedOn: string | undefined) {
+      this.serverMessagesCheckedOn = newServerMessagesCheckedOn
     },
     setDarkMode: function (newDarkMode: boolean) {
       this.darkMode = newDarkMode

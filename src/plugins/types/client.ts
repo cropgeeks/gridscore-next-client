@@ -37,6 +37,15 @@ export interface CellPlus extends Cell {
   displayRow?: string
 }
 
+export interface ServerMessage {
+  date: Date
+  severity: 'info' | 'warning' | 'error'
+  title: string
+  message: string
+  minVersion?: string
+  maxVersion?: string
+}
+
 export const enum ShareStatus {
   TRIAL_STATE_NOT_SHARED = 'NOT_SHARED',
   TRIAL_STATE_OWNER = 'OWNER',
