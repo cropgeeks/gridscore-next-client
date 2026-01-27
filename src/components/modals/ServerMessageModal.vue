@@ -40,7 +40,7 @@ import emitter from 'tiny-emitter/instance'
 const store = coreStore()
 const { t } = useI18n()
 
-const serverMessageModal = useTemplateRef('serverMessageModal')
+const serverMessageModal = ref()
 
 const messages = ref<ServerMessage[]>([])
 const visibleMessages = ref<ServerMessage[]>([])
@@ -112,7 +112,7 @@ onBeforeUnmount(() => {
 
 watch(visibleMessages, async newValue => {
   if (newValue.length > 0) {
-    serverMessageModal.value.show()
+    serverMessageModal.value?.show()
 
     store.setServerMessagesCheckedOn(new Date().toISOString().split('T')[0])
   }
