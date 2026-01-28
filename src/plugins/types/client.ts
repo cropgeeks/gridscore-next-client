@@ -71,6 +71,15 @@ export interface RemoteConfig {
   token?: string
 }
 
+export interface ServerMessage {
+  date: Date
+  severity: 'info' | 'warning' | 'error'
+  title: string
+  message: string
+  minVersion?: string
+  maxVersion?: string
+}
+
 export const enum ShareStatus {
   NOT_SHARED = 'NOT_SHARED',
   OWNER = 'OWNER',

@@ -13,8 +13,10 @@
           contain
         />
 
-        <v-app-bar-title style="cursor: pointer" @click="$router.push('/')">
-          <span v-if="smAndUp">GridScore NEXT</span>
+        <v-app-bar-title>
+          <router-link to="/" style="text-decoration: none; color: inherit;" v-if="smAndUp">
+            <span>GridScore NEXT</span>
+          </router-link>
         </v-app-bar-title>
 
         <v-spacer />
@@ -136,6 +138,7 @@
 
     <TrialSynchonizationModal />
     <TrialMissingModal />
+    <ServerMessageModal />
 
     <v-dialog
       v-model="updateExists"
@@ -172,6 +175,7 @@
   import { getId } from '@/plugins/id'
   import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiFinance, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
+  import ServerMessageModal from '@/components/modals/ServerMessageModal.vue'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()

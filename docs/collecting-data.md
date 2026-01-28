@@ -39,6 +39,7 @@ If comments have been added to a trial, a list of all plot comments can be displ
 Highlighting will visually call attention to individual plots based on your selection. These include
 
 - `No highlight`: Disable any previously selected highlight.
+- `Highlight last scored plot`: To keep track of your location within the trial, GridScore can highlight the last plot you scored so you know which one to select next.
 - `Highlight controls`: Highlight all plots that have been defined as controls/checks during setup.
 - `Highlight bookmarks`: Highlight all plots that have been marked by users.
 - `Highlight reps`: Highlight individually selected reps.

@@ -8,6 +8,7 @@
           <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiTagOutline" /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
           <p class="text-subtitle-1 my-3" v-if="storeDeviceConfigString"><v-icon size="x-small" :icon="mdiLaptop" /> {{ storeDeviceConfigString }}</p>
           <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiInformation" /> <a href="#" @click.prevent="showChangelog">{{ $t('pageAboutChangelog') }}</a></p>
+          <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiMessageAlert" /> <a href="#" @click.prevent="showServerMessages">{{ $t('pageAboutServerMessages') }}</a></p>
         </v-card-text>
         <v-avatar
           class="ma-3"
@@ -75,7 +76,7 @@
 <script setup lang="ts">
   import { gridScoreVersion } from '@/plugins/constants'
   import { coreStore } from '@/stores/app'
-  import { mdiBookEducation, mdiGithub, mdiInformation, mdiLaptop, mdiNewspaperVariant, mdiTagOutline } from '@mdi/js'
+  import { mdiBookEducation, mdiGithub, mdiInformation, mdiLaptop, mdiMessageAlert, mdiNewspaperVariant, mdiTagOutline } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 
@@ -104,43 +105,45 @@
     by: 'Huu Loi Nguyen',
   }])
 
-  const funders = ref<Funder[]>([
-    {
-      name: 'The James Hutton Institute',
-      href: 'https://www.hutton.ac.uk/',
-      logo: 'hutton.svg',
-    },
-    {
-      name: 'Crop Trust',
-      href: 'https://www.croptrust.org/',
-      logo: 'crop-trust.svg',
-    },
-    {
-      name: 'Biodiversity for Opportunities, Livelihoods and Development',
-      href: 'https://bold.croptrust.org/',
-      logo: 'bold.svg',
-    },
-    {
-      name: 'Norway',
-      href: 'https://www.norway.no/',
-      logo: 'norway.svg',
-    },
-    {
-      name: 'Norwegian Ministry of Foreign Affairs',
-      href: 'https://www.regjeringen.no/en/dep/ud/id833/',
-      logo: 'norwegian-ministry-of-foreign-affairs.svg',
-    },
-    {
-      name: 'The Scottish Government',
-      href: 'https://www.gov.scot/',
-      logo: 'scottish-government.svg',
-    },
-    {
-      name: 'International Barley Hub',
-      href: 'https://www.barleyhub.org/',
-      logo: 'ibh.svg',
-    },
-  ])
+  const funders: ComputedRef<Funder[]> = computed(() => {
+    return [
+      {
+        name: 'The James Hutton Institute',
+        href: 'https://www.hutton.ac.uk/',
+        logo: store.storeIsDarkMode ? 'hutton-white.svg' : 'hutton-black.svg',
+      },
+      {
+        name: 'Crop Trust',
+        href: 'https://www.croptrust.org/',
+        logo: 'crop-trust.svg',
+      },
+      {
+        name: 'Biodiversity for Opportunities, Livelihoods and Development',
+        href: 'https://bold.croptrust.org/',
+        logo: 'bold.svg',
+      },
+      {
+        name: 'Norway',
+        href: 'https://www.norway.no/',
+        logo: store.storeIsDarkMode ? 'norway-white.svg' : 'norway-black.svg',
+      },
+      {
+        name: 'Norwegian Ministry of Foreign Affairs',
+        href: 'https://www.regjeringen.no/en/dep/ud/id833/',
+        logo: store.storeIsDarkMode ? 'norwegian-mofa-white.svg' : 'norwegian-mofa-black.svg',
+      },
+      {
+        name: 'The Scottish Government',
+        href: 'https://www.gov.scot/',
+        logo: 'scottish-government.svg',
+      },
+      {
+        name: 'International Barley Hub',
+        href: 'https://www.barleyhub.org/',
+        logo: 'ibh.svg',
+      },
+    ]
+  })
 
   const store = coreStore()
 
@@ -163,5 +166,11 @@
 
   function showChangelog () {
     emitter.emit('show-changelog')
+  }
+
+  function showServerMessages () {
+    store.setServerMessagesCheckedOn(undefined)
+
+    emitter.emit('show-server-messages', true)
   }
 </script>

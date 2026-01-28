@@ -76,6 +76,7 @@ export const coreStore = defineStore('core', {
     escapeBarcode: undefined as (string | undefined),
     enterBarcode: undefined as (string | undefined),
     autoSelectSearch: false,
+    serverMessagesCheckedOn: undefined as (string | undefined),
     autoSelectFirstInput: true,
     autoProgressInputs: true,
     categoryCountInline: 4,
@@ -119,6 +120,7 @@ export const coreStore = defineStore('core', {
     storeTraitColors: (state): string[] => state.traitColors,
     storeHomeWidgetOrder: (state): string[] => state.homeWidgetOrder,
     storePlotDisplayField: (state): PlotDisplayField => state.plotDisplayField,
+    storeServerMessagesCheckedOn: (state): string | undefined => state.serverMessagesCheckedOn,
     storeSelectedTrialPerson: (state): string | undefined => state.selectedTrialPerson,
     storeEscapeBarcode: (state): string | undefined => state.escapeBarcode,
     storeEnterBarcode: (state): string | undefined => state.enterBarcode,
@@ -190,6 +192,9 @@ export const coreStore = defineStore('core', {
     setEscapeBarcode (newEscapeBarcode: string | undefined) {
       this.escapeBarcode = newEscapeBarcode
     },
+    setServerMessagesCheckedOn (newStoreServerMessagesCheckedOn: string | undefined) {
+      this.serverMessagesCheckedOn = newStoreServerMessagesCheckedOn
+    },
     setEnterBarcode (newEnterBarcode: string | undefined) {
       this.enterBarcode = newEnterBarcode
     },
@@ -207,17 +212,18 @@ export const coreStore = defineStore('core', {
       const currentId = this.selectedTrial
       this.mediaMode = undefined
       this.selectedTrial = newSelectedTrial
-      this.hiddenTraits = []
-      this.previouslyScoredPlot = undefined
-      this.hideTraitCircles = false
-      this.highlightConfig = {
-        type: undefined,
-        germplasm: undefined,
-        reps: undefined,
-        treatments: undefined,
-      }
+
       if (currentId !== newSelectedTrial) {
+        this.hiddenTraits = []
+        this.hideTraitCircles = false
         this.selectedTrialPerson = undefined
+        this.previouslyScoredPlot = undefined
+        this.highlightConfig = {
+          type: undefined,
+          germplasm: undefined,
+          reps: undefined,
+          treatments: undefined,
+        }
       }
 
       if (newSelectedTrial) {

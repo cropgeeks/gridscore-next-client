@@ -69,6 +69,7 @@ declare module 'vue' {
     RowHeader: typeof import('./components/data/RowHeader.vue')['default']
     Scale: typeof import('./components/chart/Scale.vue')['default']
     SearchResultModal: typeof import('./components/modals/SearchResultModal.vue')['default']
+    ServerMessageModal: typeof import('./components/modals/ServerMessageModal.vue')['default']
     SettingsShareContent: typeof import('./components/util/SettingsShareContent.vue')['default']
     SpeechRecognitionTextarea: typeof import('./components/inputs/SpeechRecognitionTextarea.vue')['default']
     StatsChart: typeof import('./components/chart/StatsChart.vue')['default']
