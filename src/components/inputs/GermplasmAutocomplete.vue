@@ -12,7 +12,6 @@
       clearable
       :readonly="abortController !== undefined"
       :multiple="multiple"
-      :chips="multiple"
       :min-width="minWidth"
       :max-width="maxWidth"
       autocomplete="off"
@@ -28,6 +27,12 @@
 
       <template #append v-if="supportsNfc">
         <v-btn :icon="mdiNfcVariant" v-tooltip:top="$t('tooltipScanRFID')" @click="scanNfc" :color="abortController !== undefined ? 'info' : undefined" />
+      </template>
+
+      <template #selection="{ item, index }" v-if="multiple">
+        <v-chip size="small" v-if="index < 5" :text="item.title" />
+
+        <span v-if="index === 5" class="text-grey text-caption align-self-center">{{ $t('formDetailsItemSelectOther', (searchMatch || []).length - 5) }}</span>
       </template>
 
       <template #item="{ props, item }">

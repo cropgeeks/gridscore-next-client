@@ -8,7 +8,6 @@
     item-value="id"
     item-title="name"
     :multiple="multiple"
-    :chips="multiple"
     clearable
     :label="$t(label)"
     :hint="$t(hint)"
@@ -19,10 +18,12 @@
         <template #prepend><v-icon :color="item.raw.color" :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" /></template>
       </v-list-item>
     </template>
-    <template #selection="{ item }">
-      <v-list-item slim :title="item.raw.name">
-        <template #prepend><v-icon :color="item.raw.color" :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" /></template>
-      </v-list-item>
+
+    <template #selection="{ item, index }" v-if="multiple">
+      <v-chip size="small" v-if="index < 5" :text="item.title" />
+
+      <!-- @vue-ignore -->
+      <span v-if="index === 5" class="text-grey text-caption align-self-center">{{ $t('formDetailsItemSelectOther', (selectedTraits || []).length - 5) }}</span>
     </template>
   </v-select>
 </template>

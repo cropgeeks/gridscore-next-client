@@ -130,6 +130,8 @@
     if (newValue.length > 0) {
       dialog.value = true
 
+      emitter.emit('plausible-event', { key: 'server-messages-shown', props: { date: newValue[newValue.length - 1]?.date } })
+
       store.setServerMessagesCheckedOn(new Date().toISOString().split('T')[0])
     }
   })

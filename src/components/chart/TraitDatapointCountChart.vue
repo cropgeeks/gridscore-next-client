@@ -22,7 +22,7 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import type { DownloadBlob } from '@/plugins/file'
   import { getId } from '@/plugins/id'
-  import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
+  import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { toLocalDateString } from '@/plugins/util'
   import { mdiChartBellCurveCumulative } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
@@ -154,7 +154,7 @@
         },
         shapes: [] as any[],
         annotations: [] as any[],
-        legend: { orientation: 'h', font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+        legend: { orientation: 'h', y: 1.1, font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       }
 
       if (compProps.trial.events && compProps.trial.events.length > 0) {

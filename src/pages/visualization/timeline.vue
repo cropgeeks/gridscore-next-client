@@ -69,7 +69,7 @@
 
   const multiValueTraits = computed(() => {
     if (trial.value) {
-      return trial.value.traits.filter(t => t.allowRepeats && TraitDataType.isNumeric(t.dataType))
+      return trial.value.traits.filter(t => t.allowRepeats && (TraitDataType.isNumeric(t.dataType) || t.dataType === TraitDataType.categorical))
     } else {
       return []
     }

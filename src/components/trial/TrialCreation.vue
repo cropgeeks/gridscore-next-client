@@ -316,6 +316,7 @@
         name: t.name,
         description: t.description,
         group: t.group,
+        mediaFilenameFormat: t.mediaFilenameFormat,
         markers: t.layout.markers,
         corners: t.layout.corners,
         traits: t.traits,

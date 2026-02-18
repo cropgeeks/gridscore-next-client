@@ -35,7 +35,7 @@
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
   import type { UserSelection } from '@/components/util/HighlightSelect.vue'
-  import { CellCategory } from '@/plugins/types/gridscore'
+  import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
@@ -98,6 +98,7 @@
       })
 
       const sortedDates = [...allDates].sort((a, b) => a - b)
+      const isCategorical = compProps.trait.dataType === TraitDataType.categorical
 
       let selectedItems: string[] = []
       const datapoints: { [index: string]: (number | null)[] } = {}
@@ -158,7 +159,7 @@
           const timeIndex = sortedDates.indexOf(time)
 
           const existingValues = m.values.filter(v => v !== undefined && v !== null)
-          const avg = existingValues.length > 0 ? existingValues.reduce((acc, val) => acc + (+val), 0) / existingValues.length : 0
+          const avg = existingValues.length > 0 ? existingValues.reduce((acc: number, val) => acc + (+val), 0) / existingValues.length : 0
 
           // Update statistics
           if (avg !== undefined) {
@@ -248,6 +249,9 @@
           title: { text: compProps.trait.name, font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
           tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
           fixedrange: !interactive.value,
+          tickmode: isCategorical ? 'array' : undefined,
+          tickvals: isCategorical ? compProps.trait.restrictions?.categories?.map((c, i) => i) : undefined,
+          ticktext: isCategorical ? compProps.trait.restrictions?.categories : undefined,
         },
         shapes: [] as any[],
         annotations: [] as any[],

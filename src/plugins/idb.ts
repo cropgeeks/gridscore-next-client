@@ -21,6 +21,7 @@ export interface TrialModification {
   name: string
   description?: string
   socialShareConfig?: SocialShareConfig
+  mediaFilenameFormat?: string[]
   group?: Group
   markers?: Markers
   corners?: Corners
@@ -254,6 +255,7 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
     trial.socialShareConfig = updates.socialShareConfig
     trial.layout.markers = updates.markers
     trial.layout.corners = updates.corners
+    trial.mediaFilenameFormat = updates.mediaFilenameFormat
     trial.traits = updates.traits
     trial.group = updates.group
 
@@ -467,6 +469,7 @@ async function addTrial (trial: TrialPlus): Promise<string> {
     brapiId: copy.brapiId || null,
     description: copy.description,
     socialShareConfig: copy.socialShareConfig || null,
+    mediaFilenameFormat: copy.mediaFilenameFormat,
     group: copy.group || null,
     layout: copy.layout,
     traits: copy.traits,

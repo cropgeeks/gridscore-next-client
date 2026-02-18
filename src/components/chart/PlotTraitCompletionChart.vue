@@ -163,7 +163,7 @@
         },
         shapes: [] as any[],
         annotations: [] as any[],
-        legend: { orientation: 'h', font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+        legend: { orientation: 'h', y: 1.1, font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       }
 
       if (compProps.trial.events && compProps.trial.events.length > 0) {

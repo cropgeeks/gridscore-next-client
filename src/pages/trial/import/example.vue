@@ -176,7 +176,7 @@
           columnLabels: [],
         },
         data: {},
-        traits: [trait, trait],
+        traits: [trait, trait, trait],
       },
       source: 'timeline.json',
       image: 'timeline-trial.svg',
