@@ -179,12 +179,13 @@
     </v-number-input>
     <template v-else-if="trait.dataType === TraitDataType.categorical">
       <v-autocomplete
-        v-model="model"
         :label="label"
         :items="traitCategories"
         :messages="description ? [description] : undefined"
         :bg-color="bgColor"
         :readonly="isEditable === false"
+        :model-value="model !== undefined ? +model : undefined"
+        @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
         @keyup.enter="emit('traverse')"
         ref="input"
         v-if="(trait.restrictions?.categories || []).length > store.storeCategoryCountInline"
@@ -196,7 +197,8 @@
       <div class="v-text-field" v-else>
         <div class="text-subtitle-2">{{ label }}</div>
         <v-btn-toggle
-          v-model="model"
+          :model-value="model !== undefined ? +model : undefined"
+          @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
           :disabled="isEditable === false"
           color="primary"
           :base-color="bgColor"

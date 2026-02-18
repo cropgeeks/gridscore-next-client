@@ -175,14 +175,14 @@
       }
       timestamp = timestamp.toISOString()
 
-      const values: (string | number | undefined)[] = []
+      const values: (string | undefined)[] = []
       const parts = trait.setSize === 1 ? [row.Value] : (row.Value || '').split(',').map(v => v.trim())
 
       for (const part of parts) {
         if (part !== undefined && part !== null && part !== '') {
           if (trait.dataType === TraitDataType.categorical && trait.restrictions && trait.restrictions.categories) {
             const index = trait.restrictions.categories.indexOf(part)
-            values.push(index)
+            values.push(`${index}`)
           } else {
             values.push(part)
           }

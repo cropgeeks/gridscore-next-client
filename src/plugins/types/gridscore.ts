@@ -153,7 +153,7 @@ export interface Geography {
 export interface Measurement {
     personId?: string;
     timestamp: string;
-    values: (string | number | undefined)[];
+    values: (string | undefined)[];
 }
 
 export interface LatLng {

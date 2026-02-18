@@ -161,6 +161,7 @@
     refs.value = []
     dataOutsideRangeAccepted.value = false
     measurementsList.value = JSON.parse(JSON.stringify(compProps.cell.measurements[compProps.trait.id || ''] || []))
+    measurementsList.value.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     traitData.value = measurementsList.value.map((m, i) => {
       itemsValid.value[`${i}`] = true
       const td: TraitData = {}

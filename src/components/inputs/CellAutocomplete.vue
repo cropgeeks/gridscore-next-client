@@ -34,8 +34,7 @@
       <template #selection="{ item, index }" v-if="multiple">
         <v-chip size="small" v-if="index < 5" :text="item.title" />
 
-        <!-- @vue-ignore -->
-        <span v-if="index === 5" class="text-grey text-caption align-self-center">{{ $t('formDetailsItemSelectOther', (searchMatch || []).length - 5) }}</span>
+        <span v-if="index === 5 && multiple" class="text-grey text-caption align-self-center">{{ $t('formDetailsItemSelectOther', ((searchMatch as CellPlus[]) || []).length - 5) }}</span>
       </template>
 
       <template #item="{ props, item }">
