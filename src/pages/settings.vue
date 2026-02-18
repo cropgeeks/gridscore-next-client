@@ -73,12 +73,10 @@
 
             <h4 class="mt-3">{{ $t('formLabelSettingsWidgetOrder') }}</h4>
             <p>{{ $t('formDescriptionSettingsWidgetOrder') }}</p>
+            <!-- @vue-skip -->
             <draggable :list="homeWidgetOrder" item-key="id" handle=".drag-handle" id="home-widget-list">
-              <!-- @vue-skip -->
               <template #item="{ element }">
-                <!-- Temporary variable -->
-                {{ (item = homeWidgetOptions[element.value], null) }}
-                <v-list-item :title="item.name" :subtitle="item.description" v-if="item">
+                <v-list-item :title="homeWidgetOptions[element.value].name" :subtitle="homeWidgetOptions[element.value].description" v-if="homeWidgetOptions[element.value]">
                   <template #append>
                     <v-icon class="drag-handle" :icon="mdiDrag" />
                   </template>
