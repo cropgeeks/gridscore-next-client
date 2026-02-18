@@ -74,8 +74,11 @@
             <h4 class="mt-3">{{ $t('formLabelSettingsWidgetOrder') }}</h4>
             <p>{{ $t('formDescriptionSettingsWidgetOrder') }}</p>
             <draggable :list="homeWidgetOrder" item-key="id" handle=".drag-handle" id="home-widget-list">
+              <!-- @vue-skip -->
               <template #item="{ element }">
-                <v-list-item :title="homeWidgetOptions[element.value].name" :subtitle="homeWidgetOptions[element.value].description">
+                <!-- Temporary variable -->
+                {{ (item = homeWidgetOptions[element.value], null) }}
+                <v-list-item :title="item.name" :subtitle="item.description" v-if="item">
                   <template #append>
                     <v-icon class="drag-handle" :icon="mdiDrag" />
                   </template>
@@ -394,6 +397,8 @@
   const shareBottomSheetVisible = ref(false)
   const shareConfig = ref<'import' | 'export' | undefined>()
 
+  type HomeOrder = { id: number, value: string }[]
+
   const performanceMode = ref<boolean>(store.storePerformanceMode)
   const locale = ref<string>(store.storeLocale)
   const theme = ref<string>(store.storeTheme)
@@ -404,7 +409,7 @@
   const traitColors = ref<string[]>(store.storeTraitColors || [])
   const currentTraitColor = ref<string>('#000000')
   const currentTraitIndex = ref<number>()
-  const homeWidgetOrder = ref(store.storeHomeWidgetOrder.map((o, i) => {
+  const homeWidgetOrder = ref<HomeOrder>(store.storeHomeWidgetOrder.map((o, i) => {
     return {
       id: i,
       value: o,
@@ -427,7 +432,7 @@
   const escapeBarcode = ref(store.escapeBarcode)
   const restrictInputToMarked = ref(store.storeRestrictInputToMarked)
 
-  const homeWidgetOptions = computed(() => {
+  const homeWidgetOptions: ComputedRef<{ [index: string]: { id: string, name: string, description: string } }> = computed(() => {
     return {
       banners: {
         id: 'banners',
