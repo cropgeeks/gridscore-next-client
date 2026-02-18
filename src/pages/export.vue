@@ -7,6 +7,7 @@
       :interactive="false"
       :can-share="false"
       :show-actions="false"
+      force-show-details
     />
 
     <UseOnline v-slot="{ isOnline }">

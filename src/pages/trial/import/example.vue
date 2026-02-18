@@ -28,7 +28,7 @@
         :key="`example-${trial.id}`"
         class="d-flex"
       >
-        <TrialCard :trial="trial.trial" :wrap-description="true" :interactive="false" :can-share="false" class="example-card">
+        <TrialCard :trial="trial.trial" :wrap-description="true" :interactive="false" :can-share="false" force-show-details class="example-card">
           <template #prepend>
             <v-icon class="me-" size="60" :color="trial.color" :icon="trial.icon" />
           </template>

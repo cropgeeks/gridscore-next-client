@@ -27,8 +27,8 @@
             v-for="trait in numericTraits"
             :key="`numeric-trait-${trait.id}`"
             cols="12"
-            md="6"
-            lg="4"
+            sm="6"
+            md="4"
           >
             <StatsChart
               :trial="trial"
@@ -57,7 +57,6 @@
             cols="12"
             sm="6"
             md="4"
-            lg="3"
           >
             <StatsChart
               :trial="trial"
