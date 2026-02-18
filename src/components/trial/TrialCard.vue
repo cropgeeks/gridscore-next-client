@@ -28,47 +28,51 @@
 
     <v-list variant="tonal" class="pb-0" v-if="horizontal" :disabled="!interactive">
       <v-row no-gutters>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
-            <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
-            <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
-          </v-list-item>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-list-item :prepend-icon="mdiCalendarRange" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
-        </v-col>
+        <template v-if="forceShowDetails || (store.storeTrialShowDetails !== false)">
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
+              <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
+              <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
+            </v-list-item>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-list-item :prepend-icon="mdiCalendarRange" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
+          </v-col>
+        </template>
       </v-row>
     </v-list>
     <v-list variant="tonal" class="pb-0" slim :disabled="!interactive" v-else>
-      <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
-      <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
-        <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
-        <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
-      </v-list-item>
-      <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
-      <v-list-item :prepend-icon="mdiCalendarRange" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
+      <template v-if="forceShowDetails || (store.storeTrialShowDetails !== false)">
+        <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
+        <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
+          <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
+          <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
+        </v-list-item>
+        <v-list-item :prepend-icon="mdiAccountMultiple" :title="$t('widgetTrialSelectorPeople')"><template #append><v-badge :content="getNumberWithSuffix((trial.people || []).length, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiCommentMultiple" :title="$t('widgetTrialSelectorComments')" @click.prevent.stop="commentModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.comments || []).length, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiFlagVariant" :title="$t('widgetTrialSelectorEvents')" @click.prevent.stop="eventModal?.show()"><template #append><v-badge :content="getNumberWithSuffix((trial.events || []).length, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiCalendarRange" :title="$t('widgetTrialSelectorTrialDuration')"><template #append><v-badge :content="getNumberWithSuffix(trialDuration, 1)" inline /></template></v-list-item>
+      </template>
     </v-list>
 
     <v-card-actions v-if="showActions">
@@ -202,6 +206,7 @@
     interactive?: boolean
     canShare?: boolean
     horizontal?: boolean
+    forceShowDetails?: boolean
   }
 
   const compProps = withDefaults(defineProps<TrialCardProps>(), {
@@ -212,6 +217,7 @@
     interactive: true,
     canShare: true,
     horizontal: false,
+    forceShowDetails: false,
   })
 
   const emit = defineEmits(['lock', 'share', 'extend-lifetime', 'delete', 'edit', 'load', 'toggle-select', 'duplicate', 'synchronize', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm', 'add-trait-reference-image'])

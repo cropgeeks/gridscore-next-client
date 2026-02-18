@@ -18,48 +18,53 @@
       </div>
     </v-card>
 
-    <HelpCard />
-
     <v-row>
-      <v-col
-        v-for="banner in banners"
-        :key="`banner-${banner.id}`"
-        class="d-flex"
-      >
-        <v-card :to="banner.to" class="d-flex flex-column justify-content-between flex-grow-1" variant="tonal">
-          <div class="d-flex flex-no-wrap align-center flex-grow-1">
-            <v-avatar
-              class="ma-3"
-              rounded="0"
-              variant="text"
-              size="72"
-            >
-              <v-icon size="72" :color="banner.color">{{ banner.icon }}</v-icon>
-            </v-avatar>
-            <div>
-              <v-card-text>
-                <p class="text-h4 font-weight-black">{{ banner.title }}</p>
+      <v-col cols="12" :order="store.storeHomeWidgetOrder.indexOf('banners')">
+        <HelpCard />
 
-                <div class="text-medium-emphasis">
-                  {{ banner.subtitle }}
+        <v-row>
+          <v-col
+            v-for="banner in banners"
+            :key="`banner-${banner.id}`"
+            class="d-flex"
+          >
+            <v-card :to="banner.to" class="d-flex flex-column justify-content-between flex-grow-1" variant="tonal">
+              <div class="d-flex flex-no-wrap align-center flex-grow-1">
+                <v-avatar
+                  class="ma-3"
+                  rounded="0"
+                  variant="text"
+                  size="72"
+                >
+                  <v-icon size="72" :color="banner.color">{{ banner.icon }}</v-icon>
+                </v-avatar>
+                <div>
+                  <v-card-text>
+                    <p class="text-h4 font-weight-black">{{ banner.title }}</p>
+
+                    <div class="text-medium-emphasis">
+                      {{ banner.subtitle }}
+                    </div>
+                  </v-card-text>
                 </div>
-              </v-card-text>
-            </div>
-          </div>
+              </div>
 
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              color="primary"
-              :text="$t('buttonSelect')"
-              variant="text"
-            />
-          </v-card-actions>
-        </v-card>
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  color="primary"
+                  :text="$t('buttonSelect')"
+                  variant="text"
+                />
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" :order="store.storeHomeWidgetOrder.indexOf('trials')">
+        <TrialSelector />
       </v-col>
     </v-row>
-
-    <TrialSelector class="mt-5" />
 
     <v-card variant="tonal" class="mt-5">
       <div class="d-flex flex-wrap flex-sm-nowrap justify-center justify-sm-start">
@@ -80,8 +85,11 @@
   import TrialSelector from '@/components/trial/TrialSelector.vue'
   import HelpCard from '@/components/util/HelpCard.vue'
   import { categoricalColors } from '@/plugins/color'
+  import { coreStore } from '@/stores/app'
   import { mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
+
+  const store = coreStore()
 
   const { t } = useI18n()
   const banners = computed(() => {

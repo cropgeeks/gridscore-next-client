@@ -70,6 +70,18 @@
               color="primary"
               v-model="hideHelpInformation"
             />
+
+            <h4 class="mt-3">{{ $t('formLabelSettingsWidgetOrder') }}</h4>
+            <p>{{ $t('formDescriptionSettingsWidgetOrder') }}</p>
+            <draggable :list="homeWidgetOrder" item-key="id" handle=".drag-handle" id="home-widget-list">
+              <template #item="{ element }">
+                <v-list-item :title="homeWidgetOptions[element.value].name" :subtitle="homeWidgetOptions[element.value].description">
+                  <template #append>
+                    <v-icon class="drag-handle" :icon="mdiDrag" />
+                  </template>
+                </v-list-item>
+              </template>
+            </draggable>
           </template>
         </v-card>
 
@@ -370,8 +382,9 @@
   import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
-  import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDrag, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
+  import draggable from 'vuedraggable'
 
   import emitter from 'tiny-emitter/instance'
 
@@ -391,6 +404,12 @@
   const traitColors = ref<string[]>(store.storeTraitColors || [])
   const currentTraitColor = ref<string>('#000000')
   const currentTraitIndex = ref<number>()
+  const homeWidgetOrder = ref(store.storeHomeWidgetOrder.map((o, i) => {
+    return {
+      id: i,
+      value: o,
+    }
+  }))
   const gpsEnabled = ref(store.storeGpsEnabled)
   const navigationMode = ref(store.storeNavigationMode)
   const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)
@@ -407,6 +426,21 @@
   const enterBarcode = ref(store.storeEnterBarcode)
   const escapeBarcode = ref(store.escapeBarcode)
   const restrictInputToMarked = ref(store.storeRestrictInputToMarked)
+
+  const homeWidgetOptions = computed(() => {
+    return {
+      banners: {
+        id: 'banners',
+        name: t('pageSettingsHomeWidgetOrderBannersName'),
+        description: t('pageSettingsHomeWidgetOrderBannersDescription'),
+      },
+      trials: {
+        id: 'trials',
+        name: t('pageSettingsHomeWidgetOrderTrialsName'),
+        description: t('pageSettingsHomeWidgetOrderTrialsDescription'),
+      },
+    }
+  })
 
   const isSquare = computed(() => store.storeCanvasShape === CanvasShape.SQUARE)
 
@@ -453,6 +487,12 @@
     enterBarcode.value = store.storeEnterBarcode
     escapeBarcode.value = store.storeEscapeBarcode
     restrictInputToMarked.value = store.storeRestrictInputToMarked
+    homeWidgetOrder.value = store.storeHomeWidgetOrder.map((o, i) => {
+      return {
+        id: i,
+        value: o,
+      }
+    })
 
     shareBottomSheetVisible.value = false
   }
@@ -588,6 +628,10 @@
     store.setPerformanceMode(newValue)
     window.location.reload()
   })
+  watch(homeWidgetOrder, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { homeWidgetOrder: newValue.map(o => o.value) } })
+    store.setHomeWidgetOrder(newValue.map(o => o.value))
+  }, { deep: true })
 </script>
 
 <style scoped>
@@ -600,5 +644,8 @@
 }
 .theme-color:hover {
   cursor: pointer;
+}
+.drag-handle:hover {
+  cursor: move;
 }
 </style>

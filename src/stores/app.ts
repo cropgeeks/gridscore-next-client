@@ -69,6 +69,7 @@ export const coreStore = defineStore('core', {
     mapLayer: 'theme',
     trialListMode: TrialListMode.ALL as TrialListMode,
     trialListArrangement: TrialListType.GRID as TrialListType,
+    trialShowDetails: true,
     hideTraitCircles: true,
     hiddenTraits: [] as string[],
     previouslyScoredPlot: undefined as (RowColumn | undefined),
@@ -132,6 +133,7 @@ export const coreStore = defineStore('core', {
     storeCanvasShape: (state): CanvasShape => state.canvasShape,
     storeCanvasSize: (state): CanvasSize => state.canvasSize,
     storeMainDisplayMode: (state): MainDisplayMode => state.mainDisplayMode || MainDisplayMode.AUTO,
+    storeTrialShowDetails: (state): boolean => state.trialShowDetails,
     storeTrialListMode: (state): TrialListMode => state.trialListMode,
     storeTrialListArrangement: (state): TrialListType => state.trialListArrangement,
     storeMapLayer: (state): string => state.mapLayer,
@@ -303,6 +305,9 @@ export const coreStore = defineStore('core', {
     },
     setCanvasSize (newCanvasSize: CanvasSize) {
       this.canvasSize = newCanvasSize
+    },
+    setTrialShowDetails (newTrialShowDetails: boolean) {
+      this.trialShowDetails = newTrialShowDetails
     },
     setTrialListMode (newTrialListMode: TrialListMode) {
       this.trialListMode = newTrialListMode

@@ -114,7 +114,7 @@
             <p v-if="!canCopyData" class="text-error">{{ $t('formMessageDuplicateTrialCopyDataNotPossible') }}</p>
           </div>
 
-          <TrialCard :trial="trial" :interactive="false" :can-share="false" :show-actions="false" />
+          <TrialCard :trial="trial" :interactive="false" :can-share="false" :show-actions="false" force-show-details />
         </template>
       </v-card>
     </v-bottom-sheet>

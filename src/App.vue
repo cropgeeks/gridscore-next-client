@@ -25,7 +25,7 @@
           <template #activator="{ props }">
             <v-btn :icon="mdiNotebook" v-bind="props" />
           </template>
-          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" interactive :can-share="false" ref="selectedTrialCard" />
+          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" interactive force-show-details :can-share="false" ref="selectedTrialCard" />
         </v-menu>
 
         <v-menu>

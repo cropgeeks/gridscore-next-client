@@ -23,6 +23,7 @@
 
       <div class="me-3 d-flex align-center">
         <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorRefresh')" :icon="mdiUpdate" @click="update" />
+        <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorToggleDetails')" :icon="trialShowDetails ? mdiCardBulleted : mdiCardBulletedOff" @click="trialShowDetails = !trialShowDetails" />
         <v-menu>
           <template #activator="{ props }">
             <v-btn v-bind="props" :icon="trialDisplayMode === TrialListType.GRID ? mdiViewGrid : mdiViewSequential" v-tooltip:top="$t('tooltipTrialSelectorArrangement')" />
@@ -175,7 +176,7 @@
   import { postCheckUpdate } from '@/plugins/api'
   import type { Person, TrialUpdateCheck } from '@/plugins/types/gridscore'
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
-  import { mdiCalendarAlert, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
+  import { mdiCalendarAlert, mdiCardBulleted, mdiCardBulletedOff, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
   import AddPersonModal from '@/components/modals/AddPersonModal.vue'
   import UpdateTrialMetadataModal from '@/components/modals/UpdateTrialMetadataModal.vue'
   import UpdateTrialDataModal from '@/components/modals/UpdateTrialDataModal.vue'
@@ -209,6 +210,7 @@
   const loading = ref(false)
   const sortField = ref('updatedOn')
   const sortDescending = ref(true)
+  const trialShowDetails = ref(store.storeTrialShowDetails)
   const trialDisplayMode = ref(store.storeTrialListArrangement)
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTraitModal = useTemplateRef('addTraitModal')
@@ -593,9 +595,8 @@
   watch(trialGroups, async () => {
     selectedGroup.value = 0
   })
-  watch(trialDisplayMode, async newValue => {
-    store.setTrialListArrangement(newValue)
-  })
+  watch(trialDisplayMode, async newValue => store.setTrialListArrangement(newValue))
+  watch(trialShowDetails, async newValue => store.setTrialShowDetails(newValue))
 
   onMounted(() => {
     emitter.on('trial-properties-changed', update)
