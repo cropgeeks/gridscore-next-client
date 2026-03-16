@@ -88,6 +88,7 @@
         margin: {
           t: 0,
         },
+        dragmode: false as const,
         hovermode: 'y' as const,
         barmode: 'stack' as const,
         paper_bgcolor: 'transparent',

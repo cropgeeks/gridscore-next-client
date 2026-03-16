@@ -87,6 +87,7 @@
 
       const layout = {
         height: 400,
+        dragmode: false as const,
         margin: {
           t: 0,
         },

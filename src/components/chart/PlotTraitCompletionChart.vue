@@ -138,6 +138,7 @@
       const layout = {
         hovermode: 'x',
         margin: { autoexpand: true },
+        dragmode: false as const,
         autosize: true,
         height: 500,
         paper_bgcolor: 'transparent',

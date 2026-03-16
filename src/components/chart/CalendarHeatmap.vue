@@ -186,6 +186,7 @@
         },
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
+        dragmode: false as const,
         xaxis: xAxis,
         yaxis: yAxis,
       }

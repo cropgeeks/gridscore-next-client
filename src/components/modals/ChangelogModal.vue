@@ -24,6 +24,8 @@
               <v-card :title="version.raw.version" class="mb-4">
                 <template #subtitle><v-chip label :prepend-icon="mdiCalendar" :text="new Date(version.raw.date).toLocaleDateString()" /></template>
 
+                <v-card-text v-if="version.raw.description">{{ version.raw.description }}</v-card-text>
+
                 <v-list>
                   <v-list-item
                     v-for="(item, index) in version.raw.items"
@@ -75,6 +77,7 @@
   interface VersionInfo {
     version: string
     date: string
+    description?: string
     items: VersionItem[]
   }
 

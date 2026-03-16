@@ -98,6 +98,7 @@
       const layout = {
         hovermode: 'y unified',
         showlegend: false,
+        dragmode: false as const,
         margin: { autoexpand: true },
         autosize: true,
         height: (25 * compProps.trial.traits.length) + 200,

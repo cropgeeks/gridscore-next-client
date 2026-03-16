@@ -89,8 +89,8 @@ function initVuetify () {
   vuetify = createVuetify({
     defaults: {
       global: {
-        ripple: store.rippleEnabled,
-        transition: store.transitionsEnabled,
+        ripple: store.rippleEnabled !== false,
+        transition: store.transitionsEnabled === false ? 'no' : 'yes',
       },
     },
     components: {

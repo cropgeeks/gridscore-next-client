@@ -386,6 +386,7 @@
 
       const layout = {
         margin: { autoexpand: true },
+        dragmode: false as const,
         autosize: true,
         height: (20 * allGermplasm.value.length) + 200,
         paper_bgcolor: 'transparent',

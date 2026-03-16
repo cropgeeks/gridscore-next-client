@@ -7,6 +7,7 @@ import { ensureTraitImagesCached } from '@/plugins/traitcache'
 import { loadTrialData } from '@/plugins/datastore'
 import { THEME_COLORS } from '@/plugins/color'
 import { getVuetify } from '@/plugins/vuetify'
+import type { IResult } from 'ua-parser-js'
 
 export interface PlausibleConfig {
   plausibleDomain: string | undefined
@@ -34,8 +35,8 @@ if (!name) {
 
 export const coreStore = defineStore('core', {
   state: () => ({
-    rippleEnabled: true,
-    transitionsEnabled: 'yes' as 'yes' | 'no',
+    rippleEnabled: undefined as boolean | undefined,
+    transitionsEnabled: undefined as boolean | undefined,
     mediaMode: undefined as 'image' | 'video' | undefined,
     themeColor: ((THEME_COLORS && THEME_COLORS[0]) ? THEME_COLORS[0].hex : '#00a0f1') as string,
     uniqueClientId: null as (string | null),
@@ -92,12 +93,12 @@ export const coreStore = defineStore('core', {
       token: undefined,
     },
     changelogVersionNumber: undefined as (string | undefined),
-    deviceConfig: null as any,
+    deviceConfig: undefined as IResult | undefined,
   }),
   getters: {
-    storePerformanceMode: (state): boolean => state.rippleEnabled === false && state.transitionsEnabled === 'no',
-    storeRippleEnabled: (state): boolean => state.rippleEnabled,
-    storeTransitionsEnabled: (state): 'yes' | 'no' => state.transitionsEnabled,
+    storePerformanceMode: (state): boolean => state.rippleEnabled === false && state.transitionsEnabled === false,
+    storeRippleEnabled: (state): boolean | undefined => state.rippleEnabled,
+    storeTransitionsEnabled: (state): boolean | undefined => state.transitionsEnabled,
     storeMediaMode: (state): 'image' | 'video' | undefined => state.mediaMode,
     storeThemeColor: (state): string => state.themeColor,
     storeUniqueClientId: (state): string | null => state.uniqueClientId,
@@ -145,14 +146,14 @@ export const coreStore = defineStore('core', {
     storeServerUrl: (state): string | null => state.serverUrl,
     storeBrapiConfig: (state): BrapiConfig => state.brapiConfig,
     storeChangelogVersionNumber: (state): string | undefined => state.changelogVersionNumber,
-    storeDeviceConfig: (state): any => state.deviceConfig,
+    storeDeviceConfig: (state): IResult | undefined => state.deviceConfig,
     storeShowFullTraitDescription: (state): boolean => state.showFullTraitDescription,
     storeCategoryCountInline: (state): number => state.categoryCountInline,
   },
   actions: {
     setPerformanceMode (newPerformanceMode: boolean) {
-      this.rippleEnabled = newPerformanceMode === false
-      this.transitionsEnabled = newPerformanceMode === false ? 'yes' : 'no'
+      this.rippleEnabled = newPerformanceMode === true
+      this.transitionsEnabled = newPerformanceMode === true
       this.mainDisplayMode = newPerformanceMode === false ? MainDisplayMode.AUTO : MainDisplayMode.CANVAS_ONLY
     },
     setSystemTheme (newSystemTheme: string) {
@@ -349,8 +350,12 @@ export const coreStore = defineStore('core', {
     setChangelogVersionNumber (newChangelogVersionNumber: string) {
       this.changelogVersionNumber = newChangelogVersionNumber
     },
-    setDeviceConfig (newDeviceConfig: any) {
+    setDeviceConfig (newDeviceConfig: IResult | undefined) {
       this.deviceConfig = newDeviceConfig
+
+      if (newDeviceConfig && (this.storeRippleEnabled === undefined || this.storeTransitionsEnabled === undefined)) {
+        this.setPerformanceMode(newDeviceConfig.device.type === 'mobile' || newDeviceConfig.device.type === 'tablet')
+      }
     },
     setShowFullTraitDescription (newShowFullTraitDescription: boolean) {
       this.showFullTraitDescription = newShowFullTraitDescription
