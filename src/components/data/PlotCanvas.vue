@@ -51,7 +51,7 @@
     traitCutoff?: string
   }>()
 
-  const emit = defineEmits(['origin-changed'])
+  const emit = defineEmits(['origin-changed', 'click:plot'])
 
   const { t } = useI18n()
   const store = coreStore()
@@ -830,7 +830,7 @@
 
         if (cell) {
           // Emit an event to handle user selections
-          emitter.emit('plot-clicked', row, column, false)
+          emit('click:plot', row, column)
         }
       }
     } else if (store.storeNavigationMode === NavigationMode.DRAG && (e.type === 'touchend' || e.type === 'touchcancel')) {

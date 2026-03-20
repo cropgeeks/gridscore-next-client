@@ -178,7 +178,10 @@
         nextTick(() => {
           if (store.storeMediaMode !== undefined) {
             // Save straightaway
-            save()
+            const row = cell.value?.row || 0
+            const column = cell.value?.column || 0
+            store.setPreviouslyScoredPlot({ row, column })
+            nextTick(() => save())
           }
         })
       })

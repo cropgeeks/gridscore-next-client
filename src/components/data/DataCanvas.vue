@@ -27,6 +27,7 @@
       :marked-rows="markedRows"
       :trial="trial"
       @origin-changed="setOrigin"
+      @click:plot="(row, column) => emit('click:plot', row, column)"
       ref="plotCanvas"
     />
     <VScroll :dimensions="dimensions" :y="origin.y" :rows="trial.layout.rows" ref="vScroll" />
@@ -271,6 +272,10 @@
       reset()
     }
   }, { immediate: true })
+
+  watch(() => store.storePreviouslyScoredPlot, async () => {
+    update()
+  })
 
   watch(() => store.storeHiddenTraits, async () => {
     if (plotCanvas.value) {

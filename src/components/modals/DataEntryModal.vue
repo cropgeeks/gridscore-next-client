@@ -44,8 +44,9 @@
             :prepend-icon="okConfig.prependIcon"
             :append-icon="okConfig.appendIcon"
             :color="okConfig.color"
+            :breakpoint="true"
             :disabled="okConfig.disabled"
-            variant="tonal"
+            variant="flat"
             @click="save()"
           />
         </v-toolbar-items>
@@ -361,14 +362,14 @@
         return {
           title: t('buttonNext'),
           prependIcon: undefined,
-          color: canSave.value ? 'primary' : 'error',
+          color: canSave.value ? 'success' : 'error',
           appendIcon: mdiChevronRight,
           disabled: !canSave.value,
         }
       } else {
         return {
           title: t('buttonFinish'),
-          color: canSave.value ? 'primary' : 'error',
+          color: canSave.value ? 'success' : 'error',
           prependIcon: mdiNotebookCheck,
           appendIcon: undefined,
           disabled: !canSave.value,
@@ -377,7 +378,7 @@
     } else {
       return {
         title: t(isEditable.value ? 'buttonSave' : 'buttonClose'),
-        color: canSave.value ? 'primary' : 'error',
+        color: canSave.value ? 'success' : 'error',
         prependIcon: mdiContentSave,
         appendIcon: undefined,
         disabled: !canSave.value,
