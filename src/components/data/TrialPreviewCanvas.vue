@@ -32,7 +32,7 @@
   const internalWidth = ref<number>(250)
   const internalHeight = ref<number>(250)
 
-  const fillStyleHighlight = computed(() => theme.current.value.colors.primary)
+  const fillStyleHighlight = computed(() => `${theme.current.value.colors.primary}`)
   const fillStyleDarkGray = computed(() => store.storeIsDarkMode ? '#2f2f2f' : '#d0d0d0')
 
   let ctx: CanvasRenderingContext2D | null = null

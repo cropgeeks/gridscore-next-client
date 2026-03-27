@@ -13,6 +13,7 @@
         }"
         :key="`column-${column.index}`"
         @click="column.marked = !column.marked"
+        @contextmenu.prevent="e => column.marked ? showContextMenu(e, true, column) : undefined"
       >{{ column.text }}</div>
     </div>
     <div class="row-headers force-ltr" ref="rowHeader" :style="{ gridTemplateRows: `repeat(${rows.length}, ${cellHeight}px)` }">
@@ -27,6 +28,7 @@
         }"
         :key="`row-${row.index}`"
         @click="row.marked = !row.marked"
+        @contextmenu.prevent="e => row.marked ? showContextMenu(e, false, row) : undefined"
       >{{ row.text }}</div>
     </div>
     <div :class="`data-grid-wrapper force-ltr ${(store.storeNavigationMode === NavigationMode.JUMP) ? 'no-scroll' : ''}`" ref="wrapper">
@@ -126,16 +128,15 @@
     index: number
   }
 
-  const emit = defineEmits(['click:plot'])
+  const emit = defineEmits(['click:plot', 'context:header'])
 
   const wrapper = useTemplateRef('wrapper')
   const rowHeader = useTemplateRef('rowHeader')
   const columnHeader = useTemplateRef('columnHeader')
 
-  const refs = ref<{ [index: string]: Element | ComponentPublicInstance | null }>({})
-
   const { t } = useI18n()
 
+  const refs = ref<{ [index: string]: Element | ComponentPublicInstance | null }>({})
   const cellWidth = ref(100)
   const cellHeight = ref(40)
   const scrollSynced = ref(false)
@@ -151,6 +152,13 @@
 
   const fillStyleHiddenTrait = computed(() => store.storeIsDarkMode ? '#2c2c2c' : '#d3d3d3')
   const highlightColors = computed(() => store.storeIsDarkMode ? categoricalColors.HighlightDark : categoricalColors.HighlightPastel)
+
+  const markedColumns = computed(() => {
+    return (columns.value || []).map(c => c.marked || false)
+  })
+  const markedRows = computed(() => {
+    return (rows.value || []).map(c => c.marked || false)
+  })
 
   const userPosition = computed(() => {
     if (compProps.trial && compProps.geolocation && compProps.trial.layout.corners && gridProjection) {
@@ -333,6 +341,14 @@
     }
   }
 
+  function showContextMenu (e: Event, isColumn: boolean, header: RowColumn) {
+    emit('context:header', {
+      target: e.target,
+      isColumn,
+      index: header.index,
+    })
+  }
+
   function clearMarkedRowsCols () {
     columns.value.forEach(c => {
       c.marked = false
@@ -367,6 +383,8 @@
   }
 
   function reset () {
+    trialData.value = JSON.parse(JSON.stringify(getTrialDataCached()))
+
     if (!trialData.value) {
       // TODO
     } else {
@@ -657,6 +675,11 @@
     emitter.off('jump-to-corner', jumpToCorner)
     emitter.off('move-to-corner', moveInDirection)
     emitter.off('plot-clicked', onPlotClicked)
+  })
+
+  defineExpose({
+    markedColumns,
+    markedRows,
   })
 </script>
 

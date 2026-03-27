@@ -7,8 +7,8 @@
         <v-form @submit.prevent>
           <v-textarea
             v-model="content"
-            :label="$t(label)"
-            :placeholder="$t(placeholder)"
+            :label="$t(label, i18nParams || {})"
+            :placeholder="$t(placeholder, i18nParams || {})"
           />
 
           <v-file-input v-model="file" accept="text/plain" :label="$t('buttonOpenFile')" :placeholder="$t('buttonOpenFile')" />
@@ -34,6 +34,7 @@
   defineProps<{
     label: string
     placeholder: string
+    i18nParams?: { [key: string]: string }
   }>()
 
   const canContinue = computed(() => content.value && content.value.trim().length > 0)

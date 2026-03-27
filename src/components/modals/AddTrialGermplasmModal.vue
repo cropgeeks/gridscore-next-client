@@ -83,6 +83,7 @@
   import type { LayoutFeedback } from '@/components/setup/GermplasmLayoutTable.vue'
   import { useI18n } from 'vue-i18n'
   import QRScanInput from '@/components/inputs/QRScanInput.vue'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -104,6 +105,8 @@
   const hasWarnings = computed(() => feedback.value && feedback.value.some(f => f.type === 'warning'))
   const canContinue = computed(() => canCheck.value && feedback.value && hasErrors.value === false)
   const canCheck = computed(() => newGermplasm.value.length > 0)
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   function show () {
     dialog.value = true
@@ -141,7 +144,7 @@
         if (barcodeSet.has(barcode)) {
           feedback.value?.push({
             type: 'error',
-            message: t('formFeedbackSetupDuplicateBarcode', { columnIndex: 1, rowIndex: index + 1, germplasm: cell.germplasm, rep: cell.rep, barcode: barcode }),
+            message: t('formFeedbackSetupDuplicateBarcode', { columnIndex: 1, rowIndex: index + 1, germplasm: cell.germplasm, rep: cell.rep, barcode: barcode, ...i18nParams.value }),
           })
         }
         barcodeSet.add(barcode)
@@ -151,7 +154,7 @@
       if (germplasmSet.has(displayName)) {
         feedback.value?.push({
           type: 'warning',
-          message: t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: 1, rowIndex: index + 1, germplasm: cell.germplasm, rep: cell.rep || 'N/A' }),
+          message: t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: 1, rowIndex: index + 1, germplasm: cell.germplasm, rep: cell.rep || 'N/A', ...i18nParams.value }),
         })
       } else {
         germplasmSet.add(displayName)

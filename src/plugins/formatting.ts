@@ -1,4 +1,6 @@
 import { coreStore } from '@/stores/app'
+import type { DimensionNames } from '@/plugins/types/gridscore'
+import { i18n } from '@/plugins/vuetify'
 
 const padTo2Digits = (num: number) => num.toString().padStart(2, '0')
 
@@ -138,6 +140,21 @@ function toIsoString (str: string): string {
  */
 const toFixed = (number: number, places: number) => Number.parseFloat(Math.round(+(number + 'e+' + places)) + 'e-' + places)
 
+const isEmpty = (value: string | undefined) => value === undefined || value.trim().length === 0
+
+function getI18nParams (dimensionNames: DimensionNames | undefined): { [key: string]: string } {
+  return {
+    rowStart: dimensionNames?.row || i18n.global.t('genericStartRow'),
+    rowsStart: dimensionNames?.rows || i18n.global.t('genericStartRows'),
+    columnStart: dimensionNames?.column || i18n.global.t('genericStartColumn'),
+    columnsStart: dimensionNames?.columns || i18n.global.t('genericStartColumns'),
+    rowMiddle: dimensionNames?.row || i18n.global.t('genericMiddleRow'),
+    rowsMiddle: dimensionNames?.rows || i18n.global.t('genericMiddleRows'),
+    columnMiddle: dimensionNames?.column || i18n.global.t('genericMiddleColumn'),
+    columnsMiddle: dimensionNames?.columns || i18n.global.t('genericMiddleColumns'),
+  }
+}
+
 export {
   padTo2Digits,
   getDateTimeString,
@@ -150,4 +167,6 @@ export {
   toFixed,
   isAnyMissing,
   toIsoString,
+  isEmpty,
+  getI18nParams,
 }

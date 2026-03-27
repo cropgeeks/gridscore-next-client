@@ -47,7 +47,7 @@
                 :prepend-inner-icon="dts.find(dt => dt.value === currentTrait.dataType)?.icon"
                 persistent-hint
               >
-                <template #item="{ props, item }">
+                <template #item="{ props, internalItem: item }">
                   <v-list-item v-bind="props" :prepend-icon="item.raw.icon" :title="item.raw.title" />
                 </template>
               </v-select>

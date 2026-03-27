@@ -91,7 +91,7 @@
               :color="neighbor && (neighbor.key === option.key) ? 'primary' : undefined"
               variant="tonal"
               :title="option.name"
-              :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { row: option.displayRow, column: option.displayColumn })"
+              :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { row: option.displayRow, column: option.displayColumn, ...i18nParams })"
               @click="neighbor = option"
             />
           </v-col>
@@ -110,12 +110,13 @@
   import type { CellPlus } from '@/plugins/types/client'
   import { guidedWalkDouble, guidedWalkSingle, guidedWalkSnake, guidedWalkZigzag } from '@/plugins/icons'
   import { Direction, getSequence, methods, type Method } from '@/plugins/guidedwalk'
-  import type { Layout } from '@/plugins/types/gridscore'
+  import type { DimensionNames, Layout } from '@/plugins/types/gridscore'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
   import type { XY } from '@/plugins/location'
   import TrialPreviewCanvas from '@/components/data/TrialPreviewCanvas.vue'
   import { mdiAccountArrowRight } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   export interface GuideOrderConfig {
     order: string
@@ -140,6 +141,7 @@
     row: number
     column: number
     layout: Layout
+    dimensionNames?: DimensionNames
   }>()
 
   const tabIndex = ref('snake')
@@ -158,6 +160,8 @@
       return false
     }
   })
+
+  const i18nParams = computed(() => getI18nParams(compProps.dimensionNames))
 
   const precomputedOrders = computed(() => {
     const sw = scoreWidth.value

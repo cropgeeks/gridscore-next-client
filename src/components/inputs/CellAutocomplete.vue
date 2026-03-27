@@ -31,18 +31,18 @@
         <v-btn :icon="mdiNfcVariant" v-tooltip:top="$t('tooltipScanRFID')" @click="scanNfc" :color="abortController !== undefined ? 'info' : undefined" />
       </template>
 
-      <template #selection="{ item, index }" v-if="multiple">
+      <template #selection="{ internalItem: item, index }" v-if="multiple">
         <v-chip size="small" v-if="index < 5" :text="item.title" />
 
-        <span v-if="index === 5 && multiple" class="text-grey text-caption align-self-center">{{ $t('formDetailsItemSelectOther', ((searchMatch as CellPlus[]) || []).length - 5) }}</span>
+        <span v-if="index === 5 && multiple" class="text-grey text-body-small align-self-center">{{ $t('formDetailsItemSelectOther', ((searchMatch as CellPlus[]) || []).length - 5) }}</span>
       </template>
 
-      <template #item="{ props, item }">
+      <template #item="{ props, internalItem: item }">
         <v-list-item
           v-bind="props"
-          :title="`${item.raw.displayName} (${$t('formLabelFieldLayoutRowColumn', { row: item.raw.displayRow || 1, column: item.raw.displayColumn || 1 })})`"
+          :title="`${item.raw.displayName} (${$t('formLabelFieldLayoutRowColumn', { row: item.raw.displayRow || 1, column: item.raw.displayColumn || 1, rowStart: i18nParams.rowStart, columnStart: i18nParams.columnStart })})`"
         >
-          <template #title v-if="performanceMode === false"><PlotInformation :cell="item.raw" /></template>
+          <template #title v-if="performanceMode === false"><PlotInformation :cell="item.raw" :i18n-params="i18nParams" /></template>
         </v-list-item>
       </template>
     </v-autocomplete>
@@ -82,6 +82,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const store = coreStore()
   const { t } = useI18n()
@@ -110,6 +111,8 @@
     label: 'formLabelSearch',
     scanInBottomSheet: false,
   })
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   const searchField = useTemplateRef('searchField')
   const performanceMode = computed(() => store.storePerformanceMode === true || trialGermplasm.value.length > 1000)

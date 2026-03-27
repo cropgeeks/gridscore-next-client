@@ -19,7 +19,7 @@
     <template #subtitle>
       <span class="text-wrap">{{ $t('widgetHelpInformationText') }}</span>
     </template>
-    <v-row class="mb-0">
+    <v-row class="mb-3">
       <v-col v-if="showInstall">
         <v-list-item slim min-width="200" @click="install" :title="$t('widgetHelpToolbarInstall')" :prepend-icon="mdiCellphoneArrowDown" />
       </v-col>

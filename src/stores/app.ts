@@ -152,8 +152,8 @@ export const coreStore = defineStore('core', {
   },
   actions: {
     setPerformanceMode (newPerformanceMode: boolean) {
-      this.rippleEnabled = newPerformanceMode === true
-      this.transitionsEnabled = newPerformanceMode === true
+      this.rippleEnabled = newPerformanceMode === false
+      this.transitionsEnabled = newPerformanceMode === false
       this.mainDisplayMode = newPerformanceMode === false ? MainDisplayMode.AUTO : MainDisplayMode.CANVAS_ONLY
     },
     setSystemTheme (newSystemTheme: string) {

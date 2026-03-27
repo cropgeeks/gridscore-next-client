@@ -36,6 +36,7 @@ export interface TrialPlus extends Trial {
   hasLocalUpdate?: boolean
   showExpiryWarning?: boolean
   expiresOn?: string
+  distanceToMe?: number
 }
 
 export interface CellPlus extends Cell {
@@ -78,6 +79,12 @@ export interface ServerMessage {
   message: string
   minVersion?: string
   maxVersion?: string
+}
+
+export interface PlotCoords {
+  lat: number
+  lng: number
+  trialId: string
 }
 
 export const enum ShareStatus {

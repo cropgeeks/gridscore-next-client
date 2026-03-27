@@ -1,5 +1,12 @@
 <template>
-  <canvas class="cell d-block" ref="rowCanvas" :width="scaledWidth" :height="scaledHeight" v-if="dimensions" />
+  <canvas
+    class="cell d-block"
+    ref="rowCanvas"
+    :width="scaledWidth"
+    :height="scaledHeight"
+    @contextmenu.prevent="handleContext"
+    v-if="dimensions"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -14,7 +21,7 @@
 
   const { n } = useI18n()
 
-  const emit = defineEmits(['row-marked'])
+  const emit = defineEmits(['row-marked', 'contextmenu'])
 
   const compProps = defineProps<{
     dimensions: Dimensions
@@ -28,6 +35,23 @@
   const resizeRunning = ref(false)
   const scaledWidth = ref(10)
   const scaledHeight = ref(5)
+
+  function handleContext (e: PointerEvent) {
+    const ev = getTouchPosition(e)
+    if (ev && rowCanvas.value) {
+      const row = Math.floor((-compProps.y + ev.y) / compProps.dimensions.cellHeight)
+      const y = rowCanvas.value.offsetTop + compProps.y - document.documentElement.scrollTop + compProps.dimensions.cellHeight * (row + 1)
+
+      if (row >= 0 && row < compProps.layout.rows && (compProps.markedRows[row] === true)) {
+        emit('contextmenu', {
+          y,
+          x: rowCanvas.value.scrollLeft + rowCanvas.value.offsetLeft,
+          index: row,
+          isColumn: false,
+        })
+      }
+    }
+  }
 
   let ctx: CanvasRenderingContext2D | null = null
 

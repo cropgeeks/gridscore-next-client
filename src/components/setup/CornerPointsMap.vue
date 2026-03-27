@@ -7,28 +7,28 @@
     <div v-show="cornersEnabled && corners">
       <v-row class="mb-5" v-if="corners && cornerLabels">
         <v-col cols="12" lg="6">
-          <v-card :title="$t('formLabelFieldLayoutRowColumn', cornerLabels.topLeft)">
+          <v-card :title="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.topLeft, ...i18nParams})">
             <template #text>
               <GpsInput v-model="corners.topLeft" />
             </template>
           </v-card>
         </v-col>
         <v-col cols="12" lg="6">
-          <v-card :title="$t('formLabelFieldLayoutRowColumn', cornerLabels.topRight)">
+          <v-card :title="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.topRight, ...i18nParams})">
             <template #text>
               <GpsInput v-model="corners.topRight" />
             </template>
           </v-card>
         </v-col>
         <v-col cols="12" lg="6">
-          <v-card :title="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomLeft)">
+          <v-card :title="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.bottomLeft, ...i18nParams})">
             <template #text>
               <GpsInput v-model="corners.bottomLeft" />
             </template>
           </v-card>
         </v-col>
         <v-col cols="12" lg="6">
-          <v-card :title="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomRight)">
+          <v-card :title="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.bottomRight, ...i18nParams})">
             <template #text>
               <GpsInput v-model="corners.bottomRight" />
             </template>
@@ -42,16 +42,16 @@
 
           <v-row v-if="cornerLabels">
             <v-col cols="6">
-              <v-btn :prepend-icon="mdiArrowTopLeft" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.topLeft)" @click="setCorner('topLeft')" />
+              <v-btn :prepend-icon="mdiArrowTopLeft" :text="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.topLeft, ...i18nParams})" @click="setCorner('topLeft')" />
             </v-col>
             <v-col cols="6">
-              <v-btn :append-icon="mdiArrowTopRight" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.topRight)" @click="setCorner('topRight')" />
+              <v-btn :append-icon="mdiArrowTopRight" :text="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.topRight, ...i18nParams})" @click="setCorner('topRight')" />
             </v-col>
             <v-col cols="6">
-              <v-btn :prepend-icon="mdiArrowBottomLeft" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomLeft)" @click="setCorner('bottomLeft')" />
+              <v-btn :prepend-icon="mdiArrowBottomLeft" :text="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.bottomLeft, ...i18nParams})" @click="setCorner('bottomLeft')" />
             </v-col>
             <v-col cols="6">
-              <v-btn :append-icon="mdiArrowBottomRight" :text="$t('formLabelFieldLayoutRowColumn', cornerLabels.bottomRight)" @click="setCorner('bottomRight')" />
+              <v-btn :append-icon="mdiArrowBottomRight" :text="$t('formLabelFieldLayoutRowColumn', {...cornerLabels.bottomRight, ...i18nParams})" @click="setCorner('bottomRight')" />
             </v-col>
           </v-row>
         </div>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Corners, Layout } from '@/plugins/types/gridscore'
+  import type { Corners, DimensionNames, Layout } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
 
   import L, { type TileLayer, type Map, type Marker, type LatLngBounds } from 'leaflet'
@@ -73,6 +73,7 @@
   import GpsInput from '@/components/inputs/GpsInput.vue'
   import { isGeographyValid, isLocationValid, toGeoJson, trialLayoutToPlots } from '@/plugins/location'
   import { mdiArrowBottomLeft, mdiArrowBottomRight, mdiArrowTopLeft, mdiArrowTopRight } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   // Set the leaflet marker icon
   // @ts-ignore
@@ -82,6 +83,10 @@
     iconUrl: iconUrl,
     shadowUrl: shadowUrl,
   })
+
+  const compProps = defineProps<{
+    dimensionNames?: DimensionNames
+  }>()
 
   const store = coreStore()
 
@@ -101,6 +106,8 @@
   let markerBottomRight: Marker | undefined = undefined
   let geoJsonLayer: L.GeoJSON<any, any> | undefined = undefined
   let bounds: LatLngBounds | undefined = undefined
+
+  const i18nParams = computed(() => getI18nParams(compProps.dimensionNames))
 
   const cornerLabels = computed(() => {
     if (model.value) {

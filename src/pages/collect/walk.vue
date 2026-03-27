@@ -8,7 +8,7 @@
       v-if="isValidConfig"
     />
     <v-container v-else>
-      <h1 class="text-h4 mb-3">{{ $t('modalTitleGuidedWalk') }}</h1>
+      <h1 class="text-headline-large mt-0 mb-3">{{ $t('modalTitleGuidedWalk') }}</h1>
 
       <v-divider class="mb-3" />
 
@@ -30,6 +30,7 @@
           :row="searchMatch.row || 0"
           :column="searchMatch.column || 0"
           :layout="trial.layout"
+          :dimension-names="trial.dimensionNames"
           @order-changed="orderSelected"
         />
       </template>
@@ -108,7 +109,7 @@
     let x = searchMatch.value?.column || 0
     let y = searchMatch.value?.row || 0
 
-    if (order.neighbor) {
+    if (order.neighbor && order.scoreWidth > 1) {
       x = (x + (order.neighbor.column || 0)) / 2
       y = (y + (order.neighbor.row || 0)) / 2
     }

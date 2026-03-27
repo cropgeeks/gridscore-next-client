@@ -48,7 +48,7 @@
   import CommentModal from '@/components/modals/CommentModal.vue'
   import type { Comment } from '@/plugins/types/gridscore'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
-  import { mdiBookmark, mdiBookmarkOutline, mdiCalendar, mdiCamera, mdiCommentText, mdiDirectionsFork, mdiLockAlert, mdiLockOpen } from '@mdi/js'
+  import { mdiBookmark, mdiBookmarkOutline, mdiCalendar, mdiCamera, mdiCommentText, mdiDirectionsFork, mdiLockAlert, mdiLockOpenVariant } from '@mdi/js'
 
   const store = coreStore()
   const router = useRouter()
@@ -115,7 +115,7 @@
         size: 'small',
         variant: 'tonal',
         color: compProps.cell.isLocked ? 'warning' : undefined,
-        prependIcon: compProps.cell.isLocked ? mdiLockAlert : mdiLockOpen,
+        prependIcon: compProps.cell.isLocked ? mdiLockAlert : mdiLockOpenVariant,
         click: toggleLocked,
         disabled: !compProps.trial.editable || compProps.trial.isLocked === true,
       })

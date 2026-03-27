@@ -3,11 +3,11 @@
     <v-card class="mb-5">
       <div class="d-flex flex-nowrap flex-column flex-sm-row justify-space-between align-center ma-5 justify-center">
         <v-card-text class="flex-grow-1">
-          <p class="text-h2">{{ $t('appTitle') }}</p>
+          <p class="text-display-large mt-0">{{ $t('appTitle') }}</p>
 
-          <p class="text-h5 my-3">{{ $t('pageHomeWelcome') }}</p>
+          <p class="text-headline-small my-3">{{ $t('pageHomeWelcome') }}</p>
 
-          <p class="text-subtitle-1 my-3">{{ $t('pageHomeInstructions') }}</p>
+          <p class="text-body-large my-3">{{ $t('pageHomeInstructions') }}</p>
         </v-card-text>
         <v-avatar
           class="ma-3"
@@ -19,7 +19,7 @@
     </v-card>
 
     <v-row>
-      <v-col cols="12" :order="store.storeHomeWidgetOrder.indexOf('banners')">
+      <v-col cols="12" :class="`order-${store.storeHomeWidgetOrder.indexOf('banners')}`">
         <HelpCard />
 
         <v-row>
@@ -40,7 +40,7 @@
                 </v-avatar>
                 <div>
                   <v-card-text>
-                    <p class="text-h4 font-weight-black">{{ banner.title }}</p>
+                    <p class="text-headline-large mt-0 font-weight-black">{{ banner.title }}</p>
 
                     <div class="text-medium-emphasis">
                       {{ banner.subtitle }}
@@ -61,7 +61,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" :order="store.storeHomeWidgetOrder.indexOf('trials')">
+      <v-col cols="12" :class="`order-${store.storeHomeWidgetOrder.indexOf('trials')}`">
         <TrialSelector />
       </v-col>
     </v-row>
@@ -70,7 +70,7 @@
       <div class="d-flex flex-wrap flex-sm-nowrap justify-center justify-sm-start">
         <v-icon color="primary" class="ma-5" size="80" :icon="mdiNewspaperVariantOutline" />
         <div>
-          <v-card-title class="text-h5">{{ $t('pageHomeTitleCitation') }}</v-card-title>
+          <v-card-title class="text-headline-small">{{ $t('pageHomeTitleCitation') }}</v-card-title>
 
           <v-card-text>
             <div v-html="$t('pageHomeTextCitation')" />

@@ -93,6 +93,15 @@ function initVuetify () {
         transition: store.transitionsEnabled === false ? 'no' : 'yes',
       },
     },
+    // v3 breakpoints
+    display: {
+      thresholds: {
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+        xxl: 2560,
+      },
+    },
     components: {
       VStepperVertical,
       VStepperVerticalItem,

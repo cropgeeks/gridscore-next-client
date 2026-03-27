@@ -10,10 +10,10 @@
           <v-select :items="markerAnchorOptions" v-model="markers.anchor" :label="$t('formLabelMarkersCorner')" />
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <NumberInputWithFallback v-model="markers.everyRow" :label="$t('formLabelMarkersEveryRow')" :min="1" :max="model?.rows || 1" :default-value="1" />
+          <NumberInputWithFallback v-model="markers.everyRow" :label="$t('formLabelMarkersEveryRow', i18nParams)" :min="1" :max="model?.rows || 1" :default-value="1" />
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <NumberInputWithFallback v-model="markers.everyColumn" :label="$t('formLabelMarkersEveryColumn')" :min="1" :max="model?.columns || 1" :default-value="1" />
+          <NumberInputWithFallback v-model="markers.everyColumn" :label="$t('formLabelMarkersEveryColumn', i18nParams)" :min="1" :max="model?.columns || 1" :default-value="1" />
         </v-col>
       </v-row>
 
@@ -25,11 +25,12 @@
 </template>
 
 <script setup lang="ts">
-  import { Anchor, type Layout, type Markers } from '@/plugins/types/gridscore'
+  import { Anchor, type DimensionNames, type Layout, type Markers } from '@/plugins/types/gridscore'
   import { coreStore } from '@/stores/app'
   import { useI18n } from 'vue-i18n'
   import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
   import { getThemeColor } from '@/plugins/util'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const { t } = useI18n()
   const store = coreStore()
@@ -41,6 +42,10 @@
     everyColumn: 1,
     everyRow: 1,
   })
+
+  const compProps = defineProps<{
+    dimensionNames?: DimensionNames
+  }>()
 
   const width = ref(5)
   const height = ref(10)
@@ -61,6 +66,8 @@
       { title: t('formSelectMarkersBottomRight'), value: Anchor.bottomRight },
     ]
   })
+
+  const i18nParams = computed(() => getI18nParams(compProps.dimensionNames))
 
   const isValid = computed(() => {
     if (!markersEnabled.value) {

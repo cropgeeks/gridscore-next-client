@@ -87,13 +87,13 @@
         </v-chip-group>
 
         <v-card class="mb-4 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'remote' ? mdiCheck : undefined" :variant="filterForWarning === 'remote' ? 'elevated' : 'tonal'" color="warning" v-if="remoteUpdateCount > 0" :prepend-icon="mdiCloudDownload" @click="filterWarning('remote')">
-          <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</span></template>
+          <template #title><span class="text-body-large">{{ $t('widgetTrialSelectorWarningUpdates', { count: remoteUpdateCount }) }}</span></template>
         </v-card>
         <v-card class="mb-4 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'local' ? mdiCheck : undefined" :variant="filterForWarning === 'local' ? 'elevated' : 'tonal'" color="info" v-if="localUpdateCount > 0" :prepend-icon="mdiCloudUpload" @click="filterWarning('local')">
-          <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</span></template>
+          <template #title><span class="text-body-large">{{ $t('widgetTrialSelectorWarningUpdatesLocal', { count: localUpdateCount }) }}</span></template>
         </v-card>
         <v-card class="mb-4 trial-filter" :ripple="store.storePerformanceMode !== true" :append-icon="filterForWarning === 'expiry' ? mdiCheck : undefined" :variant="filterForWarning === 'expiry' ? 'elevated' : 'tonal'" color="error" v-if="expiryWarningCount > 0" :prepend-icon="mdiCalendarAlert" @click="filterWarning('expiry')">
-          <template #title><span class="text-body-1">{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</span></template>
+          <template #title><span class="text-body-large">{{ $t('widgetTrialSelectorWarningExpiry', { count: expiryWarningCount }) }}</span></template>
         </v-card>
       </template>
 
@@ -162,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-  import { addTrialPeople, addTrialTraits, deleteTrial, getTrials, lockTrial } from '@/plugins/idb'
+  import { addTrialPeople, addTrialTraits, deleteTrial, getPlotGeolocations, getTrials, lockTrial } from '@/plugins/idb'
   import { TrialListType, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import TrialCard from '@/components/trial/TrialCard.vue'
@@ -181,6 +181,8 @@
   import UpdateTrialMetadataModal from '@/components/modals/UpdateTrialMetadataModal.vue'
   import UpdateTrialDataModal from '@/components/modals/UpdateTrialDataModal.vue'
   import AddTrialGermplasmModal from '@/components/modals/AddTrialGermplasmModal.vue'
+  import { useGeolocation } from '@vueuse/core'
+  import { geodesicDistance } from '@/plugins/location'
 
   interface TrialGroup {
     id: string
@@ -197,6 +199,7 @@
   const store = coreStore()
   const { t } = useI18n()
   const router = useRouter()
+  const { isSupported: isGpsSupported, coords: gpsCoords } = useGeolocation()
 
   const selectionEnabled = ref(false)
   const searchTerm = ref<string>()
@@ -208,7 +211,7 @@
   const page = ref(1)
   const selectedGroup = ref<number>()
   const loading = ref(false)
-  const sortField = ref('updatedOn')
+  const sortField = ref<'updatedOn' | 'distanceToMe' | 'name'>('updatedOn')
   const sortDescending = ref(true)
   const trialShowDetails = ref(store.storeTrialShowDetails)
   const trialDisplayMode = ref(store.storeTrialListArrangement)
@@ -222,6 +225,14 @@
   const addTraitReferenceImageModal = useTemplateRef('addTraitReferenceImageModal')
 
   const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
+
+  const geolocation = computed(() => {
+    if (isGpsSupported.value === true && gpsCoords.value && Number.isFinite(gpsCoords.value.latitude) && Number.isFinite(gpsCoords.value.longitude)) {
+      return gpsCoords.value
+    } else {
+      return undefined
+    }
+  })
 
   const editableSelectedTrials = computed(() => selectedTrials.value.filter(t => t.editable === true))
 
@@ -243,13 +254,22 @@
   })
 
   const sortOptions = computed(() => {
-    return [{
+    const result = [{
       title: t('formSelectOptionTrialSortLastUpdate'),
       value: 'updatedOn',
     }, {
       title: t('formSelectOptionTrialSortName'),
       value: 'name',
     }]
+
+    if (isGpsSupported.value === true && geolocation.value !== undefined) {
+      result.push({
+        title: t('formSelectOptionTrialSortDistance'),
+        value: 'distanceToMe',
+      })
+    }
+
+    return result
   })
 
   const visibleTrials = computed(() => {
@@ -557,6 +577,20 @@
           t.showExpiryWarning = false
           t.hasLocalUpdate = t.shareCodes && t.transactionCount !== undefined && t.transactionCount > 0
 
+          // Update the distance to the user. We only do this if sorting by this field is enabled, because of performance reasons
+          if (sortField.value === 'distanceToMe' && geolocation.value !== undefined) {
+            getPlotGeolocations([t.localId || '']).then(coords => {
+              let min = Number.MAX_SAFE_INTEGER
+              coords.forEach(c => {
+                if (c) {
+                  min = Math.min(min, geodesicDistance(c, { lat: 56.458_056, lng: -3.070_267 }) || Number.MAX_SAFE_INTEGER)
+                }
+              })
+
+              t.distanceToMe = min
+            })
+          }
+
           if (t.shareCodes && trialUpdates.value) {
             const shareCode = t.shareCodes.ownerCode || t.shareCodes.editorCode || t.shareCodes.viewerCode
             const timestamp = trialUpdates.value[shareCode]
@@ -589,6 +623,12 @@
   watch(filterForWarning, async newValue => {
     if (newValue) {
       selectedGroup.value = 0
+    }
+  })
+
+  watch(sortField, async newValue => {
+    if (newValue === 'distanceToMe') {
+      update()
     }
   })
 

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <h1 class="text-h4 mb-3">{{ $t('pageGermplasmPerformanceTitle') }}</h1>
+    <h1 class="text-headline-large mt-0 mb-3">{{ $t('pageGermplasmPerformanceTitle') }}</h1>
     <v-divider class="mb-3" />
     <p>{{ $t('pageGermplasmPerformanceText') }}</p>
 

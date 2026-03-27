@@ -7,7 +7,7 @@
       <template #title>
         <div class="d-flex flex-wrap align-center justify-space-between ga-2">
           <div class="d-flex flex-wrap align-center ga-2">
-            <span class="text-h6" :style="{ color: trait.color }">{{ trait.name }}</span>
+            <span class="text-title-large" :style="{ color: trait.color }">{{ trait.name }}</span>
             <template v-if="showDetails">
               <v-chip size="small" label :text="$t((shortTitle ? dataTypeMap[trait.dataType]?.shortTitle : dataTypeMap[trait.dataType]?.title) || '')" :prepend-icon="dataTypeMap[trait.dataType]?.icon" />
 

@@ -3,11 +3,11 @@
     height="40"
     class="d-flex justify-space-between border-t border-primary border-opacity-100"
   >
-    <div class="text-caption text-disabled">
+    <div class="text-body-small text-disabled">
       &copy; {{ new Date().getFullYear() }} <span class="d-none d-sm-inline-block">GridScore NEXT: <a class="text-muted" href="https://www.hutton.ac.uk">The James Hutton Institute</a></span>
     </div>
 
-    <div class="text-caption text-disabled">
+    <div class="text-body-small text-disabled">
       <a href="#" @click.prevent="showChangelog" class="text-muted">{{ $t('pageFooterVersion', { version: gridScoreVersion }) }}</a>
     </div>
 

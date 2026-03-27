@@ -3,7 +3,7 @@
     <v-card :title="$t('modalTitleTrialDataUpload')">
       <template #text>
         <v-container>
-          <p v-html="$t('modalTextTrialDataUpload')" />
+          <p v-html="$t('modalTextTrialDataUpload', i18nParams)" />
 
           <LineNumberTextarea
             v-model="input"
@@ -36,6 +36,7 @@
   import emitter from 'tiny-emitter/instance'
   import { mdiAlert } from '@mdi/js'
   import { TraitDataType } from '@/plugins/types/gridscore'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const requiredColumns = new Set(['Germplasm', 'Rep', 'Row', 'Column', 'Trait name', 'Date', 'Value'])
 
@@ -50,6 +51,7 @@
   const errorMessage = ref<string>()
 
   const canContinue = computed(() => input.value && input.value.trim().length > 0)
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   function show () {
     dialog.value = true
@@ -114,19 +116,19 @@
       }
       // Check the germplasm exists in the trial
       if (!cell) {
-        errorMessage.value = t('errorMessageDataImportInvalidGermplasmRep', { missing: displayName, row: r + 1 })
+        errorMessage.value = t('errorMessageDataImportInvalidGermplasmRep', { missing: displayName, rowNumber: r + 1, ...i18nParams.value })
         return
       }
 
       // Check the trait exists in the trial
       if (!trialTraits.has(row['Trait name'] || '')) {
-        errorMessage.value = t('errorMessageDataImportInvalidTrait', { missing: row['Trait name'], row: r + 1 })
+        errorMessage.value = t('errorMessageDataImportInvalidTrait', { missing: row['Trait name'], rowNumber: r + 1, ...i18nParams.value })
         return
       }
 
       // Check the date
       if (row.Date !== undefined && row.Date !== null && row.Date !== '' && !isValidDateString(row.Date)) {
-        errorMessage.value = t('errorMessageDataImportInvalidDate', { date: row.Date, row: r + 1 })
+        errorMessage.value = t('errorMessageDataImportInvalidDate', { date: row.Date, rowNumber: r + 1, ...i18nParams.value })
         return
       }
 
@@ -140,20 +142,20 @@
       if (row.Value !== undefined && row.Value !== null && row.Value !== '') {
         if (trait.setSize === 1) {
           if (!checkDataMatchesTraitType(trait, row.Value)) {
-            errorMessage.value = t('errorMessageDataImportInvalidValue', { value: row.Value, row: r + 1 })
+            errorMessage.value = t('errorMessageDataImportInvalidValue', { value: row.Value, rowNumber: r + 1, ...i18nParams.value })
             return
           }
         } else {
           const parts = row.Value.split(',').map(v => v.trim())
 
           if (parts.length > trait.setSize) {
-            errorMessage.value = t('errorMessageDataImportInvalidSetSize', { value: row.Value, setSize: trait.setSize, provided: parts.length, row: r + 1 })
+            errorMessage.value = t('errorMessageDataImportInvalidSetSize', { value: row.Value, setSize: trait.setSize, provided: parts.length, rowNumber: r + 1, ...i18nParams.value })
             return
           }
 
           for (const part of parts) {
             if (!checkDataMatchesTraitType(trait, part)) {
-              errorMessage.value = t('errorMessageDataImportInvalidValue', { value: part, row: r + 1 })
+              errorMessage.value = t('errorMessageDataImportInvalidValue', { value: part, rowNumber: r + 1, ...i18nParams.value })
               return
             }
           }

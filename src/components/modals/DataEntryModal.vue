@@ -53,7 +53,7 @@
       </v-toolbar>
 
       <v-card-text class="pa-0">
-        <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="cell.isLocked === true">
+        <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="cell.isLocked === true || trial.isLocked === true">
           <span class="text-wrap">{{ $t('widgetDataInputLockedWarning') }}</span>
         </v-banner>
 
@@ -68,7 +68,7 @@
             <v-col cols="12" md="4" class="d-flex">
               <v-row v-if="guidedWalk.prevCells">
                 <v-col :cols="12 / guidedWalk.prevCells.length" v-for="prev in guidedWalk.prevCells" :key="`prev-cell-${prev?.row}-${prev?.column}`">
-                  <v-card class="text-center" title-tag="h5" :title="prev?.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(prev?.displayColumn || 0), row: $n(prev?.displayRow || 0) })" />
+                  <v-card class="text-center" title-tag="h5" :title="prev?.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(prev?.displayColumn || 0), row: $n(prev?.displayRow || 0), ...i18nParams })" />
                 </v-col>
               </v-row>
             </v-col>
@@ -97,22 +97,22 @@
                 </v-card-title>
 
                 <v-card-subtitle>
-                  {{ $t('widgetGuidedWalkPreviewColumnRow', { column: $n(cell?.displayColumn || 0), row: $n(cell?.displayRow || 0) }) }}
+                  {{ $t('widgetGuidedWalkPreviewColumnRow', { column: $n(cell?.displayColumn || 0), row: $n(cell?.displayRow || 0), ...i18nParams }) }}
                 </v-card-subtitle>
               </v-card>
             </v-col>
             <v-col cols="12" md="4" class="d-flex">
               <v-row v-if="guidedWalk.nextCells">
                 <v-col :cols="12 / guidedWalk.nextCells.length" v-for="next in guidedWalk.nextCells" :key="`next-cell-${next?.row}-${next?.column}`">
-                  <v-card class="text-center" title-tag="h5" :title="next?.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(next?.displayColumn || 0), row: $n(next?.displayRow || 0) })" />
+                  <v-card class="text-center" title-tag="h5" :title="next?.displayName" :subtitle="$t('widgetGuidedWalkPreviewColumnRow', { column: $n(next?.displayColumn || 0), row: $n(next?.displayRow || 0), ...i18nParams })" />
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
 
           <v-row>
-            <v-col :cols="dataInputColumns.cols" :md="dataInputColumns.md" :lg="dataInputColumns.lg" :order="cellIndex">
-              <PlotInformation :cell="cell" />
+            <v-col :cols="dataInputColumns.cols" :md="dataInputColumns.md" :lg="dataInputColumns.lg" :class="`order-${cellIndex}`">
+              <PlotInformation :cell="cell" :i18n-params="i18nParams" />
 
               <v-expansion-panels eager multiple v-model="expandedTraitGroups">
                 <v-expansion-panel
@@ -209,11 +209,11 @@
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-col>
-            <v-col :cols="12" :md="12 - dataInputColumns.md" :lg="12 - dataInputColumns.lg" :order="1 - cellIndex" v-if="isGuidedWalk && guidedWalk && guidedWalk.scoreWidth > 1" :class="`d-flex ${cellIndex === 0 ? 'border-s' : 'border-e'}`">
+            <v-col :cols="12" :md="12 - dataInputColumns.md" :lg="12 - dataInputColumns.lg" v-if="isGuidedWalk && guidedWalk && guidedWalk.scoreWidth > 1" :class="`order-${1 - cellIndex} d-flex ${cellIndex === 0 ? 'border-s' : 'border-e'}`">
               <v-card :title="guidedWalk.currentCells[1 - cellIndex]?.displayName" class="d-flex flex-column flex-grow-1" @click="save(0)">
                 <template #subtitle>
                   <!-- @vue-ignore -->
-                  <PlotInformation :cell="guidedWalk.currentCells[1 - cellIndex]" v-if="guidedWalk.currentCells[1 - cellIndex]" />
+                  <PlotInformation :cell="guidedWalk.currentCells[1 - cellIndex]" :i18n-params="i18nParams" v-if="guidedWalk.currentCells[1 - cellIndex]" />
                 </template>
 
                 <v-card-text class="flex-grow-1 d-flex align-center justify-center">
@@ -252,7 +252,7 @@
   import { coreStore } from '@/stores/app'
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
-  import { getNumberWithSuffix } from '@/plugins/formatting'
+  import { getI18nParams, getNumberWithSuffix } from '@/plugins/formatting'
   import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
   import TraitInputSection from '@/components/trait/TraitInputSection.vue'
   import type { TraitMeasurement } from '@/plugins/types/gridscore'
@@ -322,6 +322,8 @@
   const expandedTraitGroups = ref<number[]>([])
 
   const isGuidedWalk = computed(() => guidedWalk.value !== undefined)
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   const hasHistoricData: ComputedRef<{ [index: string]: boolean }> = computed(() => {
     const result: { [index: string]: boolean } = {}

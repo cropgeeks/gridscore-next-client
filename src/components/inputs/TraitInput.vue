@@ -75,7 +75,7 @@
       </template>
     </v-text-field>
     <div v-else-if="trait.dataType === TraitDataType.range">
-      <div class="text-subtitle-2">{{ label }}</div>
+      <div class="text-title-small">{{ label }}</div>
       <v-slider
         v-model="model"
         :readonly="isEditable === false"
@@ -195,7 +195,7 @@
         </template>
       </v-autocomplete>
       <div class="v-text-field" v-else>
-        <div class="text-subtitle-2">{{ label }}</div>
+        <div class="text-title-small">{{ label }}</div>
         <v-btn-toggle
           :model-value="model !== undefined ? +model : undefined"
           @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
@@ -246,7 +246,7 @@
         </template>
       </v-autocomplete>
       <div class="v-text-field" v-else>
-        <div class="text-subtitle-2">{{ label }}</div>
+        <div class="text-title-small">{{ label }}</div>
         <v-btn-toggle
           :model-value="model !== undefined ? model.split(':').map(c => +c) : []"
           @update:model-value="v => model = (v === undefined || v === null || v.length === 0) ? undefined : v.sort().join(':')"

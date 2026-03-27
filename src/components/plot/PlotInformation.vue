@@ -4,8 +4,8 @@
       <v-chip tabindex="-1" size="small" label :prepend-icon="mdiSprout" :text="cell.germplasm" v-tooltip:top="$t('tooltipChartHeatmapGermplasm')" />
       <v-chip tabindex="-1" size="small" label :prepend-icon="mdiFormatListNumbered" :text="cell.rep" v-tooltip:top="$t('tooltipChartHeatmapRep')" v-if="cell.rep" />
       <v-chip tabindex="-1" size="small" label :prepend-icon="mdiEyeCheck" :text="cell.friendlyName" v-tooltip:top="$t('tooltipChartHeatmapFriendlyName')" v-if="cell.friendlyName" />
-      <v-chip tabindex="-1" size="small" label :prepend-icon="mdiLandRowsHorizontal" :text="$n(cell.displayRow || 1)" v-tooltip:top="$t('tooltipChartHeatmapRow')" />
-      <v-chip tabindex="-1" size="small" label :prepend-icon="mdiLandRowsVertical" :text="$n(cell.displayColumn || 1)" v-tooltip:top="$t('tooltipChartHeatmapColumn')" />
+      <v-chip tabindex="-1" size="small" label :prepend-icon="mdiLandRowsHorizontal" :text="$n(cell.displayRow || 1)" v-tooltip:top="$t('tooltipChartHeatmapRow', i18nParams)" />
+      <v-chip tabindex="-1" size="small" label :prepend-icon="mdiLandRowsVertical" :text="$n(cell.displayColumn || 1)" v-tooltip:top="$t('tooltipChartHeatmapColumn', i18nParams)" />
       <v-chip tabindex="-1" size="small" label :prepend-icon="mdiFamilyTree" :text="cell.pedigree" v-tooltip:top="$t('tooltipChartHeatmapPedigree')" v-if="cell.pedigree" />
       <v-chip tabindex="-1" size="small" label :prepend-icon="mdiBarcode" :text="cell.barcode" v-tooltip:top="$t('tooltipChartHeatmapBarcode')" v-if="cell.barcode" />
       <v-chip tabindex="-1" size="small" label :prepend-icon="mdiSprinklerFire" :text="cell.treatment" v-tooltip:top="$t('tooltipChartHeatmapTreatment')" v-if="cell.treatment" />
@@ -25,5 +25,6 @@
 
   defineProps<{
     cell: MiniCell | CellPlus
+    i18nParams: { [key: string]: string }
   }>()
 </script>

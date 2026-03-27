@@ -13,16 +13,16 @@
     :hint="$t(hint)"
     persistent-hint
   >
-    <template #item="{ props, item }">
+    <template #item="{ props, internalItem: item }">
       <v-list-item v-bind="props" slim :title="item.raw.name">
         <template #prepend><v-icon :color="item.raw.color" :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" /></template>
       </v-list-item>
     </template>
 
-    <template #selection="{ item, index }" v-if="multiple">
+    <template #selection="{ internalItem: item, index }" v-if="multiple">
       <v-chip size="small" v-if="index < 5" :text="item.title" />
 
-      <span v-if="index === 5 && multiple" class="text-grey text-caption align-self-center">{{ $t('formDetailsItemSelectOther', ((selectedTraits as TraitPlus[]) || []).length - 5) }}</span>
+      <span v-if="index === 5 && multiple" class="text-grey text-body-small align-self-center">{{ $t('formDetailsItemSelectOther', ((selectedTraits as TraitPlus[]) || []).length - 5) }}</span>
     </template>
   </v-select>
 </template>

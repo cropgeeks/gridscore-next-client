@@ -12,7 +12,7 @@
             wrap="off"
             required
             :error-messages="errorMessages"
-            :placeholder="$t('formPlaceholderFielDBookInput')"
+            :placeholder="$t('formPlaceholderFielDBookInput', i18nParams || {})"
           />
 
           <v-file-input v-model="file" accept="text/plain" :placeholder="$t('buttonOpenFile')" />
@@ -28,10 +28,10 @@
           <p>{{ $t('modalTextFielDBookColumnMapping') }}</p>
           <v-row>
             <v-col cols="12" md="6">
-              <v-select :items="fileColumns" v-model="columnMapping.row" :label="$t('formLabelFielDBookRow')" :hint="$t('formDescriptionFielDBookRow')" persistent-hint />
+              <v-select :items="fileColumns" v-model="columnMapping.row" :label="$t('formLabelFielDBookRow', i18nParams || {})" :hint="$t('formDescriptionFielDBookRow', i18nParams || {})" persistent-hint />
             </v-col>
             <v-col cols="12" md="6">
-              <v-select :label="$t('formLabelFielDBookColumn')" :hint="$t('formDescriptionFielDBookColumn')" persistent-hint :items="fileColumns" v-model="columnMapping.column" :options="fileColumns" />
+              <v-select :label="$t('formLabelFielDBookColumn', i18nParams || {})" :hint="$t('formDescriptionFielDBookColumn', i18nParams || {})" persistent-hint :items="fileColumns" v-model="columnMapping.column" :options="fileColumns" />
             </v-col>
             <v-col cols="12" md="6">
               <v-select :label="$t('formLabelFielDBookGermplasm')" :hint="$t('formDescriptionFielDBookGermplasm')" persistent-hint :items="fileColumns" v-model="columnMapping.germplasm" :options="fileColumns" />
@@ -67,10 +67,11 @@
 <script setup lang="ts">
   import { useI18n } from 'vue-i18n'
   import { tsvParse, csvParse, autoType, type DSVParsedArray } from 'd3-dsv'
-  import type { Layout } from '@/plugins/types/gridscore'
+  import type { DimensionNames, Layout } from '@/plugins/types/gridscore'
   import { getColumnIndex, getRowIndex } from '@/plugins/util'
   import type { CellPlus } from '@/plugins/types/client'
   import { mdiViewSplitVertical } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   interface SelectOption {
     title: string
@@ -79,6 +80,8 @@
 
   const compProps = defineProps<{
     currentLayout: Layout
+    dimensionNames?: DimensionNames
+    i18nParams?: { [key: string]: string }
   }>()
 
   const { t } = useI18n()
@@ -93,6 +96,7 @@
 
   const emit = defineEmits(['content-loaded'])
 
+  const i18nParams = computed(() => getI18nParams(compProps.dimensionNames))
   const columnsMapped = computed(() => columnMapping.value.row && columnMapping.value.column && columnMapping.value.germplasm)
 
   function show () {
@@ -130,11 +134,11 @@
         return
       }
       if (row === undefined || row === null || row === '' || !(typeof row === 'number')) {
-        errorMessages.value = [t('formFeedbackFielDBookMissingInvalidRow', { line: i + 1 })]
+        errorMessages.value = [t('formFeedbackFielDBookMissingInvalidRow', { line: i + 1, ...(i18nParams.value) })]
         return
       }
       if (column === undefined || column === null || column === '' || !(typeof column === 'number')) {
-        errorMessages.value = [t('formFeedbackFielDBookMissingInvalidColumn', { line: i + 1 })]
+        errorMessages.value = [t('formFeedbackFielDBookMissingInvalidColumn', { line: i + 1, ...(i18nParams.value) })]
         return
       }
 
@@ -142,7 +146,7 @@
       const columnIndex = getColumnIndex(compProps.currentLayout, column)
 
       if (rowIndex < 0 || rowIndex >= compProps.currentLayout.rows || columnIndex < 0 || columnIndex >= compProps.currentLayout.columns) {
-        errorMessages.value = [t('formFeedbackFielDBookInvalidDimensions', { line: i + 1, row, column })]
+        errorMessages.value = [t('formFeedbackFielDBookInvalidDimensions', { line: i + 1, row, column, ...(i18nParams.value) })]
         return
       }
 

@@ -34,7 +34,7 @@
       </v-col>
 
       <v-col cols="12" md="6">
-        <div class="text-subtitle-2">{{ $t('formLabelTrialSetupTrialPeople') }}</div>
+        <div class="text-title-small">{{ $t('formLabelTrialSetupTrialPeople') }}</div>
         <p>{{ $t('formDescriptionTrialSetupTrialPeople') }}</p>
 
         <v-btn @click="addPersonModal?.show()" :prepend-icon="mdiAccountPlus" :text="$t('buttonAdd')" />
@@ -169,11 +169,12 @@
       trialGroups.value = groups || []
     })
 
-    if (model.value) {
-      usedMediaFilenameChips.value = (model.value.mediaFilenameFormat || []).map(p => mediaFilenameParts.find(op => op.id === p)).filter(p => p !== undefined)
+    const mv = model.value
+    if (mv) {
+      usedMediaFilenameChips.value = (mv.mediaFilenameFormat || []).map(p => mediaFilenameParts.find(op => op.id === p)).filter(p => p !== undefined)
       unusedMediaFilenameChips.value = mediaFilenameParts.filter(p => !usedMediaFilenameChips.value.some(op => op.id === p.id))
-      group.value = model.value.group?.name
-      peopleCutoffIndex.value = (compProps.isClone || !compProps.isEdit) ? 0 : (model.value.people || []).length
+      group.value = mv.group?.name
+      peopleCutoffIndex.value = (compProps.isClone || !compProps.isEdit) ? 0 : (mv.people || []).length
     }
   })
 

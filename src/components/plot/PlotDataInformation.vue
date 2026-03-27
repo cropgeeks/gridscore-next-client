@@ -2,7 +2,7 @@
   <v-list density="compact">
     <v-list-item>
       <template #subtitle>
-        <PlotInformation :cell="cell" />
+        <PlotInformation :cell="cell" :i18n-params="i18nParams" />
       </template>
     </v-list-item>
 
@@ -40,6 +40,7 @@
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
   import { TraitDataType } from '@/plugins/types/gridscore'
+  import { getI18nParams } from '@/plugins/formatting';
 
   const compProps = defineProps<{
     cell: CellPlus
@@ -56,6 +57,8 @@
       return compProps.trial.traits
     }
   })
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   function getDaysAgoIn (timestamp: string) {
     const diffDays = Math.floor((Date.now() - new Date(timestamp).getTime()) / (1000 * 60 * 60 * 24))

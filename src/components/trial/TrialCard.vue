@@ -33,10 +33,10 @@
             <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3">
-            <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
+            <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows', i18nParams)"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3">
-            <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
+            <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns', i18nParams)"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3">
             <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
@@ -62,8 +62,8 @@
     <v-list variant="tonal" class="pb-0" slim :disabled="!interactive" v-else>
       <template v-if="forceShowDetails || (store.storeTrialShowDetails !== false)">
         <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
-        <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
-        <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows', i18nParams)"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
+        <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns', i18nParams)"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
         <v-list-item :prepend-icon="mdiTagMultiple" :title="$t('widgetTrialSelectorTraits')">
           <template #title="{ title }">{{ title }} <v-icon v-if="hasTimeframeTraits" @click="trialTimeFrameModal = true" v-tooltip:top="$t('widgetTrialSelectorTraitTimeframe')" :icon="mdiCalendarExpandHorizontal" class="ms-5" size="small" color="muted" /></template>
           <template #append><v-badge :content="getNumberWithSuffix(trial.traits.length, 1)" inline /></template>
@@ -178,7 +178,7 @@
 </template>
 
 <script setup lang="ts">
-  import { getNumberWithSuffix } from '@/plugins/formatting'
+  import { getI18nParams, getNumberWithSuffix } from '@/plugins/formatting'
   import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
   import { shareStatusTypes } from '@/plugins/types/types'
   import { formatTimeAgo, getThemeColor, toLocalDateString } from '@/plugins/util'
@@ -224,6 +224,7 @@
   const commentModal = useTemplateRef('commentModal')
   const eventModal = useTemplateRef('eventModal')
 
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const canEdit = computed(() => compProps.trial.editable === true && compProps.trial.isLocked !== true)
 
   const hasTimeframeTraits = computed(() => compProps.trial?.traits.some(t => t.timeframe))

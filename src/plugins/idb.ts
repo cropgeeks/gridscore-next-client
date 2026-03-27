@@ -1,11 +1,11 @@
 import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
-import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
-import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation } from '@/plugins/types/client'
+import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type DimensionNames, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
+import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type PlotCoords } from '@/plugins/types/client'
 import { getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl } from '@/plugins/util'
 import { getId } from '@/plugins/id'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
-import { isGeographyValid, trialLayoutToPlots } from '@/plugins/location'
+import { isGeographyValid, isLocationValid, trialLayoutToPlots, type XY } from '@/plugins/location'
 
 let store: any | undefined
 
@@ -27,6 +27,7 @@ export interface TrialModification {
   corners?: Corners
   traits: Trait[]
   people: Person[]
+  dimensionNames?: DimensionNames
 }
 
 function getStore () {
@@ -38,7 +39,7 @@ function getStore () {
 
 async function getDb () {
   return new Promise<IDBPDatabase>((resolve, reject) => {
-    openDB('gridscore-next-' + window.location.pathname, 9, {
+    openDB('gridscore-next-' + window.location.pathname, 10, {
       upgrade: (db, oldVersion, newVersion, transaction) => {
         let trials
         let data
@@ -105,6 +106,10 @@ async function getDb () {
         if (oldVersion < 9) {
           data = transaction.objectStore('trials')
           data.createIndex('isLocked', 'isLocked', { unique: false })
+        }
+        if (oldVersion < 10) {
+          data = transaction.objectStore('trials')
+          data.createIndex('dimensionNames', 'dimensionNames', { unique: false })
         }
       },
     }).then(db => resolve(db))
@@ -258,6 +263,7 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
     trial.mediaFilenameFormat = updates.mediaFilenameFormat
     trial.traits = updates.traits
     trial.group = updates.group
+    trial.dimensionNames = updates.dimensionNames
 
     if (logTransactions(trial)) {
       const transaction: Transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
@@ -483,6 +489,7 @@ async function addTrial (trial: TrialPlus): Promise<string> {
     comments: copy.comments || [],
     events: copy.events || [],
     people: copy.people || [],
+    dimensionNames: copy.dimensionNames,
   })
 
   // Make sure all cached images are updated
@@ -919,6 +926,49 @@ async function setPlotLocked (trialId: string, row: number, column: number, isLo
   }
 }
 
+async function setPlotsLocked (trialId: string, cells: XY[], isLocked: boolean) {
+  const trial = await getTrialById(trialId)
+
+  if (trial) {
+    const db = await getDb()
+    for (const coords of cells) {
+      const [row, column] = [coords.y, coords.x]
+      const cell = await getCell(trialId, row, column)
+
+      if (cell) {
+        if (cell.isLocked === isLocked || (cell.isLocked === undefined && isLocked === false)) {
+          continue
+        }
+
+        if (isLocked) {
+          cell.isLocked = isLocked
+        } else {
+          delete cell.isLocked
+        }
+        cell.updatedOn = new Date().toISOString()
+
+        if (logTransactions(trial)) {
+          const transaction = (await db.get('transactions', trialId)) || getEmptyTransaction(trialId)
+
+          if (transaction.plotLockedTransactions[`${row}|${column}`] !== undefined && transaction.plotLockedTransactions[`${row}|${column}`] !== null && transaction.plotLockedTransactions[`${row}|${column}`] !== isLocked) {
+            // If there is a marking value and it's not the same as the new one, they cancel each other out, so remove the transaction item
+            delete transaction.plotLockedTransactions[`${row}|${column}`]
+          } else {
+            // Else, there isn't a value OR it's the same, so just set it again
+            transaction.plotLockedTransactions[`${row}|${column}`] = isLocked
+          }
+
+          await db.put('transactions', transaction)
+        }
+
+        db.put('data', cell)
+      }
+    }
+
+    return new Promise<void>(resolve => resolve())
+  }
+}
+
 async function updateGermplasmBrapiIds (trialId: string, germplasmBrapiIds: { [index: string]: string }) {
   const trial = await getTrialById(trialId)
 
@@ -1233,6 +1283,46 @@ function logTransactions (trial: TrialPlus) {
   } else {
     return true
   }
+}
+
+async function getPlotGeolocations (trialIds: string[] | undefined) {
+  const db = await getDb()
+
+  return new Promise<PlotCoords[]>(resolve => {
+    const result: PlotCoords[] = []
+    db.getAll('data')
+      .then(data => {
+        data.forEach(d => {
+          if (d.geography && (trialIds === undefined || trialIds.includes(d.trialId))) {
+            if (isGeographyValid(d.geography.corners)) {
+              result.push(
+                { lat: d.geography.corners.topLeft.lat, lng: d.geography.corners.topLeft.lng, trialId: d.trialId },
+                { lat: d.geography.corners.topRight.lat, lng: d.geography.corners.topRight.lng, trialId: d.trialId },
+                { lat: d.geography.corners.bottomLeft.lat, lng: d.geography.corners.bottomLeft.lng, trialId: d.trialId },
+                { lat: d.geography.corners.bottomRight.lat, lng: d.geography.corners.bottomRight.lng, trialId: d.trialId },
+              )
+            }
+            if (isLocationValid(d.geography.center)) {
+              result.push({ lat: d.geography.center.lat, lng: d.geography.center.lng, trialId: d.trialId })
+            }
+          }
+        })
+      })
+      .then(() => db.getAll('trials'))
+      .then(trials => {
+        trials.forEach(t => {
+          if (t.layout.corners && isGeographyValid(t.layout.corners)) {
+            result.push(
+              { lat: t.layout.corners.topLeft.lat, lng: t.layout.corners.topLeft.lng, trialId: t.localId },
+              { lat: t.layout.corners.topRight.lat, lng: t.layout.corners.topRight.lng, trialId: t.localId },
+              { lat: t.layout.corners.bottomLeft.lat, lng: t.layout.corners.bottomLeft.lng, trialId: t.localId },
+              { lat: t.layout.corners.bottomRight.lat, lng: t.layout.corners.bottomRight.lng, trialId: t.localId },
+            )
+          }
+        })
+      })
+      .then(() => resolve(result))
+  })
 }
 
 async function addTrialComment (trialId: string, commentContent: string) {
@@ -1627,6 +1717,7 @@ export {
   getTransactionForTrial,
   setPlotMarked,
   setPlotLocked,
+  setPlotsLocked,
   addPlotComment,
   deletePlotComment,
   addTrialComment,
@@ -1636,5 +1727,6 @@ export {
   updateTrialBrapiConfig,
   updateGermplasmBrapiIds,
   updateTraitBrapiIds,
+  getPlotGeolocations,
   lockTrial,
 }

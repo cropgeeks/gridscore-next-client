@@ -77,6 +77,7 @@
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { mdiAlert, mdiLandFields } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
@@ -105,6 +106,7 @@
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
 
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
 
   const filename = computed(() => {
@@ -296,8 +298,8 @@
           : [[0, store.storeIsDarkMode ? '#444444' : '#dddddd'], [1, trait.color]],
         hoverongaps: false,
         hovertemplate: trait.dataType === TraitDataType.categorical
-          ? `${t('tooltipChartHeatmapRow')}: %{y}<br>${t('tooltipChartHeatmapColumn')}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{customdata}<extra>%{text}</extra>`
-          : `${t('tooltipChartHeatmapRow')}: %{y}<br>${t('tooltipChartHeatmapColumn')}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`,
+          ? `${t('tooltipChartHeatmapRow', i18nParams.value)}: %{y}<br>${t('tooltipChartHeatmapColumn', i18nParams.value)}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{customdata}<extra>%{text}</extra>`
+          : `${t('tooltipChartHeatmapRow', i18nParams.value)}: %{y}<br>${t('tooltipChartHeatmapColumn', i18nParams.value)}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`,
       }]
 
       if (traces.length > 0 && traces[0]) {
@@ -370,7 +372,7 @@
           tickmode: 'array' as const,
           tickvals: Array.from(new Array(compProps.trial.layout.columns).keys()).map(i => i + 1),
           ticktext: xTicks,
-          title: { text: t('widgetChartHeatmapAxisTitleCol'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+          title: { text: t('widgetChartHeatmapAxisTitleCol', i18nParams.value), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
           tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
           fixedrange: !interactive.value,
         },
@@ -381,7 +383,7 @@
           tickmode: 'array' as const,
           tickvals: Array.from(new Array(compProps.trial.layout.rows).keys()).map(i => i + 1),
           ticktext: yTicks,
-          title: { text: t('widgetChartHeatmapAxisTitleRow'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+          title: { text: t('widgetChartHeatmapAxisTitleRow', i18nParams.value), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
           tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
           fixedrange: !interactive.value,
         },

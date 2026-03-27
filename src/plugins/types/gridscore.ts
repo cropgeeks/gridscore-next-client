@@ -23,6 +23,14 @@ export interface Trial {
     lastSyncedOn?: string;
     shareCodes?: ShareCodes;
     mediaFilenameFormat?: string[];
+    dimensionNames?: DimensionNames;
+}
+
+export interface DimensionNames {
+    row: string;
+    rows: string;
+    column: string;
+    columns: string;
 }
 
 export interface Trait {

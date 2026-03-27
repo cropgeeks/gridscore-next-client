@@ -13,10 +13,80 @@
             <v-btn :prepend-icon="mdiLandRowsHorizontal" :text="$t('pageTrialLayoutDimensionsList')" value="list" :append-icon="layoutType === 'list' ? mdiCheck : undefined" />
           </v-btn-toggle>
 
-          <p class="my-5">{{ $t(layoutType === 'grid' ? 'pageTrialLayoutDimensionsTextGrid' : 'pageTrialLayoutDimensionsTextList') }}</p>
+          <p class="my-5">{{ $t(layoutType === 'grid' ? 'pageTrialLayoutDimensionsTextGrid' : 'pageTrialLayoutDimensionsTextList', i18nParams) }}</p>
+
+          <v-card
+            class="mb-5"
+            :title="$t('formLabelTrialSetupTrialCustomNames')"
+          >
+            <v-card-text>
+              <p>{{ $t('formDescriptionTrialSetupTrialCustomNames') }}</p>
+
+              <v-switch
+                v-model="useCustomNames"
+                color="primary"
+                hide-details
+                :label="$t('formLabelTrialSetupTrialUseCustomNames')"
+              />
+
+              <template v-if="useCustomNames && customNames">
+                <v-alert
+                  color="warning"
+                  :icon="mdiAlert"
+                  :text="$t('formDescriptionTrialSetupTrialCustomNamesWarning')"
+                  variant="tonal"
+                  class="mb-3"
+                  border="start"
+                />
+
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="customNames.row"
+                      :prepend-inner-icon="mdiViewDayOutline"
+                      :label="$t('formLabelTrialSetupTrialCustomNamesRow')"
+                      :hint="$t('formDescriptionTrialSetupTrialCustomNamesRow')"
+                      persistent-hint
+                    />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="customNames.rows"
+                      :prepend-inner-icon="mdiLandRowsHorizontal"
+                      :label="$t('formLabelTrialSetupTrialCustomNamesRows')"
+                      :hint="$t('formDescriptionTrialSetupTrialCustomNamesRows')"
+                      persistent-hint
+                    />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="customNames.column"
+                      :label="$t('formLabelTrialSetupTrialCustomNamesColumn')"
+                      :hint="$t('formDescriptionTrialSetupTrialCustomNamesColumn')"
+                      persistent-hint
+                    >
+                      <template #prepend-inner>
+                        <v-icon class="mdi-rotate-90" :icon="mdiViewDayOutline" />
+                      </template>
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="customNames.columns"
+                      :prepend-inner-icon="mdiLandRowsVertical"
+                      :label="$t('formLabelTrialSetupTrialCustomNamesColumns')"
+                      :hint="$t('formDescriptionTrialSetupTrialCustomNamesColumns')"
+                      persistent-hint
+                    />
+                  </v-col>
+                </v-row>
+              </template>
+            </v-card-text>
+          </v-card>
 
           <LayoutDimensions
             v-model="model.layout"
+            :dimension-names="model.dimensionNames"
             v-model:layout-type="layoutType"
             :is-edit="isEdit"
             can-change
@@ -52,7 +122,7 @@
           :error="!areCornersValid"
           value="3"
         >
-          <CornerPointsMap v-model="model.layout" ref="cornerPointMap" />
+          <CornerPointsMap v-model="model.layout" :dimension-names="model.dimensionNames" ref="cornerPointMap" />
 
           <template #prev="{ prev }">
             <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
@@ -68,7 +138,7 @@
           :error="!areCornersValid"
           value="4"
         >
-          <LayoutMarkers v-model="model.layout" ref="layoutMarkers" />
+          <LayoutMarkers v-model="model.layout" :dimension-names="model.dimensionNames" ref="layoutMarkers" />
 
           <template #prev="{ prev }">
             <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
@@ -90,7 +160,9 @@
   import CornerPointsMap from '@/components/setup/CornerPointsMap.vue'
   import LayoutMarkers from '@/components/setup/LayoutMarkers.vue'
   import type { TrialPlus } from '@/plugins/types/client'
-  import { mdiArrowDown, mdiArrowUp, mdiCheck, mdiGrid, mdiLandRowsHorizontal } from '@mdi/js'
+  import { mdiAlert, mdiArrowDown, mdiArrowUp, mdiCheck, mdiGrid, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiViewDayOutline } from '@mdi/js'
+  import { getI18nParams, isEmpty } from '@/plugins/formatting'
+  import type { DimensionNames } from '@/plugins/types/gridscore'
 
   const { t } = useI18n()
 
@@ -108,13 +180,26 @@
 
   const model = defineModel<TrialPlus>()
 
+  const useCustomNames = ref(false)
+  const customNames = ref<DimensionNames>()
+
+  const customNamesValid = computed(() => {
+    if (!useCustomNames.value || !customNames.value) {
+      return true
+    } else {
+      return !isEmpty(customNames.value.row) && !isEmpty(customNames.value.rows) && !isEmpty(customNames.value.column) && !isEmpty(customNames.value.columns)
+    }
+  })
+
+  const i18nParams = computed(() => getI18nParams(model.value?.dimensionNames))
+
   const stepperIndex = ref(1)
   const layoutType = ref<'grid' | 'list'>('grid')
   const germplasmLayoutTable = useTemplateRef('germplasmLayoutTable')
   const cornerPointMap = useTemplateRef('cornerPointMap')
   const layoutMarkers = useTemplateRef('layoutMarkers')
 
-  const isValid: ComputedRef<boolean> = computed(() => areDimensionsValid.value && isGermplasmValid.value && areCornersValid.value && areLabelsValid.value)
+  const isValid: ComputedRef<boolean> = computed(() => areDimensionsValid.value && isGermplasmValid.value && areCornersValid.value && areLabelsValid.value && customNamesValid.value)
   const areDimensionsValid: ComputedRef<boolean> = computed(() => model.value?.layout.rows !== undefined && model.value.layout.rows !== null && model.value.layout.columns !== undefined && model.value.layout.columns !== null)
   const isGermplasmValid: ComputedRef<boolean> = computed(() => germplasmLayoutTable.value?.isValid || false)
   const areCornersValid: ComputedRef<boolean> = computed(() => cornerPointMap.value?.isValid || false)
@@ -161,6 +246,35 @@
       case 4:
         nextTick(() => layoutMarkers.value?.reset())
         break
+    }
+  })
+
+  watch(useCustomNames, async newValue => {
+    if (newValue && !customNames.value) {
+      customNames.value = {
+        row: '',
+        rows: '',
+        column: '',
+        columns: '',
+      }
+    } else if (!newValue && customNames.value !== undefined) {
+      customNames.value = undefined
+    }
+  })
+
+  watch(customNames, async newValue => {
+    if (model.value) {
+      model.value.dimensionNames = newValue
+    }
+  }, { deep: true })
+
+  onMounted(() => {
+    const mv = model.value
+    if (mv) {
+      customNames.value = mv.dimensionNames ? JSON.parse(JSON.stringify(mv.dimensionNames)) : undefined
+      nextTick(() => {
+        useCustomNames.value = mv.dimensionNames !== undefined
+      })
     }
   })
 

@@ -10,6 +10,17 @@
       </v-col>
     </v-row>
 
+    <div>
+      <v-chip
+        v-for="(value, key) in highlightColors"
+        :key="`map-chip-${key}`"
+        :base-color="value"
+        class="me-2 mt-2"
+        label
+        :text="key"
+      />
+    </div>
+
     <div ref="mapElement" class="location-map map mt-5">
       <v-bottom-sheet
         v-model="bottomSheetVisible"
@@ -68,12 +79,13 @@
   const selectedFeature = ref<CellPlus>()
   const bottomSheetVisible = ref(false)
 
+  const highlightColors = ref<{ [index: string]: string }>({})
+
   let themeLayer: TileLayer
   let map: Map
   // let geoJsonLayer: L.GeoJSON<any, any> | undefined = undefined
   let trialData: { [index: string]: CellPlus } | undefined = {}
   let circles: Circle[] = []
-  let highlightColors: { [index: string]: string } = {}
 
   const userSelection = computed(() => highlightSelection.value?.userSelection)
 
@@ -224,7 +236,7 @@
       // Create the geojson and the layer, then add to the map
       const geoJson = plotInfoToGeoJson(plotInfo)
 
-      highlightColors = {}
+      highlightColors.value = {}
 
       if (geoJson) {
         // @ts-ignore
@@ -303,11 +315,11 @@
       }
 
       if (userSelection.value.selectedItems.includes(selectionField)) {
-        color = highlightColors[selectionField]
+        color = highlightColors.value[selectionField]
 
         if (!color) {
-          color = categoricalColors.D3schemeCategory10[Object.keys(highlightColors).length % categoricalColors.D3schemeCategory10.length] || '#910080'
-          highlightColors[selectionField] = color
+          color = categoricalColors.D3schemeCategory10[Object.keys(highlightColors.value).length % categoricalColors.D3schemeCategory10.length] || '#910080'
+          highlightColors.value[selectionField] = color
         }
       }
     }

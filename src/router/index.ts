@@ -9,6 +9,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
 
+import emitter from 'tiny-emitter/instance'
+
 // Backwards compatibility
 routes.push({
   path: '/trial-import',
@@ -38,6 +40,11 @@ const router = createRouter({
       }, 250)
     })
   },
+})
+
+router.beforeEach((to, from, next) => {
+  emitter.emit('clear-snackback')
+  next()
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

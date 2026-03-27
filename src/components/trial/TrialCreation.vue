@@ -1,6 +1,6 @@
 <template>
   <v-container fluid v-if="trial">
-    <h1 class="text-h4 mb-3">{{ $t(pageConfig.title) }}</h1>
+    <h1 class="text-headline-large mt-0 mb-3">{{ $t(pageConfig.title) }}</h1>
     <v-divider class="mb-3" />
     <p>{{ $t(pageConfig.text) }}</p>
 
@@ -321,6 +321,7 @@
         corners: t.layout.corners,
         traits: t.traits,
         people: newPeople,
+        dimensionNames: t.dimensionNames,
       }).then(async () => {
         emitter.emit('trials-updated')
         emitter.emit('trial-selected')

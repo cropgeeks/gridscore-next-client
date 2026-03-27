@@ -1,5 +1,12 @@
 <template>
-  <canvas class="cell d-block" ref="colCanvas" :width="scaledWidth" :height="scaledHeight" v-if="dimensions" />
+  <canvas
+    class="cell d-block"
+    ref="colCanvas"
+    :width="scaledWidth"
+    :height="scaledHeight"
+    @contextmenu.prevent="handleContext"
+    v-if="dimensions"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -14,7 +21,7 @@
 
   const { n } = useI18n()
 
-  const emit = defineEmits(['column-marked'])
+  const emit = defineEmits(['column-marked', 'contextmenu'])
 
   const compProps = defineProps<{
     dimensions: Dimensions
@@ -28,6 +35,23 @@
   const resizeRunning = ref(false)
   const scaledWidth = ref(5)
   const scaledHeight = ref(10)
+
+  function handleContext (e: PointerEvent) {
+    const ev = getTouchPosition(e)
+    if (ev && colCanvas.value) {
+      const col = Math.floor((-compProps.x + ev.x) / compProps.dimensions.cellWidth)
+      const x = compProps.x + compProps.dimensions.cellWidth * col + colCanvas.value.offsetLeft
+
+      if (col >= 0 && col < compProps.layout.columns && (compProps.markedColumns[col] === true)) {
+        emit('contextmenu', {
+          x,
+          y: colCanvas.value.offsetTop - document.documentElement.scrollTop + compProps.dimensions.columnHeaderHeight,
+          index: col,
+          isColumn: true,
+        })
+      }
+    }
+  }
 
   let ctx: CanvasRenderingContext2D | null = null
 

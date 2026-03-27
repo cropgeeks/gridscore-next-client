@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div class="d-flex flex-wrap justify-space-between">
-      <h1 class="text-h4 mb-3">{{ $t('pageSettingsTitle') }}</h1>
+      <h1 class="text-headline-large mt-0 mb-3">{{ $t('pageSettingsTitle') }}</h1>
       <v-menu>
         <template #activator="{ props }">
           <v-btn v-bind="props" :text="$t('buttonImportExport')" :prepend-icon="mdiShare" />
@@ -108,7 +108,7 @@
               <v-btn class="flex-grow-1" :prepend-icon="mdiCursorMove" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
             </v-btn-toggle>
 
-            <div class="text-subtitle-2 mt-3">{{ $t('formLabelSettingsCategoryCountInline') }}</div>
+            <div class="text-title-small mt-3">{{ $t('formLabelSettingsCategoryCountInline') }}</div>
             <v-slider
               v-model="categoryCountInline"
               :hint="$t('formDescriptionSettingsCategoryCountInline')"
@@ -282,7 +282,7 @@
               v-model="largeButtonsForIntTraits"
             />
 
-            <div class="text-subtitle-2 mt-3">{{ $t('formLabelSettingsMinCellWidth') }}</div>
+            <div class="text-title-small mt-3">{{ $t('formLabelSettingsMinCellWidth') }}</div>
             <v-slider
               v-model="displayMinCellWidth"
               :hint="$t('formDescriptionSettingsMinCellWidth')"

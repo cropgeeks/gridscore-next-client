@@ -77,6 +77,7 @@
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { mdiAlert, mdiCounter } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   interface RepInfo {
     row: number
@@ -115,6 +116,7 @@
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
 
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
 
   const filename = computed(() => {
@@ -200,7 +202,7 @@
             })
           }
 
-          rowText.push(t('widgetChartHeatmapRowColumn', { row: cell.displayRow, column: cell.displayColumn }))
+          rowText.push(t('widgetChartHeatmapRowColumn', { row: cell.displayRow, column: cell.displayColumn, ...i18nParams.value }))
 
           // Get all sorted measurements for this trait and plot
           const traitMeasurements = cell.measurements[trait.id || ''] || []

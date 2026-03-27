@@ -8,7 +8,7 @@
           :title="item.displayName || item.germplasm"
           @click="onClick(item)"
         >
-          <PlotInformation :cell="item" />
+          <PlotInformation :cell="item" :i18n-params="i18nParams" />
         </v-list-item>
       </v-list>
 
@@ -29,6 +29,7 @@
 
   defineProps<{
     list: CellPlus[]
+    i18nParams: { [index: string]: string }
   }>()
 
   function onClick (match: CellPlus) {

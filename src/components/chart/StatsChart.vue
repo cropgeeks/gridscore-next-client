@@ -47,6 +47,7 @@
   import { coreStore } from '@/stores/app'
   import { CELL_CATEGORIES } from '@/plugins/constants'
   import type { UserSelection } from '@/components/util/HighlightSelect.vue'
+  import { getI18nParams } from '@/plugins/formatting'
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
     bar,
@@ -89,6 +90,7 @@
   const traitChart = useTemplateRef('traitChart')
   const message = ref<string>()
 
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
   const filename = computed(() => {
     if (safeTrialName.value && compProps.trait) {
@@ -214,7 +216,7 @@
               data.unshift({
                 x: dps.map(d => d.value),
                 text: dps.map(d => d.name),
-                customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn })),
+                customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, ...i18nParams.value })),
                 ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
                 name: `&nbsp;${k}`,
                 type: chartType,
@@ -231,7 +233,7 @@
             data.push({
               x: dps.map(d => d.value),
               text: dps.map(d => d.name),
-              customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => t(CELL_CATEGORIES[c]?.title || '')).join(', ') })),
+              customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => t(CELL_CATEGORIES[c]?.title || '')).join(', '), ...i18nParams.value })),
               ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
               marker: {
                 color: store.storeHighlightControls ? dps.map(d => (d.categories && d.categories.includes(CellCategory.CONTROL)) ? invertHex(compProps.trait.color || '#00acef') : compProps.trait.color) : compProps.trait.color,

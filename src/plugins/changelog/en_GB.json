@@ -775,6 +775,11 @@
       },
       {
         "type": "new",
+        "title": "Custom row and column names",
+        "text": "You can now define custom names for what by default is called a 'row' and a 'column'. This will change and occurrence of these throughout the interface."
+      },
+      {
+        "type": "new",
         "title": "Plot highlighting",
         "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
       },

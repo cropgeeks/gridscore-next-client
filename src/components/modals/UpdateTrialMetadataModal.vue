@@ -3,7 +3,7 @@
     <v-card :title="$t('modalTitlePlotMetadataUpdate')">
       <template #text>
         <v-container>
-          <p v-html="$t('modalTextPlotMetadataUpdate')" />
+          <p v-html="$t('modalTextPlotMetadataUpdate', i18nParams)" />
 
           <LineNumberTextarea
             v-model="input"
@@ -35,8 +35,10 @@
 
   import emitter from 'tiny-emitter/instance'
   import { mdiAlert } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const requiredColumns = new Set(['Germplasm', 'Rep', 'Row', 'Column', 'Treatment', 'Friendly name', 'Barcode', 'Pedigree'])
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   const { t } = useI18n()
 

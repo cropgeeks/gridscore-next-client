@@ -31,7 +31,7 @@
             />
           </v-btn-toggle>
 
-          <p class="text-caption">{{ $t('formDescriptionPersonRole') }}</p>
+          <p class="text-body-small">{{ $t('formDescriptionPersonRole') }}</p>
         </v-form>
       </template>
 

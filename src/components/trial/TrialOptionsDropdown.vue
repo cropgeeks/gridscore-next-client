@@ -5,7 +5,7 @@
     <v-list-item :prepend-icon="mdiNotebookMultiple" :title="$t('buttonDuplicateTrial')" @click="internalEmit('duplicate')" />
     <template v-if="editable">
       <v-divider />
-      <v-list-item :prepend-icon="isLocked ? mdiLockOpen : mdiLockAlert" color="warning" :active="isLocked" :title="$t(isLocked ? 'buttonReactivateTrial' : 'buttonDeactivateTrial')" @click="internalEmit('lock')" v-if="isOwner" />
+      <v-list-item :prepend-icon="isLocked ? mdiLockOpenVariant : mdiLockAlert" color="warning" :active="isLocked" :title="$t(isLocked ? 'buttonReactivateTrial' : 'buttonDeactivateTrial')" @click="internalEmit('lock')" v-if="isOwner" />
       <v-list-item :prepend-icon="mdiPlus" :disabled="isLocked === true" :title="$t('buttonAdd')">
         <template #append>
           <v-icon :icon="mdiMenuRight" />
@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-  import { mdiAccountPlus, mdiDatabaseSync, mdiDelete, mdiExportVariant, mdiFileUpload, mdiFormatListGroupPlus, mdiImagePlus, mdiLockAlert, mdiLockOpen, mdiMenuRight, mdiNotebookEdit, mdiNotebookMultiple, mdiPlus, mdiTableArrowUp, mdiTagPlus } from '@mdi/js'
+  import { mdiAccountPlus, mdiDatabaseSync, mdiDelete, mdiExportVariant, mdiFileUpload, mdiFormatListGroupPlus, mdiImagePlus, mdiLockAlert, mdiLockOpenVariant, mdiMenuRight, mdiNotebookEdit, mdiNotebookMultiple, mdiPlus, mdiTableArrowUp, mdiTagPlus } from '@mdi/js'
 
   const compProps = defineProps<{
     editable: boolean

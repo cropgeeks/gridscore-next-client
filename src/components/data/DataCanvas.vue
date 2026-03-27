@@ -7,6 +7,7 @@
       :x="origin.x"
       :marked-columns="markedColumns"
       @column-marked="onColumnMarked"
+      @contextmenu="e => emit('context:header', e)"
       id="data-canvas-header"
       ref="colHead"
     />
@@ -17,6 +18,7 @@
       :y="origin.y"
       :marked-rows="markedRows"
       @row-marked="onRowMarked"
+      @contextmenu="e => emit('context:header', e)"
       ref="rowHead"
     />
     <PlotCanvas
@@ -84,7 +86,7 @@
   const plotCanvas = useTemplateRef('plotCanvas')
 
   const store = coreStore()
-  const emit = defineEmits(['click:plot'])
+  const emit = defineEmits(['click:plot', 'context:header'])
 
   const markedColumns = ref<boolean[]>([])
   const markedRows = ref<boolean[]>([])
@@ -292,6 +294,11 @@
 
   onBeforeUnmount(() => {
     window.removeEventListener('resize', reset)
+  })
+
+  defineExpose({
+    markedColumns,
+    markedRows,
   })
 </script>
 

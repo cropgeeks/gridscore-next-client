@@ -59,7 +59,7 @@
                 </template>
 
                 <template #text>
-                  <PlotInformation :cell="comment.raw.cell" />
+                  <PlotInformation :cell="comment.raw.cell" :i18n-params="i18nParams" />
                 </template>
 
                 <v-list>
@@ -94,6 +94,7 @@
   import type { SortItem } from 'vuetify/lib/components/VDataTable/composables/sort.mjs'
 
   import emitter from 'tiny-emitter/instance'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const comments = ref<PlotComment[]>([])
   const dialog = ref(false)
@@ -116,6 +117,8 @@
     timestamp: string
     displayName: string
   }
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
 
   const sortBy: ComputedRef<SortItem[]> = computed(() => {
     return [{

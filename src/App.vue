@@ -116,7 +116,7 @@
 
     <ConfirmModal />
     <ChangelogModal />
-    <v-snackbar-queue timeout="4000" location="bottom" v-model="snackbarQueue" />
+    <v-snackbar-queue timeout="4000" location="bottom" v-model="snackbarQueue" ref="snackbarQueueElement" />
     <v-overlay
       :model-value="loading"
       class="align-center justify-center"
@@ -182,6 +182,8 @@
   const store = coreStore()
   const route = useRoute()
   const isDark = useDark()
+
+  const snackbarQueueElement = useTemplateRef('snackbarQueueElement')
 
   const drawer = ref(true)
   const loading = ref(false)
@@ -316,6 +318,10 @@
     }
   }
 
+  function clearSnackbar () {
+    snackbarQueueElement.value?.clear()
+  }
+
   // Listen for theme changes in the store
   watchEffect(() => {
     const str = isDark.value ? 'dark' : 'light'
@@ -407,6 +413,7 @@
     emitter.on('trial-properties-changed', loadTrialInfo)
     emitter.on('trial-information-updated', loadTrialInfo)
     emitter.on('plausible-event', plausibleEvent)
+    emitter.on('clear-snackback', clearSnackbar)
   })
   onBeforeUnmount(() => {
     emitter.off('show-snackbar', showSnackbar)
@@ -415,6 +422,7 @@
     emitter.off('trial-properties-changed', loadTrialInfo)
     emitter.off('trial-information-updated', loadTrialInfo)
     emitter.off('plausible-event', plausibleEvent)
+    emitter.off('clear-snackback', clearSnackbar)
   })
 
   onBeforeMount(() => {
@@ -441,14 +449,6 @@ a.table-icon-link, a.table-icon-link:visited,
 .v-card-text ul a, .v-card-text ul a:visited,
 form a, form a:visited {
   color: rgb(var(--v-theme-primary));
-}
-
-ul:not([class]),
-ul:not([class]) li:not([class]),
-ol:not([class]),
-ol:not([class]) li:not([class])
- {
-  padding: revert;
 }
 
 .pe-none .v-badge__badge {

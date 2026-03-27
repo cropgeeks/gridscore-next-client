@@ -9,8 +9,8 @@
           required
           :disabled="isEdit || !canChange"
           :prepend-inner-icon="mdiLandRowsHorizontal"
-          :label="$t('formLabelSetupRows')"
-          :hint="$t('formLabelDescriptionRows')"
+          :label="$t('formLabelSetupRows', i18nParams)"
+          :hint="$t('formLabelDescriptionRows', i18nParams)"
           persistent-hint
         />
 
@@ -31,8 +31,8 @@
           required
           :disabled="isEdit || !canChange"
           :prepend-inner-icon="mdiLandRowsVertical"
-          :label="$t('formLabelSetupColumns')"
-          :hint="$t('formLabelDescriptionColumns')"
+          :label="$t('formLabelSetupColumns', i18nParams)"
+          :hint="$t('formLabelDescriptionColumns', i18nParams)"
           persistent-hint
         />
 
@@ -54,7 +54,7 @@
       class="mt-3"
       color="warning"
       :icon="mdiAlert"
-      :text="$t('pageTrialLayoutDimensionsFielDHubNotice')"
+      :text="$t('pageTrialLayoutDimensionsFielDHubNotice', i18nParams)"
       variant="tonal"
       border="start"
     />
@@ -63,16 +63,20 @@
 
 <script setup lang="ts">
   import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
-  import { DisplayOrder, type Layout } from '@/plugins/types/gridscore'
+  import { DisplayOrder, type DimensionNames, type Layout } from '@/plugins/types/gridscore'
   import { mdiAlert, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSortAscending } from '@mdi/js'
   import LabelEditor from '@/components/setup/LabelEditor.vue'
+  import { getI18nParams } from '@/plugins/formatting'
 
   const model = defineModel<Layout>()
   const layoutType = defineModel<'grid' | 'list'>('layoutType')
 
-  defineProps<{
+  const i18nParams = computed(() => getI18nParams(props.dimensionNames))
+
+  const props = defineProps<{
     isEdit: boolean
     canChange: boolean
+    dimensionNames?: DimensionNames
   }>()
 </script>
 

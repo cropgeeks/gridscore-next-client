@@ -3,12 +3,12 @@
     <v-card class="mb-5">
       <div class="d-flex flex-nowrap flex-column flex-sm-row justify-space-between align-center ma-5 justify-center">
         <v-card-text class="flex-grow-1">
-          <p class="text-h2">{{ $t('appTitle') }}</p>
+          <p class="text-display-large mt-0">{{ $t('appTitle') }}</p>
 
-          <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiTagOutline" /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
-          <p class="text-subtitle-1 my-3" v-if="storeDeviceConfigString"><v-icon size="x-small" :icon="mdiLaptop" /> {{ storeDeviceConfigString }}</p>
-          <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiInformation" /> <a href="#" @click.prevent="showChangelog">{{ $t('pageAboutChangelog') }}</a></p>
-          <p class="text-subtitle-1 my-3"><v-icon size="x-small" :icon="mdiMessageAlert" /> <a href="#" @click.prevent="showServerMessages">{{ $t('pageAboutServerMessages') }}</a></p>
+          <p class="text-body-large my-3"><v-icon size="x-small" :icon="mdiTagOutline" /> {{ $t('pageAboutVersion', { version: gridScoreVersion }) }}</p>
+          <p class="text-body-large my-3" v-if="storeDeviceConfigString"><v-icon size="x-small" :icon="mdiLaptop" /> {{ storeDeviceConfigString }}</p>
+          <p class="text-body-large my-3"><v-icon size="x-small" :icon="mdiInformation" /> <a href="#" @click.prevent="showChangelog">{{ $t('pageAboutChangelog') }}</a></p>
+          <p class="text-body-large my-3"><v-icon size="x-small" :icon="mdiMessageAlert" /> <a href="#" @click.prevent="showServerMessages">{{ $t('pageAboutServerMessages') }}</a></p>
         </v-card-text>
         <v-avatar
           class="ma-3"
@@ -57,6 +57,8 @@
         </div>
       </v-col>
     </v-row>
+
+    <p v-html="$t('pageAboutGridScoreFundersExtra')" />
 
     <!-- Translations -->
     <section class="pb-3">

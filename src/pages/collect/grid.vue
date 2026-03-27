@@ -39,7 +39,7 @@
                 v-model="selectedTreatments"
                 :items="trialTreatments"
               >
-                <template #selection="{ item, index }">
+                <template #selection="{ internalItem: item, index }">
                   <v-chip density="compact" :text="item.title" :color="highlightColors[index % highlightColors.length]" variant="flat" />
                 </template>
               </v-select>
@@ -54,7 +54,7 @@
                 v-model="selectedReps"
                 :items="trialReps"
               >
-                <template #selection="{ item, index }">
+                <template #selection="{ internalItem: item, index }">
                   <v-chip density="compact" :text="item.title" :color="highlightColors[index % highlightColors.length]" variant="flat" />
                 </template>
               </v-select>
@@ -85,10 +85,38 @@
       />
     </v-toolbar>
 
-    <DataCanvas :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" @click:plot="selectPlot" v-if="showCanvas" />
-    <DataGrid :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" @click:plot="selectPlot" v-else />
+    <DataCanvas :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" ref="dataCanvas" @click:plot="selectPlot" @context:header="showContextMenu" v-if="showCanvas" />
+    <DataGrid :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" ref="dataGrid" @click:plot="selectPlot" @context:header="showContextMenu" v-else />
 
     <DataEntryModal :trial="trial" :geolocation="geolocation" ref="dataEntryModal" @data-changed="loadTrial" />
+
+    <v-menu
+      v-model="contextMenu.visible"
+      :target="contextMenu.target || [contextMenu.x || 0, contextMenu.y || 0]"
+      location="bottom"
+      v-if="contextMenu"
+    >
+      <v-list
+        slim
+        density="compact"
+      >
+        <v-list-item @click="lockUnlock(false, true)" :prepend-icon="mdiLockAlert" :title="$t(contextMenu.isColumn ? 'buttonDeactivateColumn' : 'buttonDeactivateRow', getI18nParams(trial.dimensionNames))" />
+        <v-list-item @click="lockUnlock(false, false)" :prepend-icon="mdiLockOpenVariant" :title="$t(contextMenu.isColumn ? 'buttonReactivateColumn' : 'buttonReactivateRow', getI18nParams(trial.dimensionNames))" />
+        <template v-if="(contextMenu.isColumn ? markedColumnCount : markedRowCount) > 1">
+          <v-divider />
+          <v-list-item @click="lockUnlock(true, true)" :prepend-icon="mdiLockAlert" :title="$t(contextMenu.isColumn ? 'buttonDeactivateColumns' : 'buttonDeactivateRows', getI18nParams(trial.dimensionNames))">
+            <template #append>
+              <v-chip class="ms-3" size="small" inline :text="contextMenu.isColumn ? markedColumnCount : markedRowCount" />
+            </template>
+          </v-list-item>
+          <v-list-item @click="lockUnlock(true, false)" :prepend-icon="mdiLockOpenVariant" :title="$t(contextMenu.isColumn ? 'buttonReactivateColumns' : 'buttonReactivateRows', getI18nParams(trial.dimensionNames))">
+            <template #append>
+              <v-chip class="ms-3" size="small" inline :text="contextMenu.isColumn ? markedColumnCount : markedRowCount" />
+            </template>
+          </v-list-item>
+        </template>
+      </v-list>
+    </v-menu>
 
     <v-menu v-model="jumpMenuVisible" v-if="store.storeNavigationMode === NavigationMode.JUMP" location="start" :close-on-content-click="false">
       <template #activator="{ props }">
@@ -109,7 +137,7 @@
       </v-sheet>
     </v-menu>
 
-    <SearchResultModal ref="searchResultModal" :list="searchResults" v-if="searchResults && searchResults.length > 0" />
+    <SearchResultModal ref="searchResultModal" :list="searchResults" :i18n-params="i18nParams" v-if="searchResults && searchResults.length > 0" />
     <PlotCommentListModal :trial="trial" ref="plotCommentListModal" />
 
     <MediaModal :trial="trial" />
@@ -118,7 +146,8 @@
 </template>
 
 <script setup lang="ts">
-  import DataGrid from '@/components/data/DataGrid.vue'
+  import type DataGrid from '@/components/data/DataGrid.vue'
+  import type DataCanvas from '@/components/data/DataCanvas.vue'
   import CellAutocomplete from '@/components/inputs/CellAutocomplete.vue'
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
@@ -127,16 +156,27 @@
   import ArrowDirectionGrid from '@/components/util/ArrowDirectionGrid.vue'
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
   import { categoricalColors } from '@/plugins/color'
-  import { getTrialControlsCached, getTrialBookmarksCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached } from '@/plugins/datastore'
-  import { getTrialById } from '@/plugins/idb'
-  import { MainDisplayMode, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
+  import { getTrialControlsCached, getTrialBookmarksCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached, loadTrialData } from '@/plugins/datastore'
+  import { getTrialById, setPlotsLocked } from '@/plugins/idb'
+  import { MainDisplayMode, NavigationMode, ShareStatus, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountMultiple, mdiBookArrowLeft, mdiBookmark, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCommentMultiple, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
+  import { mdiAccountMultiple, mdiBookArrowLeft, mdiBookmark, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCommentMultiple, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiLockAlert, mdiLockOpenVariant, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
+  import type { XY } from '@/plugins/location'
+  import { getI18nParams } from '@/plugins/formatting'
+
+  export interface ContextMenuConfig {
+    target?: Element
+    x?: number
+    y?: number
+    visible: boolean
+    isColumn: boolean
+    index: number
+  }
 
   const store = coreStore()
   const { lgAndUp, smAndUp } = useDisplay()
@@ -153,6 +193,8 @@
   const trialControls = ref<Set<string>>(new Set())
   const trialBookmarks = ref<Set<string>>(new Set())
 
+  const contextMenu = ref<ContextMenuConfig | undefined>()
+
   // Highlighting stuff
   const selectedReps = ref<string[]>([])
   const selectedTreatments = ref<string[]>([])
@@ -164,8 +206,17 @@
   const searchResultModal = useTemplateRef('searchResultModal')
   const plotCommentListModal = useTemplateRef('plotCommentListModal')
 
+  const dataCanvas = useTemplateRef<typeof DataCanvas>('dataCanvas')
+  const dataGrid = useTemplateRef<typeof DataGrid>('dataGrid')
+
   let textSynth: SpeechSynthesis | undefined = undefined
   let geolocationWatchId: number | undefined = undefined
+
+  const i18nParams = computed(() => getI18nParams(trial.value?.dimensionNames))
+  const markedColumns = computed(() => ((dataCanvas.value || dataGrid.value)?.markedColumns || []))
+  const markedRows = computed(() => ((dataCanvas.value || dataGrid.value)?.markedRows || []))
+  const markedColumnCount = computed(() => markedColumns.value.filter((c: boolean) => c === true).length)
+  const markedRowCount = computed(() => markedRows.value.filter((c: boolean) => c === true).length)
 
   const hasTrialPeople = computed(() => trial.value && trial.value.people && trial.value.people.length > 0)
 
@@ -220,6 +271,34 @@
     }
   })
 
+  function lockUnlock (all: boolean, isLock: boolean) {
+    const tr = trial.value
+    if (!contextMenu.value || !tr) {
+      return
+    }
+    const ic = contextMenu.value.isColumn
+    const indices = all ? (ic ? markedColumns.value : markedRows.value).map((d: boolean, i: number) => d === true ? i : undefined).filter((d: number | undefined) => d !== undefined) : [contextMenu.value.index]
+
+    const max = ic ? tr.layout.rows : tr.layout.columns
+
+    const coords: XY[] = []
+
+    for (let i = 0; i < max; i++) {
+      indices.forEach((j: number) => {
+        const [row, column] = ic ? [i, j] : [j, i]
+
+        coords.push({ x: column, y: row })
+      })
+    }
+
+    setPlotsLocked(tr.localId || '', coords, isLock)
+      .then(() => {
+        // Refresh data
+        loadTrialData()
+        emitter.emit('plausible-event', { key: 'plot-locked', props: { multiple: indices.length > 1, locked: isLock } })
+      })
+  }
+
   function loadTrial () {
     getTrialById(store.storeSelectedTrial || '').then(t => {
       trial.value = t
@@ -228,6 +307,15 @@
 
       startGeoTracking()
     })
+  }
+
+  function showContextMenu (config: ContextMenuConfig) {
+    if (trial.value?.shareStatus === ShareStatus.NOT_SHARED || trial.value?.shareStatus === ShareStatus.OWNER) {
+      contextMenu.value = config
+      contextMenu.value.visible = true
+    } else {
+      contextMenu.value = undefined
+    }
   }
 
   function updateLocalCaches () {

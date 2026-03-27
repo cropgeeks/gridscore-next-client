@@ -70,8 +70,8 @@
       <v-btn v-if="hasErrors || hasWarnings" @click="bottomSheetVisible = true" :text="$t('formFeedbackLayout', feedback.length)" :prepend-icon="hasErrors ? mdiAlertCircle : mdiAlert" :color="hasErrors ? 'error' : 'warning'" />
     </div>
 
-    <TabbedInputModal :label="dataImportConfig.label" :placeholder="dataImportConfig.placeholder" ref="inputModal" @content-loaded="content => updateTableFromTabbed(dataImportConfig?.field || '', content)" v-if="dataImportConfig" />
-    <FieldHubInputModal :current-layout="model.layout" ref="fieldbookInputModal" @content-loaded="updateTableFromFile" />
+    <TabbedInputModal :i18n-params="i18nParams" :label="dataImportConfig.label" :placeholder="dataImportConfig.placeholder" ref="inputModal" @content-loaded="content => updateTableFromTabbed(dataImportConfig?.field || '', content)" v-if="dataImportConfig" />
+    <FieldHubInputModal :i18n-params="i18nParams" :current-layout="model.layout" ref="fieldbookInputModal" @content-loaded="updateTableFromFile" />
 
     <v-bottom-sheet v-model="bottomSheetVisible" inset>
       <v-card :title="$t('modalTitleLayoutFeedback')">
@@ -104,6 +104,7 @@
   import emitter from 'tiny-emitter/instance'
   import type { TrialPlus } from '@/plugins/types/client'
   import { mdiAlert, mdiAlertCircle, mdiBarcode, mdiCheckboxMultipleMarked, mdiEyeCheck, mdiFamilyTree, mdiFilePlus, mdiFileTable, mdiPlaylistCheck, mdiPlaylistRemove, mdiShuffle, mdiSprinklerFire, mdiTable } from '@mdi/js'
+  import { getI18nParams } from '@/plugins/formatting'
 
   export interface LayoutFeedback {
     type: 'warning' | 'error'
@@ -153,6 +154,8 @@
       placeholder: 'formPlaceholderSetupTreatmentNames',
     },
   }
+
+  const i18nParams = computed(() => getI18nParams(model.value?.dimensionNames))
 
   const compProps = withDefaults(defineProps<GermplasmLayoutTableProps>(), {
     isEdit: false,
@@ -206,13 +209,13 @@
           if (row < 0 || row >= trial.layout.rows) {
             feedback.value.push({
               type: 'error',
-              message: t('formFeedbackSetupInvalidRow', { rowIndex: getRowLabel(trial.layout, row), germplasm: cell.germplasm, rep: cell.rep }),
+              message: t('formFeedbackSetupInvalidRow', { rowIndex: getRowLabel(trial.layout, row), germplasm: cell.germplasm, rep: cell.rep, ...i18nParams.value }),
             })
           }
           if (column < 0 || column >= trial.layout.columns) {
             feedback.value.push({
               type: 'error',
-              message: t('formFeedbackSetupInvalidColumn', { columnIndex: getColumnLabel(trial.layout, column), germplasm: cell.germplasm, rep: cell.rep }),
+              message: t('formFeedbackSetupInvalidColumn', { columnIndex: getColumnLabel(trial.layout, column), germplasm: cell.germplasm, rep: cell.rep, ...i18nParams.value }),
             })
           }
 
@@ -225,7 +228,7 @@
             if (barcodeSet.has(barcode)) {
               feedback.value.push({
                 type: 'error',
-                message: t('formFeedbackSetupDuplicateBarcode', { columnIndex: getColumnLabel(trial.layout, column), rowIndex: getRowLabel(trial.layout, row), germplasm: cell.germplasm, rep: cell.rep, barcode: barcode }),
+                message: t('formFeedbackSetupDuplicateBarcode', { columnIndex: getColumnLabel(trial.layout, column), rowIndex: getRowLabel(trial.layout, row), germplasm: cell.germplasm, rep: cell.rep, barcode: barcode, ...i18nParams.value }),
               })
             }
             barcodeSet.add(barcode)
@@ -235,7 +238,7 @@
           if (germplasmSet.has(displayName)) {
             feedback.value.push({
               type: 'warning',
-              message: t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: getColumnLabel(trial.layout, column), rowIndex: getRowLabel(trial.layout, row), germplasm: cell.germplasm, rep: cell.rep || 'N/A' }),
+              message: t('formFeedbackSetupDuplicateGermplasmRep', { columnIndex: getColumnLabel(trial.layout, column), rowIndex: getRowLabel(trial.layout, row), germplasm: cell.germplasm, rep: cell.rep || 'N/A', ...i18nParams.value }),
             })
           } else {
             germplasmSet.add(displayName)
@@ -471,7 +474,7 @@
         // Germplasm name input
         const cellId = createElement(cell, 'small')
         cellId.classList.add('text-muted')
-        cellId.innerHTML = t('pageSetupGermplasmGridTableCellRowColumn', { row: displayRowIndex, column: displayColumnIndex })
+        cellId.innerHTML = t('pageSetupGermplasmGridTableCellRowColumn', { row: displayRowIndex, column: displayColumnIndex, rowStart: i18nParams.value.rowStart, columnStart: i18nParams.value.columnStart })
         const g = createElement(cell, 'input') as HTMLInputElement
         g.id = `germplasm-${row}-${column}`
         if (dataCell) {
