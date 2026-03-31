@@ -73,16 +73,21 @@
 
             <h4 class="mt-3">{{ $t('formLabelSettingsWidgetOrder') }}</h4>
             <p>{{ $t('formDescriptionSettingsWidgetOrder') }}</p>
-            <!-- @vue-skip -->
-            <draggable :list="homeWidgetOrder" item-key="id" handle=".drag-handle" id="home-widget-list">
-              <template #item="{ element }">
-                <v-list-item :title="homeWidgetOptions[element.value].name" :subtitle="homeWidgetOptions[element.value].description" v-if="homeWidgetOptions[element.value]">
-                  <template #append>
-                    <v-icon class="drag-handle" :icon="mdiDrag" />
-                  </template>
-                </v-list-item>
-              </template>
-            </draggable>
+
+            <div
+              ref="homeWidgetOrderParent"
+            >
+              <v-list-item
+                v-for="element in homeWidgetOrder"
+                :key="`order-${element.value}`"
+                :title="homeWidgetOptions[element.value]?.name"
+                :subtitle="homeWidgetOptions[element.value]?.description"
+              >
+                <template #append>
+                  <v-icon class="drag-handle" :icon="mdiDrag" />
+                </template>
+              </v-list-item>
+            </div>
           </template>
         </v-card>
 
@@ -385,9 +390,9 @@
   import { coreStore } from '@/stores/app'
   import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDrag, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
-  import draggable from 'vuedraggable'
 
   import emitter from 'tiny-emitter/instance'
+  import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
 
   const store = coreStore()
   const { t } = useI18n()
@@ -395,7 +400,7 @@
   const shareBottomSheetVisible = ref(false)
   const shareConfig = ref<'import' | 'export' | undefined>()
 
-  type HomeOrder = { id: number, value: string }[]
+  type HomeOrder = { id: number, value: string }
 
   const performanceMode = ref<boolean>(store.storePerformanceMode)
   const locale = ref<string>(store.storeLocale)
@@ -407,12 +412,15 @@
   const traitColors = ref<string[]>(store.storeTraitColors || [])
   const currentTraitColor = ref<string>('#000000')
   const currentTraitIndex = ref<number>()
-  const homeWidgetOrder = ref<HomeOrder>(store.storeHomeWidgetOrder.map((o, i) => {
-    return {
-      id: i,
-      value: o,
-    }
-  }))
+  const [homeWidgetOrderParent, homeWidgetOrder] = useDragAndDrop<HomeOrder>(
+    store.storeHomeWidgetOrder.map((o, i) => {
+      return {
+        id: i,
+        value: o,
+      }
+    }),
+    { dragHandle: '.drag-handle' },
+  )
   const gpsEnabled = ref(store.storeGpsEnabled)
   const navigationMode = ref(store.storeNavigationMode)
   const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)

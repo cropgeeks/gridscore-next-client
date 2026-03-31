@@ -26,7 +26,7 @@
       </div>
     </v-card-text>
 
-    <v-list variant="tonal" class="pb-0" v-if="horizontal" :disabled="!interactive">
+    <v-list variant="tonal" class="pb-0" slim v-if="horizontal" :disabled="!interactive">
       <v-row no-gutters>
         <template v-if="forceShowDetails || (store.storeTrialShowDetails !== false)">
           <v-col cols="12" sm="6" md="4" lg="3">

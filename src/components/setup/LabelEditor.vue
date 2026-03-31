@@ -11,7 +11,7 @@
     <div
       v-if="edit"
     >
-      <draggable
+      <!-- <draggable
         :class="{
           'd-flex': true,
           'ga-1': true,
@@ -21,7 +21,7 @@
         }"
         v-model="localCopy"
         item-key="id"
-        handle=".v-icon"
+        handle=".drag-handle"
       >
         <template #item="{ element }">
           <v-number-input
@@ -31,12 +31,73 @@
             density="compact"
             control-variant="hidden"
             variant="outlined"
-            :append-inner-icon="mdiDragVertical"
             @focus="$event.target.select()"
             :width="orientation === 'horizontal' ? `${('' + element.value).length + 4}em` : undefined"
-          />
+          >
+            <template #append-inner>
+              <v-icon class="drag-handle" :icon="mdiDragVertical" />
+            </template>
+          </v-number-input>
         </template>
-      </draggable>
+      </draggable> -->
+
+      <div
+        ref="parent"
+        :class="{
+          'd-flex': true,
+          'ga-1': true,
+          'flex-row': orientation === 'horizontal',
+          'flex-column': orientation === 'vertical',
+          'flex-wrap': orientation === 'horizontal',
+        }"
+      >
+        <v-number-input
+          v-for="element in values"
+          :key="`element-${element.id}`"
+          v-model="element.value"
+          hide-details
+          :step="1"
+          density="compact"
+          control-variant="hidden"
+          variant="outlined"
+          :width="orientation === 'horizontal' ? `${('' + element.value).length + 4}em` : undefined"
+        >
+          <template #append-inner>
+            <div class="drag-handle" @mousedown.stop @touchstart.stop>
+              <v-icon :icon="mdiDragVertical" />
+            </div>
+          </template>
+        </v-number-input>
+      </div>
+      <!-- <draggable
+        :class="{
+          'd-flex': true,
+          'ga-1': true,
+          'flex-row': orientation === 'horizontal',
+          'flex-column': orientation === 'vertical',
+          'flex-wrap': orientation === 'horizontal',
+        }"
+        v-model="localCopy"
+        item-key="id"
+        handle=".drag-handle"
+      >
+        <template #item="{ element }">
+          <v-number-input
+            v-model="element.value"
+            hide-details
+            :step="1"
+            density="compact"
+            control-variant="hidden"
+            variant="outlined"
+            @focus="$event.target.select()"
+            :width="orientation === 'horizontal' ? `${('' + element.value).length + 4}em` : undefined"
+          >
+            <template #append-inner>
+              <v-icon class="drag-handle" :icon="mdiDragVertical" />
+            </template>
+          </v-number-input>
+        </template>
+      </draggable> -->
     </div>
   </div>
 </template>
@@ -44,8 +105,8 @@
 <script setup lang="ts">
   import { getId } from '@/plugins/id'
   import { mdiDragVertical } from '@mdi/js'
-  import draggable from 'vuedraggable'
   import { watchIgnorable } from '@vueuse/core'
+  import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
 
   const compProps = defineProps<{
     orientation: 'horizontal' | 'vertical'
@@ -60,8 +121,13 @@
   const model = defineModel<number[]>()
   const localCopy = ref<CopyObject[]>([])
 
+  const [parent, values] = useDragAndDrop<CopyObject>(
+    [],
+    { dragHandle: '.drag-handle' },
+  )
+
   function setCopies () {
-    localCopy.value = model.value?.map(v => {
+    values.value = model.value?.map(v => {
       return {
         value: v,
         id: getId(),
@@ -80,3 +146,9 @@
 
   onMounted(() => setCopies())
 </script>
+
+<style scoped>
+.drag-handle:hover {
+  cursor: move;
+}
+</style>

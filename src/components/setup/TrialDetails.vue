@@ -64,32 +64,38 @@
                 <v-btn @click="resetFilenameChips" color="info" :icon="mdiUndoVariant" v-tooltip:top="$t('buttonReset')" />
               </template>
               <v-card-text class="flex-grow-1 d-flex flex-column">
-                <draggable
+                <div
+                  ref="usedParent"
                   class="flex-grow-1"
-                  v-model="usedMediaFilenameChips"
-                  group="mediaTypeChips"
-                  item-key="id"
                 >
-                  <template #item="{ element }">
-                    <v-chip label class="me-2 mb-2" :text="$t(element.title)" :prepend-icon="element.icon" />
-                  </template>
-                </draggable>
+                  <v-chip
+                    v-for="element in usedMediaFilenameChips"
+                    :key="`filename-chip-${element.id}`"
+                    label
+                    class="me-2 mb-2"
+                    :text="$t(element.title)"
+                    :prepend-icon="element.icon"
+                  />
+                </div>
               </v-card-text>
             </v-card>
           </v-col>
           <v-col class="d-flex flex-column" cols="12" md="6">
             <v-card class="flex-grow-1 d-flex flex-column" :title="$t('pageSetupMediaFilenameUnusedTitle')" :subtitle="$t('pageSetupMediaFilenameUnusedSubtitle')">
               <v-card-text class="flex-grow-1 d-flex flex-column">
-                <draggable
+                <div
+                  ref="unusedParent"
                   class="flex-grow-1"
-                  v-model="unusedMediaFilenameChips"
-                  group="mediaTypeChips"
-                  item-key="id"
                 >
-                  <template #item="{ element }">
-                    <v-chip label class="me-2 mb-2" :text="$t(element.title)" :prepend-icon="element.icon" />
-                  </template>
-                </draggable>
+                  <v-chip
+                    v-for="element in unusedMediaFilenameChips"
+                    :key="`filename-chip-${element.id}`"
+                    label
+                    class="me-2 mb-2"
+                    :text="$t(element.title)"
+                    :prepend-icon="element.icon"
+                  />
+                </div>
               </v-card-text>
             </v-card>
           </v-col>
@@ -119,8 +125,8 @@
   import type { TrialPlus } from '@/plugins/types/client'
   import { personTypes } from '@/plugins/types/types'
   import { getThemeColor } from '@/plugins/util'
+  import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
   import { mdiAccountPlus, mdiFolderTable, mdiTextLong, mdiTextShort, mdiUndoVariant } from '@mdi/js'
-  import draggable from 'vuedraggable'
 
   export interface FilenameChip {
     id: string
@@ -146,8 +152,9 @@
 
   const group = ref<string>()
   const trialGroups = ref<string[]>([])
-  const usedMediaFilenameChips = ref<FilenameChip[]>([])
-  const unusedMediaFilenameChips = ref<FilenameChip[]>([])
+
+  const [usedParent, usedMediaFilenameChips] = useDragAndDrop<FilenameChip>([], { group: 'mediaTypeChips' })
+  const [unusedParent, unusedMediaFilenameChips] = useDragAndDrop<FilenameChip>([], { group: 'mediaTypeChips' })
 
   const exampleFilename = computed(() => {
     return `${usedMediaFilenameChips.value.map(c => c.example).join('_')}.jpg`

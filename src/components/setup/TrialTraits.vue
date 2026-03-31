@@ -248,92 +248,90 @@
           </template>
         </v-card>
         <template v-if="model && model.length > 0">
-          <draggable
-            v-model="model"
-            item-key="id"
-            handle=".drag-handle"
+          <div
+            ref="traitListRef"
           >
-            <template #item="{ element, index }">
-              <v-card
-                class="mb-3"
-                variant="tonal"
-                :color="element.id === currentTrait?.id ? 'primary' : undefined"
-                @click="setTrait(element)"
-              >
-                <template #title>
-                  <div class="d-flex justify-space-between align-center">
-                    <span>{{ element.name }}</span>
-                    <div>
-                      <v-chip label size="small" color="primary" :prepend-icon="dts.find(dt => dt.value === element.dataType)?.icon" :text="dts.find(dt => dt.value === element.dataType)?.shortTitle" />
-                      <v-icon class="drag-handle" :icon="mdiDrag" />
-                    </div>
+            <v-card
+              v-for="element in model"
+              :key="`trait-${element.id}`"
+              class="mb-3"
+              variant="tonal"
+              :color="element.id === currentTrait?.id ? 'primary' : undefined"
+              @click="setTrait(element)"
+            >
+              <template #title>
+                <div class="d-flex justify-space-between align-center">
+                  <span>{{ element.name }}</span>
+                  <div>
+                    <v-chip label size="small" color="primary" :prepend-icon="dts.find(dt => dt.value === element.dataType)?.icon" :text="dts.find(dt => dt.value === element.dataType)?.shortTitle" />
+                    <v-icon class="drag-handle" :icon="mdiDrag" />
                   </div>
-                </template>
-                <template #subtitle>
-                  <span class="text-wrap" v-if="element.description">{{ element.description }}</span>
-                </template>
+                </div>
+              </template>
+              <template #subtitle>
+                <span class="text-wrap" v-if="element.description">{{ element.description }}</span>
+              </template>
 
-                <template #text>
-                  <div class="mb-2">
-                    <v-chip
-                      label
-                      class="me-2 mb-1"
-                      size="small"
-                      :text="$t(element.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
-                      :prepend-icon="element.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
-                    />
+              <template #text>
+                <div class="mb-2">
+                  <v-chip
+                    label
+                    class="me-2 mb-1"
+                    size="small"
+                    :text="$t(element.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
+                    :prepend-icon="element.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
+                  />
 
-                    <v-chip
-                      label
-                      class="me-2 mb-1"
-                      size="small"
-                      :text="$t('formFeedbackTraitSetSize', { count: element.setSize })"
-                      :prepend-icon="mdiSetSplit"
-                    />
+                  <v-chip
+                    label
+                    class="me-2 mb-1"
+                    size="small"
+                    :text="$t('formFeedbackTraitSetSize', { count: element.setSize })"
+                    :prepend-icon="mdiSetSplit"
+                  />
 
-                    <v-chip
-                      v-if="element.group && element.group.name"
-                      label
-                      class="me-2 mb-1"
-                      size="small"
-                      :text="element.group.name"
-                      :prepend-icon="mdiTagText"
-                    />
-                  </div>
-                  <div v-if="element.timeframe" class="mb-2">
-                    <v-chip
-                      label
-                      size="small"
-                      class="me-2 mb-1"
-                      :text="$t(element.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
-                      :prepend-icon="element.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
-                    />
-                    <v-chip
-                      v-if="element.timeframe.start"
-                      label
-                      size="small"
-                      class="me-2 mb-1"
-                      :text="element.timeframe.start"
-                      :prepend-icon="mdiCalendarStart"
-                    />
-                    <v-chip
-                      v-if="element.timeframe.end"
-                      label
-                      size="small"
-                      class="me-2 mb-1"
-                      :text="element.timeframe.end"
-                      :prepend-icon="mdiCalendarEnd"
-                    />
-                  </div>
-                </template>
-                <template #actions>
-                  <v-btn variant="tonal" :text="$t('buttonDuplicate')" color="info" :disabled="isEdit" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(element)" />
-                  <v-spacer />
-                  <v-btn variant="tonal" :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
-                </template>
-              </v-card>
-            </template>
-          </draggable>
+                  <v-chip
+                    v-if="element.group && element.group.name"
+                    label
+                    class="me-2 mb-1"
+                    size="small"
+                    :text="element.group.name"
+                    :prepend-icon="mdiTagText"
+                  />
+                </div>
+                <div v-if="element.timeframe" class="mb-2">
+                  <v-chip
+                    label
+                    size="small"
+                    class="me-2 mb-1"
+                    :text="$t(element.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
+                    :prepend-icon="element.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
+                  />
+                  <v-chip
+                    v-if="element.timeframe.start"
+                    label
+                    size="small"
+                    class="me-2 mb-1"
+                    :text="element.timeframe.start"
+                    :prepend-icon="mdiCalendarStart"
+                  />
+                  <v-chip
+                    v-if="element.timeframe.end"
+                    label
+                    size="small"
+                    class="me-2 mb-1"
+                    :text="element.timeframe.end"
+                    :prepend-icon="mdiCalendarEnd"
+                  />
+                </div>
+              </template>
+              <template #actions>
+                <v-btn variant="tonal" :text="$t('buttonDuplicate')" color="info" :disabled="isEdit" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(element)" />
+                <v-spacer />
+                <v-btn variant="tonsal" :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
+              </template>
+            </v-card>
+          </div>
         </template>
         <p v-else>{{ $t('pageTrialTraitListEmpty') }}</p>
       </v-col>
@@ -360,13 +358,13 @@
   import GenericAddEditFormModal from '@/components/modals/GenericAddEditFormModal.vue'
   import TraitImportFromTrialModal from '@/components/modals/TraitImportFromTrialModal.vue'
   import TraitImportFromBrapiModal from '@/components/modals/TraitImportFromBrapiModal.vue'
-  import draggable from 'vuedraggable'
 
   import emitter from 'tiny-emitter/instance'
   import { germinateToTraits, jsonToTraits, tabularToTraits } from '@/plugins/util'
   import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
   import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
   import TraitInput from '@/components/inputs/TraitInput.vue'
+  import { dragAndDrop } from '@formkit/drag-and-drop/vue'
 
   const { t } = useI18n()
   const store = coreStore()
@@ -386,7 +384,9 @@
     okTitle: string
   }
 
-  const model = defineModel<TraitPlus[]>()
+  const model = defineModel<TraitPlus[]>({
+    default: [],
+  })
 
   export interface TrialTraitsProps {
     trialIdsForTraitGroups?: string[]
@@ -405,6 +405,14 @@
   const traitImportFromTrialModal = useTemplateRef('traitImportFromTrialModal')
   const categoryInput = useTemplateRef('categoryInput')
   const formModal = useTemplateRef('formModal')
+  const traitListRef = ref()
+
+  dragAndDrop<TraitPlus>({
+    parent: traitListRef,
+    values: model,
+    // @ts-ignore
+    config: { dragHandle: '.drag-handle' },
+  })
 
   const exampleTraitValue = ref<string>()
   const initialTraitIds = ref<Set<string>>(new Set())
