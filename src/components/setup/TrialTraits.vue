@@ -252,7 +252,7 @@
             ref="traitListRef"
           >
             <v-card
-              v-for="element in model"
+              v-for="(element, index) in model"
               :key="`trait-${element.id}`"
               class="mb-3"
               variant="tonal"
@@ -328,7 +328,7 @@
               <template #actions>
                 <v-btn variant="tonal" :text="$t('buttonDuplicate')" color="info" :disabled="isEdit" :prepend-icon="mdiContentDuplicate" @click.stop="duplicateTrait(element)" />
                 <v-spacer />
-                <v-btn variant="tonsal" :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
+                <v-btn variant="tonal" :text="$t('buttonDelete')" color="error" :disabled="isEdit === true && initialTraitIds.has(element.id || '') && isTrialOwner === false" :prepend-icon="mdiDelete" @click.stop="deleteTrait(index)" />
               </template>
             </v-card>
           </div>
