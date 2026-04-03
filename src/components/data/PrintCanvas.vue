@@ -13,7 +13,6 @@
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
 
-  import canvasSize from 'canvas-size'
   import { useI18n } from 'vue-i18n'
 
   const canvas = useTemplateRef('canvas')
@@ -40,20 +39,11 @@
   function init () {
     const canv = canvas.value
     if (canv) {
-      canvasSize.maxArea({
-        max: 20_000,
-        min: 1,
-        step: 100,
-        useWorker: true,
-        usePromise: true,
-      }).then(result => {
-        loading.value = false
-        plot(result.width, result.height)
-      })
+      plot()
     }
   }
 
-  async function plot (width: number, height: number) {
+  async function plot () {
     const trialData = await getTrialData(compProps.trial.localId || '')
 
     ctx = canvas.value?.getContext('2d', { alpha: false })
@@ -103,34 +93,64 @@
     columnTextWidth = Math.ceil(columnTextWidth)
     textWidth = Math.max(textWidth, columnTextWidth)
 
-    if (((textWidth + config.padding) * compProps.trial.layout.columns < width) && ((textHeight + config.padding) * compProps.trial.layout.rows) < height) {
-      // Easy case, everything fits perfectly within the max size of the canvas
-      config.totalWidth = ((textWidth + config.padding) * compProps.trial.layout.columns)
-      config.totalHeight = ((textHeight + config.padding) * compProps.trial.layout.rows)
-      config.cellWidth = config.totalWidth / compProps.trial.layout.columns
-      config.cellHeight = config.totalHeight / compProps.trial.layout.rows
-      config.paddingLeft = rowTextWidth + config.padding
-      config.paddingTop = config.cellHeight
+    config.totalWidth = ((textWidth + config.padding) * compProps.trial.layout.columns)
+    config.totalHeight = ((textHeight + config.padding) * compProps.trial.layout.rows)
+    config.cellWidth = config.totalWidth / compProps.trial.layout.columns
+    config.cellHeight = config.totalHeight / compProps.trial.layout.rows
+    config.paddingLeft = rowTextWidth + config.padding
+    config.paddingTop = config.cellHeight
 
-      canvass.width = config.totalWidth + config.paddingLeft
-      canvass.height = config.totalHeight + config.paddingTop
-      canvass.style.width = `${config.totalWidth + config.paddingLeft}px`
-      canvass.style.height = `${config.totalHeight + config.paddingTop}px`
+    const canvasWidth = config.totalWidth + config.paddingLeft
+    const canvasHeight = config.totalHeight + config.paddingTop
 
-      nextTick(() => {
-        ctx = canvas.value?.getContext('2d', { alpha: false })
+    canvass.width = canvasWidth
+    canvass.height = canvasHeight
+    canvass.style.width = `${canvasWidth}px`
+    canvass.style.height = `${canvasHeight}px`
 
-        if (ctx) {
-          ctx.textBaseline = 'middle'
-          ctx.textAlign = 'center'
-          ctx.font = '14px sans-serif'
+    nextTick(() => {
+      // 1. Check if the browser downsized it immediately (common in iOS)
+      if (canvass.width !== canvasWidth || canvass.height !== canvasHeight) {
+        setError()
+        return
+      }
 
-          plotCells(ctx, trialData)
+      ctx = canvas.value?.getContext('2d')
+
+      if (!ctx) {
+        setError()
+        return
+      }
+
+      try {
+        // 2. Try to draw and read a single pixel.
+        // If the canvas is over the limit, this usually throws an error
+        // or returns an empty/transparent pixel where it shouldn't.
+        ctx.fillRect(canvasWidth - 1, canvasHeight - 1, 1, 1)
+        const data = ctx.getImageData(canvasWidth - 1, canvasHeight - 1, 1, 1).data
+
+        // Check if the fill actually worked (alpha should be 255)
+        if (data[3] !== 255) {
+          setError()
+          return
         }
-      })
-    } else {
-      errorMessage.value = 'errorMessagePrintCanvasTooBig'
-    }
+
+        ctx.textBaseline = 'middle'
+        ctx.textAlign = 'center'
+        ctx.font = '14px sans-serif'
+
+        plotCells(ctx, trialData)
+      } catch {
+        // 3. If the browser hits a hardware limit, getImageData often throws.
+        setError()
+        return
+      }
+    })
+  }
+
+  function setError () {
+    loading.value = false
+    errorMessage.value = 'errorMessagePrintCanvasTooBig'
   }
 
   function plotCells (ctx: CanvasRenderingContext2D, trialData: { [key: string]: CellPlus }) {
@@ -200,6 +220,8 @@
     }
 
     ctx.strokeRect(0, 0, config.totalWidth + config.paddingLeft - 1, config.totalHeight + config.paddingTop - 1)
+
+    loading.value = false
   }
 
   onMounted(() => {
