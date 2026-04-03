@@ -2,7 +2,7 @@
   <div>
     <p>{{ $t('pageTrialLayoutMarkersText') }}</p>
 
-    <v-switch v-model="markersEnabled" color="primary" :label="$t('formLabelUseMarkers')" />
+    <v-switch v-model="markersEnabled" hide-details color="primary" :label="$t('formLabelUseMarkers')" />
 
     <div v-show="markersEnabled && markers">
       <v-row v-if="markers">

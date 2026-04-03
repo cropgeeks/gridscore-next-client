@@ -3,6 +3,7 @@
     <v-list-item :prepend-icon="mdiExportVariant" :title="$t('buttonShare')" @click="internalEmit('share')" />
     <v-list-item :prepend-icon="mdiDatabaseSync" :title="$t('buttonSynchronize')" @click="internalEmit('synchronize')" v-if="canSynchronize" />
     <v-list-item :prepend-icon="mdiNotebookMultiple" :title="$t('buttonDuplicateTrial')" @click="internalEmit('duplicate')" />
+    <v-list-item :prepend-icon="mdiMagnifyScan" :title="$t('buttonShowOverview')" @click="internalEmit('print')" v-if="isListMode === false" />
     <template v-if="editable">
       <v-divider />
       <v-list-item :prepend-icon="isLocked ? mdiLockOpenVariant : mdiLockAlert" color="warning" :active="isLocked" :title="$t(isLocked ? 'buttonReactivateTrial' : 'buttonDeactivateTrial')" @click="internalEmit('lock')" v-if="isOwner" />
@@ -32,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-  import { mdiAccountPlus, mdiDatabaseSync, mdiDelete, mdiExportVariant, mdiFileUpload, mdiFormatListGroupPlus, mdiImagePlus, mdiLockAlert, mdiLockOpenVariant, mdiMenuRight, mdiNotebookEdit, mdiNotebookMultiple, mdiPlus, mdiTableArrowUp, mdiTagPlus } from '@mdi/js'
+  import { mdiAccountPlus, mdiDatabaseSync, mdiDelete, mdiExportVariant, mdiFileUpload, mdiFormatListGroupPlus, mdiImagePlus, mdiLockAlert, mdiLockOpenVariant, mdiMenuRight, mdiNotebookEdit, mdiNotebookMultiple, mdiPlus, mdiMagnifyScan, mdiTableArrowUp, mdiTagPlus } from '@mdi/js'
 
   const compProps = defineProps<{
     editable: boolean
@@ -43,9 +44,9 @@
     canSynchronize: boolean
   }>()
 
-  type Event = 'lock' | 'delete' | 'duplicate' | 'edit' | 'synchronize' | 'share' | 'add-trait' | 'add-person' | 'add-data' | 'add-metadata' | 'add-germplasm' | 'close-menu' | 'add-trait-reference-image'
+  type Event = 'lock' | 'delete' | 'duplicate' | 'edit' | 'synchronize' | 'share' | 'add-trait' | 'add-person' | 'add-data' | 'add-metadata' | 'add-germplasm' | 'close-menu' | 'add-trait-reference-image' | 'print'
 
-  const emit = defineEmits(['lock', 'delete', 'duplicate', 'edit', 'synchronize', 'share', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm', 'close-menu', 'add-trait-reference-image'])
+  const emit = defineEmits(['lock', 'delete', 'duplicate', 'edit', 'synchronize', 'share', 'add-trait', 'add-person', 'add-data', 'add-metadata', 'add-germplasm', 'close-menu', 'add-trait-reference-image', 'print'])
 
   function clickOutside () {
     emit('close-menu')

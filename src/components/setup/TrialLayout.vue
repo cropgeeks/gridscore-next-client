@@ -1,6 +1,6 @@
 <template>
   <div v-if="model">
-    <v-stepper-vertical class="layout-stepper" eager v-model="stepperIndex">
+    <v-stepper-vertical class="layout-stepper" hide-actions eager v-model="stepperIndex">
       <template #default="{ step }">
         <v-stepper-vertical-item
           :complete="step > 1"
@@ -8,6 +8,15 @@
           :title="t('pageTrialLayoutDimensionsTitle')"
           value="1"
         >
+          <v-stepper-actions class="mb-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" :disabled="stepperIndex === 1" color="primary" @click="stepperIndex--" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" color="primary" @click="stepperIndex++" />
+            </template>
+          </v-stepper-actions>
+
           <v-btn-toggle v-model="layoutType" :disabled="isEdit" mandatory color="primary" variant="tonal">
             <v-btn :prepend-icon="mdiGrid" :text="$t('pageTrialLayoutDimensionsGrid')" value="grid" :append-icon="layoutType === 'grid' ? mdiCheck : undefined" />
             <v-btn :prepend-icon="mdiLandRowsHorizontal" :text="$t('pageTrialLayoutDimensionsList')" value="list" :append-icon="layoutType === 'list' ? mdiCheck : undefined" />
@@ -92,13 +101,14 @@
             can-change
           />
 
-          <template #prev="{ prev }">
-            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
-          </template>
-
-          <template #next="{ next }">
-            <v-btn :append-icon="mdiArrowDown" color="primary" @click="next" />
-          </template>
+          <v-stepper-actions class="mt-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" :disabled="stepperIndex === 1" color="primary" @click="stepperIndex--" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" color="primary" @click="stepperIndex++" />
+            </template>
+          </v-stepper-actions>
         </v-stepper-vertical-item>
 
         <v-stepper-vertical-item
@@ -106,15 +116,25 @@
           :error="!isGermplasmValid"
           value="2"
         >
+          <v-stepper-actions class="mb-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="checkLeave(undefined, -1)" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" color="primary" :disabled="!isGermplasmValid" @click="checkLeave(undefined, 1)" />
+            </template>
+          </v-stepper-actions>
+
           <GermplasmLayoutTable v-model="model" :is-edit="isEdit" :is-clone="isClone" ref="germplasmLayoutTable" />
 
-          <template #prev="{ prev }">
-            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="checkLeave(prev)" />
-          </template>
-
-          <template #next="{ next }">
-            <v-btn :append-icon="mdiArrowDown" color="primary" @click="checkLeave(next)" :disabled="!isGermplasmValid" />
-          </template>
+          <v-stepper-actions class="mt-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="checkLeave(undefined, -1)" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" color="primary" :disabled="!isGermplasmValid" @click="checkLeave(undefined, 1)" />
+            </template>
+          </v-stepper-actions>
         </v-stepper-vertical-item>
 
         <v-stepper-vertical-item
@@ -122,15 +142,25 @@
           :error="!areCornersValid"
           value="3"
         >
+          <v-stepper-actions class="mb-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" :disabled="stepperIndex === 1" color="primary" @click="stepperIndex--" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" color="primary" @click="stepperIndex++" />
+            </template>
+          </v-stepper-actions>
+
           <CornerPointsMap v-model="model.layout" :dimension-names="model.dimensionNames" ref="cornerPointMap" />
 
-          <template #prev="{ prev }">
-            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
-          </template>
-
-          <template #next="{ next }">
-            <v-btn :append-icon="mdiArrowDown" color="primary" @click="next" />
-          </template>
+          <v-stepper-actions class="mt-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="stepperIndex--" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" color="primary" @click="stepperIndex++" />
+            </template>
+          </v-stepper-actions>
         </v-stepper-vertical-item>
 
         <v-stepper-vertical-item
@@ -138,15 +168,25 @@
           :error="!areCornersValid"
           value="4"
         >
+          <v-stepper-actions class="mb-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="stepperIndex--" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" :disabled="!isValid" color="primary" @click="emit('next')" />
+            </template>
+          </v-stepper-actions>
+
           <LayoutMarkers v-model="model.layout" :dimension-names="model.dimensionNames" ref="layoutMarkers" />
 
-          <template #prev="{ prev }">
-            <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="prev" />
-          </template>
-
-          <template #next>
-            <v-btn :append-icon="mdiArrowDown" color="primary" @click="emit('next')" :disabled="!isValid" />
-          </template>
+          <v-stepper-actions class="mt-4 pa-0">
+            <template #prev>
+              <v-btn :prepend-icon="mdiArrowUp" color="primary" @click="stepperIndex--" />
+            </template>
+            <template #next>
+              <v-btn :append-icon="mdiArrowDown" :disabled="!isValid" color="primary" @click="emit('next')" />
+            </template>
+          </v-stepper-actions>
         </v-stepper-vertical-item>
       </template>
     </v-stepper-vertical>
@@ -207,12 +247,22 @@
     return (model.value?.layout.columnLabels.every(cl => cl !== undefined && cl !== null) && model.value.layout.rowLabels.every(rl => rl !== undefined && rl !== null) && model.value?.layout.columnLabels.length === model.value?.layout.columns && model.value?.layout.rowLabels.length === model.value?.layout.rows) || false
   })
 
-  function checkLeave (callback: () => void) {
+  function checkLeave (callback: (() => void) | undefined, internalDelta: number) {
     if (stepperIndex.value === 2) {
       germplasmLayoutTable.value?.removeTable()
-        .then(() => callback())
+        .then(() => {
+          if (callback) {
+            callback()
+          } else {
+            stepperIndex.value += internalDelta
+          }
+        })
     } else {
-      callback()
+      if (callback) {
+        callback()
+      } else {
+        stepperIndex.value += internalDelta
+      }
     }
   }
 

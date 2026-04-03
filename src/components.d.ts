@@ -61,6 +61,7 @@ declare module 'vue' {
     PlotDataInformation: typeof import('./components/plot/PlotDataInformation.vue')['default']
     PlotInformation: typeof import('./components/plot/PlotInformation.vue')['default']
     PlotTraitCompletionChart: typeof import('./components/chart/PlotTraitCompletionChart.vue')['default']
+    PrintCanvas: typeof import('./components/data/PrintCanvas.vue')['default']
     QRScanInput: typeof import('./components/inputs/QRScanInput.vue')['default']
     ReplicateHeatmap: typeof import('./components/chart/ReplicateHeatmap.vue')['default']
     ResponsiveButton: typeof import('./components/util/ResponsiveButton.vue')['default']

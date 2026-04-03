@@ -285,7 +285,7 @@
 
   function checkTableChanges (callback: () => void, isNext: boolean) {
     if (stepperIndex.value === 2) {
-      trialLayout.value?.checkLeave(callback)
+      trialLayout.value?.checkLeave(callback, 0)
     } else if (stepperIndex.value === 3 && isNext) {
       bottomSheetVisible.value = true
     } else {

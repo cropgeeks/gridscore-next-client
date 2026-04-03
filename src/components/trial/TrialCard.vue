@@ -105,6 +105,7 @@
                   @add-data="emit('add-data')"
                   @add-metadata="emit('add-metadata')"
                   @share="emit('share')"
+                  @print="print"
                 />
               </v-menu>
             </template>
@@ -134,6 +135,7 @@
           @add-data="emit('add-data')"
           @add-metadata="emit('add-metadata')"
           @share="emit('share')"
+          @print="print"
           @close-menu="menuShown = false"
         />
         <template #actions>
@@ -158,6 +160,19 @@
       @event-deleted="deleteEvent"
       ref="eventModal"
     />
+
+    <v-dialog v-model="trialPrintViewModal" fullscreen scrollable v-if="trialPrintViewModal">
+      <v-card :title="$t('modalTitleTrialPrintView')">
+        <template #text>
+          <p>{{ $t('modalTextTrialPrintView') }}</p>
+          <PrintCanvas :trial="trial" />
+        </template>
+        <template #actions>
+          <v-spacer />
+          <v-btn :text="$t('buttonClose')" color="primary" variant="tonal" @click="trialPrintViewModal = false" />
+        </template>
+      </v-card>
+    </v-dialog>
 
     <v-dialog v-model="trialTimeFrameModal" max-width="min(90vw, 1024px)">
       <v-card :title="$t('modalTitleTraitTimeframe')">
@@ -191,11 +206,13 @@
   import { addTrialComment, addTrialEvent, deleteTrialComment, deleteTrialEvent } from '@/plugins/idb'
   import type { Comment, Event } from '@/plugins/types/gridscore'
   import EventModal from '@/components/modals/EventModal.vue'
+  import PrintCanvas from '@/components/data/PrintCanvas.vue'
 
   const store = coreStore()
 
   const menuShown = ref(false)
   const trialTimeFrameModal = ref(false)
+  const trialPrintViewModal = ref(false)
 
   export interface TrialCardProps {
     trial: TrialPlus
@@ -251,6 +268,10 @@
   const isSelected = computed(() => {
     return compProps.trial && compProps.trial.localId === store.selectedTrial
   })
+
+  function print () {
+    trialPrintViewModal.value = true
+  }
 
   function addNewEvent (event: Event) {
     addTrialEvent(compProps.trial.localId || '', event)

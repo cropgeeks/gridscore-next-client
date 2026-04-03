@@ -2,7 +2,7 @@
   <div v-if="corners">
     <p>{{ $t('pageTrialLayoutCornersText') }}</p>
 
-    <v-switch v-model="cornersEnabled" color="primary" :label="$t('formLabelUseCorners')" />
+    <v-switch v-model="cornersEnabled" hide-details color="primary" :label="$t('formLabelUseCorners')" />
 
     <div v-show="cornersEnabled && corners">
       <v-row class="mb-5" v-if="corners && cornerLabels">

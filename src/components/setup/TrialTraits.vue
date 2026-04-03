@@ -365,6 +365,7 @@
   import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
   import TraitInput from '@/components/inputs/TraitInput.vue'
   import { dragAndDrop } from '@formkit/drag-and-drop/vue'
+  import type { DragState } from '@formkit/drag-and-drop'
 
   const { t } = useI18n()
   const store = coreStore()
@@ -411,7 +412,13 @@
     parent: traitListRef,
     values: model,
     // @ts-ignore
-    config: { dragHandle: '.drag-handle' },
+    config: {
+      dragHandle: '.drag-handle',
+    },
+    handleEnd: (state: DragState<TraitPlus>) => {
+      // This is a workaround to some weird bug with this library.
+      state.draggedNode.el.style.zIndex = '0'
+    },
   })
 
   const exampleTraitValue = ref<string>()
