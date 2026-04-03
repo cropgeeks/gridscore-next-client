@@ -135,7 +135,7 @@
 
   function plotCells (ctx: CanvasRenderingContext2D, trialData: { [key: string]: CellPlus }) {
     ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, config.totalWidth, config.totalHeight)
+    ctx.fillRect(0, 0, config.totalWidth + config.paddingLeft, config.totalHeight + config.paddingTop)
 
     for (let r = 0; r < compProps.trial.layout.rows; r++) {
       ctx.fillStyle = '#ffffff'
@@ -165,36 +165,39 @@
       ctx.fillText(str, x + config.cellWidth / 2, config.paddingTop / 2)
     }
 
-    Object.values(trialData).forEach(td => {
-      const row = td.row || 0
-      const column = td.column || 0
+    for (let row = 0; row < compProps.trial.layout.rows; row++) {
+      for (let column = 0; column < compProps.trial.layout.columns; column++) {
+        let count = 0
+        // Determine the background color
+        if (row % 2 === 0) {
+          count++
+        }
+        if (column % 2 === 0) {
+          count++
+        }
+        switch (count) {
+          case 0:
+            ctx.fillStyle = '#ffffff'
+            break
+          case 1:
+            ctx.fillStyle = '#f2f2f2'
+            break
+          default:
+            ctx.fillStyle = '#e0e0e0'
+            break
+        }
 
-      let count = 0
-      // Determine the background color
-      if (row % 2 === 0) {
-        count++
-      }
-      if (column % 2 === 0) {
-        count++
-      }
-      switch (count) {
-        case 0:
-          ctx.fillStyle = '#ffffff'
-          break
-        case 1:
-          ctx.fillStyle = '#f2f2f2'
-          break
-        default:
-          ctx.fillStyle = '#e0e0e0'
-          break
-      }
+        const x = column * config.cellWidth + config.paddingLeft
+        const y = row * config.cellHeight + config.paddingTop
+        ctx.fillRect(x, y, config.cellWidth, config.cellHeight)
 
-      const x = column * config.cellWidth + config.paddingLeft
-      const y = row * config.cellHeight + config.paddingTop
-      ctx.fillRect(x, y, config.cellWidth, config.cellHeight)
-      ctx.fillStyle = 'black'
-      ctx.fillText(td.displayName || '', x + config.cellWidth / 2, y + config.cellHeight / 2)
-    })
+        const td = trialData[`${row}|${column}`]
+        if (td) {
+          ctx.fillStyle = 'black'
+          ctx.fillText(td.displayName || '', x + config.cellWidth / 2, y + config.cellHeight / 2)
+        }
+      }
+    }
 
     ctx.strokeRect(0, 0, config.totalWidth + config.paddingLeft - 1, config.totalHeight + config.paddingTop - 1)
   }
