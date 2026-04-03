@@ -58,7 +58,7 @@
 
   function focus (index: number) {
     if (index === 1) {
-      emitter.emit('tts', compProps.trait.name)
+      emitter.emit('tts', compProps.trait.name, false)
     }
 
     // @ts-ignore

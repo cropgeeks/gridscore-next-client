@@ -470,6 +470,10 @@
     } else {
       emitter.emit('tts', toLocalDateString(current))
     }
+
+    if (delta === 0) {
+      emit('traverse')
+    }
   }
 
   function setDate () {

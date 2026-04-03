@@ -492,6 +492,12 @@
     nextTick(() => traitDataHistoryModal.value?.show())
   }
 
+  watch(cell, async newValue => {
+    if (newValue) {
+      emitter.emit('tts', newValue.displayName, false)
+    }
+  })
+
   watch(dialog, async newValue => {
     if (newValue) {
       // Listen to escape and enter barcodes/input
