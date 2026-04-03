@@ -28,7 +28,7 @@
 
     <v-list variant="tonal" class="pb-0" slim v-if="horizontal" :disabled="!interactive">
       <v-row no-gutters>
-        <template v-if="forceShowDetails || (store.storeTrialShowDetails !== false)">
+        <template v-if="showDetails">
           <v-col cols="12" sm="6" md="4" lg="3">
             <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
           </v-col>
@@ -60,7 +60,7 @@
       </v-row>
     </v-list>
     <v-list variant="tonal" class="pb-0" slim :disabled="!interactive" v-else>
-      <template v-if="forceShowDetails || (store.storeTrialShowDetails !== false)">
+      <template v-if="showDetails">
         <v-list-item :prepend-icon="mdiFolderTable" :title="trial.group?.name || $t('widgetTrialSelectorGroupUnassigned')" />
         <v-list-item :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows', i18nParams)"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.rows, 1)" inline /></template></v-list-item>
         <v-list-item :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns', i18nParams)"><template #append><v-badge :content="getNumberWithSuffix(trial.layout.columns, 1)" inline /></template></v-list-item>
@@ -75,74 +75,76 @@
       </template>
     </v-list>
 
-    <v-card-actions v-if="showActions">
-      <slot name="actions">
-        <div class="d-flex justify-space-between flex-grow-1 flex-wrap ga-2">
-          <div>
-            <v-btn variant="tonal" :color="selected ? 'info' : undefined" :text="$t(selected ? 'buttonDeselect' : 'buttonSelect')" :prepend-icon="selected ? mdiCheckboxMarked : mdiCheckboxBlankOutline" v-if="selectionEnabled" @click="emit('toggle-select')" />
-            <template v-else>
-              <v-btn variant="tonal" :append-icon="mdiMenuDown" v-if="horizontal === false" @click="menuShown = true"><v-icon :icon="mdiCog" /></v-btn>
-              <v-menu v-else>
-                <template #activator="{ props }">
-                  <v-btn variant="tonal" :append-icon="mdiMenuDown" v-bind="props"><v-icon :icon="mdiCog" /></v-btn>
-                </template>
-                <TrialOptionsDropdown
-                  :editable="trial.editable || false"
-                  :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
-                  :is-list-mode="trial.layout.columns === 1"
-                  :is-locked="trial.isLocked"
-                  :is-shared="trial.shareStatus !== ShareStatus.NOT_SHARED"
-                  :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
-                  @delete="emit('delete')"
-                  @edit="emit('edit')"
-                  @lock="emit('lock')"
-                  @synchronize="emit('synchronize')"
-                  @duplicate="emit('duplicate')"
-                  @add-trait="emit('add-trait')"
-                  @add-trait-reference-image="emit('add-trait-reference-image')"
-                  @add-person="emit('add-person')"
-                  @add-germplasm="emit('add-germplasm')"
-                  @add-data="emit('add-data')"
-                  @add-metadata="emit('add-metadata')"
-                  @share="emit('share')"
-                  @print="print"
-                />
-              </v-menu>
-            </template>
+    <template v-if="showActions">
+      <v-card-actions>
+        <slot name="actions">
+          <div class="d-flex justify-space-between flex-grow-1 flex-wrap ga-2">
+            <div>
+              <v-btn variant="tonal" :color="selected ? 'info' : undefined" :text="$t(selected ? 'buttonDeselect' : 'buttonSelect')" :prepend-icon="selected ? mdiCheckboxMarked : mdiCheckboxBlankOutline" v-if="selectionEnabled" @click="emit('toggle-select')" />
+              <template v-else>
+                <v-btn variant="tonal" :append-icon="mdiMenuDown" v-if="horizontal === false && showDetails === true" @click="menuShown = true"><v-icon :icon="mdiCog" /></v-btn>
+                <v-menu v-else>
+                  <template #activator="{ props }">
+                    <v-btn variant="tonal" :append-icon="mdiMenuDown" v-bind="props"><v-icon :icon="mdiCog" /></v-btn>
+                  </template>
+                  <TrialOptionsDropdown
+                    :editable="trial.editable || false"
+                    :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
+                    :is-list-mode="trial.layout.columns === 1"
+                    :is-locked="trial.isLocked"
+                    :is-shared="trial.shareStatus !== ShareStatus.NOT_SHARED"
+                    :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
+                    @delete="emit('delete')"
+                    @edit="emit('edit')"
+                    @lock="emit('lock')"
+                    @synchronize="emit('synchronize')"
+                    @duplicate="emit('duplicate')"
+                    @add-trait="emit('add-trait')"
+                    @add-trait-reference-image="emit('add-trait-reference-image')"
+                    @add-person="emit('add-person')"
+                    @add-germplasm="emit('add-germplasm')"
+                    @add-data="emit('add-data')"
+                    @add-metadata="emit('add-metadata')"
+                    @share="emit('share')"
+                    @print="print"
+                  />
+                </v-menu>
+              </template>
+            </div>
+            <v-btn :prepend-icon="isSelected ? mdiNotebookCheck : mdiNotebookEdit" :text="$t(isSelected ? 'buttonActive' : 'buttonSelect')" :color="isSelected ? 'primary' : 'info'" variant="tonal" @click="emit('load')" />
           </div>
-          <v-btn :prepend-icon="isSelected ? mdiNotebookCheck : mdiNotebookEdit" :text="$t(isSelected ? 'buttonActive' : 'buttonSelect')" :color="isSelected ? 'primary' : 'info'" variant="tonal" @click="emit('load')" />
-        </div>
-      </slot>
-    </v-card-actions>
-    <v-expand-transition v-if="horizontal === false">
-      <v-card :title="$t('widgetTrialSelectorMenuTitle')" v-if="menuShown" class="d-flex flex-column position-absolute w-100" height="100%" style="bottom: 0;">
-        <TrialOptionsDropdown
-          :editable="trial.editable || false"
-          :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
-          :is-list-mode="trial.layout.columns === 1"
-          :is-locked="trial.isLocked"
-          :is-shared="trial.shareStatus !== ShareStatus.NOT_SHARED"
-          :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
-          @delete="emit('delete')"
-          @edit="emit('edit')"
-          @lock="emit('lock')"
-          @synchronize="emit('synchronize')"
-          @duplicate="emit('duplicate')"
-          @add-trait="emit('add-trait')"
-          @add-trait-reference-image="emit('add-trait-reference-image')"
-          @add-person="emit('add-person')"
-          @add-germplasm="emit('add-germplasm')"
-          @add-data="emit('add-data')"
-          @add-metadata="emit('add-metadata')"
-          @share="emit('share')"
-          @print="print"
-          @close-menu="menuShown = false"
-        />
-        <template #actions>
-          <v-btn variant="tonal" color="primary" :append-icon="mdiMenuUp" @click="menuShown = false"><v-icon :icon="mdiCog" /></v-btn>
-        </template>
-      </v-card>
-    </v-expand-transition>
+        </slot>
+      </v-card-actions>
+      <v-expand-transition v-if="horizontal === false">
+        <v-card :title="$t('widgetTrialSelectorMenuTitle')" v-if="menuShown" class="d-flex flex-column position-absolute w-100" height="100%" style="bottom: 0;">
+          <TrialOptionsDropdown
+            :editable="trial.editable || false"
+            :is-owner="trial.shareStatus === ShareStatus.NOT_SHARED || trial.shareStatus === ShareStatus.OWNER"
+            :is-list-mode="trial.layout.columns === 1"
+            :is-locked="trial.isLocked"
+            :is-shared="trial.shareStatus !== ShareStatus.NOT_SHARED"
+            :can-synchronize="(trial.transactionCount && trial.transactionCount > 0) || trial.hasRemoteUpdate || false"
+            @delete="emit('delete')"
+            @edit="emit('edit')"
+            @lock="emit('lock')"
+            @synchronize="emit('synchronize')"
+            @duplicate="emit('duplicate')"
+            @add-trait="emit('add-trait')"
+            @add-trait-reference-image="emit('add-trait-reference-image')"
+            @add-person="emit('add-person')"
+            @add-germplasm="emit('add-germplasm')"
+            @add-data="emit('add-data')"
+            @add-metadata="emit('add-metadata')"
+            @share="emit('share')"
+            @print="print"
+            @close-menu="menuShown = false"
+          />
+          <template #actions>
+            <v-btn variant="tonal" color="primary" :append-icon="mdiMenuUp" @click="menuShown = false"><v-icon :icon="mdiCog" /></v-btn>
+          </template>
+        </v-card>
+      </v-expand-transition>
+    </template>
 
     <CommentModal
       type="trial"
@@ -243,6 +245,7 @@
 
   const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const canEdit = computed(() => compProps.trial.editable === true && compProps.trial.isLocked !== true)
+  const showDetails = computed(() => compProps.forceShowDetails || (store.storeTrialShowDetails !== false))
 
   const hasTimeframeTraits = computed(() => compProps.trial?.traits.some(t => t.timeframe))
 
