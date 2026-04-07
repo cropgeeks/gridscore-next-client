@@ -35,10 +35,10 @@
     const x = Math.abs(-compProps.x / (compProps.columns * compProps.dimensions.cellWidth) * compProps.dimensions.canvasWidth)
 
     // Background color
-    ctx.fillStyle = store.storeDarkMode ? '#8e8c84' : '#f2f2f2'
+    ctx.fillStyle = store.storeIsDarkMode ? '#8e8c84' : '#f2f2f2'
     ctx.fillRect(0, 0, compProps.dimensions.canvasWidth, compProps.dimensions.hScrollHeight)
     // Draw the handle
-    ctx.fillStyle = store.storeDarkMode ? '#f2f2f2' : '#8e8c84'
+    ctx.fillStyle = store.storeIsDarkMode ? '#f2f2f2' : '#8e8c84'
     ctx.fillRect(x, 0, w, compProps.dimensions.hScrollHeight)
   }
 
@@ -67,7 +67,7 @@
   watch(() => compProps.x, async () => draw())
   watch(() => compProps.dimensions, async () => reset())
   watch(() => compProps.columns, async () => draw())
-  watch(() => store.storeDarkMode, async () => draw())
+  watch(() => store.storeIsDarkMode, async () => draw())
 
   defineExpose({
     reset,

@@ -216,19 +216,22 @@
       const plotInfo: any[] = []
       Object.keys(trialData).forEach(td => {
         const [row, column] = td.split('|').map(c => +c)
-        if (trialData && trialData[td] && trialData[td].geography && (trialData[td].geography.corners || trialData[td].geography.center)) {
+        const tdd = trialData?.[td]
+        if (trialData && tdd && tdd.geography && (tdd.geography.corners || tdd.geography.center)) {
           plotInfo.push({
             properties: {
-              displayName: trialData[td].displayName,
-              germplasm: trialData[td].germplasm,
-              rep: trialData[td].rep,
-              treatment: trialData[td].treatment,
+              displayName: tdd.displayName,
+              germplasm: tdd.germplasm,
+              rep: tdd.rep,
+              treatment: tdd.treatment,
+              displayRow: tdd.displayRow,
+              displayColumn: tdd.displayColumn,
               row,
               column,
-              categories: trialData[td].categories || [],
+              categories: tdd.categories || [],
             },
-            corners: trialData[td].geography.corners,
-            center: trialData[td].geography.center,
+            corners: tdd.geography.corners,
+            center: tdd.geography.center,
           })
         }
       })
@@ -254,7 +257,7 @@
               return {}
             }
           },
-          pointToLayer(feature, latlng) {
+          pointToLayer (feature, latlng) {
             const color = getColor(feature.properties)
             return L.circleMarker(latlng, {
               radius: 8,
@@ -298,7 +301,7 @@
       let selectionField: string
       switch (userSelection.value.type) {
         case 'cell':
-          selectionField = properties.displayName || properties.germplasm
+          selectionField = `${properties.displayRow}|${properties.displayColumn} - ${properties.displayName || properties.germplasm}`
           break
         case 'germplasm':
           selectionField = properties.germplasm

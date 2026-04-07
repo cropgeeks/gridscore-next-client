@@ -153,7 +153,7 @@
               if (compProps.userSelection && compProps.userSelection.type) {
                 switch (compProps.userSelection.type) {
                   case 'cell':
-                    selectionField = cell.displayName || cell.germplasm
+                    selectionField = `${cell.displayRow}|${cell.displayColumn} - ${cell.displayName || cell.germplasm}`
                     break
                   case 'germplasm':
                     selectionField = cell.germplasm
@@ -283,7 +283,7 @@
               if (compProps.userSelection && compProps.userSelection.type) {
                 switch (compProps.userSelection.type) {
                   case 'cell':
-                    selectionField = cell.displayName || cell.germplasm
+                    selectionField = `${cell.displayRow}|${cell.displayColumn} - ${cell.displayName || cell.germplasm}`
                     break
                   case 'germplasm':
                     selectionField = cell.germplasm

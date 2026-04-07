@@ -55,10 +55,10 @@
 
   let ctx: CanvasRenderingContext2D | null = null
 
-  const fillStyleMarked = computed(() => store.storeDarkMode ? '#364a5e' : '#aebfd0')
-  const fillStyleLightGray = computed(() => store.storeDarkMode ? '#0d0d0d' : '#f2f2f2')
-  const fillStyleWhite = computed(() => store.storeDarkMode ? '#000000' : '#ffffff')
-  const fillStyleText = computed(() => store.storeDarkMode ? '#ffffff' : '#000000')
+  const fillStyleMarked = computed(() => store.storeIsDarkMode ? '#364a5e' : '#aebfd0')
+  const fillStyleLightGray = computed(() => store.storeIsDarkMode ? '#0d0d0d' : '#f2f2f2')
+  const fillStyleWhite = computed(() => store.storeIsDarkMode ? '#000000' : '#ffffff')
+  const fillStyleText = computed(() => store.storeIsDarkMode ? '#ffffff' : '#000000')
 
   function reset () {
     if (resizeRunning.value) {

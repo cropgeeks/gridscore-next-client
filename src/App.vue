@@ -433,6 +433,11 @@
 </script>
 
 <style>
+.prevent-pull-to-refresh {
+  /* Only prevents refresh when interacting with this div */
+  overscroll-behavior-y: contain;
+}
+
 p {
   margin-bottom: 0.5rem;
 }

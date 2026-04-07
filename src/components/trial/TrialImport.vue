@@ -265,6 +265,8 @@
 
   watch(() => compProps.code, async newValue => {
     shareCode.value = newValue
+
+    nextTick(() => getTrial())
   }, { immediate: true })
 
   onMounted(() => {

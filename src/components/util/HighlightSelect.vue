@@ -100,7 +100,7 @@
       case 'cell':
         return {
           type: selectionMode.value,
-          selectedItems: (selectedCells.value || []).map(g => g.displayName || g.germplasm),
+          selectedItems: (selectedCells.value || []).map(g => `${g.displayRow}|${g.displayColumn} - ${g.displayName || g.germplasm}`),
         }
       case 'germplasm':
         return {

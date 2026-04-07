@@ -1011,7 +1011,7 @@
   }, { immediate: true })
 
   watch(userPosition, async () => updateUserPosition())
-  watch(() => store.storeDarkMode, async () => reset())
+  watch(() => store.storeIsDarkMode, async () => reset())
   watch(() => compProps.traitCutoff, async () => update())
 
   watch(() => compProps.markedRows, async (newValue, oldValue) => {

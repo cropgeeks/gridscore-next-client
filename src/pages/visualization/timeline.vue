@@ -30,7 +30,7 @@
         <v-col cols="12" md="6">
           <HighlightSelect
             :trial="trial"
-            :allow-cell-select="false"
+            :allow-cell-select="true"
             ref="highlightSelect"
           />
         </v-col>

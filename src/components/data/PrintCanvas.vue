@@ -28,12 +28,12 @@
   let ctx: CanvasRenderingContext2D | null | undefined = undefined
   const config = {
     padding: 10,
-    cellWidth: 0,
     cellHeight: 0,
     totalWidth: 0,
     totalHeight: 0,
     paddingLeft: 0,
     paddingTop: 0,
+    columnTextWidths: [] as number[],
   }
 
   function init () {
@@ -64,44 +64,42 @@
       return
     }
 
-    let rowTextWidth = 0
-    let columnTextWidth = 0
-    let textWidth = 0
+    let columnTextWidths = Array.from(new Array(compProps.trial.layout.columns + 1).keys()).map(() => 0)
     let textHeight = 0
 
     for (let y = 0; y < compProps.trial.layout.rows; y++) {
       const str = n(getRowLabel(compProps.trial.layout, y))
-      rowTextWidth = Math.max(rowTextWidth, ctxx.measureText(str).width)
+      columnTextWidths[0] = Math.max(columnTextWidths[0] || 0, ctxx.measureText(str).width)
     }
     for (let x = 0; x < compProps.trial.layout.columns; x++) {
       const str = n(getColumnLabel(compProps.trial.layout, x))
-      columnTextWidth = Math.max(columnTextWidth, ctxx.measureText(str).width)
+      columnTextWidths[x + 1] = Math.max(columnTextWidths[x + 1] || 0, ctxx.measureText(str).width)
     }
 
-    Object.values(trialData).forEach(td => {
+    Object.keys(trialData).forEach(key => {
+      const td = trialData[key]
       if (td && td.germplasm) {
+        const [row, column] = key.split('|').map(Number)
         const dims = ctxx.measureText(td.displayName || '')
 
         textHeight = Math.max(textHeight, dims.fontBoundingBoxAscent + dims.fontBoundingBoxDescent)
-        textWidth = Math.max(textWidth, dims.width)
+        columnTextWidths[(column || 0) + 1] = Math.max(columnTextWidths[(column || 0) + 1] || 0, dims.width)
       }
     })
 
-    textWidth = Math.ceil(textWidth)
     textHeight = Math.ceil(textHeight)
-    rowTextWidth = Math.ceil(rowTextWidth)
-    columnTextWidth = Math.ceil(columnTextWidth)
-    textWidth = Math.max(textWidth, columnTextWidth)
+    columnTextWidths = columnTextWidths.map(c => Math.ceil(c + config.padding))
 
-    config.totalWidth = ((textWidth + config.padding) * compProps.trial.layout.columns)
+    config.totalWidth = columnTextWidths.reduce((a, b) => a + b, 0)
     config.totalHeight = ((textHeight + config.padding) * compProps.trial.layout.rows)
-    config.cellWidth = config.totalWidth / compProps.trial.layout.columns
     config.cellHeight = config.totalHeight / compProps.trial.layout.rows
-    config.paddingLeft = rowTextWidth + config.padding
+    config.paddingLeft = (columnTextWidths[0] || 0)
     config.paddingTop = config.cellHeight
+    config.columnTextWidths = columnTextWidths
+    config.totalHeight += config.paddingTop
 
-    const canvasWidth = config.totalWidth + config.paddingLeft
-    const canvasHeight = config.totalHeight + config.paddingTop
+    const canvasWidth = config.totalWidth
+    const canvasHeight = config.totalHeight
 
     canvass.width = canvasWidth
     canvass.height = canvasHeight
@@ -155,8 +153,9 @@
 
   function plotCells (ctx: CanvasRenderingContext2D, trialData: { [key: string]: CellPlus }) {
     ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, config.totalWidth + config.paddingLeft, config.totalHeight + config.paddingTop)
+    ctx.fillRect(0, 0, config.totalWidth, config.totalHeight)
 
+    // Row headers
     for (let r = 0; r < compProps.trial.layout.rows; r++) {
       ctx.fillStyle = '#ffffff'
       // Determine the background color
@@ -166,11 +165,13 @@
 
       const str = n(getRowLabel(compProps.trial.layout, r))
       const y = r * config.cellHeight + config.paddingTop
-      ctx.fillRect(0, y, config.cellWidth, config.cellHeight)
+      ctx.fillRect(0, y, config.columnTextWidths[0] || 0, config.cellHeight)
       ctx.fillStyle = 'black'
       ctx.fillText(str, config.paddingLeft / 2, y + config.cellHeight / 2)
     }
 
+    // Column headers
+    let x = config.paddingLeft
     for (let c = 0; c < compProps.trial.layout.columns; c++) {
       ctx.fillStyle = '#ffffff'
       // Determine the background color
@@ -179,13 +180,15 @@
       }
 
       const str = n(getColumnLabel(compProps.trial.layout, c))
-      const x = c * config.cellWidth + config.paddingLeft
-      ctx.fillRect(x, 0, config.cellWidth, config.cellHeight)
+      ctx.fillRect(x, 0, (config.columnTextWidths[c + 1] || 0), config.cellHeight)
       ctx.fillStyle = 'black'
-      ctx.fillText(str, x + config.cellWidth / 2, config.paddingTop / 2)
+      ctx.fillText(str, x + (config.columnTextWidths[c + 1] || 0) / 2, config.paddingTop / 2)
+
+      x += config.columnTextWidths[c + 1] || 0
     }
 
     for (let row = 0; row < compProps.trial.layout.rows; row++) {
+      x = config.paddingLeft
       for (let column = 0; column < compProps.trial.layout.columns; column++) {
         let count = 0
         // Determine the background color
@@ -207,19 +210,20 @@
             break
         }
 
-        const x = column * config.cellWidth + config.paddingLeft
         const y = row * config.cellHeight + config.paddingTop
-        ctx.fillRect(x, y, config.cellWidth, config.cellHeight)
+        ctx.fillRect(x, y, (config.columnTextWidths[column + 1] || 0), config.cellHeight)
 
         const td = trialData[`${row}|${column}`]
         if (td) {
           ctx.fillStyle = 'black'
-          ctx.fillText(td.displayName || '', x + config.cellWidth / 2, y + config.cellHeight / 2)
+          ctx.fillText(td.displayName || '', x + (config.columnTextWidths[column + 1] || 0) / 2, y + config.cellHeight / 2)
         }
+
+        x += config.columnTextWidths[column + 1] || 0
       }
     }
 
-    ctx.strokeRect(0, 0, config.totalWidth + config.paddingLeft - 1, config.totalHeight + config.paddingTop - 1)
+    ctx.strokeRect(0, 0, config.totalWidth - 1, config.totalHeight - 1)
 
     loading.value = false
   }

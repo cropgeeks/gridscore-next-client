@@ -564,74 +564,8 @@ async function getTrials (includeTransactions?: boolean, ids?: string[]): Promis
           trials = trials.filter(t => ids.includes(t.localId))
         }
 
-        trials.forEach(trial => {
-          if (trial) {
-            if (!trial.layout.rowOrder) {
-              trial.layout.rowOrder = DisplayOrder.TOP_TO_BOTTOM
-            }
-            if (!trial.layout.columnOrder) {
-              trial.layout.columnOrder = DisplayOrder.LEFT_TO_RIGHT
-            }
-
-            const trialImageConfig = {
-              serverUrl: getServerUrl(trial),
-              priorityShareCode: getPriorityShareCode(trial),
-            }
-
-            if (trial.traits) {
-              trial.traits.forEach((t: TraitPlus, i: number) => {
-                if (t.hasImage === true && !t.imageUrl) {
-                  t.imageUrl = `${trialImageConfig.serverUrl}trait/${trialImageConfig.priorityShareCode}/${t.id}/img`
-                }
-                t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
-                t.progress = 0
-                t.editable = true
-                if (t.timeframe && t.timeframe.type === TimeframeType.ENFORCE) {
-                  const now = new Date().toISOString()
-                  if (t.timeframe.start) {
-                    const date = new Date(t.timeframe.start)
-                    date.setHours(0)
-                    date.setMinutes(0)
-                    date.setSeconds(0)
-
-                    if (now < date.toISOString()) {
-                      t.editable = false
-                    }
-                  }
-
-                  if (t.timeframe.end) {
-                    const date = new Date(t.timeframe.end)
-                    date.setHours(23)
-                    date.setMinutes(59)
-                    date.setSeconds(59)
-
-                    if (now > date.toISOString()) {
-                      t.editable = false
-                    }
-                  }
-                }
-              })
-            }
-
-            if (trial.shareCodes) {
-              if (trial.shareCodes.ownerCode !== undefined && trial.shareCodes.ownerCode !== null) {
-                trial.editable = true
-                trial.shareStatus = ShareStatus.OWNER
-              } else if (trial.shareCodes.editorCode !== undefined && trial.shareCodes.editorCode !== null) {
-                trial.editable = true
-                trial.shareStatus = ShareStatus.EDITOR
-              } else if (trial.shareCodes.viewerCode !== undefined && trial.shareCodes.viewerCode !== null) {
-                trial.editable = false
-                trial.shareStatus = ShareStatus.VIEWER
-              } else {
-                trial.editable = false
-                trial.shareStatus = ShareStatus.NOT_SHARED
-              }
-            } else {
-              trial.editable = true
-              trial.shareStatus = ShareStatus.NOT_SHARED
-            }
-          }
+        trials.forEach((trial: TrialPlus) => {
+          handleTrial(trial)
         })
       }
 
@@ -655,70 +589,7 @@ async function getTrials (includeTransactions?: boolean, ids?: string[]): Promis
   }
 }
 
-function setTransactionCount (t: TrialPlus, transaction: Transaction) {
-  // Sum up all individual transaction types
-  t.transactionCount = 0
-  t.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-  t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-  t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
-  t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
-  t.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
-  t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
-  t.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
-  t.transactionCount += transaction.trialLockedTransaction !== undefined ? 1 : 0
-  t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
-  t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
-  t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
-  t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
-  t.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
-  t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
-  t.transactionCount += transaction.trialGermplasmWithMetadataAddedTransactions ? transaction.trialGermplasmWithMetadataAddedTransactions.length : 0
-  t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
-  t.transactionCount += transaction.trialEditTransaction ? 1 : 0
-  t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
-  t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
-  t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
-  t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
-  t.transactionCount += (transaction.traitOrderTransaction || []).length > 0 ? 1 : 0
-}
-
-async function updateTrial (localId: string, updatedTrial: TrialPlus) {
-  const trial = await getTrialById(localId)
-
-  if (trial) {
-    const db = await getDb()
-
-    // Delete and local changes that may have been made to the trial temporarily
-    delete updatedTrial.editable
-    delete updatedTrial.shareStatus
-    delete updatedTrial.transactionCount
-    delete updatedTrial.data
-
-    // Set the trial group again
-    if (trial.group && trial.group.name) {
-      updatedTrial.group = {
-        name: trial.group.name,
-      }
-    }
-
-    if (updatedTrial.traits) {
-      updatedTrial.traits.forEach((t: TraitPlus) => {
-        delete t.color
-        delete t.editable
-        delete t.progress
-      })
-    }
-
-    return db.put('trials', updatedTrial)
-  } else {
-    return new Promise<void>(resolve => resolve())
-  }
-}
-
-async function getTrialById (localId: string) {
-  const db = await getDb()
-
-  const trial = await db.get('trials', localId)
+function handleTrial (trial: TrialPlus) {
   if (trial) {
     if (!trial.layout.rowOrder) {
       trial.layout.rowOrder = DisplayOrder.TOP_TO_BOTTOM
@@ -786,6 +657,74 @@ async function getTrialById (localId: string) {
       trial.shareStatus = ShareStatus.NOT_SHARED
     }
   }
+}
+
+function setTransactionCount (t: TrialPlus, transaction: Transaction) {
+  // Sum up all individual transaction types
+  t.transactionCount = 0
+  t.transactionCount += transaction.plotCommentAddedTransactions ? Object.values(transaction.plotCommentAddedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+  t.transactionCount += transaction.plotCommentDeletedTransactions ? Object.values(transaction.plotCommentDeletedTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+  t.transactionCount += transaction.plotTraitDataChangeTransactions ? Object.values(transaction.plotTraitDataChangeTransactions).map(tr => tr.length).reduce((a, b) => a + b, 0) : 0
+  t.transactionCount += transaction.plotGeographyChangeTransactions ? Object.values(transaction.plotGeographyChangeTransactions).length : 0
+  t.transactionCount += transaction.plotDetailsChangeTransaction ? Object.values(transaction.plotDetailsChangeTransaction).length : 0
+  t.transactionCount += transaction.plotMarkedTransactions ? Object.keys(transaction.plotMarkedTransactions).length : 0
+  t.transactionCount += transaction.plotLockedTransactions ? Object.keys(transaction.plotLockedTransactions).length : 0
+  t.transactionCount += transaction.trialLockedTransaction !== undefined ? 1 : 0
+  t.transactionCount += transaction.trialCommentAddedTransactions ? transaction.trialCommentAddedTransactions.length : 0
+  t.transactionCount += transaction.trialCommentDeletedTransactions ? transaction.trialCommentDeletedTransactions.length : 0
+  t.transactionCount += transaction.trialEventAddedTransactions ? transaction.trialEventAddedTransactions.length : 0
+  t.transactionCount += transaction.trialEventDeletedTransactions ? transaction.trialEventDeletedTransactions.length : 0
+  t.transactionCount += transaction.trialPersonAddedTransactions ? transaction.trialPersonAddedTransactions.length : 0
+  t.transactionCount += transaction.trialGermplasmAddedTransactions ? transaction.trialGermplasmAddedTransactions.length : 0
+  t.transactionCount += transaction.trialGermplasmWithMetadataAddedTransactions ? transaction.trialGermplasmWithMetadataAddedTransactions.length : 0
+  t.transactionCount += transaction.trialTraitAddedTransactions ? transaction.trialTraitAddedTransactions.length : 0
+  t.transactionCount += transaction.trialEditTransaction ? 1 : 0
+  t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.germplasmBrapiIds).length : 0
+  t.transactionCount += transaction.brapiIdChangeTransaction ? Object.keys(transaction.brapiIdChangeTransaction.traitBrapiIds).length : 0
+  t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
+  t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
+  t.transactionCount += (transaction.traitOrderTransaction || []).length > 0 ? 1 : 0
+}
+
+async function updateTrial (localId: string, updatedTrial: TrialPlus) {
+  const trial = await getTrialById(localId)
+
+  if (trial) {
+    const db = await getDb()
+
+    // Delete and local changes that may have been made to the trial temporarily
+    delete updatedTrial.editable
+    delete updatedTrial.shareStatus
+    delete updatedTrial.transactionCount
+    delete updatedTrial.data
+
+    // Set the trial group again
+    if (trial.group && trial.group.name) {
+      updatedTrial.group = {
+        name: trial.group.name,
+      }
+    }
+
+    if (updatedTrial.traits) {
+      updatedTrial.traits.forEach((t: TraitPlus) => {
+        delete t.color
+        delete t.editable
+        delete t.progress
+      })
+    }
+
+    return db.put('trials', updatedTrial)
+  } else {
+    return new Promise<void>(resolve => resolve())
+  }
+}
+
+async function getTrialById (localId: string) {
+  const db = await getDb()
+
+  const trial = await db.get('trials', localId)
+
+  handleTrial(trial)
 
   if (trial) {
     getStore().setBrapiConfig(trial.brapiConfig)

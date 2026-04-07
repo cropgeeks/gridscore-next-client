@@ -35,7 +35,7 @@
 
   watch(() => compProps.traits, async () => reset())
   watch(() => compProps.circleRadius, async () => reset())
-  watch(() => store.storeDarkMode, async () => draw())
+  watch(() => store.storeIsDarkMode, async () => draw())
 
   function reset () {
     const scale = window.devicePixelRatio

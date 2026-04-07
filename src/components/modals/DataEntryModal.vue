@@ -52,7 +52,7 @@
         </v-toolbar-items>
       </v-toolbar>
 
-      <v-card-text class="pa-0">
+      <v-card-text class="pa-0 prevent-pull-to-refresh">
         <v-banner class="pa-2" sticky style="z-index: 100;" color="warning" lines="one" bg-color="warning" density="compact" :icon="mdiAlert" v-if="cell.isLocked === true || trial.isLocked === true">
           <span class="text-wrap">{{ $t('widgetDataInputLockedWarning') }}</span>
         </v-banner>
@@ -810,6 +810,7 @@
   }
 
   function show (row?: number, column?: number) {
+    document.body.classList.add('prevent-pull-to-refresh')
     dataOutsideRangeAccepted.value = false
     cellData.value = {}
     itemsValid.value = {}
@@ -832,6 +833,7 @@
     }
   }
   function hide () {
+    document.body.classList.remove('prevent-pull-to-refresh')
     dialog.value = false
     emit('hide')
   }
