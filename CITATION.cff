@@ -1,35 +1,145 @@
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
-
 cff-version: 1.2.0
-title: >-
-  GridScore: a tool for accurate, cross-platform
-  phenotypic data collection and visualization
+title: 'Beyond the clipboard: data collection with GridScore NEXT'
 message: >-
-  If you use this software in your work, please
-  cite it using the following metadata.
+  If you use this software, please cite it using the
+  metadata from this file.
 type: software
-doi: 10.1186/s12859-022-04755-2
-url: 'https://github.com/cropgeeks/gridscore'
-date-released: 2022-06-06
 authors:
   - given-names: Sebastian
     family-names: Raubach
     affiliation: >-
-      Department of Information and Computational
-      Sciences, The James Hutton Institute,
-      Invergowrie, Dundee, Scotland
+      The James Hutton Institute/International Barley Hub,
+      Invergowrie, Dundee, DD2 5DA, UK
     orcid: 'https://orcid.org/0000-0001-5659-247X'
   - given-names: Miriam
     family-names: Schreiber
     affiliation: >-
-      Department of Life Science, University of
-      Dundee, Dundee, Scotland
-    orcid: 'https://orcid.org/0000-0002-3732-8822'
-  - given-names: Paul D
+      The James Hutton Institute/International Barley Hub,
+      Invergowrie, Dundee, DD2 5DA, UK
+  - given-names: Ruth
+    family-names: Hamilton
+    affiliation: >-
+      The James Hutton Institute/International Barley Hub,
+      Invergowrie, Dundee, DD2 5DA, UK
+  - given-names: Gaynor
+    family-names: McKenzie
+    affiliation: >-
+      The James Hutton Institute/International Barley Hub,
+      Invergowrie, Dundee, DD2 5DA, UK
+  - given-names: Susan
+    family-names: McCallum
+    affiliation: >-
+      The James Hutton Institute/International Barley Hub,
+      Invergowrie, Dundee, DD2 5DA, UK
+  - given-names: Benjamin
+    family-names: Kilian
+    affiliation: >-
+      Global Crop Diversity Trust, Platz der Vereinten
+      Nationen 7, 53113, Bonn, Germany
+  - given-names: Alan
+    family-names: Humphries
+    affiliation: >-
+      South Australian Research and Development Institute,
+      Adelaide, SA, Australia
+  - given-names: Loi Huu
+    family-names: Nguyen
+    affiliation: 'FPT PolySchool, FPT University, Can Tho, Vietnam'
+  - given-names: Tin Huynh
+    family-names: Quang
+    affiliation: >-
+      Mekong Delta Development Research Institute, Can Tho
+      University, Can Tho, Vietnam
+  - given-names: Akanksha
+    family-names: Singh
+    affiliation: 'ICARDA, Pusa, New Delhi, 110012, India'
+  - given-names: Shivali
+    family-names: Sharma
+    affiliation: >-
+      Global Crop Diversity Trust, Platz der Vereinten
+      Nationen 7, 53113, Bonn, Germany
+  - given-names: Sarah
+    family-names: Trinder
+    affiliation: >-
+      UK Vegetable Genebank, Warwick Crop Centre, School of
+      Life Sciences, University of Warwick,
+      Stratford-upon-Avon, UK
+  - given-names: Manuel
+    family-names: Feser
+    affiliation: >-
+      Leibniz Institute of Plant Genetics and Crop Plant
+      Research (IPK) Gatersleben, 06466, Seeland, Germany
+  - given-names: Paul D.
     family-names: Shaw
     affiliation: >-
-      Department of Information and Computational
-      Sciences, The James Hutton Institute,
-      Invergowrie, Dundee, Scotland
-    orcid: 'https://orcid.org/0000-0002-0202-1150'
+      Leibniz Institute of Plant Genetics and Crop Plant
+      Research (IPK) Gatersleben, 06466, Seeland, Germany
+identifiers:
+  - type: doi
+    value: 10.1186/s12859-025-06352-5
+    description: BMC Bioinformatics
+repository-code: 'https://github.com/cropgeeks/gridscore-next-client'
+url: 'https://ics.hutton.ac.uk/get-gridscore'
+abstract: >-
+  Background
+
+  Accurate acquisition of phenotypic data is critical for
+  cataloguing and utilising genetic variation in cultivated
+  crops, landraces, and their wild relatives. The collection
+  of phenotypic data using handwritten notes often
+  introduces errors which can and should be avoided.
+  Electronic data collection is crucial for ensuring error
+  prevention and data standardisation and thus ensuring
+  high-quality, reliable data.
+
+
+  Implementation
+
+  This paper describes the development of GridScore NEXT, a
+  new plant phenotyping application that significantly
+  advances the state of the art for collecting field trial
+  data in plant genetics, pre-breeding and crop improvement
+  research. Building on its predecessor, GridScore, the
+  development of GridScore NEXT was driven by real life, in
+  the field interactions with expert user groups across a
+  number of crops. This iterative design methodology allowed
+  the development and testing of new features. Collaborators
+  from the 'Biodiversity for Opportunities, Livelihoods and
+  Development' (BOLD) project, focusing on crops including
+  rice, grasspea, and alfalfa, along with barley, potato,
+  vegetable and blueberry teams, provided invaluable
+  insights through training sessions and interviews and in
+  the field use of the application.
+
+
+  Results
+
+  Key improvements to GridScore NEXT include enhanced data
+  collection tools, supporting individual plant phenotyping
+  within plots and enabling new data types such as GPS
+  coordinates and image traits. GridScore NEXT provides
+  customisable user defined validation rules to help prevent
+  errors and incorporates barcode scanning for accurate,
+  efficient data capture. The application offers an
+  increased toolbox of data visualizations over its
+  predecessor including heatmaps and statistical box plots,
+  which aid in identifying potential data issues and
+  understanding trial performance in the field. GridScore
+  NEXT is cross-platform and can operate without an internet
+  connection, making it ideal for field use in remote areas.
+  Its adoption has led to standardisation of methods,
+  significant error reduction, and the timely sharing of
+  data, enabling quicker decision-making in pre-breeding and
+  characterisation experiments. GridScore NEXT is available
+  under an open-source (Apache 2.0) licence and freely
+  available to all with no restrictions. It offers
+  self-hosting options for enhanced data security and
+  privacy. GridScore NEXT shows broad applicability across a
+  diverse range of not only plant phenotyping experiments,
+  but any experiment that requires the collection of
+  accurate data.
+keywords:
+  - phenotyping
+  - trials
+  - app
+  - pwa
+license: Apache-2.0
