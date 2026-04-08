@@ -86,7 +86,7 @@
         thumb-label
         :min="trait.restrictions?.min"
         :max="trait.restrictions?.max"
-        :step="1"
+        :step="trait.restrictions?.step || 1"
         ref="input"
         @end="tts"
       >
@@ -103,10 +103,12 @@
             :bg-color="(model !== null && model !== undefined) ? 'warning' : undefined"
             :min="trait.restrictions?.min"
             :max="trait.restrictions?.max"
-            :step="1"
+            :step="trait.restrictions?.step || 1"
+            :precision="trait.restrictions.step !== undefined ? null : 0"
             control-variant="stacked"
             variant="outlined"
             hide-details
+            @keydown="e => e.preventDefault()"
           />
           <v-btn class="ms-1" variant="flat" :disabled="isEditable === false || model === undefined || model === null" color="error" size="small" @click="model = undefined" :icon="mdiCancel" />
         </template>

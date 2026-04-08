@@ -105,10 +105,11 @@
           </v-combobox>
 
           <v-row v-if="TraitDataType.isNumeric(currentTrait.dataType)">
-            <v-col cols="6">
+            <v-col cols="12" :lg="currentTrait.dataType === TraitDataType.range ? 4 : 6">
               <v-number-input
                 v-model="restrictions.min"
                 class="mb-3"
+                control-variant="stacked"
                 :disabled="isDisabledDueToEdit || !canEdit"
                 :prepend-inner-icon="mdiFormatVerticalAlignBottom"
                 :label="$t('formLabelTraitRestrictionsMin')"
@@ -117,15 +118,30 @@
                 persistent-hint
               />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12" :lg="currentTrait.dataType === TraitDataType.range ? 4 : 6">
               <v-number-input
                 v-model="restrictions.max"
                 class="mb-3"
+                control-variant="stacked"
                 :disabled="isDisabledDueToEdit || !canEdit"
                 :prepend-inner-icon="mdiFormatVerticalAlignTop"
                 :label="$t('formLabelTraitRestrictionsMax')"
                 :hint="$t('formDescriptionTraitRestrictionsMax')"
                 :error-messages="formState.max ? [formState.max] : undefined"
+                persistent-hint
+              />
+            </v-col>
+            <v-col cols="12" lg="4" v-if="currentTrait.dataType === TraitDataType.range">
+              <v-number-input
+                v-model="restrictions.step"
+                class="mb-3"
+                control-variant="stacked"
+                :precision="null"
+                :disabled="isDisabledDueToEdit || !canEdit"
+                :prepend-inner-icon="mdiDebugStepOver"
+                :label="$t('formLabelTraitRestrictionsStep')"
+                :hint="$t('formDescriptionTraitRestrictionsStep')"
+                :error-messages="formState.step ? [formState.step] : undefined"
                 persistent-hint
               />
             </v-col>
@@ -176,7 +192,7 @@
             </template>
 
             <template #text>
-              <v-btn-toggle v-model="timeframe.type" :disabled="isDisabledDueToEdit || !canEdit" variant="tonal" class="mb-3">
+              <v-btn-toggle v-model="timeframe.type" mandatory :disabled="isDisabledDueToEdit || !canEdit" variant="tonal" class="mb-3">
                 <v-btn :value="TimeframeType.SUGGEST" color="warning" :text="$t('formSelectOptionTraitTimeframeSuggest')" :prepend-icon="mdiAlert" />
                 <v-btn :value="TimeframeType.ENFORCE" color="error" :text="$t('formSelectOptionTraitTimeframeEnforce')" :prepend-icon="mdiMinusCircle" />
               </v-btn-toggle>
@@ -334,6 +350,27 @@
           </div>
         </template>
         <p v-else>{{ $t('pageTrialTraitListEmpty') }}</p>
+
+        <v-card
+          v-show="traitGroupOrder && traitGroupOrder.length > 1"
+          class="mb-5"
+          :title="$t('pageTrialTraitGroupListTitle')"
+          :subtitle="$t('pageTrialTraitGroupListText')"
+          :prepend-icon="mdiFormatListNumbered"
+        >
+          <v-card-text
+            ref="traitGroupListRef"
+          >
+            <v-chip
+              v-for="groupName in traitGroupOrder"
+              :key="`group-${groupName}`"
+              :text="groupName"
+              :prepend-icon="mdiTagText"
+              label
+              class="drag-handle me-2 my-1"
+            />
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 
@@ -360,8 +397,8 @@
   import TraitImportFromBrapiModal from '@/components/modals/TraitImportFromBrapiModal.vue'
 
   import emitter from 'tiny-emitter/instance'
-  import { germinateToTraits, jsonToTraits, tabularToTraits } from '@/plugins/util'
-  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTagText, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove } from '@mdi/js'
+  import { germinateToTraits, intersection, jsonToTraits, tabularToTraits } from '@/plugins/util'
+  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatListNumbered, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiTagText, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove, mdiDebugStepOver } from '@mdi/js'
   import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
   import TraitInput from '@/components/inputs/TraitInput.vue'
   import { dragAndDrop } from '@formkit/drag-and-drop/vue'
@@ -376,6 +413,7 @@
     categories?: string
     min?: string
     max?: string
+    step?: string
   }
   interface ImportExportFormContent {
     content: string
@@ -388,6 +426,7 @@
   const model = defineModel<TraitPlus[]>({
     default: [],
   })
+  const traitGroupOrder = defineModel<string[]>('traitGroupOrder', { default: [] })
 
   export interface TrialTraitsProps {
     trialIdsForTraitGroups?: string[]
@@ -407,6 +446,7 @@
   const categoryInput = useTemplateRef('categoryInput')
   const formModal = useTemplateRef('formModal')
   const traitListRef = ref()
+  const traitGroupListRef = ref()
 
   dragAndDrop<TraitPlus>({
     parent: traitListRef,
@@ -419,6 +459,11 @@
       // This is a workaround to some weird bug with this library.
       state.draggedNode.el.style.zIndex = '0'
     },
+  })
+
+  dragAndDrop<string>({
+    parent: traitGroupListRef,
+    values: traitGroupOrder,
   })
 
   const exampleTraitValue = ref<string>()
@@ -445,6 +490,7 @@
   const restrictions = ref<Restrictions>({
     min: undefined,
     max: undefined,
+    step: undefined,
     categories: undefined,
   })
 
@@ -534,15 +580,12 @@
       case TraitDataType.int:
       case TraitDataType.float:
       case TraitDataType.range:
-        result.restrictions = (restrictions.value && (restrictions.value.min !== undefined || restrictions.value.max !== undefined))
-          ? {
-            min: restrictions.value.min,
-            max: restrictions.value.max,
-          }
-          : {
-            min: 0,
-            max: 10,
-          }
+        result.restrictions = {
+          min: restrictions.value.min || 0,
+          max: restrictions.value.max || 10,
+          step: restrictions.value.step || 1,
+        }
+
         break
     }
 
@@ -623,8 +666,27 @@
     if (!TraitDataType.isNumeric(newValue)) {
       restrictions.value.min = undefined
       restrictions.value.max = undefined
+      restrictions.value.step = undefined
     }
   })
+
+  watch(model, async newValue => {
+    const oldTgs = new Set<string>(traitGroupOrder.value)
+    const newTgs = new Set<string>()
+
+    newValue.forEach(t => {
+      if (t.group && t.group.name) {
+        newTgs.add(t.group.name)
+      }
+    })
+
+    const is = intersection<string>(oldTgs, newTgs)
+
+    if (is.size !== newTgs.size || is.size !== oldTgs.size) {
+      // Different groups => update
+      traitGroupOrder.value = [...newTgs]
+    }
+  }, { deep: true, immediate: true })
 
   function duplicateTrait (trait: Trait) {
     reset()
@@ -737,6 +799,7 @@
       categories: undefined,
       min: undefined,
       max: undefined,
+      step: undefined,
     }
 
     if (!currentTrait.value.name || currentTrait.value.name.trim().length === 0) {
@@ -751,6 +814,9 @@
       }
       if (!restrictions.value || restrictions.value.max === undefined) {
         formState.value.max = t('formFeedbackTraitRangeMissingBoundaries')
+      }
+      if (!restrictions.value || (restrictions.value.step || 0) < 0 || (restrictions.value.step || 0) > (((restrictions.value.max || 0) - (restrictions.value.min || 0)) / 2)) {
+        formState.value.step = t('formFeedbackTraitRangeInvalidStep')
       }
     }
 
@@ -768,7 +834,7 @@
     }
 
     // Set restrictions
-    if (restrictions.value.categories || restrictions.value.min !== undefined || restrictions.value.max !== undefined) {
+    if (restrictions.value.categories || restrictions.value.min !== undefined || restrictions.value.max !== undefined || restrictions.value.step !== undefined) {
       currentTrait.value.restrictions = restrictions.value
     }
 
@@ -821,6 +887,7 @@
     restrictions.value = {
       min: undefined,
       max: undefined,
+      step: undefined,
       categories: undefined,
     }
   }

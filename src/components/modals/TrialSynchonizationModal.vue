@@ -38,6 +38,14 @@
                     <TraitSection :trait="trait" v-for="trait in transaction.trialTraitAddedTransactions" :key="`trait-${trait.id}`" />
                   </template>
                 </v-list-item>
+                <!-- TRAITS RE-ORDERED -->
+                <v-list-item v-if="transaction.traitOrderTransaction && transaction.traitOrderTransaction.length > 0" :prepend-icon="mdiTagArrowDown" :title="$t('transactionTypeTraitOrder')">
+                  <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTraitOrderText') }}</span></template>
+                </v-list-item>
+                <!-- TRAIT GROUPS RE-ORDERED -->
+                <v-list-item v-if="transaction.traitGroupOrderTransaction && transaction.traitGroupOrderTransaction.length > 0" :prepend-icon="mdiFormatListNumbered" :title="$t('transactionTypeTraitGroupOrder')">
+                  <template #subtitle><span class="text-wrap">{{ $t('transactionTypeTraitGroupOrderText') }}</span></template>
+                </v-list-item>
                 <!-- PERSON ADDED -->
                 <v-list-item v-if="transaction.trialPersonAddedTransactions && transaction.trialPersonAddedTransactions.length > 0" :prepend-icon="mdiAccountPlus" :title="$t('transactionTypePeopleAdded')">
                   <template #subtitle><span class="text-wrap">{{ $t('transactionTypePeopleAddedCount', Object.keys(transaction.trialPersonAddedTransactions).length) }}</span></template>
@@ -156,7 +164,7 @@
   import { useI18n } from 'vue-i18n'
   import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
   import { coreStore } from '@/stores/app'
-  import { mdiAccountPlus, mdiAlert, mdiBookmark, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiCloudDownload, mdiCommentMinus, mdiCommentPlus, mdiDatabaseSync, mdiDelete, mdiFlagMinus, mdiFlagPlus, mdiLanDisconnect, mdiLockAlert, mdiNotebookEdit, mdiTableEdit, mdiTableRowPlusAfter, mdiTagEdit, mdiTagPlus, mdiTextBoxEdit, mdiVectorPolylineEdit } from '@mdi/js'
+  import { mdiAccountPlus, mdiAlert, mdiBookmark, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiCloudDownload, mdiCommentMinus, mdiCommentPlus, mdiDatabaseSync, mdiDelete, mdiFlagMinus, mdiFlagPlus, mdiFormatListNumbered, mdiLanDisconnect, mdiLockAlert, mdiNotebookEdit, mdiTableEdit, mdiTableRowPlusAfter, mdiTagArrowDown, mdiTagEdit, mdiTagPlus, mdiTextBoxEdit, mdiVectorPolylineEdit } from '@mdi/js'
 
   const { t } = useI18n()
 

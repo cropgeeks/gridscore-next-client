@@ -444,6 +444,12 @@
     if (visibleTraits.value && cell.value) {
       const result: { [index: string]: TraitPlus[] } = {}
 
+      if (compProps.trial.traitGroupOrder) {
+        compProps.trial.traitGroupOrder.forEach(tg => {
+          result[tg] = []
+        })
+      }
+
       visibleTraits.value.forEach(trait => {
         if (store.storeHiddenTraits.includes(trait.id || '')) {
           return

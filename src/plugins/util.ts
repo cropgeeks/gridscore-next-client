@@ -420,6 +420,10 @@ function isValidDateString (dateString: string) {
   return d.toISOString().slice(0, 10) === dateString
 }
 
+function intersection<T> (one: Set<T>, two: Set<T>) {
+  return new Set<T>([...one].filter(a => two.has(a)))
+}
+
 function filterGermplasm (value: string, query: string, item?: InternalItem<string>): FilterMatch {
   if (query && query.length > 0 && item && item.raw) {
     return item.raw.toLowerCase().includes(query.toLowerCase())
@@ -509,4 +513,5 @@ export {
   safeTrialName,
   getServerUrl,
   getPriorityShareCode,
+  intersection,
 }

@@ -7,6 +7,7 @@ export interface Trial {
     description?: string;
     group?: Group
     traits: Trait[];
+    traitGroupOrder?: string[];
     comments?: Comment[];
     events?: Event[];
     people: Person[];
@@ -130,6 +131,7 @@ export interface Group {
 export interface Restrictions {
     min?: number;
     max?: number;
+    step?: number;
     categories?: string[];
 }
 
@@ -254,6 +256,7 @@ export interface Transaction {
     trialTraitAddedTransactions: Trait[];
     trialTraitDeletedTransactions: Trait[];
     traitOrderTransaction: string[];
+    traitGroupOrderTransaction?: string[];
     traitChangeTransactions: TraitEditContent[];
     trialEditTransaction?: TrialContent | null;
     trialLockedTransaction?: boolean;

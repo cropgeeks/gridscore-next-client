@@ -22,6 +22,7 @@ export interface TrialModification {
   description?: string
   socialShareConfig?: SocialShareConfig
   mediaFilenameFormat?: string[]
+  trialTraitGroups?: string[]
   group?: Group
   markers?: Markers
   corners?: Corners
@@ -248,6 +249,9 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
     const oldOrderedIds = originalTraits.map(t => t.id).join('|')
     const newOrderedIds = updates.traits.map(t => t.id).join('|')
 
+    const oldTraitGroupsOrdered = (trial.traitGroupOrder || []).join('|')
+    const newTraitGroupsOrdered = (updates.trialTraitGroups || []).join('|')
+
     const retainedTraitIds = new Set(updates.traits.map(t => t.id))
     const traitsToRemove = originalTraits.filter((t: Trait) => !retainedTraitIds.has(t.id))
 
@@ -264,6 +268,7 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
     trial.traits = updates.traits
     trial.group = updates.group
     trial.dimensionNames = updates.dimensionNames
+    trial.traitGroupOrder = updates.trialTraitGroups
 
     if (logTransactions(trial)) {
       const transaction: Transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
@@ -289,6 +294,10 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
 
       if (oldOrderedIds !== newOrderedIds) {
         transaction.traitOrderTransaction = updates.traits.map(t => t.id || '')
+      }
+
+      if (oldTraitGroupsOrdered !== newTraitGroupsOrdered) {
+        transaction.traitGroupOrderTransaction = updates.trialTraitGroups
       }
 
       if (!transaction.traitChangeTransactions) {
@@ -412,7 +421,7 @@ async function getTrialValidPlots (trialId: string): Promise<string[]> {
 }
 
 async function addTrialTraits (trialId: string, traits: Trait[]) {
-  const trial = await getTrialById(trialId)
+  const trial: TrialPlus = await getTrialById(trialId)
 
   traits = JSON.parse(JSON.stringify(traits))
 
@@ -426,6 +435,22 @@ async function addTrialTraits (trialId: string, traits: Trait[]) {
 
       if (transaction.traitOrderTransaction && transaction.traitOrderTransaction.length > 0) {
         transaction.traitOrderTransaction.push(...traits.map(t => t.id))
+      }
+
+      if (transaction.traitGroupOrderTransaction && transaction.traitGroupOrderTransaction.length > 0) {
+        const traitGroups = new Set<string>()
+        trial.traits.filter(t => t.group && t.group.name).forEach(t => {
+          traitGroups.add(t.group?.name || '')
+        })
+
+        const newGroups = new Set<string>()
+        traits.filter(t => t.group && t.group.name && !traitGroups.has(t.group.name)).forEach(t => {
+          newGroups.add(t.group?.name || '')
+        })
+
+        if (newGroups.size > 0) {
+          transaction.traitGroupOrderTransaction.push(...newGroups)
+        }
       }
 
       await db.put('transactions', transaction)
@@ -466,7 +491,7 @@ async function addTrial (trial: TrialPlus): Promise<string> {
   const id = trial.localId || getId()
 
   // Avoid Vue Proxy issues with IDB
-  const copy = JSON.parse(JSON.stringify(trial))
+  const copy: TrialPlus = JSON.parse(JSON.stringify(trial))
 
   await db.add('trials', {
     localId: id,
@@ -490,6 +515,7 @@ async function addTrial (trial: TrialPlus): Promise<string> {
     events: copy.events || [],
     people: copy.people || [],
     dimensionNames: copy.dimensionNames,
+    traitGroupOrder: copy.traitGroupOrder,
   })
 
   // Make sure all cached images are updated
@@ -604,7 +630,13 @@ function handleTrial (trial: TrialPlus) {
     }
 
     if (trial.traits) {
+      const groupNames = new Set<string>()
+
       trial.traits.forEach((t: TraitPlus, i: number) => {
+        if (t.group && t.group.name) {
+          groupNames.add(t.group.name)
+        }
+
         if (t.hasImage === true && !t.imageUrl) {
           t.imageUrl = `${trialImageConfig.serverUrl}trait/${trialImageConfig.priorityShareCode}/${t.id}/img`
         }
@@ -636,6 +668,10 @@ function handleTrial (trial: TrialPlus) {
           }
         }
       })
+
+      if (!trial.traitGroupOrder || trial.traitGroupOrder.some(tg => !groupNames.has(tg))) {
+        trial.traitGroupOrder = [...groupNames]
+      }
     }
 
     if (trial.shareCodes) {
@@ -684,6 +720,7 @@ function setTransactionCount (t: TrialPlus, transaction: Transaction) {
   t.transactionCount += transaction.brapiConfigChangeTransaction && transaction.brapiConfigChangeTransaction.url !== undefined && transaction.brapiConfigChangeTransaction.url !== null && transaction.brapiConfigChangeTransaction.url !== '' ? 1 : 0
   t.transactionCount += transaction.traitChangeTransactions ? transaction.traitChangeTransactions.length : 0
   t.transactionCount += (transaction.traitOrderTransaction || []).length > 0 ? 1 : 0
+  t.transactionCount += (transaction.traitGroupOrderTransaction || []).length > 0 ? 1 : 0
 }
 
 async function updateTrial (localId: string, updatedTrial: TrialPlus) {
@@ -1204,6 +1241,7 @@ function getEmptyTransaction (trialId: string): Transaction {
     trialTraitDeletedTransactions: [],
     traitChangeTransactions: [],
     traitOrderTransaction: [],
+    traitGroupOrderTransaction: [],
     trialLockedTransaction: undefined,
     trialEditTransaction: null,
     brapiIdChangeTransaction: {

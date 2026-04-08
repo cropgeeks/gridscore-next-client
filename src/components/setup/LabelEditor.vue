@@ -11,36 +11,6 @@
     <div
       v-if="edit"
     >
-      <!-- <draggable
-        :class="{
-          'd-flex': true,
-          'ga-1': true,
-          'flex-row': orientation === 'horizontal',
-          'flex-column': orientation === 'vertical',
-          'flex-wrap': orientation === 'horizontal',
-        }"
-        v-model="localCopy"
-        item-key="id"
-        handle=".drag-handle"
-      >
-        <template #item="{ element }">
-          <v-number-input
-            v-model="element.value"
-            hide-details
-            :step="1"
-            density="compact"
-            control-variant="hidden"
-            variant="outlined"
-            @focus="$event.target.select()"
-            :width="orientation === 'horizontal' ? `${('' + element.value).length + 4}em` : undefined"
-          >
-            <template #append-inner>
-              <v-icon class="drag-handle" :icon="mdiDragVertical" />
-            </template>
-          </v-number-input>
-        </template>
-      </draggable> -->
-
       <div
         ref="parent"
         :class="{
@@ -69,35 +39,6 @@
           </template>
         </v-number-input>
       </div>
-      <!-- <draggable
-        :class="{
-          'd-flex': true,
-          'ga-1': true,
-          'flex-row': orientation === 'horizontal',
-          'flex-column': orientation === 'vertical',
-          'flex-wrap': orientation === 'horizontal',
-        }"
-        v-model="localCopy"
-        item-key="id"
-        handle=".drag-handle"
-      >
-        <template #item="{ element }">
-          <v-number-input
-            v-model="element.value"
-            hide-details
-            :step="1"
-            density="compact"
-            control-variant="hidden"
-            variant="outlined"
-            @focus="$event.target.select()"
-            :width="orientation === 'horizontal' ? `${('' + element.value).length + 4}em` : undefined"
-          >
-            <template #append-inner>
-              <v-icon class="drag-handle" :icon="mdiDragVertical" />
-            </template>
-          </v-number-input>
-        </template>
-      </draggable> -->
     </div>
   </div>
 </template>

@@ -55,7 +55,7 @@
           <TrialLayout v-model="trial" :is-clone="isClone" :is-edit="isEdit" ref="trialLayout" @next="stepperIndex++" />
         </v-stepper-window-item>
         <v-stepper-window-item :value="3">
-          <TrialTraits v-model="trial.traits" :is-clone="isClone" :is-edit="isEdit" :is-trial-owner="isTrialOwner" ref="trialTraits" />
+          <TrialTraits v-model="trial.traits" v-model:trait-group-order="trial.traitGroupOrder" :is-clone="isClone" :is-edit="isEdit" :is-trial-owner="isTrialOwner" ref="trialTraits" />
         </v-stepper-window-item>
       </v-stepper-window>
 
@@ -322,6 +322,7 @@
         traits: t.traits,
         people: newPeople,
         dimensionNames: t.dimensionNames,
+        trialTraitGroups: t.traitGroupOrder,
       }).then(async () => {
         emitter.emit('trials-updated')
         emitter.emit('trial-selected')
