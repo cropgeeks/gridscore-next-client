@@ -780,6 +780,16 @@
       },
       {
         "type": "new",
+        "title": "Printable field plan",
+        "text": "You can now create an image of your trial field plan for printing. Please not that this may be unavailable for very large trials."
+      },
+      {
+        "type": "new",
+        "title": "Custom stepper size for range slider traits",
+        "text": "Range slider traits can now have a custom step size. The default was always 1, but it can now be changed to values like 0.5, 2, 5, etc."
+      },
+      {
+        "type": "new",
         "title": "Plot highlighting",
         "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
       },
