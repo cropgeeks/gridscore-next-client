@@ -14,6 +14,6 @@ As mentioned, this screen repurposes the setup screen to give you all the option
 
 <img src="img/trial-duplication.png" style="max-width: 100%;" alt="Trial duplication">
 
-Make adjustments as required and then press the `Create trial` button at the bottom to create your duplicate.
+Make adjustments as required and then press the `Duplicate` button at the top to create your duplicate.
 
 <a href="index.html" class="btn btn-dark">Home</a>

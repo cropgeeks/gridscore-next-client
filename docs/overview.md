@@ -50,11 +50,15 @@ Once you have created or imported some trials, they will be listed on the front 
 
 The top toolbar lets you search for trials as well as sort them. You can also change the way the trials are displayed - as a grid or as a list - and you can refresh the list to look for remote changes in shared trials.
 
-## GridScore publication
+## GridScore publications
 
-GridScore is available for free with no strings attached. You are free to use it for your research and commercial work. We have published a paper on GridScore and we would really appreciate it if you could reference our paper in your own publication if you've used GridScore for your data collection!
+GridScore is available for free with no strings attached. You are free to use it for your research and commercial work. We have published two papers on GridScore and we would really appreciate it if you could reference them in your own publication if you've used GridScore for your data collection!
 
-[GridScore: a tool for accurate, cross-platform phenotypic data collection and visualization](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-022-04755-2)
+[Beyond the clipboard: data collection with GridScore NEXT](https://doi.org/10.1186/s12859-025-06352-5)
+
+Raubach, S., Schreiber, M., Hamilton, R. *et al.*, *BMC Bioinformatics* **27**, 44 (2026)
+
+[GridScore: a tool for accurate, cross-platform phenotypic data collection and visualization](https://doi.org/10.1186/s12859-022-04755-2)
 
 Raubach, S., Schreiber, M., & Shaw, P.D., *BMC Bioinformatics* **23**, 214 (2022)
 

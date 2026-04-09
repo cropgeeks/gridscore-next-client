@@ -8,7 +8,7 @@ title: GridScore NEXT Trial modification
 
 If you are the owner of a trial or if a trial hasn't been shared yet, you can make certain changes to an existing trial. Go to the `Home` page and use the cog icon on the trial you want to modify. Select the `Edit trial` option to open the modification modal window.
 
-<img src="img/home-trial-settings.png" style="max-width: 50%;" alt="Trial settings">
+<img src="img/home-trial-settings2.png" style="max-width: 50%;" alt="Trial settings">
 
 Here you can make changes to trial properties. Check the <a href="trial-setup.html">trial setup</a> section for more detailed descriptions of these. Here is a list of what can be modified:
 
@@ -21,8 +21,6 @@ Here you can make changes to trial properties. Check the <a href="trial-setup.ht
   - **Trait description**: You can modify the description of the trait.
   - **Trait group**: You can add traits to a group or reassign groups as required.
   - **Deletion**: If the trial hasn't been shared yet, you will also be able to delete traits from the trial.
-
-<img src="img/trial-modification.png" style="max-width: 100%;" alt="Trial modification screen">
 
 Once you are happy with your changes, use the `Save` button at the bottom to persist your changes.
 
