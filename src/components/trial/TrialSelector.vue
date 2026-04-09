@@ -73,7 +73,7 @@
       <p>{{ $t('widgetTrialSelectorText') }}</p>
 
       <template v-if="!searchTerm">
-        <v-chip-group class="mb-2" mandatory column filter variant="tonal" color="primary" v-model="selectedGroup">
+        <v-chip-group class="mb-2" mandatory column filter variant="tonal" color="primary" v-model="selectedGroup" v-if="!filterForWarning">
           <v-chip
             v-for="group in trialGroups"
             :key="`trial-groups-${group.name}`"
