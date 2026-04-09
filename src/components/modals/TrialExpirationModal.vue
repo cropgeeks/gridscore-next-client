@@ -1,115 +1,135 @@
 <template>
-  <b-modal :title="$t('modalTitleTrialExpiration')"
-           :ok-title="$t('buttonExtendLifetime')"
-           @ok.prevent="sendCaptcha"
-           :ok-disabled="!captcha"
-           no-fade
-           ref="trialExpirationModal">
-    <div v-if="trial">
-      <p>{{ $t('modalTextTrialExpiration') }}</p>
+  <v-dialog v-model="dialog" max-width="min(75vw, 720px)" scrollable>
+    <v-card :title="$t('modalTitleTrialExpiration')" v-if="trial">
+      <template #text>
+        <!-- We don't have the codes yet, so need to be able to share the trial -->
+        <UseOnline v-slot="{ isOnline }">
+          <v-alert
+            v-if="isOnline === false"
+            color="error"
+            :icon="mdiLanDisconnect"
+            density="compact"
+            :text="$t('modalTextNetworkUnavailableWarning')"
+            variant="tonal"
+            border="start"
+          />
 
-      <p class="text-danger">{{ $t('modalTextTrialExpirationDate', { date: new Date(trial.expiresOn).toLocaleDateString() }) }}</p>
+          <p>{{ $t('modalTextTrialExpiration') }}</p>
 
-      <template v-if="trial.shareStatus === TRIAL_STATE_EDITOR || trial.shareStatus === TRIAL_STATE_OWNER">
-        <b-form-group label-for="captcha" :description="$t('formDescriptionTrialExpirationCaptcha')" v-if="captchaUrl">
-          <template #label>
-            {{ $t('formLabelTrialExpirationCaptcha') }} <b-button variant="link" size="sm" @click="getNewCaptcha"><IBiArrowRepeat /></b-button>
+          <p class="text-error">{{ $t('modalTextTrialExpirationDate', { date: new Date(trial.expiresOn || 0).toLocaleDateString() }) }}</p>
+
+          <template v-if="trial.shareStatus === ShareStatus.EDITOR || trial.shareStatus === ShareStatus.OWNER">
+            <v-card>
+              <template #title>
+                <div class="d-flex justify-space-between">
+                  <span>{{ $t('formLabelTrialExpirationCaptcha') }}</span>
+                  <v-btn size="small" class="mb-2" :icon="mdiRefresh" @click="getNewCaptcha" />
+                </div>
+              </template>
+
+              <template #text>
+                <v-img
+                  :src="captchaUrl"
+                  max-height="50px"
+                >
+                  <template #placeholder>
+                    <div class="d-flex align-center justify-center fill-height">
+                      <v-progress-circular
+                        color="grey-lighten-4"
+                        indeterminate
+                      />
+                    </div>
+                  </template>
+                </v-img>
+
+                <v-text-field
+                  v-model="captcha"
+                  :label="$t('formLabelTrialExpirationCaptcha')"
+                  :hint="$t('formDescriptionTrialExpirationCaptcha')"
+                  persistent-hint
+                  required
+                />
+              </template>
+            </v-card>
           </template>
-          <div class="text-center mb-3">
-            <b-img lazy fluid :blank-src="null" :blank-width="200" :blank-height="50" blank-color="#bdc3c7" :src="captchaUrl" />
+          <div v-else>
+            <p class="text-warning">{{ $t('modalTextTrialExpirationNotAuthorized') }}</p>
           </div>
-          <b-form-input id="captcha" v-model="captcha" required />
-        </b-form-group>
+        </UseOnline>
       </template>
-      <div v-else>
-        <p class="text-warning">{{ $t('modalTextTrialExpirationNotAuthorized') }}</p>
-      </div>
-    </div>
-  </b-modal>
+
+      <v-card-actions>
+        <v-spacer />
+        <v-btn :text="$t('buttonCancel')" @click="hide" variant="tonal" />
+        <v-btn :text="$t('buttonExtendLifetime')" @click="extendLifetime" color="primary" :disabled="!captcha" variant="tonal" />
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-import { mapState, mapStores } from 'pinia'
-import { coreStore } from '@/store'
-import { extendTrialPeriod } from '@/plugins/api'
-import { TRIAL_STATE_VIEWER, TRIAL_STATE_EDITOR, TRIAL_STATE_OWNER } from '@/plugins/constants'
+<script setup lang="ts">
+  import { UseOnline } from '@vueuse/components'
+  import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
+  import emitter from 'tiny-emitter/instance'
+  import { mdiLanDisconnect, mdiRefresh } from '@mdi/js'
+  import { coreStore } from '@/stores/app'
+  import { extendTrialPeriod } from '@/plugins/api'
 
-import emitter from 'tiny-emitter/instance'
+  const compProps = defineProps<{
+    trial: TrialPlus
+  }>()
 
-export default {
-  data: function () {
-    return {
-      TRIAL_STATE_VIEWER,
-      TRIAL_STATE_EDITOR,
-      TRIAL_STATE_OWNER,
-      captcha: null,
-      captchaUrl: null
-    }
-  },
-  computed: {
-    ...mapStores(coreStore),
-    ...mapState(coreStore, [
-      'storeServerUrl',
-      'storeDarkMode'
-    ]),
-    shareCode: function () {
-      if (this.trial && this.trial.shareCodes) {
-        return this.trial.shareCodes.ownerCode || this.trial.shareCodes.editorCode
-      } else {
-        return null
-      }
-    }
-  },
-  props: {
-    trial: {
-      type: Object,
-      default: () => null
-    }
-  },
-  methods: {
-    getNewCaptcha: function () {
-      this.captchaUrl = `${this.storeServerUrl}trial/${this.shareCode}/captcha?ts=${new Date().getTime()}&darkMode=${this.storeDarkMode === true}`
-    },
-    sendCaptcha: function () {
-      emitter.emit('show-loading', true)
+  const store = coreStore()
+  const error = ref<string>()
+  const captcha = ref<string>()
+  const captchaUrl = ref<string>()
 
-      let remoteConfig = null
+  const dialog = ref(false)
 
-      if (this.trial && this.trial.remoteUrl) {
-        remoteConfig = {
-          remoteUrl: this.trial.remoteUrl,
-          token: this.trial.remoteToken || null
-        }
-      }
+  const shareCode = computed(() => compProps.trial?.shareCodes?.ownerCode || compProps.trial?.shareCodes?.editorCode)
 
-      extendTrialPeriod(remoteConfig, this.shareCode, { captcha: this.captcha })
-        .then(() => {
-          this.hide()
-          emitter.emit('trials-updated')
-        })
-        .catch(err => {
-          console.error(err)
-          console.log(err.status)
-        })
-        .finally(() => emitter.emit('show-loading', false))
-    },
-    /**
-     * Shows and resets modal dialog
-     */
-    show: function () {
-      this.captcha = null
-      this.getNewCaptcha()
-      this.$refs.trialExpirationModal.show()
-    },
-    /**
-     * Hides the modal dialog
-     */
-    hide: function () {
-      this.$nextTick(() => this.$refs.trialExpirationModal.hide())
-    }
+  function getNewCaptcha () {
+    captchaUrl.value = `${store.storeServerUrl}trial/${shareCode.value}/captcha?ts=${Date.now()}&darkMode=${store.storeIsDarkMode === true}`
   }
-}
-</script>
 
-<style scoped>
-</style>
+  function extendLifetime () {
+    error.value = undefined
+    emitter.emit('show-loading', true)
+
+    let remoteConfig = undefined
+
+    if (compProps.trial && compProps.trial.remoteUrl) {
+      remoteConfig = {
+        remoteUrl: compProps.trial.remoteUrl,
+        token: compProps.trial.remoteToken || undefined,
+      }
+    }
+
+    extendTrialPeriod(remoteConfig, shareCode.value || '', { captcha: captcha.value || '' })
+      .then(() => {
+        hide()
+        emitter.emit('trials-updated')
+      })
+      .catch(err => {
+        console.error(err)
+        console.log(err.status)
+      })
+      .finally(() => emitter.emit('show-loading', false))
+  }
+
+  function show () {
+    error.value = undefined
+    captcha.value = undefined
+    dialog.value = true
+
+    getNewCaptcha()
+  }
+  function hide () {
+    dialog.value = false
+  }
+
+  defineExpose({
+    show,
+    hide,
+  })
+</script>

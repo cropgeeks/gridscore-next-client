@@ -1,4 +1,4 @@
-name: Docker CI NEXT
+name: Docker CI Vuetify
 
 # Docker CI builds on master branch push.
 # Only builds AMD build to increase development speed.
@@ -22,9 +22,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: 'vuetify'
-
-      # - name: Set up QEMU
-      #   uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1

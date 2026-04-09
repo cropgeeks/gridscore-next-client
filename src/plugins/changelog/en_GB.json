@@ -747,5 +747,92 @@
         "text": "Fixed issues with decimal values in row/column counts and labels as well as import of traits from JSON format if groups are defined."
       }
     ]
+  },
+  {
+    "version": "4.0.0",
+    "date": "2025-04-09",
+    "description": "This new version includes a big update to the user interface. We tried to improve the user experience of using GridScore while maintaining the familiarity with its functionality. Your trials will transfer over to this new version. Please get in touch if you notice any issues with this new version. Below are some highlights of new/changed features.",
+    "items": [
+      {
+        "type": "new",
+        "title": "New setup screen",
+        "text": "The trial creation/setup screen has been streamlined into a 'wizard'-type interface that takes you through the setup step by step."
+      },
+      {
+        "type": "new",
+        "title": "Trial editing/duplicating improved",
+        "text": "Editing an existing trial will now reuse the same user interface as the trial setup so it's easier to find everything."
+      },
+      {
+        "type": "new",
+        "title": "Multi-category traits",
+        "text": "Scoring multiple values for the same categorical trait is now possible with a new trait type."
+      },
+      {
+        "type": "new",
+        "title": "Improved performance of large trials",
+        "text": "For very large trials - either large number of germplasm, or large number of traits, or both - we have made improvements to GridScore that should make the data collection a lot smoother."
+      },
+      {
+        "type": "new",
+        "title": "Custom row and column names",
+        "text": "You can now define custom names for what by default is called a 'row' and a 'column'. This will change and occurrence of these throughout the interface."
+      },
+      {
+        "type": "new",
+        "title": "Printable field plan",
+        "text": "You can now create an image of your trial field plan for printing. Please not that this may be unavailable for very large trials."
+      },
+      {
+        "type": "new",
+        "title": "Custom stepper size for range slider traits",
+        "text": "Range slider traits can now have a custom step size. The default was always 1, but it can now be changed to values like 0.5, 2, 5, etc."
+      },
+      {
+        "type": "new",
+        "title": "Plot highlighting",
+        "text": "You can now highlight plots in the main data display based on replicates, treatments, controls/checks and germplasm search matches."
+      },
+      {
+        "type": "new",
+        "title": "Plot locking",
+        "text": "Plots can now be locked by the trial owner. Locked plots cannot be edited until unlocked. They are shown in muted colours in the main display."
+      },
+      {
+        "type": "new",
+        "title": "Trial locking",
+        "text": "Similarly, a whole trial can be locked. This will prevent any further modifications of the trial. If collecting data on multiple devices, one final synchronization from those devices will be allowed."
+      },
+      {
+        "type": "new",
+        "title": "Image naming configuration",
+        "text": "During trial setup you can now change the set and order of parts used in image and video filenames."
+      },
+      {
+        "type": "new",
+        "title": "NFC chip support",
+        "text": "On Android and Chrome, you can now make use of the device's NFC chip scanning capabilities for plot identification."
+      },
+      {
+        "type": "new",
+        "title": "Dedicated guided walk and scan input page",
+        "text": "In addition to the main data display grid you can now use a dedicated guided walk page as well as a barcode-focussed input page to enter data more efficiently."
+      },
+      {
+        "type": "update",
+        "title": "Timeline charts",
+        "text": "We have reworked the timeline charts to allow for more meaningful data visualization. You can now highlight specific germplasm, reps or treatments."
+      },
+      {
+        "type": "update",
+        "title": "Full Typescript support",
+        "text": "GridScore now uses Typescript wherever possible to improve the type-safety of data handled in the app. This should reduce the potential for bugs and errors."
+      },
+      {
+        "type": "bugfix",
+        "title": "Image saving issues",
+        "text": "In previous versions there have been issues with saving images on some devices. This has now been resolved."
+      }
+    ]
   }
 ]

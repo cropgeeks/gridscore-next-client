@@ -1,118 +1,80 @@
 <template>
-  <b-modal :title="$t('modalTitleSelectTrialPerson')"
-           :ok-title="$t('buttonAdd')"
-           :cancel-title="$t('buttonCancel')"
-           no-fade
-           hide-footer
-           hide-header-close
-           no-close-on-backdrop
-           no-close-on-esc
-           ref="selectTrialPersonModal">
-    <p>{{ $t('modalTextSelectTrialPerson') }}</p>
+  <v-dialog persistent :model-value="dialog || forced" scrollable max-width="min(90vw, 1024px)">
+    <v-card :title="$t('modalTitleSelectTrialPerson')">
+      <v-card-text>
+        <p>{{ $t('modalTextSelectTrialPerson') }}</p>
+      </v-card-text>
 
-    <b-list-group>
-      <b-list-group-item :active="storeSelectedTrialPerson === person.id" v-for="person in trial.people" :key="`person-${person.id}`" href="#" @click.prevent="selectPerson(person)">
-        <div class="d-flex justify-content-between flex-wrap align-items-center">
-          <div class="d-flex flex-row align-items-center">
-            <b-avatar rounded="circle" class="me-2"><IBiPersonFill /></b-avatar>
-            <div>
-              <h5 class="mb-0">{{ person.name }}</h5>
-              <p class="my-0" v-if="person.email">
-                <a :href="`mailto:${person.email}`" @click.stop class="text-muted">{{ person.email }}</a>
-              </p>
-            </div>
-          </div>
-          <small>
-            <PersonTypeIcon class="me-1" :personType="type" v-for="type in person.types" :key="`person-${person.id}-type-${type}`" :style="{ color: personStyle[type] }" />
-          </small>
-        </div>
-      </b-list-group-item>
-    </b-list-group>
-
-    <b-button @click="$emit('addPersonClicked')"><IBiPersonPlusFill /> {{ $t('buttonAddPerson') }}</b-button>
-  </b-modal>
+      <v-list color="primary">
+        <template
+          v-for="(person, personIndex) in trial.people"
+          :key="`person-${person.id}`"
+        >
+          <v-divider v-if="personIndex > 0" />
+          <v-list-item
+            :title="person.name"
+            :subtitle="person.email"
+            :active="person.id === store.storeSelectedTrialPerson"
+            @click="selectPerson(person)"
+          >
+            <template #prepend>
+              <v-avatar variant="tonal" :color="getThemeColor(personIndex)" :text="getAvatarContent(person)" />
+            </template>
+            <template #append>
+              <v-icon v-for="type in person.types" :key="`person-${person.id}-${type}`" :icon="personTypes[type]?.icon" :color="getThemeColor(personTypes[type]?.colorIndex || 0)" />
+            </template>
+          </v-list-item>
+        </template>
+      </v-list>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-import { mapState, mapStores } from 'pinia'
-import { coreStore } from '@/store'
-import PersonTypeIcon from '@/components/icons/PersonTypeIcon.vue'
-import { PERSON_TYPE_CORRESPONDING_AUTHOR, PERSON_TYPE_DATA_COLLECTOR, PERSON_TYPE_QUALITY_CHECKER, PERSON_TYPE_DATA_SUBMITTER } from '@/plugins/constants'
+<script setup lang="ts">
+  import type { TrialPlus } from '@/plugins/types/client'
+  import type { Person } from '@/plugins/types/gridscore'
+  import { personTypes } from '@/plugins/types/types'
+  import { getThemeColor } from '@/plugins/util'
+  import { coreStore } from '@/stores/app'
 
-export default {
-  components: {
-    PersonTypeIcon
-  },
-  props: {
-    trial: {
-      type: Object,
-      default: () => null
-    },
-    shouldShow: {
-      type: Boolean,
-      default: () => false
-    }
-  },
-  data: function () {
-    return {
-    }
-  },
-  computed: {
-    ...mapStores(coreStore),
-    ...mapState(coreStore, [
-      'storeTraitColors',
-      'storeSelectedTrialPerson'
-    ]),
-    personStyle: function () {
-      const result = {}
-      result[PERSON_TYPE_CORRESPONDING_AUTHOR] = this.storeTraitColors[0 % this.storeTraitColors.length]
-      result[PERSON_TYPE_DATA_COLLECTOR] = this.storeTraitColors[1 % this.storeTraitColors.length]
-      result[PERSON_TYPE_QUALITY_CHECKER] = this.storeTraitColors[2 % this.storeTraitColors.length]
-      result[PERSON_TYPE_DATA_SUBMITTER] = this.storeTraitColors[3 % this.storeTraitColors.length]
+  import emitter from 'tiny-emitter/instance'
 
-      return result
-    }
-  },
-  watch: {
-    shouldShow: {
-      immediate: true,
-      handler: function (newValue) {
-        if (newValue) {
-          this.show()
-        } else {
-          this.hide()
-        }
-      }
-    }
-  },
-  methods: {
-    /**
-     * Shows and resets modal dialog
-     */
-    show: function () {
-      if (this.$refs.selectTrialPersonModal) {
-        this.$refs.selectTrialPersonModal.show()
-      }
-    },
-    /**
-     * Hides the modal dialog
-     */
-    hide: function () {
-      this.$nextTick(() => this.$refs.selectTrialPersonModal.hide())
-    },
-    selectPerson: function (person) {
-      this.$emit('personSelected', person)
-      this.coreStore.setSelectedTrialPerson(person.id)
-    }
-  },
-  mounted: function () {
-    if (this.shouldShow) {
-      this.show()
+  const compProps = defineProps<{
+    trial: TrialPlus
+  }>()
+
+  const store = coreStore()
+
+  const forced = ref(false)
+  const dialog = computed(() => {
+    return compProps.trial.editable === true && compProps.trial.people && compProps.trial.people.length > 0 && (!store.storeSelectedTrialPerson || !compProps.trial.people.some(p => p.id === store.storeSelectedTrialPerson))
+  })
+
+  function selectPerson (person: Person) {
+    store.setSelectedTrialPerson(person.id)
+    forced.value = false
+  }
+
+  function getAvatarContent (person: Person) {
+    if (person && person.name) {
+      const parts = person.name.split(/\s+/)
+      return parts.slice(0, 2).map(s => s.slice(0, 1).toUpperCase()).join('')
     }
   }
-}
+
+  function show () {
+    forced.value = true
+  }
+
+  onMounted(() => {
+    emitter.on('show-trial-person-selector', show)
+  })
+
+  onBeforeUnmount(() => {
+    emitter.off('show-trial-person-selector', show)
+  })
+
+  defineExpose({
+    show,
+  })
 </script>
-
-<style>
-
-</style>

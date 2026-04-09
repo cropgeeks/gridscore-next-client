@@ -1,185 +1,188 @@
- <template>
-  <b-modal :title="$t('modalTitleTraitDataHistory')"
-           :ok-title="$t(editable ? 'buttonSave' : 'buttonClose')"
-           @ok.prevent="validate"
-           @hidden="$emit('hidden')"
-           size="lg"
-           no-fade
-           scrollable
-           ref="traitDataHistoryModal">
-    <div v-if="trial && localMeasurements && trait && cell">
-      <p>{{ $t('modalTextTraitDataHistory') }}</p>
+<template>
+  <v-dialog v-model="dialog" max-width="min(90vw, 1024px)" scrollable>
+    <v-card :title="$t('modalTitleTraitDataHistory')">
+      <v-list>
+        <DataOutwithRangeBanner v-model:accepted="dataOutsideRangeAccepted" v-if="dataOutsideRangeAccepted || !valid" />
 
-      <b-list-group>
-        <b-list-group-item v-for="(measurement, mIndex) in localMeasurements" :key="`measurement-${trait.id}-${mIndex}`" class="flex-column align-items-start" :variant="(mIndex % 2) === 1 ? 'light' : null">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ $t('modalTextTraitDataHistoryHeading') }}</h5>
-            <small>{{ new Date(measurement.timestamp).toLocaleString() }}</small>
-          </div>
-          <b-form-group :label="trait.setSize > 1 ? $t('formLabelMeasurementSet', { position: $n(index) }) : $t('formLabelMeasurementEntry')"
-                        v-for="index in (trait.setSize || 1)"
-                        :key="`trait-input-group-${trait.id}-${index}`"
-                        :label-for="`trait-input-${trait.id}-${mIndex}-${index - 1}`">
-            <TraitInput :cell="{ row: cell.row, column: cell.column, displayName: cell.displayName }"
-                        :editable="editable && (measurement.delete !== true)"
-                        :currentValue="measurement.values[index - 1]"
-                        :trait="trait"
-                        :id="`trait-input-${trait.id}-${mIndex}-${index - 1}`"
-                        :ref="`trait-input-${trait.id}-${mIndex}-${index - 1}`" />
-          </b-form-group>
-          <b-button class="mt-2" @click="measurement.delete = !measurement.delete" variant="danger" :disabled="!trial.editable" v-if="measurement.delete"><IBiTrashFill /> {{ $t('buttonUndeleteTimepointData') }}</b-button>
-          <b-button class="mt-2" @click="measurement.delete = !measurement.delete" variant="outline-secondary" :disabled="!trial.editable" v-else><IBiTrash /> {{ $t('buttonDeleteTimepointData') }}</b-button>
-        </b-list-group-item>
-      </b-list-group>
-    </div>
-  </b-modal>
+        <v-list-item><span v-html="$t('modalTextTraitDataHistory')" /></v-list-item>
+        <template v-if="measurementsList && traitData">
+          <template
+            v-for="(measurements, mIndex) in measurementsList"
+            :key="`measurement-${trait.id}-${mIndex}`"
+          >
+            <v-divider v-if="mIndex > 0" />
+            <v-list-item
+              class="mb-3"
+              :active="measurements.delete === true"
+              color="error"
+            >
+              <TraitInputSection
+                v-model="traitData[mIndex]"
+                :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
+                :trait="trait"
+                :is-locked="cell.isLocked === true"
+                :measurements="undefined"
+                :editable="editable && measurements.delete !== true"
+                :ref="(el) => (refs.push(el))"
+                @valid-changed="v => setValid(`${mIndex}`, v)"
+              >
+                <v-chip size="small" label :prepend-icon="mdiCalendar" :text="new Date(measurements.timestamp).toLocaleString()" />
+              </TraitInputSection>
+
+              <v-btn
+                variant="tonal"
+                class="mb-3"
+                :disabled="editable === false"
+                @click="measurements.delete = !measurements.delete"
+                :prepend-icon="measurements.delete ? mdiDelete : mdiDeleteOffOutline"
+                :text="measurements.delete ? $t('buttonUndeleteTimepointData') : $t('buttonDeleteTimepointData')"
+              />
+            </v-list-item>
+          </template>
+        </template>
+      </v-list>
+
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          :text="$t('buttonCancel')"
+          @click="hide"
+          variant="text"
+        />
+        <v-btn
+          :text="$t(editable ? 'buttonSave' : 'buttonClose')"
+          :disabled="!valid"
+          @click="validate"
+          :color="valid ? 'primary' : 'error'"
+          variant="tonal"
+        />
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-import { mapState, mapStores } from 'pinia'
-import { coreStore } from '@/store'
-import TraitInput from '@/components/TraitInput.vue'
-import { changeTrialsData } from '@/plugins/idb'
-import { isProxy, toRaw } from 'vue'
+<script setup lang="ts">
+  import type { CellPlus, HistoryMeasurement, TraitPlus, TrialPlus } from '@/plugins/types/client'
+  import TraitInputSection from '@/components/trait/TraitInputSection.vue'
+  import type { TraitData } from '@/components/modals/DataEntryModal.vue'
+  import type { TraitMeasurement } from '@/plugins/types/gridscore'
 
-import emitter from 'tiny-emitter/instance'
+  import { coreStore } from '@/stores/app'
+  import { changeTrialsData, type DataModification } from '@/plugins/idb'
 
-export default {
-  components: {
-    TraitInput
-  },
-  props: {
-    trial: {
-      type: Object,
-      default: () => null
-    },
-    cell: {
-      type: Object,
-      default: () => null
-    },
-    measurements: {
-      type: Array,
-      default: () => null
-    },
-    trait: {
-      type: Object,
-      default: () => null
-    },
-    editable: {
-      type: Boolean,
-      default: true
+  import emitter from 'tiny-emitter/instance'
+  import { mdiCalendar, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
+
+  const compProps = defineProps<{
+    editable: boolean
+    trial: TrialPlus
+    cell: CellPlus
+    trait: TraitPlus
+  }>()
+
+  const refs = ref<any[]>([])
+  const store = coreStore()
+
+  const measurementsList = ref<HistoryMeasurement[]>([])
+  const traitData = ref<TraitData[]>()
+  const dialog = ref(false)
+  const dataOutsideRangeAccepted = ref(false)
+
+  const valid = computed(() => Object.values(itemsValid.value).every(v => v === true) || dataOutsideRangeAccepted.value)
+  const itemsValid = ref<{ [index: string]: boolean }>({})
+
+  function setValid (traitId: string, valid: boolean) {
+    itemsValid.value[traitId] = valid
+  }
+
+  function validate () {
+    if (valid.value === false) {
+      return
     }
-  },
-  data: function () {
-    return {
-      localMeasurements: null,
-      transactions: [],
-      toDelete: []
-    }
-  },
-  watch: {
-    measurements: {
-      immediate: true,
-      handler: function (newValue) {
-        this.localMeasurements = JSON.parse(JSON.stringify(newValue))
-      }
-    }
-  },
-  computed: {
-    ...mapStores(coreStore),
-    ...mapState(coreStore, [
-      'storeSelectedTrialPerson'
-    ])
-  },
-  methods: {
-    validate: function () {
-      // Run validation again
-      let valid = true
 
-      this.localMeasurements.forEach((m, mIndex) => {
-        for (let s = 0; s < (this.trait.setSize || 1); s++) {
-          valid &&= this.$refs[`trait-input-${this.trait.id}-${mIndex}-${s}`][0].validate()
-        }
-      })
+    // TODO
+    const changes: TraitMeasurement[] = []
 
-      if (!valid) {
-        return
+    measurementsList.value.forEach((mv, mvi) => {
+      let v = mv.values
+      if (isProxy(v)) {
+        v = toRaw(v)
       }
 
-      // Then check what actually changed
-      const changes = []
+      let changed = false
+      for (let s = 0; s < compProps.trait.setSize; s++) {
+        const oldValue = v[s]
+        const newValue = (traitData.value && traitData.value[mvi]) ? traitData.value[mvi][`${s + 1}`] : undefined
 
-      this.localMeasurements.forEach((m, mIndex) => {
-        let v = m.values
-
-        if (isProxy(v)) {
-          v = toRaw(v)
+        if (oldValue !== newValue) {
+          changed = true
+          v[s] = newValue === '' ? undefined : newValue
         }
-
-        let changed = false
-        for (let s = 0; s < (this.trait.setSize || 1); s++) {
-          let newData = this.$refs[`trait-input-${this.trait.id}-${mIndex}-${s}`][0].getValue()
-
-          if (newData === '') {
-            newData = null
-          }
-
-          if (newData !== this.measurements[mIndex].values[s]) {
-            changed = true
-          }
-
-          v[s] = newData
-        }
-
-        if (m.delete) {
-          changes.push({
-            traitId: this.trait.id,
-            values: v,
-            timestamp: m.timestamp,
-            delete: true
-          })
-        } else if (changed) {
-          changes.push({
-            traitId: this.trait.id,
-            personId: this.storeSelectedTrialPerson,
-            values: v,
-            timestamp: m.timestamp,
-            delete: false
-          })
-        }
-      })
-
-      if (changes.length > 0) {
-        const payload = {}
-        payload[`${this.cell.row}|${this.cell.column}`] = changes
-        changeTrialsData(this.trial.localId, payload)
-          .then(() => {
-            this.$nextTick(() => {
-              emitter.emit('plot-data-changed', this.cell.row, this.cell.column, this.trial.localId)
-              emitter.emit('plot-clicked', this.cell.row, this.cell.column, false)
-              this.$emit('data-changed')
-            })
-            this.hide()
-          })
-      } else {
-        this.hide()
       }
-    },
-    /**
-     * Shows and resets modal dialog
-     */
-    show: function () {
-      this.$refs.traitDataHistoryModal.show()
-    },
-    /**
-     * Hides the modal dialog
-     */
-    hide: function () {
-      this.$nextTick(() => this.$refs.traitDataHistoryModal.hide())
+
+      if (mv.delete) {
+        changes.push({
+          traitId: compProps.trait.id || '',
+          values: v,
+          timestamp: mv.timestamp,
+          delete: true,
+        })
+      } else if (changed) {
+        changes.push({
+          traitId: compProps.trait.id || '',
+          personId: store.storeSelectedTrialPerson,
+          values: v,
+          timestamp: mv.timestamp,
+          delete: false,
+        })
+      }
+    })
+
+    if (changes.length > 0) {
+      const payload: DataModification = {}
+      payload[`${compProps.cell.row}|${compProps.cell.column}`] = changes
+      changeTrialsData(compProps.trial.localId || '', payload)
+        .then(() => {
+          nextTick(() => {
+            emitter.emit('plot-data-changed', compProps.cell.row, compProps.cell.column, compProps.trial.localId)
+            emitter.emit('plot-clicked', compProps.cell.row, compProps.cell.column, false)
+            emit('data-changed')
+          })
+          hide()
+        })
+    } else {
+      hide()
     }
   }
-}
+
+  function show () {
+    itemsValid.value = {}
+
+    refs.value = []
+    dataOutsideRangeAccepted.value = false
+    measurementsList.value = JSON.parse(JSON.stringify(compProps.cell.measurements[compProps.trait.id || ''] || []))
+    measurementsList.value.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+    traitData.value = measurementsList.value.map((m, i) => {
+      itemsValid.value[`${i}`] = true
+      const td: TraitData = {}
+      m.values.forEach((v, i) => {
+        td[`${i + 1}`] = (v === null || v === '') ? undefined : v
+      })
+      return td
+    })
+    dialog.value = true
+  }
+  function hide () {
+    dialog.value = false
+  }
+
+  const emit = defineEmits(['data-changed'])
+
+  defineExpose({
+    show,
+    hide,
+  })
 </script>
 
-<style scoped>
+<style>
 </style>

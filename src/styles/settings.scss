@@ -1,0 +1,13 @@
+@use 'vuetify/settings' with (
+  $button-text-transform: uppercase,
+  $card-text-text-transform: none,
+  $system-bar-text-transform: none,
+
+  // v3 breakpoints
+  $grid-breakpoints: (
+    'md': 960px,
+    'lg': 1280px,
+    'xl': 1920px,
+    'xxl': 2560px,
+  ),
+);

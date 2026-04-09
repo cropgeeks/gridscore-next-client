@@ -4,36 +4,48 @@
 
 export interface Trial {
     name: string;
-    description: string;
+    description?: string;
+    group?: Group
     traits: Trait[];
-    comments: Comment[];
-    events: Event[];
+    traitGroupOrder?: string[];
+    comments?: Comment[];
+    events?: Event[];
     people: Person[];
-    remoteUrl: string;
-    remoteToken: string;
+    isLocked?: boolean;
+    remoteUrl?: string;
+    remoteToken?: string;
     layout: Layout;
     data: { [index: string]: Cell } | undefined;
-    brapiId: string;
-    brapiConfig: BrapiConfig;
-    socialShareConfig: SocialShareConfig;
-    updatedOn: string;
-    createdOn: string;
-    lastSyncedOn: string;
-    shareCodes: ShareCodes;
+    brapiId?: string;
+    brapiConfig?: BrapiConfig;
+    socialShareConfig?: SocialShareConfig;
+    updatedOn?: string;
+    createdOn?: string;
+    lastSyncedOn?: string;
+    shareCodes?: ShareCodes;
+    mediaFilenameFormat?: string[];
+    dimensionNames?: DimensionNames;
+}
+
+export interface DimensionNames {
+    row: string;
+    rows: string;
+    column: string;
+    columns: string;
 }
 
 export interface Trait {
-    id: string;
-    brapiId: string;
+    id?: string;
+    brapiId?: string;
     name: string;
-    description: string;
-    dataType: string;
+    description?: string;
+    dataType: TraitDataType;
     allowRepeats: boolean;
     setSize: number;
-    group: Group;
-    restrictions: Restrictions;
-    timeframe: Timeframe;
-    hasImage: boolean;
+    group?: Group;
+    restrictions?: Restrictions;
+    timeframe?: Timeframe;
+    hasImage?: boolean;
     imageUrl?: string | undefined;
 }
 
@@ -43,47 +55,53 @@ export interface Comment {
 }
 
 export interface Event {
-    timestamp: string;
+    timestamp?: string;
     content: string;
     type: EventType;
     impact: number;
 }
 
 export interface Person {
-    id: string;
+    id?: string;
     name: string;
-    email: string;
+    email?: string;
     types: PersonType[];
 }
 
 export interface Layout {
     rows: number;
     columns: number;
-    corners: Corners;
-    markers: Markers;
+    corners?: Corners;
+    markers?: Markers;
     columnOrder: string;
     rowOrder: string;
     columnLabels: number[];
     rowLabels: number[];
 }
 
-export interface Cell {
-    brapiId: string;
+export interface CellMetadata {
     germplasm: string;
     pedigree?: string;
     friendlyName?: string;
     barcode?: string;
     treatment?: string;
-    rep: string;
+    rep?: string;
+}
+
+export interface Cell extends CellMetadata {
+    brapiId?: string;
     isMarked: boolean;
-    geography: Geography;
+    isLocked?: boolean;
+    geography?: Geography;
     measurements: { [index: string]: Measurement[] };
     comments: Comment[];
     categories: string[];
+    latestDates?: { [index: string]: string };
 }
 
 export interface BrapiConfig {
-    url?: string | null;
+    url?: string;
+    token?: string;
 }
 
 export interface SocialShareConfig {
@@ -98,19 +116,28 @@ export interface ShareCodes {
     viewerCode: string;
 }
 
+export type TrialUpdateCheck = { [index: string]: TrialTimestamp }
+
+export interface TrialTimestamp {
+    updatedOn: string;
+    expiresOn: string;
+    showExpiryWarning: boolean;
+}
+
 export interface Group {
-    name: string;
+    name?: string;
 }
 
 export interface Restrictions {
-    min: number;
-    max: number;
-    categories: string[];
+    min?: number;
+    max?: number;
+    step?: number;
+    categories?: string[];
 }
 
 export interface Timeframe {
-    start: string;
-    end: string;
+    start?: string;
+    end?: string;
     type: TimeframeType;
 }
 
@@ -136,12 +163,12 @@ export interface Geography {
 export interface Measurement {
     personId?: string;
     timestamp: string;
-    values: string[];
+    values: (string | undefined)[];
 }
 
 export interface LatLng {
-    lat: number;
-    lng: number;
+    lat?: number;
+    lng?: number;
     valid?: boolean;
 }
 
@@ -188,10 +215,10 @@ export interface TrialEventContent {
 
 export interface TraitEditContent {
     id: string;
-    name: string;
-    description: string;
+    name?: string;
+    description?: string;
     group?: string | null;
-    hasImage: boolean;
+    hasImage?: boolean;
     imageUrl?: string | undefined;
     timestamp: string;
 }
@@ -215,6 +242,7 @@ export interface Transaction {
     plotCommentAddedTransactions: { [index: string]: PlotCommentContent[] };
     plotCommentDeletedTransactions: { [index: string]: PlotCommentContent[] };
     plotMarkedTransactions: { [index: string]: boolean };
+    plotLockedTransactions?: { [index: string]: boolean };
     plotTraitDataChangeTransactions: { [index: string]: TraitMeasurement[] };
     plotGeographyChangeTransactions: { [index: string]: PlotGeographyContent };
     plotDetailsChangeTransaction: { [index: string]: PlotDetailContent };
@@ -224,12 +252,26 @@ export interface Transaction {
     trialEventDeletedTransactions: TrialEventContent[];
     trialPersonAddedTransactions: Person[];
     trialGermplasmAddedTransactions: string[];
+    trialGermplasmWithMetadataAddedTransactions: CellMetadata[];
     trialTraitAddedTransactions: Trait[];
     trialTraitDeletedTransactions: Trait[];
+    traitOrderTransaction: string[];
+    traitGroupOrderTransaction?: string[];
     traitChangeTransactions: TraitEditContent[];
     trialEditTransaction?: TrialContent | null;
+    trialLockedTransaction?: boolean;
     brapiIdChangeTransaction: BrapiIdChangeContent;
     brapiConfigChangeTransaction: BrapiConfig;
+}
+
+export interface ArchiveInformation {
+    trialExportedOn: string;
+    trialUpdatedOn: string;
+    fileSize: number;
+}
+
+export interface CaptchaContent {
+    captcha: string;
 }
 
 export const enum EventType {
@@ -256,4 +298,38 @@ export const enum Anchor {
     topRight = 'topRight',
     bottomRight = 'bottomRight',
     bottomLeft = 'bottomLeft',
+}
+
+export const enum DisplayOrder {
+    TOP_TO_BOTTOM = 'TOP_TO_BOTTOM',
+	BOTTOM_TO_TOP = 'BOTTOM_TO_TOP',
+	LEFT_TO_RIGHT = 'LEFT_TO_RIGHT',
+	RIGHT_TO_LEFT = 'RIGHT_TO_LEFT',
+}
+
+export const enum CellCategory {
+    CONTROL = 'control'
+}
+
+export enum TraitDataType {
+    int = 'int',
+    float = 'float',
+    range = 'range',
+    categorical = 'categorical',
+    multicat = 'multicat',
+    boolean = 'boolean',
+    date = 'date',
+    gps = 'gps',
+    image = 'image',
+    video = 'video',
+    text = 'text',
+}
+
+export namespace TraitDataType {
+    export function isNumeric (dataType: TraitDataType): boolean {
+        return dataType === TraitDataType.int || dataType === TraitDataType.float || dataType === TraitDataType.range
+    }
+    export function isCategorical (dataType: TraitDataType): boolean {
+        return dataType === TraitDataType.categorical || dataType === TraitDataType.multicat
+    }
 }

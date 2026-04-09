@@ -1,0 +1,585 @@
+import emitter from 'tiny-emitter/instance'
+import { getTrialDataCached } from '@/plugins/datastore'
+import type { TrialPlus, CellPlus, TraitPlus, RemoteConfig } from '@/plugins/types/client'
+import { EventType, TraitDataType, type Geography, type Measurement, type Trait } from '@/plugins/types/gridscore'
+import { GERMINATE_EXPECTED_COLUMNS, safeTrialName, TABULAR_EXPECTED_COLUMNS, toGerminateDataType, toLocalDateString, toLocalDateTimeString } from '@/plugins/util'
+import { saveAs } from 'file-saver'
+import { i18n } from '@/plugins/vuetify'
+import { exportToGerminate, exportToShapefile, shareTrial } from './api'
+import { coreStore } from '@/stores/app'
+import { getTrialById } from './idb'
+
+interface IndividualMeasurement {
+  traitId: string
+  setPosition: number
+  date: string
+  value: string
+  geography: Geography | undefined
+}
+
+export interface TabExportConfig {
+  aggregate: boolean
+  includePeople: boolean
+  useTimestamps: boolean
+}
+
+function trialToPotentialGerminate (trial: TrialPlus, type: 'template' | 'shapefile', aggregate = true) {
+  return new Promise<string>((resolve, reject) => {
+    let shareCode = null
+    if (trial.shareCodes) {
+      shareCode = Object.values(trial.shareCodes).find(c => c !== undefined && c !== null)
+    }
+
+    if (shareCode) {
+      if (trial.transactionCount !== undefined && trial.transactionCount > 0) {
+        emitter.emit('show-confirm', {
+          title: i18n.global.t('modalTitleExportSynchronization'),
+          message: i18n.global.t('modalTextExportSynchronization'),
+          okTitle: i18n.global.t('buttonYes'),
+          cancelTitle: i18n.global.t('buttonNo'),
+          cancelVariant: 'primary',
+          okVariant: 'primary',
+          callback: (value: boolean) => {
+            if (value) {
+              emitter.emit('synchronize-trial', trial)
+            } else {
+              emitter.emit('show-loading', true)
+
+              let remoteConfig = undefined
+
+              if (trial && trial.remoteUrl) {
+                remoteConfig = {
+                  remoteUrl: trial.remoteUrl,
+                  token: trial.remoteToken || undefined,
+                }
+              }
+
+              if (type === 'shapefile') {
+                trialToShapefile(remoteConfig, shareCode)
+                  .then(resolve)
+                  .catch(reject)
+              } else {
+                trialToGerminate(remoteConfig, shareCode, aggregate)
+                  .then(resolve)
+                  .catch(reject)
+              }
+            }
+          },
+        })
+      } else {
+        emitter.emit('show-loading', true)
+
+        let remoteConfig = undefined
+
+        if (trial && trial.remoteUrl) {
+          remoteConfig = {
+            remoteUrl: trial.remoteUrl,
+            token: trial.remoteToken || undefined,
+          }
+        }
+        if (type === 'shapefile') {
+          trialToShapefile(remoteConfig, shareCode)
+            .then(resolve)
+            .catch(reject)
+        } else {
+          trialToGerminate(remoteConfig, shareCode, aggregate)
+            .then(resolve)
+            .catch(reject)
+        }
+      }
+    } else {
+      emitter.emit('show-loading', true)
+
+      let remoteConfig = undefined
+
+      if (trial && trial.remoteUrl) {
+        remoteConfig = {
+          remoteUrl: trial.remoteUrl,
+          token: trial.remoteToken || undefined,
+        }
+      }
+      shareTrial(remoteConfig, trial.localId || '')
+        .then(() => {
+          return getTrialById(trial.localId || '')
+        })
+        .then(trial => {
+          trialToPotentialGerminate(trial, type, aggregate)
+            .then(result => resolve(result))
+            .catch(e => reject(e))
+        })
+        .catch(e => reject(e))
+    }
+  })
+}
+
+function trialToShapefile (remoteConfig: RemoteConfig | undefined, shareCode: string) {
+  return new Promise<string>((resolve, reject) => {
+    exportToShapefile(remoteConfig, shareCode)
+      .then(uuid => {
+        const store = coreStore()
+        resolve(`${store.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`)
+        emitter.emit('show-loading', false)
+      })
+      .catch(e => reject(e))
+  })
+}
+
+function trialToGerminate (remoteConfig: RemoteConfig | undefined, shareCode: string, aggregate = true) {
+  return new Promise<string>((resolve, reject) => {
+    exportToGerminate(remoteConfig, shareCode, aggregate)
+      .then(uuid => {
+        const store = coreStore()
+        resolve(`${store.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`)
+        emitter.emit('show-loading', false)
+      })
+      .catch(e => reject(e))
+  })
+}
+
+function traitsToGridScore (traits: TraitPlus[]): string {
+  const copy: TraitPlus[] = JSON.parse(JSON.stringify(traits))
+  copy.forEach(t => {
+    delete t.id
+    delete t.progress
+    delete t.editable
+    delete t.color
+  })
+  return JSON.stringify(copy, null, 2)
+}
+
+function traitsToGerminate (traits: Trait[]): string {
+  let text = `${GERMINATE_EXPECTED_COLUMNS.join('\t')}\tSet size\tIs timeseries\tTrait category`
+
+  traits.forEach(t => {
+    text += `\n${t.name}\t\t${t.description || ''}\t${toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}\t${t.group ? t.group.name : ''}`
+  })
+
+  return text
+}
+
+function traitsToTabular (traits: Trait[]): string {
+  let text = TABULAR_EXPECTED_COLUMNS.join('\t')
+
+  traits.forEach(t => {
+    text += `\n${t.name}\t${t.description || ''}\t${t.dataType}\t${t.allowRepeats ? 1 : 0}\t${t.setSize}\t${t.group ? t.group.name : ''}`
+
+    // Restrictions
+    text += `\t${(t.restrictions && t.restrictions.categories) ? t.restrictions.categories.join(',') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`
+
+    // Timeframe
+    if (t.timeframe) {
+      text += `\t${t.timeframe.type}\t${t.timeframe.start || ''}\t${t.timeframe.end || ''}`
+    } else {
+      text += '\t\t\t'
+    }
+  })
+
+  return text
+}
+
+function exportTrialLayout (trial: TrialPlus, trialData: { [index: string]: CellPlus }) {
+  if (trial.layout && trialData) {
+    let result = 'Germplasm\tRep\tRow\tColumn\tTreatment\tFriendly name\tBarcode\tPedigree'
+
+    for (let row = 0; row < trial.layout.rows; row++) {
+      for (let column = 0; column < trial.layout.columns; column++) {
+        const c = trialData[`${row}|${column}`]
+
+        if (c) {
+          result += `\n${c.germplasm}\t${c.rep || ''}\t${c.displayRow}\t${c.displayColumn}\t${c.treatment || ''}\t${c.friendlyName || ''}\t${c.barcode || ''}\t${c.pedigree || ''}`
+        }
+      }
+    }
+
+    downloadText(result, `gridscore-layout-${safeTrialName(trial)}.txt`)
+  }
+}
+
+function downloadText (text: string, filename: string) {
+  const blobby = new Blob([text], { type: 'text/plain;charset=utf-8' })
+  saveAs(blobby, filename)
+}
+
+function exportDataTab (trial: TrialPlus, tabConfig: TabExportConfig, direction: 'wide' | 'long' = 'wide') {
+  emitter.emit('show-loading', true)
+
+  const data = getTrialDataCached()
+  if (data) {
+    // Header row
+    let result
+    if (direction === 'wide') {
+      result = trialsDataToMatrix(data, trial, tabConfig.aggregate)
+    } else if (direction === 'long') {
+      result = trialsDataToLongFormat(data, trial, tabConfig.aggregate, tabConfig.includePeople, tabConfig.useTimestamps)
+    }
+
+    if (result) {
+      downloadText(result, `gridscore-data-${safeTrialName(trial)}.txt`)
+    }
+  }
+
+  emitter.emit('show-loading', false)
+}
+
+function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: TrialPlus, aggregate = true, includePeople = false, useTimestamps = false) {
+  let result = 'Germplasm\tRep\tRow\tColumn\tSet entry\tDate\tLatitude\tLongitude\tTrait group\tTrait\tValue'
+
+  if (aggregate) {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = v.displayRow
+        const column = v.displayColumn
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}\t`
+
+        const dates = new Set<string>()
+        Object.values(v.measurements).forEach(td => {
+          td.forEach(dp => dates.add(dp.timestamp.split('T')[0] || ''))
+        })
+
+        const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
+
+        dateArray.forEach(date => {
+          trial.traits.forEach(t => {
+            const td = v.measurements[t.id || '']
+            const restrictions = t.restrictions
+            const categories = restrictions ? restrictions.categories : undefined
+
+            if (td) {
+              const onDate = td.filter(dp => dp.timestamp.split('T')[0] === date).reduce((a: (string | undefined)[], b: Measurement) => a.concat(b.values), []).filter(v => v !== undefined && v !== null)
+
+              if (onDate.length > 0) {
+                let values
+                const last: string | undefined = onDate[onDate.length - 1]
+                if (TraitDataType.isNumeric(t.dataType)) {
+                  values = `\t${onDate.reduce((acc, val) => acc + (+val), 0) / onDate.length}`
+                } else if (t.dataType === TraitDataType.categorical && restrictions && categories && last !== undefined) {
+                  values = `\t${categories[+last]}`
+                } else if (t.dataType === TraitDataType.multicat && restrictions && categories && last !== undefined) {
+                  const parts = last.split(':')
+
+                  if (parts.length > 0) {
+                    values = `\t${categories[+(parts[-1] || '')]}`
+                  } else {
+                    values = `\t`
+                  }
+                } else {
+                  values = `\t${onDate[onDate.length - 1]}`
+                }
+
+                result += `\n${germplasmMeta}\t${date}`
+
+                if (v.geography) {
+                  result += getLatLngAverage(v.geography)
+                } else {
+                  result += '\t\t'
+                }
+
+                result += `\t${t.group ? t.group.name : ''}\t${t.name}\t${values}`
+              }
+            }
+          })
+        })
+      }
+    })
+  } else {
+    if (includePeople) {
+      result += '\tPerson'
+    }
+
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = v.displayRow
+        const column = v.displayColumn
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        trial.traits.forEach(t => {
+          const td = v.measurements[t.id || '']
+          const restrictions = t.restrictions
+          const categories = restrictions ? restrictions.categories : undefined
+
+          if (td) {
+            td.forEach(dp => {
+              const values = (dp.values || [])
+                .map((value, index) => {
+                  return {
+                    index,
+                    value,
+                  }
+                })
+                .filter(val => val !== undefined && val !== null && val.value !== undefined && val.value !== null && val.value !== '')
+                .flat()
+
+              if (values && values.length > 0) {
+                values.forEach(val => {
+                  let valuesss: (string | undefined)[] = []
+
+                  if (t.dataType === TraitDataType.multicat) {
+                    valuesss = val.value !== undefined ? val.value.split(':') : []
+                  } else {
+                    valuesss = [val.value]
+                  }
+
+                  valuesss.forEach(value => {
+                    result += `\n${germplasmMeta}\t${val.index + 1}\t${useTimestamps ? toLocalDateTimeString(dp.timestamp, { overallSeparator: ' ', dateSeparator: '-', timeSeparator: ':' }) : dp.timestamp.split('T')[0]}`
+
+                    if (v.geography) {
+                      result += getLatLngAverage(v.geography)
+                    } else {
+                      result += '\t\t'
+                    }
+
+                    result += `\t${t.name}\t${(TraitDataType.isCategorical(t.dataType) && restrictions && categories && value !== undefined) ? categories[+value] : value}`
+
+                    if (includePeople && trial.people && trial.people.length > 0) {
+                      const person = trial.people.find(p => p.id === dp.personId)
+                      result += `\t${person ? person.name : ''}`
+                    } else {
+                      result += '\t'
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+  }
+
+  return result
+}
+
+function trialsDataToMatrix (data: { [index: string]: CellPlus }, trial: TrialPlus, aggregate = true) {
+  let result = `Line/Trait\tRep\tRow\tColumn\tSet\tDate\t${trial.traits.map(t => t.name).join('\t')}\tLatitude\tLongitude`
+
+  if (aggregate) {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = v.displayRow
+        const column = v.displayColumn
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        const dates = new Set<string>()
+        Object.values(v.measurements).forEach(td => {
+          td.forEach(dp => dates.add(dp.timestamp.split('T')[0] || ''))
+        })
+
+        const dateArray = [...dates].sort((a, b) => a.localeCompare(b))
+
+        dateArray.forEach(date => {
+          result += `\n${germplasmMeta}\t\t${date}`
+
+          trial.traits.forEach(t => {
+            const td = v.measurements[t.id || '']
+            const restrictions = t.restrictions
+            const categories = restrictions ? restrictions.categories : undefined
+
+            if (td) {
+              const onDate: (string | undefined)[] = td.filter(dp => dp.timestamp.split('T')[0] === date).reduce((a: (string | undefined)[], b: Measurement) => a.concat(b.values), []).filter(v => v !== undefined && v !== null) || []
+
+              if (onDate.length > 0) {
+                const last: string | undefined = onDate[onDate.length - 1]
+                if (TraitDataType.isNumeric(t.dataType)) {
+                  result += `\t${onDate.filter(val => val !== undefined).reduce((acc, val) => acc + (+val), 0) / onDate.length}`
+                } else if (t.dataType === TraitDataType.categorical && restrictions && categories && last !== undefined) {
+                  result += `\t${categories[+last]}`
+                } else if (t.dataType === TraitDataType.multicat && restrictions && categories && last !== undefined) {
+                  result += `\t${categories[+(last.split(':')[0] || '')]}`
+                } else {
+                  result += `\t${onDate[onDate.length - 1]}`
+                }
+              } else {
+                result += '\t'
+              }
+            } else {
+              result += '\t'
+            }
+          })
+
+          if (v.geography) {
+            result += getLatLngAverage(v.geography)
+          } else {
+            result += '\t\t'
+          }
+        })
+      }
+    })
+  } else {
+    Object.values(data).forEach(v => {
+      if (v.measurements) {
+        const row = v.displayRow
+        const column = v.displayColumn
+        const germplasmMeta = `${v.germplasm}\t${v.rep || ''}\t${row}\t${column}`
+
+        const measurements: IndividualMeasurement[] = []
+
+        trial.traits.forEach(t => {
+          const td = v.measurements[t.id || '']
+          const restrictions = t.restrictions
+          const categories = restrictions ? restrictions.categories : undefined
+
+          if (td) {
+            td.forEach(dp => {
+              const values = (dp.values || [])
+                .filter(val => val !== undefined && val !== null && val !== '')
+                .flat()
+                .filter(val => val !== undefined && val !== null && val !== '')
+
+              if (values && values.length > 0) {
+                values.forEach((val, setPosition) => {
+                  let values: (string | undefined)[] = []
+                  if (t.dataType === TraitDataType.categorical) {
+                    values = [(restrictions && categories && val !== undefined) ? categories[+val] : val]
+                  } else if (t.dataType === TraitDataType.multicat) {
+                    if (restrictions && categories && val !== undefined) {
+                      values = val.split(':').map(vv => categories[+vv])
+                    } else {
+                      values = [val]
+                    }
+                  } else {
+                    values = [val]
+                  }
+
+                  if (values !== undefined) {
+                    values.forEach(value => {
+                      if (value !== undefined) {
+                        measurements.push({
+                          traitId: t.id || '',
+                          setPosition,
+                          date: dp.timestamp.split('T')[0] || '',
+                          value,
+                          geography: v.geography,
+                        })
+                      }
+                    })
+                  }
+                })
+              }
+            })
+          }
+        })
+
+        measurements.forEach(m => {
+          const values = trial.traits.map(t => `${t.id === m.traitId ? m.value : ''}`).join('\t')
+          result += `\n${germplasmMeta}\t${m.setPosition + 1}\t${m.date}\t${values}`
+
+          if (m.geography) {
+            result += getLatLngAverage(m.geography)
+          } else {
+            result += '\t\t'
+          }
+        })
+      }
+    })
+  }
+
+  return result
+}
+
+function getLatLngAverage (geography: Geography) {
+  let result = ''
+
+  if (geography) {
+    if (geography.center) {
+      result += `\t${geography.center.lat || ''}\t${geography.center.lng || ''}`
+    } else if (geography.corners) {
+      let latverage = 0
+      let lngverage = 0
+      let count = 0
+
+      if (geography.corners.topLeft) {
+        latverage += geography.corners.topLeft.lat || 0
+        lngverage += geography.corners.topLeft.lng || 0
+        count++
+      }
+      if (geography.corners.topRight) {
+        latverage += geography.corners.topRight.lat || 0
+        lngverage += geography.corners.topRight.lng || 0
+        count++
+      }
+      if (geography.corners.bottomLeft) {
+        latverage += geography.corners.bottomLeft.lat || 0
+        lngverage += geography.corners.bottomLeft.lng || 0
+        count++
+      }
+      if (geography.corners.bottomRight) {
+        latverage += geography.corners.bottomRight.lat || 0
+        lngverage += geography.corners.bottomRight.lng || 0
+        count++
+      }
+
+      if (count) {
+        result += `\t${latverage / count}\t${lngverage / count}`
+      } else {
+        result += '\t\t'
+      }
+    } else {
+      result += '\t\t'
+    }
+  }
+
+  return result
+}
+
+function exportTrialComments (trial: TrialPlus) {
+  let result = 'Date\tComment'
+  const comments = trial.comments || []
+
+  comments.forEach(c => {
+    result += `\n${toLocalDateString(new Date(c.timestamp))}\t${c.content}`
+  })
+
+  downloadText(result, `gridscore-trial-comments-${safeTrialName(trial)}.txt`)
+}
+
+function exportTrialEvents (trial: TrialPlus) {
+  let result = 'Date\tEvent\tType\tImpact'
+  const events = trial.events || []
+
+  events.forEach(c => {
+    let typeString
+    switch (c.type) {
+      case EventType.MANAGEMENT:
+        typeString = i18n.global.t('formSelectOptionEventTypeManagement')
+        break
+      case EventType.WEATHER:
+        typeString = i18n.global.t('formSelectOptionEventTypeWeather')
+        break
+      case EventType.OTHER:
+        typeString = i18n.global.t('formSelectOptionEventTypeOther')
+        break
+    }
+    result += `\n${toLocalDateString(new Date(c.timestamp || new Date()))}\t${c.content}\t${typeString}\t${c.impact}`
+  })
+
+  downloadText(result, `gridscore-trial-events-${safeTrialName(trial)}.txt`)
+}
+
+function exportPlotComments (trial: TrialPlus, trialData: { [index: string]: CellPlus }) {
+  let result = 'Germplasm\tRep\tRow\tColumn\tDate\tComment'
+
+  Object.values(trialData).forEach(c => {
+    if (c && c.comments && c.comments.length > 0) {
+      const row = c.displayRow
+      const column = c.displayColumn
+      c.comments.forEach(cm => {
+        result += `\n${c.germplasm}\t${c.rep || ''}\t${row}\t${column}\t${toLocalDateString(new Date(cm.timestamp))}\t${cm.content}`
+      })
+    }
+  })
+
+  downloadText(result, `gridscore-plot-comments-${safeTrialName(trial)}.txt`)
+}
+
+export {
+  downloadText,
+  exportDataTab,
+  exportTrialLayout,
+  traitsToGerminate,
+  traitsToTabular,
+  traitsToGridScore,
+  exportTrialComments,
+  exportTrialEvents,
+  exportPlotComments,
+  trialToPotentialGerminate,
+}

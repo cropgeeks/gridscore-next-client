@@ -1,0 +1,91 @@
+<template>
+  <div v-if="model">
+    <v-row>
+      <v-col cols="12" md="6">
+        <NumberInputWithFallback
+          v-model="model.rows"
+          :default-value="1"
+          :min="1"
+          required
+          :disabled="isEdit || !canChange"
+          :prepend-inner-icon="mdiLandRowsHorizontal"
+          :label="$t('formLabelSetupRows', i18nParams)"
+          :hint="$t('formLabelDescriptionRows', i18nParams)"
+          persistent-hint
+        />
+
+        <v-btn-toggle v-model="model.rowOrder" :disabled="isEdit" mandatory color="primary" variant="tonal" class="mt-3">
+          <v-btn :value="DisplayOrder.TOP_TO_BOTTOM" :text="$t('buttonTopToBottom')" :prepend-icon="mdiSortAscending" />
+          <v-btn :value="DisplayOrder.BOTTOM_TO_TOP" :text="$t('buttonBottomToTop')">
+            <template #prepend><v-icon :icon="mdiSortAscending" class="mdi-flip-v" /></template>
+          </v-btn>
+        </v-btn-toggle>
+
+        <LabelEditor v-model="model.rowLabels" orientation="vertical" />
+      </v-col>
+      <v-col cols="12" md="6" v-if="layoutType === 'grid'">
+        <NumberInputWithFallback
+          v-model="model.columns"
+          :default-value="1"
+          :min="1"
+          required
+          :disabled="isEdit || !canChange"
+          :prepend-inner-icon="mdiLandRowsVertical"
+          :label="$t('formLabelSetupColumns', i18nParams)"
+          :hint="$t('formLabelDescriptionColumns', i18nParams)"
+          persistent-hint
+        />
+
+        <v-btn-toggle v-model="model.columnOrder" :disabled="isEdit" mandatory color="primary" variant="tonal" class="mt-3">
+          <v-btn :value="DisplayOrder.LEFT_TO_RIGHT" :text="$t('buttonLeftToRight')">
+            <template #prepend><v-icon :icon="mdiSortAscending" class="sort-ltr" /></template>
+          </v-btn>
+          <v-btn :value="DisplayOrder.RIGHT_TO_LEFT" :text="$t('buttonRightToLeft')">
+            <template #prepend><v-icon :icon="mdiSortAscending" class="sort-rtl" /></template>
+          </v-btn>
+        </v-btn-toggle>
+
+        <LabelEditor v-model="model.columnLabels" orientation="horizontal" />
+      </v-col>
+    </v-row>
+
+    <v-alert
+      v-if="layoutType === 'grid'"
+      class="mt-3"
+      color="warning"
+      :icon="mdiAlert"
+      :text="$t('pageTrialLayoutDimensionsFielDHubNotice', i18nParams)"
+      variant="tonal"
+      border="start"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+  import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
+  import { DisplayOrder, type DimensionNames, type Layout } from '@/plugins/types/gridscore'
+  import { mdiAlert, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSortAscending } from '@mdi/js'
+  import LabelEditor from '@/components/setup/LabelEditor.vue'
+  import { getI18nParams } from '@/plugins/formatting'
+
+  const model = defineModel<Layout>()
+  const layoutType = defineModel<'grid' | 'list'>('layoutType')
+
+  const i18nParams = computed(() => getI18nParams(props.dimensionNames))
+
+  const props = defineProps<{
+    isEdit: boolean
+    canChange: boolean
+    dimensionNames?: DimensionNames
+  }>()
+</script>
+
+<style>
+.sort-ltr svg {
+  transform: rotate(90deg) scaleX(-1) scaleY(-1);
+}
+
+.sort-rtl svg {
+  transform: rotate(90deg) scaleX(-1);
+}
+</style>

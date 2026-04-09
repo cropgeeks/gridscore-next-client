@@ -13,11 +13,11 @@ The settings page allows you to make changes to properties that affect the overa
 ## General settings
 General settings include things that affect every page of GridScore. They include the language/locale and dark mode.
 
+- **Primary theme color**: You can change the main color used throughout the user interface as the primary color. There is a set of colors to choose from. Some will work better when using the light theme while others will work better using the dark theme.
 - **Locale/Language**: Use this dropdown box to select your language of choice from a pre-defined list of supported locales. If you're language/locale isn't available in the list, please get in touch and we can try and change this together.
-- **Dark mode**: Depending on the lighting conditions you're working in, the user interface may be more usable in light or dark mode. Use the toggle to switch between them. Generally speaking, the light mode will work better in bright environments, whereas the dark mode is easier on the eyes in darker environments.
-- **Home widget order**: The order in which the sections on the front page are displayed can be changed by dragging them around. This means you can either have the getting-started banners or the list of trials on top.
-
-You can also access both of these settings from the main navigation menu at the top of the page from anywhere in GridScore.
+- **Theme**: Depending on the lighting conditions you're working in, the user interface may be more usable in light or dark mode. Use the toggle to switch between them. Generally speaking, the light mode will work better in bright environments, whereas the dark mode is easier on the eyes in darker environments. You can also set this to automatic to match your system/device settings.
+- **Battery saver mode**: When you're running low on battery or generally want to try and improve GridScore's performance on your device, you can enable the battery saver mode. This will disable most UI animations, switch the main display to canvas-mode and enable some other optimizations.
+- **Hide help information**: With this, you can hide the help information section on the home page.
 
 ## Data collection settings
 This section contains any settings that affect the way data is collected.
@@ -32,17 +32,22 @@ This section contains any settings that affect the way data is collected.
 - **Category count inline**: Decide how many category trait options are displayed inline before switching to a dropdown selection box.
 - **Voice feedback**: When enabled, GridScore will use the speech synthesis (text-to-speech) functionality of your device to provide feedback on your data input. This is done in the form of audibly repeating the data you entered as well as the plot identifier and trait which has been selected.
 - **Restrict data input**: Sometimes you want to make sure that you're only selecting plots to score from a certain row or column. For example, you may be walking along the first column in the trial and want to make sure you're not accidentally selecting a plot from the neighboring column. When this setting is enabled, GridScore will restrict the ability to select plots on the main data view to only those within the marked rows/columns. If no columns or rows are marked, any plot can be selected.
+- **Auto-select search**: When enabled, GridScore will attempt to focus the search input whenever the data input window is closed. This will make it easier to continuously use something like a barcode scanner for plot identification as well as data input.
+- **Auto-select first input**: When enabled, the first data input element on the data input screen will automatically gain focus. On mobile devices, this should automatically show the virtual keyboard.
+- **Auto-progress inputs**: When enabled, GridScore will automatically progress to the next available trait input after a value has been entered (and potentially confirmed with an enter key press).
+- **Enter barcode**: When set, GridScore will listen for this barcode during data input. When it is recognized, GridScore will attempt to save the data input and verify the entered data.
+- **Escape barcode**: When set, GridScore will listen for this barcode during data input. When it is recognized, the data input will be closed and all data entered without saving will be lost.
 
 
 ## Visual settings
 Visual settings affect the way in which data is displayed on the user interface. You can adjust these settings here if you have a preference that differs from the default.
 
 - **Trait colors**: GridScore uses colors to represent traits within the main data view as well as in any other location across the user interface. These colors have been chosen to be strike the balance between being colorblind-safe and visually appealing. Depending on your personal preference or visual needs, you can adjust these colors here by removing any colors you don't like and replacing them with any other colors.
-- **Highlight controls**: Decide whether plots marked as controls/checks should be highlighted in charts and the main data input display.
 - **Show marker indicators**: Marker indicators can be used to aid navigation within the trial. They will be displayed in a repeating pattern across both dimensions of the trial. Their position can be set during trial setup or adjusted later on. This setting determines whether they will be displayed on top of the main data display or hidden completely.
 - **Show full trait description**: Decide whether or not the full trait description should be displayed in the data input window. If disabled, only a single line of the description will be shown to make more space for the actual data input.
 - **Counter buttons**: In cases where whole number traits are used as counters (e.g. flower count, plant count etc) the `+` and `-` buttons to the right and left of the input field can be changed in size to make them much easier to use. If enabled, the buttons will be increased in size and, on devices that support it, a slight vibration feedback is used to provide tactile feedback.
 - **Minimum cell/plot width**: GridScore will try and fit as much data and as many plots as possible onto the main data view. This may result in the trial circles being wrapped multiple times to make more use of the horizontal space on screen. If you wish to ensure that at least a certain number of trait circles is displayed per row then adjust this setting. The more circles you choose the wider each cell/plot will become.
+- **Plot display field**: This setting determines the text shown on cells in the main data display. By default it'll be the `Display name` which is either `germplasm-rep` or, if set, the friendly name of the cell.
 - **Data point shape**: The shape of the data points on the main data display can be switched between circles and squares.
 - **Data point size**: The size of the data points in the main data display can be adjusted. Smaller data points allow for more data to be visible at once while larger data points make it easier to identify which data has been collected and which still needs to be collected.
 - **Data point density**: Similar to the data point size, the density of the data points on the main data display can be adjusted to change how much data (plots) are visible at once.
@@ -50,10 +55,10 @@ Visual settings affect the way in which data is displayed on the user interface.
 
 ## Sharing settings
 
-Any settings changed on this page will only affect your local device and will not affect anyone working on the same shared trial. It can sometimes be useful to make sure everyone uses the same settings across the trial, so we added a way to easily share these settings using a QR code. To use this feature, click on the share icon in the top right of the settings page. 
+Any settings changed on this page will only affect your local device and will not affect anyone working on the same shared trial. It can sometimes be useful to make sure everyone uses the same settings across the trial, so we added a way to easily share these settings using a QR code. To use this feature, click on the `Import/Export` button in the top right of the settings page. 
 
-<img src="img/settings-share.png" style="max-width: 50%;" alt="Sharing settings using QR codes">
+<img src="img/settings-share.png" style="max-width: 100%;" alt="Sharing settings using QR codes">
 
-A new window will open presenting you with the QR code that reflects your current settings. You can then show this QR code to the other person who uses the `Load other settings` tab to scan your QR code. Once they have done so, their device will use the exact same settings as yours.
+When selecting `Share your settings` new window will open presenting you with the QR code that reflects your current settings. You can then show this QR code to the other person who uses the `Load other settings` option to scan your QR code. Once they have done so, their device will use the exact same settings as yours.
 
 <a href="index.html" class="btn btn-dark">Home</a>

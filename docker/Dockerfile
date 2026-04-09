@@ -11,7 +11,7 @@ ADD https://api.github.com/repos/cropgeeks/gridscore-next-client/git/refs/heads/
 # Clone the GridScore server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
-    if [ "$BRANCH" = "master" ] || [ "$BRANCH" = "vue3" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; fi && \
+    if [ "$BRANCH" = "master" ] || [ "$BRANCH" = "vuetify" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-server.git /opt/gridscore-server ; fi && \
     if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-client.git /opt/gridscore-client ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/gridscore-next-client.git /opt/gridscore-client ; fi
 
 # Build the client code

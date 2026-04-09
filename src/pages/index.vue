@@ -1,0 +1,130 @@
+<template>
+  <v-container>
+    <v-card class="mb-5">
+      <div class="d-flex flex-nowrap flex-column flex-sm-row justify-space-between align-center ma-5 justify-center">
+        <v-card-text class="flex-grow-1">
+          <p class="text-display-large mt-0">{{ $t('appTitle') }}</p>
+
+          <p class="text-headline-small my-3">{{ $t('pageHomeWelcome') }}</p>
+
+          <p class="text-body-large my-3">{{ $t('pageHomeInstructions') }}</p>
+        </v-card-text>
+        <v-avatar
+          class="ma-3"
+          rounded="0"
+          size="150"
+          image="/img/gridscore-next.svg"
+        />
+      </div>
+    </v-card>
+
+    <v-row>
+      <v-col cols="12" :class="`order-${store.storeHomeWidgetOrder.indexOf('banners')}`">
+        <HelpCard />
+
+        <v-row>
+          <v-col
+            v-for="banner in banners"
+            :key="`banner-${banner.id}`"
+            class="d-flex"
+          >
+            <v-card :to="banner.to" class="d-flex flex-column justify-content-between flex-grow-1" variant="tonal">
+              <div class="d-flex flex-no-wrap align-center flex-grow-1">
+                <v-avatar
+                  class="ma-3"
+                  rounded="0"
+                  variant="text"
+                  size="72"
+                >
+                  <v-icon size="72" :color="banner.color">{{ banner.icon }}</v-icon>
+                </v-avatar>
+                <div>
+                  <v-card-text>
+                    <p class="text-headline-large mt-0 font-weight-black">{{ banner.title }}</p>
+
+                    <div class="text-medium-emphasis">
+                      {{ banner.subtitle }}
+                    </div>
+                  </v-card-text>
+                </div>
+              </div>
+
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  color="primary"
+                  :text="$t('buttonSelect')"
+                  variant="text"
+                />
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" :class="`order-${store.storeHomeWidgetOrder.indexOf('trials')}`">
+        <TrialSelector />
+      </v-col>
+    </v-row>
+
+    <v-card variant="tonal" class="mt-5">
+      <div class="d-flex flex-wrap flex-sm-nowrap justify-center justify-sm-start">
+        <v-icon color="primary" class="ma-5" size="80" :icon="mdiNewspaperVariantOutline" />
+        <div>
+          <v-card-title class="text-headline-small">{{ $t('pageHomeTitleCitation') }}</v-card-title>
+
+          <v-card-text>
+            <div v-html="$t('pageHomeTextCitation')" />
+          </v-card-text>
+        </div>
+      </div>
+    </v-card>
+  </v-container>
+</template>
+
+<script lang="ts" setup>
+  import TrialSelector from '@/components/trial/TrialSelector.vue'
+  import HelpCard from '@/components/util/HelpCard.vue'
+  import { categoricalColors } from '@/plugins/color'
+  import { coreStore } from '@/stores/app'
+  import { mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
+  import { useI18n } from 'vue-i18n'
+
+  const store = coreStore()
+
+  const { t } = useI18n()
+  const banners = computed(() => {
+    return [{
+      id: 'setup',
+      title: t('pageHomeCardTitleSetup'),
+      subtitle: t('pageHomeCardSubtitleSetup'),
+      image: 'banner-setup.svg',
+      color: categoricalColors.GridScoreDefault[0],
+      icon: mdiNotebookPlus,
+      to: '/setup',
+    }, {
+      id: 'share',
+      title: t('pageHomeCardTitleShareData'),
+      subtitle: t('pageHomeCardSubtitleShareData'),
+      image: 'banner-share.svg',
+      color: categoricalColors.GridScoreDefault[1],
+      icon: mdiQrcodeScan,
+      to: '/trial/import',
+    }, {
+      id: 'example',
+      title: t('pageHomeCardTitleLoadExample'),
+      subtitle: t('pageHomeCardSubtitleLoadExample'),
+      image: 'banner-load-example.svg',
+      color: categoricalColors.GridScoreDefault[2],
+      icon: mdiClipboardTextClock,
+      to: '/trial/import/example',
+    }, {
+      id: 'settings',
+      title: t('pageHomeCardTitleSettings'),
+      subtitle: t('pageHomeCardSubtitleSettings'),
+      image: 'banner-settings.svg',
+      color: categoricalColors.GridScoreDefault[3],
+      icon: mdiCog,
+      to: '/settings',
+    }]
+  })
+</script>

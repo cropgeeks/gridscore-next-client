@@ -1,14 +1,13 @@
-import { Cell, Trait, Trial } from '@/plugins/types/gridscore'
+/* tslint:disable */
+/* eslint-disable */
+
+import type { Cell, CellMetadata, Measurement, Trait, Trial } from '@/plugins/types/gridscore'
 
 export interface TraitPlus extends Trait {
   color?: string
   progress?: number
   editable?: boolean
   visible?: boolean
-}
-
-export interface TrialGroup {
-  name: string
 }
 
 export interface Geolocation {
@@ -18,23 +17,59 @@ export interface Geolocation {
   heading?: number
 }
 
+export interface HistoryMeasurement extends Measurement {
+  delete?: boolean
+}
+
+export interface TraitGroup extends TraitPlus {
+  children: Trait[]
+}
+
 export interface TrialPlus extends Trial {
-  localId: string
+  localId: string | undefined
   traits: TraitPlus[]
   editable?: boolean
   shareStatus?: ShareStatus
+  mediaFilenameFormat?: string[]
   transactionCount?: number
-  group?: TrialGroup
+  hasRemoteUpdate?: boolean
+  hasLocalUpdate?: boolean
+  showExpiryWarning?: boolean
   expiresOn?: string
+  distanceToMe?: number
 }
 
 export interface CellPlus extends Cell {
+  artificialId?: string
   trialId?: string
   row?: number
   column?: number
   displayName?: string
-  displayColumn?: string
-  displayRow?: string
+  displayColumn?: number
+  displayRow?: number
+}
+
+export interface MiniCell extends CellMetadata {
+  row: number
+  column: number
+  displayName?: string
+  displayRow?: number
+  displayColumn?: number
+  categories: string[];
+}
+
+export interface BrapiImportCell {
+  row: number
+  column: number
+  germplasm: string
+  rep?: string
+  brapiId: string
+  categories: string[]
+}
+
+export interface RemoteConfig {
+  remoteUrl?: string
+  token?: string
 }
 
 export interface ServerMessage {
@@ -46,9 +81,59 @@ export interface ServerMessage {
   maxVersion?: string
 }
 
+export interface PlotCoords {
+  lat: number
+  lng: number
+  trialId: string
+}
+
 export const enum ShareStatus {
-  TRIAL_STATE_NOT_SHARED = 'NOT_SHARED',
-  TRIAL_STATE_OWNER = 'OWNER',
-  TRIAL_STATE_EDITOR = 'EDITOR',
-  TRIAL_STATE_VIEWER = 'VIEWER',
+  NOT_SHARED = 'NOT_SHARED',
+  OWNER = 'OWNER',
+  EDITOR = 'EDITOR',
+  VIEWER = 'VIEWER',
+}
+
+export const enum NavigationMode {
+  DRAG = 'DRAG',
+  JUMP = 'JUMP',
+}
+
+export const enum PlotDisplayField {
+  DISPLAY_NAME = 'displayName',
+  GERMPLASM = 'germplasm',
+  REP = 'rep',
+  NOTHING = '',
+}
+
+export const enum CanvasDensity {
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low',
+}
+
+export const enum CanvasSize {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  LARGE = 'large',
+}
+
+export const enum CanvasShape {
+  CIRCLE = 'circle',
+  SQUARE = 'square',
+}
+
+export const enum TrialListMode {
+  TABBED = 'tabbed',
+  ALL = 'all',
+}
+
+export const enum TrialListType {
+  GRID = 'grid',
+  LIST = 'list',
+}
+
+export const enum MainDisplayMode {
+  AUTO = 'auto',
+  CANVAS_ONLY = 'canvas-only',
 }

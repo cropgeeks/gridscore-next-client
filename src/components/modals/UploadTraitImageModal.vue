@@ -1,134 +1,172 @@
 <template>
-  <b-modal :title="$t('modalTitleUploadTraitImage')"
-           :ok-title="$t('buttonUpload')"
-           @ok.prevent="onSubmit"
-           :ok-disabled="!imageFile || !imageData"
-           no-fade
-           ref="uploadTraitImageModal">
-    <div v-if="trial && trait">
-      <p>{{ $t('modalTextUploadTraitImage') }}</p>
+  <v-dialog eager scrollable v-model="dialog" max-width="min(90vw, 1024px)">
+    <v-card :title="$t('modalTitleUploadTraitImage')" id="media-modal">
+      <template #text>
+        <p>{{ $t('modalTextUploadTraitImage') }}</p>
 
-      <b-form @submit.prevent="onSubmit">
-        <!-- Preview the image -->
-        <b-img fluid-grow rounded :src="imageData" class="image" v-if="imageData" />
-        <!-- Input for selecting (or taking) the image -->
-        <b-form-file v-model="imageFile" accept="image/png, image/jpeg" class="file-selector" ref="imageInput" />
+        <v-file-input
+          v-model="inputFile"
+          :label="$t('formLabelImageFile')"
+          accept="image/jpeg,image/png"
+          ref="imageInput"
+        />
 
-        <p class="text-danger" v-if="errorMessage">{{ $t(errorMessage) }}</p>
-      </b-form>
-    </div>
-  </b-modal>
+        <template v-if="mediaData">
+          <v-img :src="mediaData" class="media-preview" />
+        </template>
+
+        <v-alert class="mt-3" color="error" variant="tonal" :icon="mdiAlert" :text="errorMessage" v-if="errorMessage" />
+      </template>
+
+      <v-card-actions>
+        <v-spacer />
+        <v-btn :text="$t('buttonCancel')" @click="hide" />
+        <v-btn :text="$t('buttonUpload')" @click="upload" :disabled="!canContinue" color="primary" variant="tonal" />
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-import { postTraitImage } from '@/plugins/api'
-import { updateTraitImageCache } from '@/plugins/traitcache'
-import emitter from 'tiny-emitter/instance'
+<script setup lang="ts">
+  import { postTraitImage } from '@/plugins/api'
+  import { updateTraitImageCache } from '@/plugins/traitcache'
+  import type { TraitPlus, TrialPlus } from '@/plugins/types/client'
+  import { mdiAlert } from '@mdi/js'
+  import Compressor from 'compressorjs'
 
-export default {
-  props: {
-    trial: {
-      type: Object,
-      default: () => null
-    },
-    trait: {
-      type: Object,
-      default: () => null
-    }
-  },
-  data: function () {
-    return {
-      imageFile: null,
-      imageData: null,
-      errorMessage: null
-    }
-  },
-  watch: {
-    imageFile: async function (newValue) {
-      if (newValue) {
-        // Convert to base64 for displaying
-        this.imageData = await this.toBase64(newValue)
-      } else {
-        this.imageData = null
+  import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
+
+  const compProps = defineProps<{
+    trial: TrialPlus
+    trait: TraitPlus
+  }>()
+
+  const { t } = useI18n()
+  const errorMessage = ref<string>()
+  const dialog = ref(false)
+  const inputFile = ref<File>()
+  const mediaData = ref<string>()
+
+  const canContinue = computed(() => {
+    return mediaData.value !== undefined
+  })
+
+  watch(inputFile, newValue => {
+    if (mediaData.value) {
+      try {
+        URL.revokeObjectURL(mediaData.value)
+      } catch {
+        // Do nothing here
       }
     }
-  },
-  methods: {
-    /**
-     * Converts the participant selected file into base64
-     * @param file The image file
-     */
-    toBase64: function (file) {
-      // Return a promise as we can't wait for this
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
+
+    if (newValue) {
+      new Compressor(newValue, {
+        quality: 0.6,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        resize: 'contain',
+        // The compression process is asynchronous,
+        // which means you have to access the `result` in the `success` hook function.
+        success(result) {
+          // Convert to base64 for displaying
+          mediaData.value = URL.createObjectURL(result)
+        },
+        error(err) {
+          console.log(err.message)
+        },
       })
-    },
-    onSubmit: function () {
+    } else {
+      mediaData.value = undefined
+    }
+  })
+
+  function upload () {
+    if (inputFile.value) {
       const formData = new FormData()
-      formData.append('imageFile', this.imageFile)
+      formData.append('imageFile', inputFile.value)
 
       emitter.emit('show-loading', true)
 
-      let remoteConfig = null
+      let remoteConfig = undefined
 
-      if (this.trial && this.trial.remoteUrl) {
+      if (compProps.trial && compProps.trial.remoteUrl) {
         remoteConfig = {
-          remoteUrl: this.trial.remoteUrl,
-          token: this.trial.remoteToken || null
+          remoteUrl: compProps.trial.remoteUrl,
+          token: compProps.trial.remoteToken || undefined,
         }
       }
 
-      postTraitImage(remoteConfig, this.trial.shareCodes.ownerCode, this.trait.id, formData)
+      postTraitImage(remoteConfig, compProps.trial.shareCodes?.ownerCode || '', compProps.trait.id || '', formData)
         .then(result => {
           if (result) {
-            this.$emit('image-uploaded')
-            this.hide()
             emitter.emit('plausible-event', { key: 'trait-image-uploaded' })
 
-            updateTraitImageCache(this.trial, this.trait.id)
+            return updateTraitImageCache(compProps.trial, compProps.trait.id || '')
+          } else {
+            return new Promise<void>(resolve => resolve())
           }
         })
+        .then(() => {
+          emit('image-uploaded')
+          hide()
+        })
         .catch(error => {
-          if (error.status === 401) {
-            this.error = this.$t('errorMessageRemoteTrialInvalidToken')
-          } else if (error.status === 400) {
-            this.error = this.$t('errorMessageBadRequest')
-          } else if (error.status === 403) {
-            this.error = this.$t('errorMessageForbidden')
-          } else if (error.status === 404) {
-            this.error = this.$t('errorMessageNotFound')
-          } else {
-            this.error = error.message
-            console.error(error)
+          switch (error.status) {
+            case 401:
+              errorMessage.value = t('errorMessageRemoteTrialInvalidToken')
+              break
+            case 400:
+              errorMessage.value = t('errorMessageBadRequest')
+              break
+            case 403:
+              errorMessage.value = t('errorMessageForbidden')
+              break
+            case 404:
+              errorMessage.value = t('errorMessageNotFound')
+              break
+            default:
+              errorMessage.value = error.message
+              console.error(error)
+              break
           }
         })
         .finally(() => emitter.emit('show-loading', false))
-    },
-    /**
-     * Shows and resets modal dialog
-     */
-    show: function () {
-      this.imageFile = null
-      this.imageData = null
-      this.errorMessage = null
-      this.$refs.uploadTraitImageModal.show()
-    },
-    /**
-     * Hides the modal dialog
-     */
-    hide: function () {
-      this.imageFile = null
-      this.imageData = null
-      this.errorMessage = null
-      this.$nextTick(() => this.$refs.uploadTraitImageModal.hide())
     }
   }
-}
+  function show () {
+    errorMessage.value = undefined
+    dialog.value = true
+  }
+  function hide () {
+    dialog.value = false
+  }
+
+  watch(dialog, async newValue => {
+    if (!newValue) {
+      inputFile.value = undefined
+      if (mediaData.value) {
+        try {
+          URL.revokeObjectURL(mediaData.value)
+        } catch {
+          // Do nothing here
+        }
+      }
+      mediaData.value = undefined
+    }
+  })
+
+  defineExpose({
+    show,
+    hide,
+  })
+
+  const emit = defineEmits(['hide', 'image-uploaded'])
 </script>
 
 <style scoped>
+.media-preview {
+  max-height: 75vh;
+}
 </style>

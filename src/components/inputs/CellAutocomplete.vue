@@ -1,0 +1,259 @@
+<template>
+  <div>
+    <v-autocomplete
+      v-model="searchMatch"
+      :items="trialGermplasm"
+      auto-select-first
+      item-value="artificialId"
+      item-title="displayName"
+      :label="$t(label)"
+      :hide-details="hint === undefined"
+      :autofocus="store.storeAutoSelectSearch !== false"
+      :density="density"
+      return-object
+      clearable
+      :readonly="abortController !== undefined"
+      :multiple="multiple"
+      :min-width="minWidth"
+      :max-width="maxWidth"
+      autocomplete="off"
+      :hint="hint"
+      :persistent-hint="hint !== undefined"
+      :custom-filter="filterCells"
+      ref="searchField"
+      :prepend-inner-icon="mdiMagnify"
+    >
+      <template #prepend>
+        <v-btn :icon="mdiQrcodeScan" v-tooltip:top="$t('tooltipScanQRCode')" @click="toggleCamera" :color="showCamera ? 'info' : undefined" />
+      </template>
+
+      <template #append v-if="supportsNfc">
+        <v-btn :icon="mdiNfcVariant" v-tooltip:top="$t('tooltipScanRFID')" @click="scanNfc" :color="abortController !== undefined ? 'info' : undefined" />
+      </template>
+
+      <template #selection="{ internalItem: item, index }" v-if="multiple">
+        <v-chip size="small" v-if="index < 5" :text="item.title" />
+
+        <span v-if="index === 5 && multiple" class="text-grey text-body-small align-self-center">{{ $t('formDetailsItemSelectOther', ((searchMatch as CellPlus[]) || []).length - 5) }}</span>
+      </template>
+
+      <template #item="{ props, internalItem: item }">
+        <v-list-item
+          v-bind="props"
+          :title="`${item.raw.displayName} (${$t('formLabelFieldLayoutRowColumn', { row: item.raw.displayRow || 1, column: item.raw.displayColumn || 1, rowStart: i18nParams.rowStart, columnStart: i18nParams.columnStart })})`"
+        >
+          <template #title v-if="performanceMode === false"><PlotInformation :cell="item.raw" :i18n-params="i18nParams" /></template>
+        </v-list-item>
+      </template>
+    </v-autocomplete>
+
+    <v-bottom-sheet
+      v-if="scanInBottomSheet"
+      v-model="bottomSheetVisible"
+      inset
+      max-height="75vh"
+    >
+      <v-sheet>
+        <QrcodeStream
+          v-if="showCamera"
+          :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
+          @detect="onDetect"
+        />
+      </v-sheet>
+    </v-bottom-sheet>
+    <template v-else>
+      <QrcodeStream
+        v-if="showCamera"
+        :formats="['qr_code', 'code_128', 'code_39', 'upc_a', 'upc_e']"
+        @detect="onDetect"
+      />
+    </template>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { getTrialDataCached, getTrialGermplasmCached } from '@/plugins/datastore'
+  import type { CellPlus, TrialPlus } from '@/plugins/types/client'
+  import { filterCells } from '@/plugins/util'
+  import { coreStore } from '@/stores/app'
+  import { mdiMagnify, mdiNfcVariant, mdiQrcodeScan } from '@mdi/js'
+  import PlotInformation from '@/components/plot/PlotInformation.vue'
+  import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
+
+  import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
+  import { getI18nParams } from '@/plugins/formatting'
+
+  const store = coreStore()
+  const { t } = useI18n()
+
+  const searchMatch = defineModel<CellPlus[] | CellPlus>()
+  const trialGermplasm = ref<CellPlus[]>([])
+  const supportsNfc = ref(false)
+  const showCamera = ref(false)
+  const abortController = shallowRef<AbortController>()
+  const bottomSheetVisible = ref(false)
+
+  export interface CellAutocompleteProps {
+    trial: TrialPlus
+    density?: 'default' | 'comfortable' | 'compact'
+    multiple?: boolean
+    label?: string
+    hint?: string
+    scanInBottomSheet?: boolean
+    minWidth?: string
+    maxWidth?: string
+  }
+
+  const compProps = withDefaults(defineProps<CellAutocompleteProps>(), {
+    density: 'default',
+    multiple: false,
+    label: 'formLabelSearch',
+    scanInBottomSheet: false,
+  })
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
+
+  const searchField = useTemplateRef('searchField')
+  const performanceMode = computed(() => store.storePerformanceMode === true || trialGermplasm.value.length > 1000)
+
+  function toggleCamera () {
+    if (compProps.scanInBottomSheet) {
+      bottomSheetVisible.value = true
+
+      nextTick(() => {
+        showCamera.value = !showCamera.value
+      })
+    } else {
+      showCamera.value = !showCamera.value
+    }
+  }
+
+  function getTrialGermplasm () {
+    const data = getTrialDataCached()
+
+    if (data && compProps.trial) {
+      trialGermplasm.value = getTrialGermplasmCached()
+    }
+  }
+
+  function focus () {
+    if (store.storeAutoSelectSearch) {
+      nextTick(() => searchField.value?.focus())
+    }
+  }
+
+  function resetAbortController () {
+    abortController.value = new AbortController()
+    abortController.value.signal.onabort = () => {
+      abortController.value = undefined
+    }
+  }
+
+  function onDetect (detectedCodes: DetectedBarcode[]) {
+    if (detectedCodes && detectedCodes.length > 0) {
+      const c = detectedCodes[0]?.rawValue
+
+      if (c) {
+        setMatch(c)
+
+        showCamera.value = false
+        bottomSheetVisible.value = false
+      }
+    }
+  }
+
+  function setMatch (matchString: string) {
+    const lower = matchString.trim().toLowerCase()
+
+    const matches = trialGermplasm.value.filter(item => {
+      const barcode = (item.barcode || '').toLowerCase()
+      const displayName = (item.displayName || '').toLowerCase()
+      const germplasm = (item.germplasm || '').toLowerCase()
+
+      return barcode.includes(lower) || displayName.includes(lower) || germplasm.includes(lower)
+    })
+
+    if (matches.length > 0) {
+      searchMatch.value = compProps.multiple ? matches : matches[0]
+    } else {
+      searchMatch.value = compProps.multiple ? [] : undefined
+      emitter.emit('show-snackbar', {
+        text: t('toastNfcNoMatchFound', { search: matchString.trim() }),
+        color: 'warning',
+      })
+    }
+  }
+
+  async function scanNfc () {
+    if (supportsNfc.value) {
+      if (abortController.value) {
+        abortController.value.abort()
+        return
+      } else {
+        resetAbortController()
+        // @ts-ignore
+        const ndef = new NDEFReader()
+
+        if (abortController.value) {
+          const ac: AbortController = abortController.value
+
+          await ndef.scan({ signal: ac.signal })
+          // @ts-ignore
+          ndef.addEventListener('reading', (event: NDEFReadingEvent) => {
+            if (event.message && event.message.records && event.message.records.length > 0) {
+              ac.abort()
+              const record = event.message.records[0]
+
+              let message = ''
+              switch (record.recordType) {
+                case 'text':
+                  const textDecoder = new TextDecoder(record.encoding)
+                  message = textDecoder.decode(record.data)
+                  break
+                case 'url':
+                  const urlDecoder = new TextDecoder()
+                  message = urlDecoder.decode(record.data)
+                  break
+              }
+
+              if (message !== '') {
+                const parts = message.split(/\r?\n/)
+
+                if (parts.length > 0 && parts[0]) {
+                  setMatch(parts[0])
+                }
+              }
+            }
+          }, { once: true })
+        }
+      }
+    }
+  }
+
+  watch(() => compProps.trial, async () => {
+    getTrialGermplasm()
+  })
+
+  watch(bottomSheetVisible, async () => {
+    showCamera.value = false
+  })
+
+  onMounted(() => {
+    supportsNfc.value = 'NDEFReader' in window
+
+    if (compProps.trial) {
+      getTrialGermplasm()
+    }
+  })
+
+  onBeforeUnmount(() => {
+    if (abortController.value) {
+      abortController.value.abort()
+    }
+  })
+
+  defineExpose({
+    focus,
+  })
+</script>

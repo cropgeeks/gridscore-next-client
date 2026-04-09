@@ -1,0 +1,525 @@
+<template>
+  <div>
+    <BaseChart
+      :title="trait.name"
+      :header-icon="mdiCircle"
+      :header-icon-color="trait.color || 'primary'"
+      :chart-id="id"
+      v-model:interactive="interactive"
+      :source-file="sourceFile"
+      :can-download="canDownload"
+      @force-redraw="redraw"
+      :filename="filename"
+    >
+      <template #toolbar-title>
+        <TraitSection :trait="trait" short-title :show-subtitle="false" />
+      </template>
+      <template #card-text>
+        <v-card-text v-if="message">
+          <v-alert color="warning" :text="$t(message)" variant="tonal" :icon="mdiAlert" class="my-5" />
+        </v-card-text>
+
+        <slot name="card-text" />
+      </template>
+
+      <template #chart-content>
+        <div :id="id" ref="traitChart" />
+      </template>
+    </BaseChart>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
+  import TraitSection from '@/components/trait/TraitSection.vue'
+  import { getId } from '@/plugins/id'
+  import { mdiAlert, mdiCircle } from '@mdi/js'
+  import type { DownloadBlob } from '@/plugins/file'
+  import { toLocalDateString } from '@/plugins/util'
+
+  import Plotly from 'plotly.js/lib/core'
+  import bar from 'plotly.js/lib/bar'
+  import box from 'plotly.js/lib/box'
+  import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
+  import { getTrialDataCached } from '@/plugins/datastore'
+  import { useI18n } from 'vue-i18n'
+  import { hexToRgba, invertHex } from '@/plugins/color'
+  import { coreStore } from '@/stores/app'
+  import { CELL_CATEGORIES } from '@/plugins/constants'
+  import type { UserSelection } from '@/components/util/HighlightSelect.vue'
+  import { getI18nParams } from '@/plugins/formatting'
+  // Only register the chart types we're actually using to reduce the final bundle size
+  Plotly.register([
+    bar,
+    box,
+  ])
+
+  const GENERIC_TRACE = '~~GENERIC_TRACE~~'
+
+  export interface Datapoint {
+    displayColumn: number
+    displayRow: number
+    row: number
+    column: number
+    name: string
+    barcode?: string
+    friendlyName?: string
+    pedigree?: string
+    rep?: string
+    treatment?: string
+    setIndex: number
+    value: string
+    date: string
+    timestamp: string
+    categories: string[]
+  }
+
+  const compProps = defineProps<{
+    trial: TrialPlus
+    trait: TraitPlus
+    userSelection?: UserSelection
+  }>()
+
+  const { t } = useI18n()
+  const store = coreStore()
+
+  const id = ref('trait-stats' + getId())
+  const interactive = ref(false)
+  const canDownload = ref(false)
+  const sourceFile = ref<DownloadBlob>()
+  const traitChart = useTemplateRef('traitChart')
+  const message = ref<string>()
+
+  const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
+  const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
+  const filename = computed(() => {
+    if (safeTrialName.value && compProps.trait) {
+      const traitName = compProps.trait.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
+      return `trait-stats-${safeTrialName.value}-${traitName}-${toLocalDateString(new Date())}`
+    } else {
+      return ''
+    }
+  })
+
+  let trialData: { [index: string]: CellPlus } | undefined = undefined
+
+  function redraw () {
+    if (!trialData) {
+      trialData = getTrialDataCached()
+    }
+
+    message.value = undefined
+    canDownload.value = false
+
+    const trialDataConst = trialData
+    if (traitChart.value && trialDataConst) {
+      try {
+        Plotly.purge(traitChart.value)
+      } catch {
+        // Do nothing here, this might fail on first run
+      }
+
+      const data = []
+      let selectedItems: string[] = []
+      let chartType = 'box'
+
+      let supportsClicking = true
+
+      let dataPointCount = 0
+
+      switch (compProps.trait.dataType) {
+        case TraitDataType.float:
+        case TraitDataType.int:
+        case TraitDataType.range:
+        case TraitDataType.date: {
+          chartType = 'box'
+          const datapoints: { [index: string]: Datapoint[] } = {}
+          datapoints[GENERIC_TRACE] = []
+
+          if (compProps.userSelection && compProps.userSelection.selectedItems && compProps.userSelection.selectedItems.length > 0) {
+            selectedItems = compProps.userSelection.selectedItems
+            selectedItems.forEach(i => {
+              datapoints[i] = []
+            })
+          }
+
+          Object.keys(trialDataConst).forEach(k => {
+            const cell = trialDataConst[k]
+
+            if (cell && cell.measurements && cell.measurements[compProps.trait.id || '']) {
+              let selectionField: string
+              let isSelected = false
+
+              if (compProps.userSelection && compProps.userSelection.type) {
+                switch (compProps.userSelection.type) {
+                  case 'cell':
+                    selectionField = `${cell.displayRow}|${cell.displayColumn} - ${cell.displayName || cell.germplasm}`
+                    break
+                  case 'germplasm':
+                    selectionField = cell.germplasm
+                    break
+                  case 'reps':
+                    selectionField = cell.rep || ''
+                    break
+                  case 'treatments':
+                    selectionField = cell.treatment || ''
+                    break
+                  case 'controls':
+                    selectionField = (cell.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : ''
+                    break
+                }
+
+                isSelected = compProps.userSelection.selectedItems.includes(selectionField)
+              }
+
+              cell.measurements[compProps.trait.id || '']?.forEach(m => {
+                const dateString = new Date(m.timestamp).toLocaleString()
+
+                m.values.filter(v => v !== undefined && v !== null && v !== '').forEach((v, setIndex) => {
+                  dataPointCount++
+                  const dp: Datapoint = {
+                    displayColumn: cell.displayColumn || 1,
+                    displayRow: cell.displayRow || 1,
+                    row: cell.row || 0,
+                    column: cell.column || 0,
+                    pedigree: cell.pedigree,
+                    treatment: cell.treatment,
+                    barcode: cell.barcode,
+                    friendlyName: cell.friendlyName,
+                    setIndex,
+                    value: v || '',
+                    name: cell.germplasm,
+                    rep: cell.rep,
+                    date: dateString,
+                    timestamp: m.timestamp,
+                    categories: cell.categories,
+                  }
+
+                  if (isSelected && selectionField) {
+                    if (!datapoints[selectionField]) {
+                      datapoints[selectionField] = []
+                    }
+
+                    datapoints[selectionField]?.push(dp)
+                  }
+
+                  datapoints[GENERIC_TRACE]?.push(dp)
+                })
+              })
+            }
+          })
+
+          selectedItems.forEach(k => {
+            const dps = datapoints[k]
+
+            if (dps) {
+              data.push({
+                x: dps.map(d => d.value),
+                text: dps.map(d => d.name),
+                customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, ...i18nParams.value })),
+                ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
+                name: `&nbsp;${k}`,
+                type: chartType,
+                jitter: 0.5,
+                pointpos: 2,
+                boxpoints: 'all',
+                hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>',
+              })
+            }
+          })
+
+          const dps = datapoints[GENERIC_TRACE]
+          if (dps) {
+            data.push({
+              x: dps.map(d => d.value),
+              text: dps.map(d => d.name),
+              customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, categories: (d.categories || []).map(c => t(CELL_CATEGORIES[c]?.title || '')).join(', '), ...i18nParams.value })),
+              ids: dps.map(d => `${d.row}|${d.column}|${d.setIndex}|${d.timestamp}|${d.value}`),
+              marker: {
+                color: store.storeHighlightControls ? dps.map(d => (d.categories && d.categories.includes(CellCategory.CONTROL)) ? invertHex(compProps.trait.color || '#00acef') : compProps.trait.color) : compProps.trait.color,
+              },
+              name: t('widgetChartStatisticsBoxplotAllTrace'),
+              type: chartType,
+              jitter: 0.5,
+              pointpos: 2,
+              boxpoints: 'all',
+              hovertemplate: '%{xaxis.title.text}: %{x}<br>%{customdata}<extra></extra>',
+              fillcolor: hexToRgba(compProps.trait.color || '#00acef', 0.5),
+              hoverlabel: {
+                bgcolor: compProps.trait.color || '#00acef',
+              },
+            })
+          }
+
+          break
+        }
+        case TraitDataType.gps:
+        case TraitDataType.image:
+        case TraitDataType.video:
+        case TraitDataType.text:
+        case TraitDataType.multicat:
+        case TraitDataType.categorical: {
+          supportsClicking = false
+          chartType = 'bar'
+          const datapoints: { [index: string]: string[] } = {}
+          datapoints[GENERIC_TRACE] = []
+
+          if (compProps.userSelection && compProps.userSelection.selectedItems && compProps.userSelection.selectedItems.length > 0) {
+            selectedItems = compProps.userSelection.selectedItems
+            selectedItems.forEach(i => {
+              datapoints[i] = []
+            })
+          }
+
+          const keys = new Set<string>()
+
+          Object.keys(trialDataConst).forEach(k => {
+            const cell = trialDataConst[k]
+
+            if (cell && cell.measurements && cell.measurements[compProps.trait.id || '']) {
+              let selectionField: string
+              let isSelected = false
+
+              if (compProps.userSelection && compProps.userSelection.type) {
+                switch (compProps.userSelection.type) {
+                  case 'cell':
+                    selectionField = `${cell.displayRow}|${cell.displayColumn} - ${cell.displayName || cell.germplasm}`
+                    break
+                  case 'germplasm':
+                    selectionField = cell.germplasm
+                    break
+                  case 'reps':
+                    selectionField = cell.rep || ''
+                    break
+                  case 'treatments':
+                    selectionField = cell.treatment || ''
+                    break
+                  case 'controls':
+                    selectionField = (cell.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : ''
+                    break
+                }
+
+                isSelected = compProps.userSelection.selectedItems.includes(selectionField)
+              }
+
+              cell.measurements[compProps.trait.id || '']?.forEach(m => {
+                m.values.forEach(v => {
+                  const vConst = v
+                  if (vConst !== undefined && vConst !== null && vConst !== '') {
+                    let values: string[] = []
+                    const restrictions = compProps.trait.restrictions
+                    const categories = restrictions ? restrictions.categories : undefined
+                    if (compProps.trait.dataType === TraitDataType.categorical && restrictions && categories) {
+                      values = [categories[+vConst] || '']
+                      keys.add(categories[+vConst] || '')
+                    } else if (compProps.trait.dataType === TraitDataType.multicat && restrictions && categories) {
+                      vConst.split(':').forEach(vv => {
+                        values.push(categories[+vv] || '')
+                        keys.add(categories[+vv] || '')
+                      })
+                    } else {
+                      values = [v || '']
+                      keys.add(v || '')
+                    }
+
+                    if (isSelected && selectionField) {
+                      if (!datapoints[selectionField]) {
+                        datapoints[selectionField] = []
+                      }
+
+                      if (values !== undefined) {
+                        values.forEach(value => {
+                          dataPointCount++
+                          datapoints[selectionField]?.push(value)
+                        })
+                      }
+                    }
+
+                    if (values !== undefined) {
+                      values.forEach(value => {
+                        dataPointCount++
+                        datapoints[GENERIC_TRACE]?.push(value)
+                      })
+                    }
+                  }
+                })
+              })
+            }
+          })
+
+          let keyArray = []
+          if (TraitDataType.isCategorical(compProps.trait.dataType) && compProps.trait.restrictions && compProps.trait.restrictions.categories) {
+            keyArray = compProps.trait.restrictions.categories
+          } else {
+            keyArray = [...keys].sort()
+          }
+
+          selectedItems.forEach(k => {
+            const dps = datapoints[k]
+
+            if (dps) {
+              data.push({
+                x: keyArray,
+                y: keyArray.map(k => dps.filter(dp => dp === k).length),
+                name: `&nbsp;${k}`,
+                type: chartType,
+              })
+            }
+          })
+
+          const dps = datapoints[GENERIC_TRACE]
+          if (dps) {
+            data.push({
+              x: keyArray,
+              y: keyArray.map(k => dps.filter(dp => dp === k).length),
+              marker: {
+                color: compProps.trait.color,
+              },
+              name: t('widgetChartStatisticsBoxplotAllTrace'),
+              type: chartType,
+            })
+          }
+
+          break
+        }
+      }
+
+      if (dataPointCount < 1) {
+        message.value = 'widgetChartNoData'
+        return
+      }
+
+      const layout = {
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        height: chartType === 'box' ? (selectedItems.length * 100 + 400) : 450,
+        barmode: 'group',
+        margin: {
+          l: 30,
+          r: 30,
+          t: 0,
+        },
+        legend: {
+          traceorder: 'reversed',
+        },
+        autosize: true,
+        yaxis: {
+          automargin: true,
+          title: { text: '', font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+          tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
+          gridcolor: store.storeIsDarkMode ? '#111111' : '#eeeeee',
+          showgrid: chartType === 'bar',
+          fixedrange: !interactive.value,
+        },
+        xaxis: {
+          zeroline: false,
+          title: { text: '', font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
+          tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
+          gridcolor: store.storeIsDarkMode ? '#111111' : '#eeeeee',
+          showgrid: chartType === 'box',
+          fixedrange: !interactive.value,
+        },
+        hovermode: chartType === 'box' ? 'closest' : 'x',
+        shapes: [],
+      }
+
+      if (compProps.trait.restrictions) {
+        if (compProps.trait.restrictions.min !== undefined && compProps.trait.restrictions.min !== null) {
+          // @ts-ignore
+          layout.shapes.push({
+            type: 'line',
+            yref: 'paper',
+            x0: compProps.trait.restrictions.min,
+            y0: 0,
+            x1: compProps.trait.restrictions.min,
+            y1: 1,
+            line: {
+              color: compProps.trait.color,
+              width: 1.5,
+              dash: 'dot',
+            },
+          })
+        }
+        if (compProps.trait.restrictions.max !== undefined && compProps.trait.restrictions.max !== null) {
+          // @ts-ignore
+          layout.shapes.push({
+            type: 'line',
+            yref: 'paper',
+            x0: compProps.trait.restrictions.max,
+            y0: 0,
+            x1: compProps.trait.restrictions.max,
+            y1: 1,
+            line: {
+              color: compProps.trait.color,
+              width: 1.5,
+              dash: 'dot',
+            },
+          })
+        }
+      }
+
+      if (TraitDataType.isCategorical(compProps.trait.dataType) || compProps.trait.dataType === TraitDataType.text) {
+        // @ts-ignore
+        layout.xaxis.type = 'category'
+        if (layout.xaxis.title) {
+          layout.xaxis.title.text = compProps.trait.name
+        }
+        if (layout.yaxis.title) {
+          layout.yaxis.title.text = t('widgetChartAxisCount')
+        }
+      } else {
+        if (layout.xaxis.title) {
+          layout.xaxis.title.text = compProps.trait.name
+        }
+      }
+
+      sourceFile.value = {
+        blob: new Blob([`x\t${data[0]?.x.join('\t')}\ny\t${data[0]?.y?.join('\t')}`], { type: 'text/plain' }),
+        filename: filename.value,
+        extension: 'tsv',
+      }
+
+      // @ts-ignore
+      Plotly.react(traitChart.value, data, layout, {
+        responsive: true,
+        modeBarButtonsToRemove: ['toImage', 'lasso2d', 'select2d'],
+        displaylogo: false,
+      }).then(element => {
+        canDownload.value = true
+        if (supportsClicking) {
+          element.on('plotly_click', (eventData: any) => {
+            if (!eventData || (eventData.points.length === 0)) {
+              if (traitChart.value) {
+                Plotly.restyle(traitChart.value, { selectedpoints: [null] })
+              }
+            } else {
+              const mapped = eventData.points.map((p: any) => {
+                const [row, column, setIndex, timestamp, value] = p.id.split('|')
+
+                return {
+                  row: +row,
+                  column: +column,
+                  setIndex: +setIndex,
+                  timestamp,
+                  value,
+                }
+              }).filter((value: any, index: number, self: any) => self.indexOf(value) === index)
+
+              // TODO: Do something with the selection here now.
+
+              if (mapped.length === 1) {
+                emit('cell-clicked', mapped[0].row, mapped[0].column)
+              }
+            }
+          })
+        }
+      })
+    }
+  }
+
+  watch(() => compProps.userSelection, async () => redraw(), { deep: true })
+
+  onMounted(() => redraw())
+
+  const emit = defineEmits(['cell-clicked'])
+</script>
