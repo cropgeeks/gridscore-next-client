@@ -334,7 +334,7 @@
   function updateTableFromFile (grid: Grid) {
     tableHasModifications.value = true
     gridData.value = grid
-    update()
+    update(true)
   }
 
   function setTabInputConfig (key: string) {
@@ -428,8 +428,8 @@
     gridData.value = result
   }
 
-  function update () {
-    if (model.value && model.value.data && Object.keys(model.value.data).length > 0) {
+  function update (useLocalData?: boolean) {
+    if (useLocalData !== true && model.value && model.value.data && Object.keys(model.value.data).length > 0) {
       gridData.value = JSON.parse(JSON.stringify(model.value.data))
     }
 
