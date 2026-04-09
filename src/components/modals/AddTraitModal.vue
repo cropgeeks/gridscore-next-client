@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable fullscreen>
+  <v-dialog v-model="dialog" persistent scrollable fullscreen>
     <v-card>
       <template #title>
         <div class="d-flex justify-space-between">
@@ -35,6 +35,11 @@
   import TrialTraits from '@/components/setup/TrialTraits.vue'
   import { mdiClose } from '@mdi/js'
 
+  import emitter from 'tiny-emitter/instance'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
+
   const compProps = defineProps<{
     trials: TrialPlus[]
   }>()
@@ -57,11 +62,28 @@
   })
 
   function show () {
+    traits.value = []
     dialog.value = true
   }
   function hide () {
-    traits.value = []
-    dialog.value = false
+    if (traits.value && traits.value.length > 0) {
+      emitter.emit('show-confirm', {
+        title: t('modalTitleConfirmCloseAddTrait'),
+        message: t('modalTextConfirmCloseAddTrait'),
+        okTitle: t('genericYes'),
+        cancelTitle: t('genericNo'),
+        okVariant: 'error',
+        callback: (result: boolean) => {
+          if (result === true) {
+            traits.value = []
+            dialog.value = false
+          }
+        },
+      })
+    } else {
+      traits.value = []
+      dialog.value = false
+    }
   }
   function save () {
     if (traits.value.length > 0) {

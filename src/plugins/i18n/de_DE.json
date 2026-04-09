@@ -657,6 +657,8 @@
   "modalTitleStopGuidedWalk": "Gelenkten Ablauf beenden",
   "modalTextConfirmCloseDataInput": "Sicher, dass die Dateneingabe beendet werden soll? Bitte entweder abbrechen, schließen oder speichern auswählen.<dl class='mt-2'><dt>Abbrechen</dt><dd>Kehre zur Dateneingabe zurück.</dd><dt>Schließen</dt><dd>Schließt die Dateneingabe <em>ohne</em> die Daten zu speichern.</dd><dt>Speichern</dt><dd>Schließt die Dateneingabe <em>nachdem</em> die Daten gespeichert wurden.</dd></dl>",
   "modalTitleConfirmCloseDataInput": "Dateneingabe beenden",
+  "modalTitleConfirmCloseAddTrait": "Aktuelle Merkmale verwerfen?",
+  "modalTextConfirmCloseAddTrait": "Es sieht so aus, als wären bereits neue Merkmale zur temporären Liste hinzugefügt worden. Sicher, dass dieses Fenster geschlossen werden soll und alle Änderungen verworfen werden?",
   "modalTitleGermplasmSearchNoMatchFound": "Keimplasmasuche",
   "modalTextGermplasmSearchNoMatchFound": "Kein Treffer gefunden für den eingegebenen/gescannten Identifikator.",
   "modalTitleLoading": "Lade...",
