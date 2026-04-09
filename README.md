@@ -1,7 +1,7 @@
 # GridScore NEXT
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/cropgeeks/gridscore-next-client/main/public/img/gridscore-next-text.svg?sanitize=true" width="200" alt="Logo">
+  <img src="https://raw.githubusercontent.com/cropgeeks/gridscore-next-client/main/public/img/gridscore-next.svg?sanitize=true" width="200" alt="Logo">
 </p>
 
 ![GitHub License](https://img.shields.io/github/license/cropgeeks/gridscore-next-client?style=for-the-badge&logo=apache)
