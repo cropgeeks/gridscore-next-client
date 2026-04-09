@@ -17,6 +17,7 @@
 
         <TrialTraits
           v-model="traits"
+          :existing-traits="existingTraits || []"
         />
       </template>
 
@@ -30,9 +31,13 @@
 </template>
 
 <script setup lang="ts">
-  import type { TraitPlus } from '@/plugins/types/client'
+  import type { TraitPlus, TrialPlus } from '@/plugins/types/client'
   import TrialTraits from '@/components/setup/TrialTraits.vue'
   import { mdiClose } from '@mdi/js'
+
+  const compProps = defineProps<{
+    trials: TrialPlus[]
+  }>()
 
   const dialog = ref(false)
   const traits = ref<TraitPlus[]>([])
@@ -40,6 +45,16 @@
   const emit = defineEmits(['traits-added'])
 
   const canContinue = computed(() => traits.value.length > 0)
+
+  const existingTraits = computed(() => {
+    const result: TraitPlus[] = []
+
+    compProps.trials.forEach(t => {
+      result.push(...t.traits)
+    })
+
+    return result
+  })
 
   function show () {
     dialog.value = true

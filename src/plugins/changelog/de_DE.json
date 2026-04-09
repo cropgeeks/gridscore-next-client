@@ -747,5 +747,92 @@
         "text": "Beheben von Fehlern mit Dezimalwerten in Zeilen-/Spaltenanzahlen und -beschriftungen sowie beim Import von Merkmalen aus dem JSON-Format, falls Gruppen definiert sind."
       }
     ]
+  },
+  {
+    "version": "4.0.0",
+    "date": "2025-04-09",
+    "description": "Diese neue Version enthält ein umfassendes Update der Benutzeroberfläche. Wir haben versucht, die Benutzererfahrung von GridScore zu verbessern und gleichzeitig die Vertrautheit mit den Funktionen beizubehalten. Alle Versuche werden in diese neue Version übertragen. Bitte setz dich mit uns in Verbindung, falls es Probleme mit dieser neuen Version gibt. Nachfolgend finden Sie einige Highlights der neuen/geänderten Funktionen.",
+    "items": [
+      {
+        "type": "new",
+        "title": "Neuer Setup-Bildschirm",
+        "text": "Der Bildschirm zum Erstellen/Einrichten von Versuchen wurde in eine 'Wizard'-ähnliche Oberfläche umgewandelt, die Sie Schritt für Schritt durch die Einrichtung führt."
+      },
+      {
+        "type": "new",
+        "title": "Versuchsbearbeitung/-duplizierung verbessert",
+        "text": "Beim Bearbeiten eines bestehenden Versuchs wird nun dieselbe Benutzeroberfläche wie beim Versuchs-Setup verwendet, sodass alles einfacher zu finden ist."
+      },
+      {
+        "type": "new",
+        "title": "Multikategorie-Merkmale",
+        "text": "Die Bewertung mehrerer Werte für dasselbe kategoriale Merkmal ist nun mit einem neuen Merkmals-Typ möglich."
+      },
+      {
+        "type": "new",
+        "title": "Verbesserte Leistung bei großen Versuchen",
+        "text": "Für sehr große Versuche - entweder mit einer großen Anzahl an Keimplasma, einer großen Anzahl an Merkmalen oder beidem - haben wir Verbesserungen an GridScore vorgenommen, die die Datenerfassung deutlich reibungsloser machen sollten."
+      },
+      {
+        "type": "new",
+        "title": "Benutzerdefinierte Zeilen- und Spaltennamen",
+        "text": "Sie können nun benutzerdefinierte Namen für das festlegen, was standardmäßig als 'Zeile' und 'Spalte' bezeichnet wird. Dies ändert alle Vorkommen dieser Begriffe innerhalb der Benutzeroberfläche."
+      },
+      {
+        "type": "new",
+        "title": "Druckbarer Feldplan",
+        "text": "Sie können nun ein Bild Ihres Versuchsfeldplans zum Drucken erstellen. Bitte beachten Sie, dass dies für sehr große Versuche möglicherweise nicht verfügbar ist."
+      },
+      {
+        "type": "new",
+        "title": "Benutzerdefinierte Schrittweite für Schieberegler-Merkmale",
+        "text": "Schieberegler-Merkmale können nun eine benutzerdefinierte Schrittweite haben. Der Standardwert war immer 1, kann aber nun auf Werte wie 0,5, 2, 5 usw. geändert werden."
+      },
+      {
+        "type": "new",
+        "title": "Beethervorhebung",
+        "text": "Sie können nun Beete in der Hauptdatenanzeige basierend auf Replikaten, Behandlungen, Kontrollen/Checks und Treffern der Keimplasma-Suche hervorheben."
+      },
+      {
+        "type": "new",
+        "title": "Beetsperrung",
+        "text": "Beete können nun vom Versuchsleiter gesperrt werden. Gesperrte Beete können erst nach der Entsperrung wieder bearbeitet werden. Sie werden in der Hauptanzeige in abgeschwächten Farben dargestellt."
+      },
+      {
+        "type": "new",
+        "title": "Versuchssperrung",
+        "text": "In ähnlicher Weise kann ein ganzer Versuch gesperrt werden. Dies verhindert jegliche weiteren Änderungen am Versuch. Wenn Daten auf mehreren Geräten erfasst werden, ist eine abschließende Synchronisierung von diesen Geräten erlaubt."
+      },
+      {
+        "type": "new",
+        "title": "Konfiguration der Bildbenennung",
+        "text": "Während des Versuchs-Setups können Sie nun den Satz und die Reihenfolge der Teile ändern, die in Bild- und Videodateinamen verwendet werden."
+      },
+      {
+        "type": "new",
+        "title": "NFC-Chip-Unterstützung",
+        "text": "Unter Android und Chrome können Sie nun die NFC-Chip-Scanfunktionen des Geräts zur Beetidentifizierung nutzen."
+      },
+      {
+        "type": "new",
+        "title": "Spezielle Seite für geführte Begehung und Scaneingabe",
+        "text": "Zusätzlich zum Haupt-Datenraster können Sie nun eine spezielle Seite für die geführte Begehung sowie eine Barcode-fokussierte Eingabeseite nutzen, um Daten effizienter einzugeben."
+      },
+      {
+        "type": "update",
+        "title": "Zeitstrahl-Diagramme",
+        "text": "Wir haben die Zeitstrahl-Diagramme überarbeitet, um eine aussagekräftigere Datenvisualisierung zu ermöglichen. Sie können nun spezifische Keimplasmen, Replikate oder Behandlungen hervorheben."
+      },
+      {
+        "type": "update",
+        "title": "Volle Typescript-Unterstützung",
+        "text": "GridScore verwendet nun überall dort, wo es möglich ist, Typescript, um die Typsicherheit der in der App verarbeiteten Daten zu verbessern. Dies sollte das Potenzial für Bugs und Fehler verringern."
+      },
+      {
+        "type": "bugfix",
+        "title": "Probleme beim Speichern von Bildern",
+        "text": "In früheren Versionen gab es Probleme beim Speichern von Bildern auf einigen Geräten. Dies wurde nun behoben."
+      }
+    ]
   }
 ]

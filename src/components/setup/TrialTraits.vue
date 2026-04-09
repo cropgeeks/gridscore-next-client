@@ -12,14 +12,14 @@
           border="start"
         />
 
-        <v-form @submit.prevent="addTrait">
+        <form>
           <v-text-field
             class="mb-3"
             v-model="currentTrait.name"
             :prepend-inner-icon="mdiTextShort"
             :label="$t('formLabelTraitName')"
             :hint="$t('formDescriptionTraitName')"
-            :error-messages="formState.name ? [formState.name] : undefined"
+            :error-messages="formState.name ? [$t(formState.name)] : undefined"
             :disabled="isDisabledDueToEdit"
             persistent-hint
             required
@@ -94,12 +94,12 @@
             :messages="formState.categories ? undefined : ['f']"
             :prepend-inner-icon="mdiTagMultiple"
             :label="$t('formLabelTraitRestrictionsCategories')"
-            :error-messages="formState.categories ? [formState.categories] : undefined"
+            :error-messages="formState.categories ? [$t(formState.categories)] : undefined"
             persistent-hint
             ref="categoryInput"
           >
             <template #message>
-              <span v-if="formState.categories">{{ formState.categories }}</span>
+              <span v-if="formState.categories">{{ $t(formState.categories) }}</span>
               <span v-html="$t('formDescriptionTraitRestrictionsCategories')" v-else />
             </template>
           </v-combobox>
@@ -114,7 +114,7 @@
                 :prepend-inner-icon="mdiFormatVerticalAlignBottom"
                 :label="$t('formLabelTraitRestrictionsMin')"
                 :hint="$t('formDescriptionTraitRestrictionsMin')"
-                :error-messages="formState.min ? [formState.min] : undefined"
+                :error-messages="formState.min ? [$t(formState.min)] : undefined"
                 persistent-hint
               />
             </v-col>
@@ -127,7 +127,7 @@
                 :prepend-inner-icon="mdiFormatVerticalAlignTop"
                 :label="$t('formLabelTraitRestrictionsMax')"
                 :hint="$t('formDescriptionTraitRestrictionsMax')"
-                :error-messages="formState.max ? [formState.max] : undefined"
+                :error-messages="formState.max ? [$t(formState.max)] : undefined"
                 persistent-hint
               />
             </v-col>
@@ -141,7 +141,7 @@
                 :prepend-inner-icon="mdiDebugStepOver"
                 :label="$t('formLabelTraitRestrictionsStep')"
                 :hint="$t('formDescriptionTraitRestrictionsStep')"
-                :error-messages="formState.step ? [formState.step] : undefined"
+                :error-messages="formState.step ? [$t(formState.step)] : undefined"
                 persistent-hint
               />
             </v-col>
@@ -230,8 +230,8 @@
             </template>
           </v-card>
 
-          <v-btn class="my-5" color="primary" :disabled="isDisabledDueToEdit || !currentTrait || !currentTrait.name || currentTrait.name.trim().length === 0" :prepend-icon="currentTrait.id ? mdiTagEdit : mdiTagPlus" :text="$t(currentTrait.id ? 'buttonUpdate' : 'buttonAdd')" @click="addTrait" />
-        </v-form>
+          <v-btn class="my-5" @click="addTrait" color="primary" :disabled="isDisabledDueToEdit || !currentTrait || !currentTrait.name || currentTrait.name.trim().length === 0" :prepend-icon="currentTrait.id ? mdiTagEdit : mdiTagPlus" :text="$t(currentTrait.id ? 'buttonUpdate' : 'buttonAdd')" />
+        </form>
       </v-col>
       <v-col cols="12" md="6">
         <v-card class="mb-3" :subtitle="$t('pageTrialTraitListText')">
@@ -433,12 +433,14 @@
     isEdit?: boolean
     isClone?: boolean
     isTrialOwner?: boolean
+    existingTraits?: TraitPlus[]
   }
 
   const compProps = withDefaults(defineProps<TrialTraitsProps>(), {
     isEdit: false,
     isClone: false,
     isTrialOwner: false,
+    existingTraits: () => [],
   })
 
   const traitImportFromBrapiModal = useTemplateRef('traitImportFromBrapiModal')
@@ -596,7 +598,18 @@
 
   const canEdit = computed(() => compProps.isEdit === false || currentTrait.value.id === undefined || !initialTraitIds.value.has(currentTrait.value.id || ''))
 
-  const existingTraitNames = computed(() => (model.value || []).map(t => t.name.trim().toLocaleLowerCase()))
+  const existingTraitNames = computed(() => {
+    const names = new Set<string>()
+
+    if (model.value) {
+      model.value.filter(t => t.id !== currentTrait.value.id).forEach(t => names.add(t.name.trim().toLocaleLowerCase()))
+    }
+    if (compProps.existingTraits) {
+      compProps.existingTraits.forEach(t => names.add(t.name.trim().toLocaleLowerCase()))
+    }
+
+    return [...names]
+  })
 
   const dts: ComputedRef<DataType[]> = computed(() => {
     return dataTypes.map(dt => {
@@ -794,7 +807,7 @@
       return
     }
 
-    formState.value = {
+    const state: FormState = {
       name: undefined,
       categories: undefined,
       min: undefined,
@@ -803,33 +816,35 @@
     }
 
     if (!currentTrait.value.name || currentTrait.value.name.trim().length === 0) {
-      formState.value.name = t('formFeedbackTraitNameMissing')
+      state.name = 'formFeedbackTraitNameMissing'
     }
-    if (!currentTrait.value.id && existingTraitNames.value.includes(currentTrait.value.name.trim().toLocaleLowerCase())) {
-      formState.value.name = t('formFeedbackTraitNameInvalidOrDuplicate')
+    if (existingTraitNames.value.includes(currentTrait.value.name.trim().toLocaleLowerCase())) {
+      state.name = 'formFeedbackTraitNameInvalidOrDuplicate'
     }
     if (currentTrait.value.dataType === TraitDataType.range) {
       if (!restrictions.value || restrictions.value.min === undefined) {
-        formState.value.min = t('formFeedbackTraitRangeMissingBoundaries')
+        state.min = 'formFeedbackTraitRangeMissingBoundaries'
       }
       if (!restrictions.value || restrictions.value.max === undefined) {
-        formState.value.max = t('formFeedbackTraitRangeMissingBoundaries')
+        state.max = 'formFeedbackTraitRangeMissingBoundaries'
       }
       if (!restrictions.value || (restrictions.value.step || 0) < 0 || (restrictions.value.step || 0) > (((restrictions.value.max || 0) - (restrictions.value.min || 0)) / 2)) {
-        formState.value.step = t('formFeedbackTraitRangeInvalidStep')
+        state.step = 'formFeedbackTraitRangeInvalidStep'
       }
     }
 
     if (restrictions.value && restrictions.value.min !== undefined && restrictions.value.max !== undefined && restrictions.value.min >= restrictions.value.max) {
-      formState.value.min = t('formFeedbackTraitInvalidMinMax')
-      formState.value.max = t('formFeedbackTraitInvalidMinMax')
+      state.min = 'formFeedbackTraitInvalidMinMax'
+      state.max = 'formFeedbackTraitInvalidMinMax'
     }
 
     if (restrictions.value && restrictions.value.categories && restrictions.value.categories.length < 2) {
-      formState.value.categories = t('formFeedbackTraitCategoryOnlyOne')
+      state.categories = 'formFeedbackTraitCategoryOnlyOne'
     }
 
-    if (Object.values(formState.value).some(v => v !== undefined)) {
+    formState.value = state
+
+    if (Object.values(state).some(v => v !== undefined)) {
       return
     }
 
@@ -862,10 +877,18 @@
       model.value.push(JSON.parse(JSON.stringify(currentTrait.value)))
     }
 
-    reset()
+    nextTick(() => reset())
   }
 
   function reset () {
+    formState.value = {
+      name: undefined,
+      categories: undefined,
+      min: undefined,
+      max: undefined,
+      step: undefined,
+    }
+
     currentTrait.value = {
       name: '',
       description: undefined,

@@ -152,7 +152,7 @@
 
     <TrialShareModal :trial="selectedTrial" ref="trialShareModal" v-if="selectedTrial" />
     <TrialExpirationModal :trial="selectedTrial" ref="trialExpirationModal" v-if="selectedTrial" />
-    <AddTraitModal ref="addTraitModal" v-if="selectedTrialsEditable" @traits-added="addTraitsToSelectedTrials" />
+    <AddTraitModal ref="addTraitModal" :trials="(selectedTrials !== undefined && selectedTrials.length > 0) ? selectedTrials : (selectedTrial ? [selectedTrial] : [])" v-if="selectedTrialsEditable" @traits-added="addTraitsToSelectedTrials" />
     <AddTraitReferenceImageModal :trial="selectedTrial" ref="addTraitReferenceImageModal" v-if="selectedTrial" />
     <AddPersonModal ref="addPersonModal" v-if="selectedTrialsEditable" @person-added="addPersonToSelectedTrials" />
     <AddTrialGermplasmModal :trial="selectedTrial" ref="addGermplasmModal" v-if="selectedTrial && selectedTrialsEditable" />
