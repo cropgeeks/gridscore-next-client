@@ -213,7 +213,7 @@
             const dps = datapoints[k]
 
             if (dps) {
-              data.unshift({
+              data.push({
                 x: dps.map(d => d.value),
                 text: dps.map(d => d.name),
                 customdata: dps.map(d => t('tooltipChartBoxplotInfo', { date: d.date, germplasm: d.name, rep: d.rep, friendlyName: d.friendlyName, treatment: d.treatment, pedigree: d.pedigree, barcode: d.barcode, row: d.displayRow, column: d.displayColumn, ...i18nParams.value })),
@@ -358,7 +358,7 @@
             const dps = datapoints[k]
 
             if (dps) {
-              data.unshift({
+              data.push({
                 x: keyArray,
                 y: keyArray.map(k => dps.filter(dp => dp === k).length),
                 name: `&nbsp;${k}`,

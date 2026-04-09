@@ -1,25 +1,28 @@
 <template>
   <div v-if="trial">
-    <v-row>
-      <v-col cols="12" xl="6">
-        <HighlightSelect
-          :trial="trial"
-          ref="highlightSelection"
-          allow-control-select
-        />
-      </v-col>
-    </v-row>
+    <template v-if="hasData">
+      <v-row>
+        <v-col cols="12" xl="6">
+          <HighlightSelect
+            :trial="trial"
+            ref="highlightSelection"
+            allow-control-select
+          />
+        </v-col>
+      </v-row>
 
-    <div>
-      <v-chip
-        v-for="(value, key) in highlightColors"
-        :key="`map-chip-${key}`"
-        :base-color="value"
-        class="me-2 mt-2"
-        label
-        :text="key"
-      />
-    </div>
+      <div>
+        <v-chip
+          v-for="(value, key) in highlightColors"
+          :key="`map-chip-${key}`"
+          :base-color="value"
+          class="me-2 mt-2"
+          label
+          :text="key"
+        />
+      </div>
+    </template>
+    <p class="text-error" v-else>{{ $t('pageVisualizationMapNoLocationData') }}</p>
 
     <div ref="mapElement" class="location-map map mt-5">
       <v-bottom-sheet
@@ -53,7 +56,7 @@
   import { getTrialById } from '@/plugins/idb'
   import { getTrialDataCached } from '@/plugins/datastore'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
-  import { plotInfoToGeoJson } from '@/plugins/location'
+  import { isGeographyValid, isLocationValid, plotInfoToGeoJson } from '@/plugins/location'
   import { CellCategory } from '@/plugins/types/gridscore'
 
   import 'leaflet.markercluster'
@@ -78,6 +81,7 @@
   let clusterer: any
   const selectedFeature = ref<CellPlus>()
   const bottomSheetVisible = ref(false)
+  const hasData = ref(true)
 
   const highlightColors = ref<{ [index: string]: string }>({})
 
@@ -85,7 +89,6 @@
   let map: Map
   // let geoJsonLayer: L.GeoJSON<any, any> | undefined = undefined
   let trialData: { [index: string]: CellPlus } | undefined = {}
-  let circles: Circle[] = []
 
   const userSelection = computed(() => highlightSelection.value?.userSelection)
 
@@ -197,8 +200,7 @@
   }
 
   function update () {
-    circles.forEach(c => c.removeFrom(map))
-    circles = []
+    let hasLocationData = false
 
     // Remove the old geojson layer if required
     if (clusterer) {
@@ -217,7 +219,8 @@
       Object.keys(trialData).forEach(td => {
         const [row, column] = td.split('|').map(c => +c)
         const tdd = trialData?.[td]
-        if (trialData && tdd && tdd.geography && (tdd.geography.corners || tdd.geography.center)) {
+        if (trialData && tdd && tdd.geography && ((tdd.geography.corners && isGeographyValid(tdd.geography.corners)) || (tdd.geography.center && isLocationValid(tdd.geography.center)))) {
+          hasLocationData = true
           plotInfo.push({
             properties: {
               displayName: tdd.displayName,
@@ -292,6 +295,8 @@
       }
       map.addLayer(clusterer)
     }
+
+    hasData.value = hasLocationData
   }
 
   function getColor (properties: any) {

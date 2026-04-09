@@ -17,7 +17,6 @@
         <v-col cols="12" md="6">
           <HighlightSelect
             :trial="trial"
-            v-model:cells="selectedCells"
             allow-control-select
             ref="highlightSelection"
           />
@@ -29,7 +28,7 @@
           <GpsTraitMap
             :trial="trial"
             :trait="trait"
-            :selected-germplasm="selectedCellNames"
+            :user-selection="highlightSelection?.userSelection"
             @cell-clicked="(row: number, column: number) => showBottomSheet(row, column, trait)"
             v-if="trait.dataType === TraitDataType.gps"
           />
@@ -72,14 +71,11 @@
 
   const trial = ref<TrialPlus>()
   const selectedTraits = ref<TraitPlus[]>([])
-  const selectedCells = ref<CellPlus[]>([])
   const bottomSheetVisible = ref(false)
   const featuredCell = ref<CellPlus>()
   const featuredTrait = ref<TraitPlus>()
 
   const highlightSelection = useTemplateRef('highlightSelection')
-
-  const selectedCellNames = computed(() => selectedCells.value.map(g => g.displayName || g.germplasm))
 
   function showBottomSheet (row: number, column: number, trait: TraitPlus) {
     getCell(store.storeSelectedTrial || '', row, column)

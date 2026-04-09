@@ -799,6 +799,7 @@
   "pageVisualizationMapTitle": "Geografische Informationen",
   "pageVisualizationMapText": "Diese Karte zeigt jegliche Feldlayoutinformationen sowie alle Standorte wo Daten aufgezeichnet wurden an.",
   "pageVisualizationMapNoTraitData": "Keine Daten für dieses Merkmal gefunden.",
+  "pageVisualizationMapNoLocationData": "Keine Standortdaten gefunden für diesen Versuch.",
   "pageVisualizationStatisticsTitle": "Datenstatistiken",
   "pageVisualizationStatisticsText": "Diese Seite zeigt eine Übersicht über die Statistiken pro Merkmal. Numerische Merkmale und Daten werden mit Boxplots dargestellt, während Freitext und kategorische Merkmale mit Balkendiagrammen veranschaulicht werden.",
   "pageVisualizationFieldHeatmapTitle": "Feld-Heatmap",

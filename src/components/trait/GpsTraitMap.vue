@@ -19,8 +19,9 @@
   import iconUrl from 'leaflet/dist/images/marker-icon.png'
   import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
   import { getTrialDataCached } from '@/plugins/datastore'
-  import type { Measurement } from '@/plugins/types/gridscore'
+  import { CellCategory, type Measurement } from '@/plugins/types/gridscore'
   import { categoricalColors } from '@/plugins/color'
+  import type { UserSelection } from '@/components/util/HighlightSelect.vue'
 
   // Set the leaflet marker icon
   // @ts-ignore
@@ -40,7 +41,7 @@
   const compProps = defineProps<{
     trial: TrialPlus
     trait: TraitPlus
-    selectedGermplasm: string[]
+    userSelection?: UserSelection
   }>()
 
   const store = coreStore()
@@ -145,7 +146,7 @@
     const trialDataConst = trialData
     if (trialDataConst && compProps.trait) {
       const bounds = L.latLngBounds([])
-      Object.keys(trialDataConst).forEach((k, kIndex) => {
+      Object.keys(trialDataConst).forEach(k => {
         const cell = trialDataConst[k]
 
         const gps: GpsData[] = []
@@ -164,10 +165,35 @@
             })
           })
 
-          const color = (compProps.selectedGermplasm.length === 0 || compProps.selectedGermplasm.includes(cell.displayName || cell.germplasm)) ? categoricalColors.D3schemeCategory10[kIndex % categoricalColors.D3schemeCategory10.length] : 'gray'
+          let selectionField: string | undefined = undefined
+          let selectionIndex = -1
+
+          if (compProps.userSelection && compProps.userSelection.type && compProps.userSelection.selectedItems && compProps.userSelection.selectedItems.length > 0) {
+            switch (compProps.userSelection.type) {
+              case 'cell':
+                selectionField = `${cell.displayRow}|${cell.displayColumn} - ${cell.displayName || cell.germplasm}`
+                break
+              case 'germplasm':
+                selectionField = cell.germplasm
+                break
+              case 'reps':
+                selectionField = cell.rep || ''
+                break
+              case 'treatments':
+                selectionField = cell.treatment || ''
+                break
+              case 'controls':
+                selectionField = (cell.categories || []).includes(CellCategory.CONTROL) ? CellCategory.CONTROL : ''
+                break
+            }
+
+            selectionIndex = compProps.userSelection.selectedItems.indexOf(selectionField)
+          }
+
+          const color = selectionIndex !== -1 ? categoricalColors.D3schemeCategory10[selectionIndex % categoricalColors.D3schemeCategory10.length] : 'gray'
 
           const line = L.polyline(gps.map(g => g.latLng), { weight: 3, color }).addTo(layerGroup)
-          line.bindTooltip(cell.displayName || cell.germplasm)
+          line.bindTooltip(selectionField || cell.displayName || cell.germplasm)
           line.on('mouseover', e => {
             const l = e.target
             l.setStyle({
@@ -222,7 +248,7 @@
 
   const emit = defineEmits(['cell-clicked'])
 
-  watch(() => compProps.selectedGermplasm, async () => updateData())
+  watch(() => compProps.userSelection, async () => updateData(), { deep: true })
 </script>
 
 <style scoped>

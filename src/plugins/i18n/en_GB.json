@@ -810,6 +810,7 @@
   "pageVisualizationMapTitle": "Geographic information",
   "pageVisualizationMapText": "This map shows any available field layout information as well as the locations where data has been collected.",
   "pageVisualizationMapNoTraitData": "No data for this trait found.",
+  "pageVisualizationMapNoLocationData": "No location data found for this trial.",
   "pageVisualizationStatisticsTitle": "Data statistics",
   "pageVisualizationStatisticsText": "This page shows overview statistics for each trait. Numeric and date traits are visualized in a box plot while text and categorical traits are shown in bar charts.",
   "pageVisualizationHeatmapTitle": "Data heatmaps",
