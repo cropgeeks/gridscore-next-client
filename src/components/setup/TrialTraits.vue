@@ -12,7 +12,7 @@
           border="start"
         />
 
-        <form>
+        <form @submit.prevent>
           <v-text-field
             class="mb-3"
             v-model="currentTrait.name"
