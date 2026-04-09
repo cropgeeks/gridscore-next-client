@@ -284,6 +284,11 @@
     event.target.selectionEnd = event.target.selectionStart = originalSelectionStart + 1
   }
 
+  watch(content, async () => {
+    columnMapping.value = {}
+    fileColumns.value = []
+  })
+
   watch(file, async newValue => {
     if (newValue) {
       content.value = await newValue?.text() || ''
