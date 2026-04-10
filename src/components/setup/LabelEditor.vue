@@ -22,15 +22,16 @@
         }"
       >
         <v-number-input
-          v-for="element in values"
-          :key="`element-${element.id}`"
-          v-model="element.value"
+          v-for="(element, index) in model"
+          :key="`element-${index}`"
+          :model-value="element"
+          @update:model-value="v => { model[index] = v }"
           hide-details
           :step="1"
           density="compact"
           control-variant="hidden"
           variant="outlined"
-          :width="orientation === 'horizontal' ? `${('' + element.value).length + 4}em` : undefined"
+          :width="orientation === 'horizontal' ? `${('' + element).length + 4}em` : undefined"
         >
           <template #append-inner>
             <div class="drag-handle" @mousedown.stop @touchstart.stop>
@@ -44,48 +45,28 @@
 </template>
 
 <script setup lang="ts">
-  import { getId } from '@/plugins/id'
   import { mdiDragVertical } from '@mdi/js'
-  import { watchIgnorable } from '@vueuse/core'
-  import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
+  import { dragAndDrop } from '@formkit/drag-and-drop/vue'
 
   const compProps = defineProps<{
     orientation: 'horizontal' | 'vertical'
   }>()
 
-  interface CopyObject {
-    id: string
-    value: number
-  }
-
   const edit = ref(false)
-  const model = defineModel<number[]>()
-  const localCopy = ref<CopyObject[]>([])
+  const model = defineModel<number[]>({
+    default: [],
+  })
 
-  const [parent, values] = useDragAndDrop<CopyObject>(
-    [],
-    { dragHandle: '.drag-handle' },
-  )
+  const parent = ref()
 
-  function setCopies () {
-    values.value = model.value?.map(v => {
-      return {
-        value: v,
-        id: getId(),
-      }
-    }) || []
-  }
-
-  // Listen for changes, but don't trigger the other one to prevent infinite loops
-  const { ignoreUpdates: ignoreModel } = watchIgnorable(model, () => ignoreLocal(() => setCopies()))
-  const { ignoreUpdates: ignoreLocal } = watchIgnorable(localCopy, async newValue => {
-    ignoreModel(() => {
-      // Don't trigger model watcher
-      model.value = newValue.map(v => v.value)
-    })
-  }, { deep: true })
-
-  onMounted(() => setCopies())
+  dragAndDrop<number>({
+    parent: parent,
+    values: model,
+    // @ts-ignore
+    config: {
+      dragHandle: '.drag-handle',
+    },
+  })
 </script>
 
 <style scoped>
