@@ -111,23 +111,36 @@ function toGridScoreDataType (type: string): TraitDataType {
     case 'categorical':
       return type as TraitDataType
     default:
-      return TraitDataType.text
+      throw new Error(`Invalid Germinate trait data type: "${type}"`)
   }
 }
 
 function germinateToTraits (traitString: string): Trait[] {
+  let error = 'Invalid Germinate trait format'
+
   try {
     const parsed = tsvParse(traitString)
 
     if (!parsed || !parsed.columns || !GERMINATE_EXPECTED_COLUMNS.every(c => parsed.columns.includes(c))) {
-      throw new Error('Invalid Germinate trait format')
+      throw new Error(error)
     }
 
-    const traits: Trait[] = parsed.map(p => {
+    const traits: Trait[] = []
+
+    for (const p of parsed) {
+      let dt = TraitDataType.text
+
+      try {
+        dt = toGridScoreDataType(p['Data Type'] || 'text')
+      } catch (e: any) {
+        error = e.message
+        throw new Error(error)
+      }
+
       const trait: Trait = {
         name: p.Name || 'N/A',
         description: p.Description,
-        dataType: toGridScoreDataType(p['Data Type'] || 'text'),
+        dataType: dt,
         setSize: 1,
         allowRepeats: false,
       }
@@ -167,12 +180,12 @@ function germinateToTraits (traitString: string): Trait[] {
         }
       }
 
-      return trait
-    })
+      traits.push(trait)
+    }
 
     return traits
   } catch {
-    throw new Error('Invalid Germinate trait format')
+    throw new Error(error)
   }
 }
 
@@ -221,11 +234,21 @@ function tabularToTraits (traitString: string): Trait[] {
 
   let error = undefined
 
-  const traits: Trait[] = parsed.map(p => {
+  const validTypes = Object.values(TraitDataType)
+  const traits: Trait[] = []
+
+  for (const p of parsed) {
+    const dt = p['Data Type']
+
+    
+    if (!validTypes.includes(dt)) {
+      error = `Invalid tabular trait data type: "${dt}"`
+    }
+
     const trait: Trait = {
       name: p.Name,
       description: p.Description,
-      dataType: p['Data Type'],
+      dataType: dt,
       allowRepeats: p['Allow repeats'] === '1' || p['Allow repeats'] === 1,
       setSize: p['Set size'] || 1,
       brapiId: p['BrAPI ID'],
@@ -281,9 +304,7 @@ function tabularToTraits (traitString: string): Trait[] {
         }
       }
     }
-
-    return trait
-  })
+  }
 
   if (error) {
     throw new Error(error)
@@ -293,10 +314,11 @@ function tabularToTraits (traitString: string): Trait[] {
 }
 
 function jsonToTraits (traitJson: string): Trait[] {
+  let error = 'Invalid GridScore JSON'
   try {
     const parsed: any[] = JSON.parse(traitJson)
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      throw new Error('Invalid GridScore JSON')
+      throw new Error(error)
     }
 
     parsed.forEach(t => {
@@ -307,9 +329,19 @@ function jsonToTraits (traitJson: string): Trait[] {
       }
     })
 
-    return parsed as Trait[]
+    const traits = parsed as Trait[]
+
+    const validTypes = Object.values(TraitDataType)
+    for (const trait of traits) {
+      if (!validTypes.includes(trait.dataType)) {
+        error = `Invalid GridScore trait data type: "${trait.dataType}"`
+        throw new Error(error)
+      }
+    }
+
+    return traits
   } catch {
-    throw new Error('Invalid GridScore JSON')
+    throw new Error(error)
   }
 }
 
