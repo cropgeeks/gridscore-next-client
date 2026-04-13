@@ -255,9 +255,9 @@ function tabularToTraits (traitString: string): Trait[] {
       description: p.Description,
       dataType: dt,
       allowRepeats: p['Allow repeats'] === '1' || p['Allow repeats'] === 1,
+      group: p['Group name'] ? { name: p['Group name'] } : undefined,
       setSize: p['Set size'] || 1,
       brapiId: p['BrAPI ID'],
-      group: p['Group name'],
     }
 
     if (trait.dataType === TraitDataType.categorical && p.Categories && p.Categories.length > 0) {
