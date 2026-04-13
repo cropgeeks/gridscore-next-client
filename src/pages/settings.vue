@@ -643,6 +643,13 @@
     emitter.emit('plausible-event', { key: 'settings-changed', props: { homeWidgetOrder: newValue.map(o => o.value) } })
     store.setHomeWidgetOrder(newValue.map(o => o.value))
   }, { deep: true })
+
+  watch(() => store.storeTheme, async newValue => {
+    theme.value = newValue
+  })
+  watch(() => store.storeLocale, async newValue => {
+    locale.value = newValue
+  })
 </script>
 
 <style scoped>
