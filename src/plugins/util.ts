@@ -7,6 +7,12 @@ import type { FilterMatch, InternalItem } from 'vuetify'
 import { ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
 import { categoricalColors } from './color'
 
+import Ajv from 'ajv'
+import traitSchema from '@/plugins/types/schema/trait.schema.json'
+
+const ajv = new Ajv()
+const traitValidator = ajv.compile(traitSchema)
+
 export const GERMINATE_EXPECTED_COLUMNS = ['Name', 'Short Name', 'Description', 'Data Type', 'Unit Name', 'Unit Abbreviation', 'Unit Descriptions', 'Trait categories (comma separated)', 'Min (only for numeric traits)', 'Max (only for numeric traits)']
 export const TABULAR_EXPECTED_COLUMNS = ['Name', 'Description', 'Data Type', 'Allow repeats', 'Set size', 'Group name', 'Categories', 'Minimum', 'Maximum', 'Timeframe type', 'Timeframe start', 'Timeframe end', 'BrAPI ID']
 
@@ -240,7 +246,6 @@ function tabularToTraits (traitString: string): Trait[] {
   for (const p of parsed) {
     const dt = p['Data Type']
 
-    
     if (!validTypes.includes(dt)) {
       error = `Invalid tabular trait data type: "${dt}"`
     }
@@ -304,6 +309,8 @@ function tabularToTraits (traitString: string): Trait[] {
         }
       }
     }
+
+    traits.push(trait)
   }
 
   if (error) {
@@ -333,7 +340,10 @@ function jsonToTraits (traitJson: string): Trait[] {
 
     const validTypes = Object.values(TraitDataType)
     for (const trait of traits) {
-      if (!validTypes.includes(trait.dataType)) {
+      if (!traitValidator(trait)) {
+        error = `Invalid GridScore trait definition: "${JSON.stringify(traitValidator.errors, undefined, 2)}"`
+        throw new Error(error)
+      } else if (!validTypes.includes(trait.dataType)) {
         error = `Invalid GridScore trait data type: "${trait.dataType}"`
         throw new Error(error)
       }

@@ -101,7 +101,7 @@
 
         <slot name="additional-fields" v-bind="{ item: formModel }" />
 
-        <p v-if="error" class="mt-5 text-error">{{ error }}</p>
+        <pre v-if="error" class="mt-5 text-error">{{ error }}</pre>
       </template>
 
       <v-card-actions>
@@ -179,6 +179,7 @@
       formModel.value = {}
     }
 
+    error.value = undefined
     dialog.value = true
   }
   function hide () {

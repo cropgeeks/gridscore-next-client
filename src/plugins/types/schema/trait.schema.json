@@ -1,0 +1,125 @@
+{
+  "$ref": "#/definitions/Trait",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Group": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Restrictions": {
+      "additionalProperties": false,
+      "properties": {
+        "categories": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "max": {
+          "type": "number"
+        },
+        "min": {
+          "type": "number"
+        },
+        "step": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "Timeframe": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "type": "string"
+        },
+        "start": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/TimeframeType"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "TimeframeType": {
+      "enum": [
+        "SUGGEST",
+        "ENFORCE"
+      ],
+      "type": "string"
+    },
+    "Trait": {
+      "additionalProperties": false,
+      "properties": {
+        "allowRepeats": {
+          "type": "boolean"
+        },
+        "brapiId": {
+          "type": "string"
+        },
+        "dataType": {
+          "$ref": "#/definitions/TraitDataType"
+        },
+        "description": {
+          "type": "string"
+        },
+        "group": {
+          "$ref": "#/definitions/Group"
+        },
+        "hasImage": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "restrictions": {
+          "$ref": "#/definitions/Restrictions"
+        },
+        "setSize": {
+          "type": "number"
+        },
+        "timeframe": {
+          "$ref": "#/definitions/Timeframe"
+        }
+      },
+      "required": [
+        "name",
+        "dataType",
+        "allowRepeats",
+        "setSize"
+      ],
+      "type": "object"
+    },
+    "TraitDataType": {
+      "enum": [
+        "int",
+        "float",
+        "range",
+        "categorical",
+        "multicat",
+        "boolean",
+        "date",
+        "gps",
+        "image",
+        "video",
+        "text"
+      ],
+      "type": "string"
+    }
+  }
+}
