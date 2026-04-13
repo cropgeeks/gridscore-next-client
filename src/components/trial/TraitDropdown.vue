@@ -111,6 +111,7 @@
   // Props
   const compProps = defineProps<{
     traits: TraitPlus[]
+    traitGroupOrder?: string[]
     size?: 'x-small' | 'small' | 'default' | 'large' | 'x-large'
   }>()
   const emit = defineEmits(['trait-cutoff-changed'])
@@ -141,6 +142,12 @@
   const traitsByGroup: ComputedRef<TraitGroup[]> = computed(() => {
     if (compProps.traits) {
       const result: TraitMap = {}
+
+      if (compProps.traitGroupOrder) {
+        compProps.traitGroupOrder.forEach(tg => {
+          result[tg] = []
+        })
+      }
 
       compProps.traits.forEach((trait: TraitPlus) => {
         const group = (trait.group ? trait.group.name : t('dropdownOptionTraitNoGroup')) || ''

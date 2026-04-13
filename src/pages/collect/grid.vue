@@ -2,7 +2,7 @@
   <div v-if="trial" class="data-entry">
     <v-toolbar flat density="compact" class="justify-space-between align-center pa-1">
       <v-btn-group density="compact">
-        <TraitDropdown :traits="trial.traits" @trait-cutoff-changed="e => { traitCutoff = e }" />
+        <TraitDropdown :traits="trial.traits" @trait-cutoff-changed="e => { traitCutoff = e }" :trait-group-order="trial.traitGroupOrder" />
         <JumpToDropdown />
 
         <OverflowMenu

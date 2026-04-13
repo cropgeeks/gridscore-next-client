@@ -18,7 +18,7 @@
         <v-toolbar-title>{{ cell.displayName }}</v-toolbar-title>
 
         <v-btn-group>
-          <TraitDropdown size="small" :traits="trial.traits" />
+          <TraitDropdown size="small" :traits="trial.traits" :trait-group-order="trial.traitGroupOrder" />
           <DataEntryActions
             v-model:recording-date="recordingDate"
             :trial="trial"
@@ -474,7 +474,7 @@
           traits: result[k] || [],
           valid: undefined,
         }
-      })
+      }).filter(tg => tg.traits.length > 0)
     }
 
     return groups
@@ -756,7 +756,7 @@
     } else {
       const traitGroupIndex = traitsByGroup.value.findIndex(tg => tg.traits.some(tt => tt.id === trait.id))
 
-      if (traitGroupIndex < traitsByGroup.value.length) {
+      if (traitGroupIndex < traitsByGroup.value.length - 1) {
         // TODO: Expand trait group
         const nextGroup = traitsByGroup.value[traitGroupIndex + 1]
         if (nextGroup) {
@@ -769,6 +769,8 @@
             refs.value[`${nextGroup?.traits[0]?.id}`]?.focus(1)
           })
         }
+      } else {
+        save(1)
       }
     }
   }
