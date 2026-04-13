@@ -106,8 +106,12 @@ function toGridScoreDataType (type: string): TraitDataType {
   switch (type) {
     case 'numeric':
       return TraitDataType.float
-    default:
+    case 'date':
+    case 'text':
+    case 'categorical':
       return type as TraitDataType
+    default:
+      return TraitDataType.text
   }
 }
 
