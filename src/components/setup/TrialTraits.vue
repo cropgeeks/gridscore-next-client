@@ -280,7 +280,6 @@
                   <span>{{ element.name }}</span>
                   <div>
                     <v-chip label size="small" color="primary" :prepend-icon="dts.find(dt => dt.value === element.dataType)?.icon" :text="dts.find(dt => dt.value === element.dataType)?.shortTitle" />
-                    <v-icon class="drag-handle" :icon="mdiDrag" />
                   </div>
                 </div>
               </template>
@@ -289,56 +288,68 @@
               </template>
 
               <template #text>
-                <div class="mb-2">
-                  <v-chip
-                    label
-                    class="me-2 mb-1"
-                    size="small"
-                    :text="$t(element.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
-                    :prepend-icon="element.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
-                  />
+                <div class="d-flex justify-space-between">
+                  <div>
+                    <div class="mb-2">
+                      <v-chip
+                        label
+                        class="me-2 mb-1"
+                        size="small"
+                        :text="$t(element.allowRepeats ? 'formFeedbackTraitAllowRepeats' : 'formFeedbackTraitNoAllowRepeats')"
+                        :prepend-icon="element.allowRepeats ? mdiTimelinePlus : mdiTimelineRemove"
+                      />
 
-                  <v-chip
-                    label
-                    class="me-2 mb-1"
-                    size="small"
-                    :text="$t('formFeedbackTraitSetSize', { count: element.setSize })"
-                    :prepend-icon="mdiSetSplit"
-                  />
+                      <v-chip
+                        label
+                        class="me-2 mb-1"
+                        size="small"
+                        :text="$t('formFeedbackTraitSetSize', { count: element.setSize })"
+                        :prepend-icon="mdiSetSplit"
+                      />
 
-                  <v-chip
-                    v-if="element.group && element.group.name"
-                    label
-                    class="me-2 mb-1"
-                    size="small"
-                    :text="element.group.name"
-                    :prepend-icon="mdiTagText"
-                  />
-                </div>
-                <div v-if="element.timeframe" class="mb-2">
-                  <v-chip
-                    label
-                    size="small"
-                    class="me-2 mb-1"
-                    :text="$t(element.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
-                    :prepend-icon="element.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
-                  />
-                  <v-chip
-                    v-if="element.timeframe.start"
-                    label
-                    size="small"
-                    class="me-2 mb-1"
-                    :text="element.timeframe.start"
-                    :prepend-icon="mdiCalendarStart"
-                  />
-                  <v-chip
-                    v-if="element.timeframe.end"
-                    label
-                    size="small"
-                    class="me-2 mb-1"
-                    :text="element.timeframe.end"
-                    :prepend-icon="mdiCalendarEnd"
-                  />
+                      <v-chip
+                        v-if="element.group && element.group.name"
+                        label
+                        class="me-2 mb-1"
+                        size="small"
+                        :text="element.group.name"
+                        :prepend-icon="mdiTagText"
+                      />
+                    </div>
+                    <div v-if="element.timeframe" class="mb-2">
+                      <v-chip
+                        label
+                        size="small"
+                        class="me-2 mb-1"
+                        :text="$t(element.timeframe.type === TimeframeType.SUGGEST ? 'formSelectOptionTraitTimeframeSuggest' : 'formSelectOptionTraitTimeframeEnforce')"
+                        :prepend-icon="element.timeframe.type === TimeframeType.SUGGEST ? mdiAlert : mdiMinusCircle"
+                      />
+                      <v-chip
+                        v-if="element.timeframe.start"
+                        label
+                        size="small"
+                        class="me-2 mb-1"
+                        :text="element.timeframe.start"
+                        :prepend-icon="mdiCalendarStart"
+                      />
+                      <v-chip
+                        v-if="element.timeframe.end"
+                        label
+                        size="small"
+                        class="me-2 mb-1"
+                        :text="element.timeframe.end"
+                        :prepend-icon="mdiCalendarEnd"
+                      />
+                    </div>
+                  </div>
+                  <div class="d-flex flex-column ga-1">
+                    <v-btn variant="outlined" @click.prevent.stop="moveTrait(index, -1)" :disabled="index === 0">
+                      <v-icon :icon="mdiChevronUp" />
+                    </v-btn>
+                    <v-btn variant="outlined" @click.prevent.stop="moveTrait(index, 1)" :disabled="index === model.length - 1">
+                      <v-icon :icon="mdiChevronDown" />
+                    </v-btn>
+                  </div>
                 </div>
               </template>
               <template #actions>
@@ -398,11 +409,10 @@
 
   import emitter from 'tiny-emitter/instance'
   import { germinateToTraits, intersection, jsonToTraits, tabularToTraits } from '@/plugins/util'
-  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatListNumbered, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiTagText, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove, mdiDebugStepOver } from '@mdi/js'
+  import { mdiAlert, mdiCalendarEnd, mdiCalendarExpandHorizontal, mdiCalendarStart, mdiContentDuplicate, mdiDelete, mdiDrag, mdiFormatListNumbered, mdiFormatVerticalAlignBottom, mdiFormatVerticalAlignTop, mdiTagText, mdiMinusCircle, mdiSetSplit, mdiTagEdit, mdiTagMultiple, mdiTagPlus, mdiTextLong, mdiTextShort, mdiTimelinePlus, mdiTimelineRemove, mdiDebugStepOver, mdiChevronUp, mdiChevronDown } from '@mdi/js'
   import { traitsToGerminate, traitsToTabular } from '@/plugins/dataexport'
   import TraitInput from '@/components/inputs/TraitInput.vue'
   import { dragAndDrop } from '@formkit/drag-and-drop/vue'
-  import type { DragState } from '@formkit/drag-and-drop'
 
   const { t } = useI18n()
   const store = coreStore()
@@ -447,21 +457,7 @@
   const traitImportFromTrialModal = useTemplateRef('traitImportFromTrialModal')
   const categoryInput = useTemplateRef('categoryInput')
   const formModal = useTemplateRef('formModal')
-  const traitListRef = ref()
   const traitGroupListRef = ref()
-
-  dragAndDrop<TraitPlus>({
-    parent: traitListRef,
-    values: model,
-    // @ts-ignore
-    config: {
-      dragHandle: '.drag-handle',
-    },
-    handleEnd: (state: DragState<TraitPlus>) => {
-      // This is a workaround to some weird bug with this library.
-      state.draggedNode.el.style.zIndex = '0'
-    },
-  })
 
   dragAndDrop<string>({
     parent: traitGroupListRef,
@@ -708,6 +704,15 @@
     delete copy.id
 
     setTrait(copy)
+  }
+
+  function moveTrait (currentIndex: number, delta: number) {
+    const toIndex = currentIndex + delta
+    const element = model.value[currentIndex]
+    if (element) {
+      model.value.splice(currentIndex, 1)
+      model.value.splice(toIndex, 0, element)
+    }
   }
 
   function clearTraits () {

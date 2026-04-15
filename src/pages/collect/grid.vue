@@ -88,7 +88,7 @@
     <DataCanvas :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" ref="dataCanvas" @click:plot="selectPlot" @context:header="showContextMenu" v-if="showCanvas" />
     <DataGrid :trial="trial" :geolocation="geolocation" :trait-cutoff="traitCutoff" ref="dataGrid" @click:plot="selectPlot" @context:header="showContextMenu" v-else />
 
-    <DataEntryModal :trial="trial" :geolocation="geolocation" ref="dataEntryModal" @data-changed="loadTrial" />
+    <DataEntryModal :trial="trial" :geolocation="geolocation" ref="dataEntryModal" @data-changed="loadTrial" @hide="focusSearchField" />
 
     <v-menu
       v-model="contextMenu.visible"
@@ -205,6 +205,7 @@
   const dataEntryModal = useTemplateRef('dataEntryModal')
   const searchResultModal = useTemplateRef('searchResultModal')
   const plotCommentListModal = useTemplateRef('plotCommentListModal')
+  const searchField = useTemplateRef('searchField')
 
   const dataCanvas = useTemplateRef<typeof DataCanvas>('dataCanvas')
   const dataGrid = useTemplateRef<typeof DataGrid>('dataGrid')
@@ -270,6 +271,10 @@
       }
     }
   })
+
+  function focusSearchField () {
+    searchField.value?.focus()
+  }
 
   function lockUnlock (all: boolean, isLock: boolean) {
     const tr = trial.value

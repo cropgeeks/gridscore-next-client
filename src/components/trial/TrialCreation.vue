@@ -334,6 +334,11 @@
       delete t.localId
       delete t.shareCodes
 
+      if (compProps.isClone) {
+        delete t.remoteUrl
+        delete t.remoteToken
+      }
+
       let plotCorners = undefined
 
       if (t.layout.corners && isGeographyValid(t.layout.corners)) {

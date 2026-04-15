@@ -225,11 +225,12 @@ export interface TraitEditContent {
 
 export interface TrialContent {
     name: string;
-    description: string;
-    socialShareConfig: SocialShareConfig;
-    markers: Markers;
-    corners: Corners;
-    plotCorners: { [index: string]: Corners };
+    description?: string;
+    socialShareConfig?: SocialShareConfig;
+    markers?: Markers;
+    corners?: Corners;
+    plotCorners?: { [index: string]: Corners };
+    dimensionNames?: DimensionNames;
 }
 
 export interface BrapiIdChangeContent {

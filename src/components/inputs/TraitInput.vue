@@ -213,6 +213,7 @@
             v-for="(cat, catIndex) in (trait.restrictions?.categories || [])"
             :key="`trait-${trait.id}-${cat}`"
             :text="cat"
+            @click="emit('traverse')"
           />
           <v-btn
             v-if="model !== undefined && model !== null"

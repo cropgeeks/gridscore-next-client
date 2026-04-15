@@ -215,6 +215,8 @@
   const sortDescending = ref(true)
   const trialShowDetails = ref(store.storeTrialShowDetails)
   const trialDisplayMode = ref(store.storeTrialListArrangement)
+  const lastChecked = ref<number | undefined>()
+
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTraitModal = useTemplateRef('addTraitModal')
   const addPersonModal = useTemplateRef('addPersonModal')
@@ -612,7 +614,17 @@
       })
       .finally(() => {
         loading.value = false
+        lastChecked.value = Date.now()
       })
+  }
+
+  function visibilityListener () {
+    // When the trial selector regains focus and hasn't checked for remote updates for more than 5 minutes, refresh list
+    const secondsSinceLastUpdate = lastChecked.value !== undefined ? ((Date.now() - lastChecked.value) / 1000) : Number.MAX_SAFE_INTEGER
+
+    if (document.visibilityState === 'visible' && (trials.value || []).length > 0 && secondsSinceLastUpdate > 300) {
+      update()
+    }
   }
 
   watch(searchTerm, async () => {
@@ -643,11 +655,15 @@
     emitter.on('trial-information-updated', update)
     emitter.on('trials-updated', update)
     update()
+
+    document.addEventListener('visibilitychange', visibilityListener)
   })
   onBeforeUnmount(() => {
     emitter.off('trial-properties-changed', update)
     emitter.off('trial-information-updated', update)
     emitter.off('trials-updated', update)
+
+    document.removeEventListener('visibilitychange', visibilityListener)
   })
 </script>
 

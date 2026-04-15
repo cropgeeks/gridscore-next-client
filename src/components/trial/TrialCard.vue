@@ -20,6 +20,7 @@
     <v-card-text class="pb-0">
       <div class="d-flex flex-row flex-wrap ga-2">
         <v-chip v-if="trial.updatedOn" :prepend-icon="mdiCalendarEdit" variant="tonal" color="primary" label v-tooltip:bottom="new Date(trial.updatedOn).toLocaleString()" :text="formatTimeAgo(trial.updatedOn)" />
+        <v-chip v-if="trial.remoteUrl" :prepend-icon="mdiCloudArrowRight" variant="tonal" color="warning" label v-tooltip:bottom="trial.remoteUrl" :text="$t('buttonTrialRemoteUrl')" />
         <v-chip v-if="trial.isLocked" :prepend-icon="mdiLockAlert" variant="tonal" color="warning" label v-tooltip:bottom="$t('widgetDataInputLockedWarning')" :text="$t('widgetDataInputLockedChip')" />
         <v-chip v-if="trial.showExpiryWarning" :disabled="!interactive" :prepend-icon="mdiCalendarAlert" variant="tonal" color="error" label :text="$t('widgetTrialSelectorTrialExpiryWarning')" @click="emit('extend-lifetime')" />
         <slot name="chips" />
@@ -203,7 +204,7 @@
   import TrialOptionsDropdown from '@/components/trial/TrialOptionsDropdown.vue'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiAccountMultiple, mdiCalendarAlert, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCalendarRange, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLockAlert, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
+  import { mdiAccountMultiple, mdiCalendarAlert, mdiCalendarEdit, mdiCalendarExpandHorizontal, mdiCalendarRange, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCloudArrowRight, mdiCloudDownload, mdiCloudUpload, mdiCog, mdiCommentMultiple, mdiFlagVariant, mdiFolderTable, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLockAlert, mdiMenuDown, mdiMenuUp, mdiNotebookCheck, mdiNotebookEdit, mdiTagMultiple } from '@mdi/js'
   import CommentModal from '@/components/modals/CommentModal.vue'
   import { addTrialComment, addTrialEvent, deleteTrialComment, deleteTrialEvent } from '@/plugins/idb'
   import type { Comment, Event } from '@/plugins/types/gridscore'

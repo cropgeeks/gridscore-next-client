@@ -269,13 +269,20 @@ async function updateTrialProperties (localId: string, updates: TrialModificatio
     trial.group = updates.group
     trial.dimensionNames = updates.dimensionNames
     trial.traitGroupOrder = updates.trialTraitGroups
+    if (updates.people && updates.people.length > 0) {
+      trial.people.push(...updates.people)
+    }
 
     if (logTransactions(trial)) {
       const transaction: Transaction = (await db.get('transactions', localId)) || getEmptyTransaction(localId)
-      const copy = JSON.parse(JSON.stringify(updates))
-      delete copy.traits
-      delete copy.people
-      transaction.trialEditTransaction = copy
+      transaction.trialEditTransaction = {
+        name: updates.name,
+        description: updates.description,
+        markers: updates.markers,
+        corners: updates.corners,
+        socialShareConfig: updates.socialShareConfig,
+        dimensionNames: updates.dimensionNames,
+      }
 
       if (plotCorners) {
         const mapping: { [index: string]: Corners } = {}
