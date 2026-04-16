@@ -87,7 +87,8 @@
   }
   function save () {
     if (traits.value.length > 0) {
-      emit('traits-added', traits.value)
+      emit('traits-added', JSON.parse(JSON.stringify(traits.value)))
+      traits.value = []
     }
 
     hide()

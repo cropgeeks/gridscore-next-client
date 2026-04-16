@@ -843,7 +843,7 @@
       state.max = 'formFeedbackTraitInvalidMinMax'
     }
 
-    if (restrictions.value && restrictions.value.categories && restrictions.value.categories.length < 2) {
+    if (TraitDataType.isCategorical(currentTrait.value.dataType) && (!restrictions.value || !restrictions.value.categories || restrictions.value.categories.length < 2)) {
       state.categories = 'formFeedbackTraitCategoryOnlyOne'
     }
 

@@ -237,6 +237,7 @@
 
     <DataInputCloseModal
       ref="dataInputCloseModal"
+      :save-enabled="canSave"
       @close="hide()"
       @save="save()"
     />

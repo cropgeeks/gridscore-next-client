@@ -9,13 +9,19 @@
         <v-btn class="me-auto" @click="localEmit('cancel')">{{ $t('buttonCancel') }}</v-btn>
         <v-spacer />
         <v-btn color="error" @click="localEmit('close')">{{ $t('buttonClose') }}</v-btn>
-        <v-btn color="success" @click="localEmit('save')">{{ $t('buttonSave') }}</v-btn>
+        <v-btn color="success" @click="localEmit('save')" :disabled="saveEnabled === false">{{ $t('buttonSave') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
+  const compProps = withDefaults(defineProps<{
+    saveEnabled?: boolean
+  }>(), {
+    saveEnabled: true,
+  })
+
   const dialog = ref(false)
 
   const emit = defineEmits(['cancel', 'close', 'save'])

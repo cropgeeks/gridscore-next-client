@@ -323,12 +323,14 @@
         people: newPeople,
         dimensionNames: t.dimensionNames,
         trialTraitGroups: t.traitGroupOrder,
-      }).then(async () => {
+      }).then(() => {
         emitter.emit('trials-updated')
         emitter.emit('trial-selected')
 
-        await store.setSelectedTrial(t.localId || '')
-        router.push('/collect/grid')
+        setupCompleted.value = true
+        return store.setSelectedTrial(t.localId || '')
+      }).then(() => {
+        nextTick(() => router.push('/collect/grid'))
       })
     } else {
       delete t.localId
@@ -414,12 +416,14 @@
         },
       })
 
-      addTrial(t).then(async trialId => {
-        setupCompleted.value = true
-
-        await store.setSelectedTrial(trialId)
-        nextTick(() => router.push('/collect/grid'))
-      })
+      addTrial(t)
+        .then(trialId => {
+          setupCompleted.value = true
+          return store.setSelectedTrial(trialId)
+        })
+        .then(() => {
+          nextTick(() => router.push('/collect/grid'))
+        })
     }
   }
 
