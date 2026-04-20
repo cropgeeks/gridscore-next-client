@@ -132,6 +132,7 @@ function germinateToTraits (traitString: string): Trait[] {
     }
 
     const traits: Trait[] = []
+    const names = new Set<string>()
 
     for (const p of parsed) {
       let dt = TraitDataType.text
@@ -150,6 +151,13 @@ function germinateToTraits (traitString: string): Trait[] {
         setSize: 1,
         allowRepeats: false,
       }
+
+      if (names.has(trait.name)) {
+        error = i18n.global.t('formFeedbackTraitNameInvalidOrDuplicate')
+        throw new Error(error)
+      }
+
+      names.add(trait.name)
 
       if (p['Trait categories (comma separated)']) {
         trait.restrictions = {
@@ -243,6 +251,8 @@ function tabularToTraits (traitString: string): Trait[] {
   const validTypes = Object.values(TraitDataType)
   const traits: Trait[] = []
 
+  const names = new Set<string>()
+
   for (const p of parsed) {
     const dt = p['Data Type']
 
@@ -259,6 +269,12 @@ function tabularToTraits (traitString: string): Trait[] {
       setSize: p['Set size'] || 1,
       brapiId: p['BrAPI ID'],
     }
+
+    if (names.has(trait.name)) {
+      error = i18n.global.t('formFeedbackTraitNameInvalidOrDuplicate')
+    }
+
+    names.add(trait.name)
 
     if (trait.dataType === TraitDataType.categorical && p.Categories && p.Categories.length > 0) {
       if (!trait.restrictions) {
@@ -337,6 +353,7 @@ function jsonToTraits (traitJson: string): Trait[] {
     })
 
     const traits = parsed as Trait[]
+    const names = new Set<string>()
 
     const validTypes = Object.values(TraitDataType)
     for (const trait of traits) {
@@ -346,7 +363,12 @@ function jsonToTraits (traitJson: string): Trait[] {
       } else if (!validTypes.includes(trait.dataType)) {
         error = `Invalid GridScore trait data type: "${trait.dataType}"`
         throw new Error(error)
+      } else if (names.has(trait.name)) {
+        error = i18n.global.t('formFeedbackTraitNameInvalidOrDuplicate')
+        throw new Error(error)
       }
+
+      names.add(trait.name)
     }
 
     return traits

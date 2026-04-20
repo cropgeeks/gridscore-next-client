@@ -31,7 +31,7 @@
 <script setup lang="ts">
   import type { MiniCell, TraitPlus } from '@/plugins/types/client'
   import type { Measurement, Person } from '@/plugins/types/gridscore'
-  import type { TraitData } from '@/components/modals/DataEntryModal.vue'
+  import type { TraitData } from '@/components/inputs/DataEntrySection.vue'
 
   import emitter from 'tiny-emitter/instance'
 

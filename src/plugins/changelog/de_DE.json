@@ -834,5 +834,26 @@
         "text": "In früheren Versionen gab es Probleme beim Speichern von Bildern auf einigen Geräten. Dies wurde nun behoben."
       }
     ]
+  },
+  {
+    "version": "4.1.0",
+    "date": "2025-04-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "Reiterbasierte Dateneingabe",
+        "text": "Diese Version bringt die reiterbasierte Dateneingabe zurück (Merkmals in Reitern unterteilt). Dies basiert sowohl auf Nutzerwünschen als auch auf Leistungsgründen für Versuche mit mehr als 100 Merkmalen."
+      },
+      {
+        "type": "new",
+        "title": "Informationen zur Speichergröße von Versuchen",
+        "text": "Die Versuchsauswahl verfügt nun über ein kleines Symbol oben rechts, das anzeigt, wie viel Speicherplatz Ihre Versuche auf Ihrem Gerät belegen und wie viel Platz noch verfügbar ist. Dies wird nur in Browsern angezeigt, die diese Funktion unterstützen."
+      },
+      {
+        "type": "new",
+        "title": "Warnung für Samsung-Geräte",
+        "text": "Aufgrund anhaltender Probleme mit Samsung-Geräten (insbesondere dem Samsung Internet Browser) wurde auf der Startseite eine Warnmeldung hinzugefügt, um die Nutzer darauf hinzuweisen."
+      }
+    ]
   }
 ]

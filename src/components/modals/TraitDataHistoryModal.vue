@@ -64,7 +64,7 @@
 <script setup lang="ts">
   import type { CellPlus, HistoryMeasurement, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import TraitInputSection from '@/components/trait/TraitInputSection.vue'
-  import type { TraitData } from '@/components/modals/DataEntryModal.vue'
+  import type { TraitData } from '@/components/inputs/DataEntrySection.vue'
   import type { TraitMeasurement } from '@/plugins/types/gridscore'
 
   import { coreStore } from '@/stores/app'

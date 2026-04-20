@@ -834,5 +834,26 @@
         "text": "In previous versions there have been issues with saving images on some devices. This has now been resolved."
       }
     ]
+  },
+  {
+    "version": "4.1.0",
+    "date": "2025-04-21",
+    "items": [
+      {
+        "type": "new",
+        "title": "Tabbed data input",
+        "text": "This version sees the return of the tabbed data input (traits grouped into tabs). This is based on user requests as well as performance reasons for trials with 100+ traits."
+      },
+      {
+        "type": "new",
+        "title": "Trial storage size information",
+        "text": "The trial selector now has a small icon in the top right that lets you know how much space your trials are using on your device and how much space is still available. This is only shown on browsers that support this."
+      },
+      {
+        "type": "new",
+        "title": "Samsung device warning",
+        "text": "Due to ongoing issues with Samsung devices (specifically the Samsung Internet browser), a warning message has been added to the front page to let users know."
+      }
+    ]
   }
 ]

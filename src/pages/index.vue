@@ -22,6 +22,18 @@
       <v-col cols="12" :class="`order-${store.storeHomeWidgetOrder.indexOf('banners')}`">
         <HelpCard />
 
+        <v-card
+          v-if="isSamsung"
+          color="info"
+          class="mb-5 border-s-xl border-info border-opacity-25"
+          :prepend-icon="mdiCellphoneInformation"
+          density="compact"
+          :title="$t('modalTitleSamsungWarning')"
+          :subtitle="$t('modalTextSamsungWarning')"
+          variant="tonal"
+          @click.prevent="samsungInfoModal?.show()"
+        />
+
         <v-row>
           <v-col
             v-for="banner in banners"
@@ -78,6 +90,8 @@
         </div>
       </div>
     </v-card>
+
+    <SamsungInfoModal ref="samsungInfoModal" />
   </v-container>
 </template>
 
@@ -86,10 +100,22 @@
   import HelpCard from '@/components/util/HelpCard.vue'
   import { categoricalColors } from '@/plugins/color'
   import { coreStore } from '@/stores/app'
-  import { mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
+  import { mdiCellphoneInformation, mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const store = coreStore()
+
+  const samsungInfoModal = useTemplateRef('samsungInfoModal')
+
+  const isSamsung = computed(() => {
+    const config = store.storeDeviceConfig
+
+    if (config) {
+      return config.browser.name === 'Sailfish' || config.device.vendor === 'Samsung' || config.ua.match(/SAMSUNG|Samsung|SGH-[I|N|T]|GT-[I|N]|SM-[A|N|P|T|Z]|SHV-E|SCH-[I|J|R|S]|SPH-L/i) !== null
+    }
+
+    return false
+  })
 
   const { t } = useI18n()
   const banners = computed(() => {

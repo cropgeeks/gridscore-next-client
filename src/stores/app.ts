@@ -1,13 +1,13 @@
 // Utilities
 import { defineStore } from 'pinia'
 import { getTrialById } from '@/plugins/idb'
-import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField, TrialListMode, TrialListType } from '@/plugins/types/client'
+import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode, TrialListMode, TrialListType } from '@/plugins/types/client'
 import type { BrapiConfig } from '@/plugins/types/gridscore'
 import { ensureTraitImagesCached } from '@/plugins/traitcache'
 import { loadTrialData } from '@/plugins/datastore'
 import { THEME_COLORS } from '@/plugins/color'
 import { getVuetify } from '@/plugins/vuetify'
-import type { IResult } from 'ua-parser-js'
+// import { useTrial } from '@/plugins/composition/useTrial'
 
 export interface PlausibleConfig {
   plausibleDomain: string | undefined
@@ -26,6 +26,8 @@ export interface RowColumn {
   row: number
   column: number
 }
+
+// const { reloadTrial } = useTrial()
 
 let name = import.meta.env.VUE_APP_INSTANCE_NAME
 
@@ -68,6 +70,7 @@ export const coreStore = defineStore('core', {
     canvasSize: CanvasSize.MEDIUM as CanvasSize,
     selectedTrial: undefined as (string | undefined),
     mapLayer: 'theme',
+    traitGroupMode: TraitGroupMode.SECTIONS as TraitGroupMode,
     trialListMode: TrialListMode.ALL as TrialListMode,
     trialListArrangement: TrialListType.GRID as TrialListType,
     trialShowDetails: true,
@@ -93,7 +96,7 @@ export const coreStore = defineStore('core', {
       token: undefined,
     },
     changelogVersionNumber: undefined as (string | undefined),
-    deviceConfig: undefined as IResult | undefined,
+    deviceConfig: undefined as any | undefined,
   }),
   getters: {
     storePerformanceMode: (state): boolean => state.rippleEnabled === false && state.transitionsEnabled === false,
@@ -116,6 +119,7 @@ export const coreStore = defineStore('core', {
     storeDisplayMarkerIndicators: (state): boolean => state.displayMarkerIndicators,
     storeDisplayMinCellWidth: (state): number => state.displayMinCellWidth,
     storeGpsEnabled: (state): boolean => state.gpsEnabled,
+    storeTraitGroupMode: (state): TraitGroupMode => state.traitGroupMode,
     storeVoiceFeedbackEnabled: (state): boolean => state.voiceFeedbackEnabled,
     storeRestrictInputToMarked: (state): boolean => state.restrictInputToMarked,
     storeNavigationMode: (state): NavigationMode => state.navigationMode,
@@ -146,7 +150,7 @@ export const coreStore = defineStore('core', {
     storeServerUrl: (state): string | null => state.serverUrl,
     storeBrapiConfig: (state): BrapiConfig => state.brapiConfig,
     storeChangelogVersionNumber: (state): string | undefined => state.changelogVersionNumber,
-    storeDeviceConfig: (state): IResult | undefined => state.deviceConfig,
+    storeDeviceConfig: (state): any | undefined => state.deviceConfig,
     storeShowFullTraitDescription: (state): boolean => state.showFullTraitDescription,
     storeCategoryCountInline: (state): number => state.categoryCountInline,
   },
@@ -185,6 +189,9 @@ export const coreStore = defineStore('core', {
     },
     setPreviouslyScoredPlot (newPreviouslyScoredPlot: RowColumn | undefined) {
       this.previouslyScoredPlot = newPreviouslyScoredPlot
+    },
+    setTraitGroupMode (newTraitGroupMode: TraitGroupMode) {
+      this.traitGroupMode = newTraitGroupMode
     },
     setHiddenTraits (newHiddenTraits: string[]) {
       this.hiddenTraits = newHiddenTraits
@@ -248,6 +255,7 @@ export const coreStore = defineStore('core', {
       }
 
       await loadTrialData()
+      // await reloadTrial()
       // emitter.emit('trial-selected')
     },
     setMainDisplayMode (newMainDisplayMode: MainDisplayMode) {
@@ -350,7 +358,7 @@ export const coreStore = defineStore('core', {
     setChangelogVersionNumber (newChangelogVersionNumber: string) {
       this.changelogVersionNumber = newChangelogVersionNumber
     },
-    setDeviceConfig (newDeviceConfig: IResult | undefined) {
+    setDeviceConfig (newDeviceConfig: any | undefined) {
       this.deviceConfig = newDeviceConfig
 
       if (newDeviceConfig && (this.storeRippleEnabled === undefined || this.storeTransitionsEnabled === undefined)) {

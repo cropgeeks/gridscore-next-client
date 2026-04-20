@@ -114,7 +114,46 @@
             <v-col :cols="dataInputColumns.cols" :md="dataInputColumns.md" :lg="dataInputColumns.lg" :class="`order-${cellIndex}`">
               <PlotInformation :cell="cell" :i18n-params="i18nParams" />
 
-              <v-expansion-panels eager multiple v-model="expandedTraitGroups">
+              <div v-if="showAsTabs">
+                <v-tabs
+                  v-model="expandedTraitGroups[0]"
+                  center-active
+                  color="primary"
+                >
+                  <v-tab
+                    v-for="(group, index) in traitsByGroup"
+                    :key="`trait-group-${group.name}`"
+                    :text="group.name"
+                    :value="index"
+                  >
+                    <template #append>
+                      <v-chip size="x-small" :text="group.traits.length" />
+                    </template>
+                  </v-tab>
+                </v-tabs>
+
+                <v-divider />
+
+                <!-- @vue-skip -->
+                <div class="mt-5">
+                  <!-- Temporary variable -->
+                  {{ (group = traitsByGroup[expandedTraitGroups[0] || 0], null) }}
+
+                  <DataEntrySection
+                    v-model="cellData"
+                    ref="dataEntrySection"
+                    :traits="group.traits"
+                    :trial="trial"
+                    :cell="cell"
+                    :is-editable="isEditable"
+                    :has-historic-data="hasHistoricData"
+                    @show-history="trait => showHistory(trait)"
+                    @set-valid="(traitId, valid) => setValid(traitId, valid)"
+                    @traverse="(trait, traitIndex, traits, setIndex) => traverse(trait, traitIndex, group.traits, setIndex)"
+                  />
+                </div>
+              </div>
+              <v-expansion-panels eager multiple v-model="expandedTraitGroups" v-else>
                 <v-expansion-panel
                   v-for="group in traitsByGroup"
                   :key="`trait-group-${group.name}`"
@@ -124,87 +163,19 @@
                     {{ group.name }} <v-badge inline :content="getNumberWithSuffix(group.traits.length, 1)" />
                   </template>
                   <template #text>
-                    <DynamicScroller
-                      v-if="group.traits.length > 20"
-                      :items="group.traits"
-                      :min-item-size="100"
-                      key-field="id"
-                      class="scrolled-content"
-                    >
-                      <template #default="{ item, index, active }">
-                        <DynamicScrollerItem
-                          :item="item"
-                          :active="active"
-                          :size-dependencies="[
-                            item.message,
-                          ]"
-                          :data-index="index"
-                        >
-                          <TraitInputSection
-                            v-model="cellData[item.id || '']"
-                            v-if="cellData[item.id || '']"
-                            :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
-                            :trait="item"
-                            :editable="isEditable || false"
-                            :measurements="cell.measurements[item.id || '']"
-                            :people="trial.people"
-                            @traverse="(setIndex: number) => traverse(item, index, group.traits, setIndex)"
-                            :ref="(el) => (refs[`${item.id}`] = el)"
-                            @valid-changed="v => setValid(item.id || '', v)"
-                          >
-                            <v-btn
-                              :icon="mdiHistory"
-                              size="small"
-                              class="mb-1"
-                              :disabled="!hasHistoricData[item.id || '']"
-                              v-tooltip:top="$t('tooltipViewTraitDataHistory')"
-                              @click="showHistory(item)"
-                            />
-                            <v-btn
-                              :icon="mdiCamera"
-                              size="small"
-                              class="mb-1"
-                              v-tooltip:top="$t('buttonTagPhoto')"
-                              @click="emitter.emit('tag-media', cell.row || 0, cell.column || 0, 'image', [item.id || ''])"
-                            />
-                          </TraitInputSection>
-                        </DynamicScrollerItem>
-                      </template>
-                    </DynamicScroller>
-                    <template
-                      v-else
-                      v-for="(trait, traitIndex) in group.traits"
-                      :key="`trait-group-${group.name}-trait-${trait.id}`"
-                    >
-                      <TraitInputSection
-                        v-model="cellData[trait.id || '']"
-                        v-if="cellData[trait.id || '']"
-                        :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
-                        :trait="trait"
-                        :editable="isEditable || false"
-                        :measurements="cell.measurements[trait.id || '']"
-                        :people="trial.people"
-                        @traverse="(setIndex: number) => traverse(trait, traitIndex, group.traits, setIndex)"
-                        :ref="(el) => (refs[`${trait.id}`] = el)"
-                        @valid-changed="v => setValid(trait.id || '', v)"
-                      >
-                        <v-btn
-                          :icon="mdiHistory"
-                          size="small"
-                          class="mb-1"
-                          :disabled="!hasHistoricData[trait.id || '']"
-                          v-tooltip:top="$t('tooltipViewTraitDataHistory')"
-                          @click="showHistory(trait)"
-                        />
-                        <v-btn
-                          :icon="mdiCamera"
-                          size="small"
-                          class="mb-1"
-                          v-tooltip:top="$t('buttonTagPhoto')"
-                          @click="emitter.emit('tag-media', cell.row || 0, cell.column || 0, 'image', [trait.id || ''])"
-                        />
-                      </TraitInputSection>
-                    </template>
+                    <DataEntrySection
+                      v-model="cellData"
+                      ref="dataEntrySection"
+                      :traits="group.traits"
+                      :group="group.name"
+                      :trial="trial"
+                      :cell="cell"
+                      :is-editable="isEditable"
+                      :has-historic-data="hasHistoricData"
+                      @show-history="trait => showHistory(trait)"
+                      @set-valid="(traitId, valid) => setValid(traitId, valid)"
+                      @traverse="(trait, traitIndex, traits, setIndex) => traverse(trait, traitIndex, group.traits, setIndex)"
+                    />
                   </template>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -245,9 +216,6 @@
 </template>
 
 <script setup lang="ts">
-  import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-  import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
   import { changeTrialsData, getCell, getTrialValidPlots, type DataModification } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
@@ -255,7 +223,6 @@
   import { useI18n } from 'vue-i18n'
   import { getI18nParams, getNumberWithSuffix } from '@/plugins/formatting'
   import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
-  import TraitInputSection from '@/components/trait/TraitInputSection.vue'
   import type { TraitMeasurement } from '@/plugins/types/gridscore'
 
   import emitter from 'tiny-emitter/instance'
@@ -264,8 +231,9 @@
   import DataInputCloseModal from '@/components/modals/DataInputCloseModal.vue'
   import TraitDropdown from '@/components/trial/TraitDropdown.vue'
   import TraitDataHistoryModal from '@/components/modals/TraitDataHistoryModal.vue'
-  import { mdiAlert, mdiCamera, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiHistory, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
+  import { mdiAlert, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
   import { KeySequenceListener } from '@/plugins/types/KeySequenceListener'
+  import type { CellData } from '@/components/inputs/DataEntrySection.vue'
 
   interface TraitGroup {
     name: string
@@ -289,13 +257,11 @@
     scoreWidth: number
   }
 
-  export type CellData = { [key: string]: TraitData }
-  export type TraitData = { [key: string]: string | undefined }
-
   const emit = defineEmits(['data-changed', 'hide'])
 
   const dataInputCloseModal = useTemplateRef('dataInputCloseModal')
   const traitDataHistoryModal = useTemplateRef('traitDataHistoryModal')
+  const dataEntrySection = useTemplateRef('dataEntrySection')
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -317,14 +283,14 @@
 
   const historyTrait = ref<TraitPlus>()
 
-  const refs = ref<{ [index: string]: any }>({})
   const itemsValid = ref<{ [index: string]: boolean }>({})
 
   const expandedTraitGroups = ref<number[]>([])
 
   const isGuidedWalk = computed(() => guidedWalk.value !== undefined)
-
   const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
+  // const showAsTabs = computed(() => store.storeTraitGroupMode === TraitGroupMode.TABS || ((compProps.trial.traitGroupOrder || []).length > 1 && (compProps.trial.traits || []).length > 30))
+  const showAsTabs = computed(() => true)
 
   const hasHistoricData: ComputedRef<{ [index: string]: boolean }> = computed(() => {
     const result: { [index: string]: boolean } = {}
@@ -529,11 +495,8 @@
     const traitIds = new Set(newValue.map(t => t.id || ''))
 
     // Remove any mapping entry for traits that have been hidden
-    Object.keys(refs.value).forEach(k => {
-      if (!traitIds.has(k)) {
-        delete refs.value[k]
-      }
-    })
+    // @ts-ignore
+    dataEntrySection.value?.removeRefs(newValue)
     Object.keys(itemsValid.value).forEach(k => {
       if (!traitIds.has(k)) {
         delete itemsValid.value[k]
@@ -750,10 +713,12 @@
 
     if (setIndex < trait.setSize) {
       // @ts-ignore
-      refs.value[`${trait.id}`].focus(setIndex + 1)
+      dataEntrySection.value.focus(trait.id, setIndex + 1)
+      // refs.value[`${trait.id}`].focus(setIndex + 1)
     } else if (traitIndex < traits.length - 1) {
       // @ts-ignore
-      refs.value[`${traits[traitIndex + 1].id}`]?.focus(1)
+      dataEntrySection.value.focus(traits[traitIndex + 1].id, 1)
+      // refs.value[`${traits[traitIndex + 1].id}`]?.focus(1)
     } else {
       const traitGroupIndex = traitsByGroup.value.findIndex(tg => tg.traits.some(tt => tt.id === trait.id))
 
@@ -761,13 +726,18 @@
         // TODO: Expand trait group
         const nextGroup = traitsByGroup.value[traitGroupIndex + 1]
         if (nextGroup) {
-          const expandedGroups = new Set<number>(expandedTraitGroups.value)
-          expandedGroups.add(traitGroupIndex + 1)
-          expandedTraitGroups.value = [...expandedGroups]
+          if (showAsTabs.value) {
+            expandedTraitGroups.value = [traitGroupIndex + 1]
+          } else {
+            const expandedGroups = new Set<number>(expandedTraitGroups.value)
+            expandedGroups.add(traitGroupIndex + 1)
+            expandedTraitGroups.value = [...expandedGroups]
+          }
 
           nextTick(() => {
             // @ts-ignore
-            refs.value[`${nextGroup?.traits[0]?.id}`]?.focus(1)
+            dataEntrySection.value.focus(nextGroup?.traits[0]?.id, 1)
+            // refs.value[`${nextGroup?.traits[0]?.id}`]?.focus(1)
           })
         }
       } else {
@@ -870,9 +840,3 @@
     hide,
   })
 </script>
-
-<style scoped>
-  .scrolled-content {
-    max-height: 80vh;
-  }
-</style>

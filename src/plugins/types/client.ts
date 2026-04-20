@@ -99,6 +99,11 @@ export const enum NavigationMode {
   JUMP = 'JUMP',
 }
 
+export const enum TraitGroupMode {
+  TABS = 'TABS',
+  SECTIONS = 'SECTIONS',
+}
+
 export const enum PlotDisplayField {
   DISPLAY_NAME = 'displayName',
   GERMPLASM = 'germplasm',

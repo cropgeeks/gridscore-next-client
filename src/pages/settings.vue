@@ -113,6 +113,14 @@
               <v-btn class="flex-grow-1" :prepend-icon="mdiCursorMove" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
             </v-btn-toggle>
 
+            <h4 class="mt-3">{{ $t('formLabelSettingsTraitGroupMode') }}</h4>
+            <p>{{ $t('formDescriptionSettingsTraitGroupMode') }}</p>
+
+            <v-btn-toggle mandatory v-model="traitGroupMode" variant="tonal" color="primary" class="d-flex">
+              <v-btn class="flex-grow-1" :prepend-icon="mdiViewDay" :value="TraitGroupMode.SECTIONS" :text="$t('buttonTraitGroupSections')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTraitGroupMode === TraitGroupMode.SECTIONS" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiTab" :value="TraitGroupMode.TABS" :text="$t('buttonTraitGroupTabs')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTraitGroupMode === TraitGroupMode.TABS" /></template></v-btn>
+            </v-btn-toggle>
+
             <div class="text-title-small mt-3">{{ $t('formLabelSettingsCategoryCountInline') }}</div>
             <v-slider
               v-model="categoryCountInline"
@@ -385,10 +393,10 @@
 
 <script setup lang="ts">
   import { categoricalColors, THEME_COLORS } from '@/plugins/color'
-  import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField } from '@/plugins/types/client'
+  import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
-  import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDrag, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiUndoVariant, mdiViewComfy, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDrag, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiTab, mdiUndoVariant, mdiViewComfy, mdiViewDay, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
@@ -423,6 +431,7 @@
   )
   const gpsEnabled = ref(store.storeGpsEnabled)
   const navigationMode = ref(store.storeNavigationMode)
+  const traitGroupMode = ref(store.storeTraitGroupMode)
   const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)
   const showFullTraitDescription = ref(store.storeShowFullTraitDescription)
   const largeButtonsForIntTraits = ref(store.storeLargeButtonsForIntTraits)
@@ -484,6 +493,7 @@
     currentTraitIndex.value = undefined
     gpsEnabled.value = store.storeGpsEnabled
     navigationMode.value = store.storeNavigationMode
+    traitGroupMode.value = store.storeTraitGroupMode
     displayMarkerIndicators.value = store.storeDisplayMarkerIndicators
     showFullTraitDescription.value = store.storeShowFullTraitDescription
     largeButtonsForIntTraits.value = store.storeLargeButtonsForIntTraits
@@ -573,6 +583,10 @@
   watch(navigationMode, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { navigationMode: newValue } })
     store.setNavigationMode(newValue)
+  })
+  watch(traitGroupMode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { traitGroupMode: newValue } })
+    store.setTraitGroupMode(newValue)
   })
   watch(mainDisplayMode, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { mainDisplayMode: newValue } })

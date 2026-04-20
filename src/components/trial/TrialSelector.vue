@@ -23,6 +23,15 @@
 
       <div class="me-3 d-flex align-center">
         <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorRefresh')" :icon="mdiUpdate" @click="update" />
+        <v-menu v-if="indexedDbQuotaValues">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" v-tooltip:top="$t('tooltipTrialSelectorStorageQuota')" :icon="mdiDatabaseCog" />
+          </template>
+          <v-list slim>
+            <v-list-item :prepend-icon="mdiDatabase" :title="$t('widgetDatabaseQuotaUsed')" :subtitle="`${getNumberWithSuffix(indexedDbQuotaValues.used, 2, 1024)} / ${getNumberWithSuffix(indexedDbQuotaValues.max, 2, 1024)}`" />
+            <v-progress-linear :color="indexedDbQuotaValues.status" :model-value="indexedDbQuotaValues.percentage" />
+          </v-list>
+        </v-menu>
         <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorToggleDetails')" :icon="trialShowDetails ? mdiCardBulleted : mdiCardBulletedOff" @click="trialShowDetails = !trialShowDetails" />
         <v-menu>
           <template #activator="{ props }">
@@ -176,7 +185,7 @@
   import { postCheckUpdate } from '@/plugins/api'
   import type { Person, TrialUpdateCheck } from '@/plugins/types/gridscore'
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
-  import { mdiCalendarAlert, mdiCardBulleted, mdiCardBulletedOff, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
+  import { mdiCalendarAlert, mdiCardBulleted, mdiCardBulletedOff, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDatabase, mdiDatabaseCog, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
   import AddPersonModal from '@/components/modals/AddPersonModal.vue'
   import UpdateTrialMetadataModal from '@/components/modals/UpdateTrialMetadataModal.vue'
   import UpdateTrialDataModal from '@/components/modals/UpdateTrialDataModal.vue'
@@ -216,6 +225,10 @@
   const trialShowDetails = ref(store.storeTrialShowDetails)
   const trialDisplayMode = ref(store.storeTrialListArrangement)
   const lastChecked = ref<number | undefined>()
+  const indexedDbQuota = ref({
+    quota: 0,
+    usage: 0,
+  })
 
   const trialShareModal = useTemplateRef('trialShareModal')
   const addTraitModal = useTemplateRef('addTraitModal')
@@ -227,6 +240,29 @@
   const addTraitReferenceImageModal = useTemplateRef('addTraitReferenceImageModal')
 
   const filterForWarning = ref<'local' | 'remote' | 'expiry'>()
+
+  const indexedDbQuotaValues = computed(() => {
+    if (indexedDbQuota.value && indexedDbQuota.value.quota && indexedDbQuota.value.usage) {
+      const result = {
+        max: indexedDbQuota.value.quota,
+        used: indexedDbQuota.value.usage,
+        free: indexedDbQuota.value.quota - indexedDbQuota.value.usage,
+        percentage: indexedDbQuota.value.usage / indexedDbQuota.value.quota * 100,
+        status: 'success',
+      }
+
+      if (result.percentage >= 50) {
+        result.status = 'warning'
+      }
+      if (result.percentage >= 75) {
+        result.status = 'error'
+      }
+
+      return result
+    } else {
+      return undefined
+    }
+  })
 
   const geolocation = computed(() => {
     if (isGpsSupported.value === true && gpsCoords.value && Number.isFinite(gpsCoords.value.latitude) && Number.isFinite(gpsCoords.value.longitude)) {
@@ -611,6 +647,13 @@
             }
           }
         })
+      })
+      .then(() => navigator.storage.estimate())
+      .then(estimate => {
+        indexedDbQuota.value = {
+          quota: estimate.quota || 0,
+          usage: estimate.usage || 0,
+        }
       })
       .finally(() => {
         loading.value = false

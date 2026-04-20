@@ -176,6 +176,7 @@
   import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiFinance, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
   import ServerMessageModal from '@/components/modals/ServerMessageModal.vue'
+  // import { useTrial } from '@/plugins/composition/useTrial'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()
@@ -190,6 +191,8 @@
   const loadingProgress = ref<number>()
   const snackbarQueue = ref<SnackbarQueueMessage[]>([])
   const selectedTrial = ref<TrialPlus>()
+
+  // const { initTrial } = useTrial()
 
   // PWA update stuff
   let registration: any
@@ -429,6 +432,8 @@
     // Listen for our custom event from the SW registration
     // @ts-ignore
     document.addEventListener('swUpdated', updateAvailable, { once: true })
+
+    // initTrial()
   })
 </script>
 
