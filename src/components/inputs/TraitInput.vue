@@ -443,7 +443,7 @@
   }
 
   function recordImage (type: string) {
-    emitter.emit('tag-media', compProps.cell.row || 0, compProps.cell.column || 0, type, [], (filename: string) => {
+    emitter.emit('tag-media', compProps.cell.row || 0, compProps.cell.column || 0, type, [compProps.trait.id], (filename: string) => {
       model.value = filename
     })
   }
