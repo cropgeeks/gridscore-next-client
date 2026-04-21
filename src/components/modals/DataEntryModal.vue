@@ -234,6 +234,7 @@
   import { mdiAlert, mdiCancel, mdiChevronDoubleRight, mdiChevronLeft, mdiChevronRight, mdiClose, mdiContentSave, mdiMapMarker, mdiNotebookCheck } from '@mdi/js'
   import { KeySequenceListener } from '@/plugins/types/KeySequenceListener'
   import type { CellData } from '@/components/inputs/DataEntrySection.vue'
+  import DataEntrySection from '@/components/inputs/DataEntrySection.vue'
 
   interface TraitGroup {
     name: string
@@ -261,7 +262,7 @@
 
   const dataInputCloseModal = useTemplateRef('dataInputCloseModal')
   const traitDataHistoryModal = useTemplateRef('traitDataHistoryModal')
-  const dataEntrySection = useTemplateRef('dataEntrySection')
+  const dataEntrySection = useTemplateRef<typeof DataEntrySection>('dataEntrySection')
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -712,13 +713,9 @@
     }
 
     if (setIndex < trait.setSize) {
-      // @ts-ignore
-      dataEntrySection.value.focus(trait.id, setIndex + 1)
-      // refs.value[`${trait.id}`].focus(setIndex + 1)
+      dataEntrySection.value?.focus(trait.id, setIndex + 1)
     } else if (traitIndex < traits.length - 1) {
-      // @ts-ignore
-      dataEntrySection.value.focus(traits[traitIndex + 1].id, 1)
-      // refs.value[`${traits[traitIndex + 1].id}`]?.focus(1)
+      dataEntrySection.value?.focus(traits[traitIndex + 1]?.id, 1)
     } else {
       const traitGroupIndex = traitsByGroup.value.findIndex(tg => tg.traits.some(tt => tt.id === trait.id))
 
@@ -735,9 +732,7 @@
           }
 
           nextTick(() => {
-            // @ts-ignore
-            dataEntrySection.value.focus(nextGroup?.traits[0]?.id, 1)
-            // refs.value[`${nextGroup?.traits[0]?.id}`]?.focus(1)
+            dataEntrySection.value?.focus(nextGroup?.traits[0]?.id, 1)
           })
         }
       } else {

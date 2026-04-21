@@ -1,5 +1,5 @@
 <template>
-  <div v-if="model">
+  <div v-if="model" ref="parent">
     <TraitSection
       :trait="trait"
       short-title
@@ -37,6 +37,8 @@
 
   const emit = defineEmits(['traverse', 'valid-changed'])
 
+  const parent = useTemplateRef('parent')
+
   const refs = ref<{ [index: number]: any }>({})
   const inputsValid = ref<boolean[]>([])
 
@@ -61,8 +63,12 @@
       emitter.emit('tts', compProps.trait.name, false)
     }
 
-    // @ts-ignore
     refs.value[index]?.focus()
+
+    const i = parent.value
+    if (i && i.scrollIntoView) {
+      setTimeout(() => i.scrollIntoView({ behavior: 'smooth' }), 500)
+    }
   }
 
   function updateValid () {

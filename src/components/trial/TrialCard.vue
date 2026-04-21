@@ -9,8 +9,8 @@
       </slot>
     </template>
     <template #append v-if="trial.hasLocalUpdate || trial.hasRemoteUpdate">
-      <v-btn v-if="trial.hasLocalUpdate" :icon="mdiCloudUpload" color="info" v-tooltip:bottom="$t('tooltipTrialHasTransactions')" @click="emitter.emit('synchronize-trial', trial)" />
-      <v-btn v-else-if="trial.hasRemoteUpdate" :icon="mdiCloudDownload" color="warning" v-tooltip:bottom="$t('tooltipTrialHasRemoteUpdate')" @click="emitter.emit('synchronize-trial', trial)" />
+      <v-btn v-if="trial.hasLocalUpdate" :icon="mdiCloudUpload" color="info" v-tooltip:top="$t('tooltipTrialHasTransactions')" @click="emitter.emit('synchronize-trial', trial)" />
+      <v-btn v-else-if="trial.hasRemoteUpdate" :icon="mdiCloudDownload" color="warning" v-tooltip:top="$t('tooltipTrialHasRemoteUpdate')" @click="emitter.emit('synchronize-trial', trial)" />
     </template>
     <template #subtitle>
       <span class="text-wrap" v-if="wrapDescription" v-html="trial.description || '&nbsp;'" />

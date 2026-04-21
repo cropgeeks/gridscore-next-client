@@ -499,21 +499,19 @@
 
   function focus () {
     const i = input.value
-    if (i) {
+    // @ts-ignore
+    if (i && i.focus) {
       // @ts-ignore
-      if (i.focus) {
-        // @ts-ignore
-        i.focus()
-      }
-      setTimeout(() => {
-        // @ts-ignore
-        if (i.scrollIntoView) {
-          // @ts-ignore
-          i.scrollIntoView({ behavior: 'smooth' })
-        } else if (i.$el) {
-          i.$el.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 500)
+      i.focus()
+      // setTimeout(() => {
+      //   // @ts-ignore
+      //   if (i.scrollIntoView) {
+      //     // @ts-ignore
+      //     i.scrollIntoView({ behavior: 'smooth' })
+      //   } else if (i.$el) {
+      //     i.$el.scrollIntoView({ behavior: 'smooth' })
+      //   }
+      // }, 500)
     }
   }
 

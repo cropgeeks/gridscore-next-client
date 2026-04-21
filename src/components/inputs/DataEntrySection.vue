@@ -5,6 +5,7 @@
     :min-item-size="100"
     key-field="id"
     class="scrolled-content"
+    ref="scroller"
   >
     <template #default="{ item, index, active }">
       <DynamicScrollerItem
@@ -89,11 +90,15 @@
   import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { mdiCamera, mdiHistory } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
+  import { coreStore } from '@/stores/app'
 
   export type CellData = { [key: string]: TraitData }
   export type TraitData = { [key: string]: string | undefined }
 
+  const store = coreStore()
   const emit = defineEmits(['traverse', 'set-valid', 'show-history'])
+
+  const scroller = useTemplateRef<typeof DynamicScroller>('scroller')
 
   const refs = ref<{ [index: string]: any }>({})
 
@@ -118,9 +123,26 @@
     })
   }
 
-  function focus (id: number, position: number) {
+  function focus (id: string, position: number) {
     refs.value[`${id}`]?.focus(position)
   }
+
+  watch(() => compProps.traits, async newValue => {
+    if (newValue && store.storeAutoSelectFirstInput) {
+      if (scroller.value) {
+        nextTick(() => {
+          scroller.value?.scrollToItem(0)
+          setTimeout(() => {
+            focus(newValue[0]?.id || '', 1)
+          }, 500)
+        })
+      } else {
+        setTimeout(() => {
+          focus(newValue[0]?.id || '', 1)
+        }, 500)
+      }
+    }
+  })
 
   defineExpose({
     removeRefs,

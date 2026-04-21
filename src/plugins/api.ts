@@ -45,7 +45,7 @@ function axiosCall<T> ({ baseUrl, url, remoteToken, params, method = 'get', igno
     if (baseUrl && checkRemote) {
       axiosCall<T>({ baseUrl, url: 'settings/version', checkRemote: false })
         .then(version => {
-          if (version !== gridScoreVersion) {
+          if (ignoreErrors === false && version !== gridScoreVersion) {
             emitter.emit('api-error', 'Incompatible remote server version. Please update your client to match the server version.')
             reject(new Error('Incompatible remote server version. Please update your client to match the server version.'))
           } else {
