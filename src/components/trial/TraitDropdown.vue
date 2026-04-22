@@ -239,8 +239,16 @@
     menuShown.value = false
   }
 
-  watch(traitsByGroup, async newValue => {
-    openedGroups.value = newValue.map(g => g.name)
+  watch(() => compProps.traitGroupOrder, async newValue => {
+    if (newValue) {
+      openedGroups.value = newValue.concat()
+
+      if (compProps.traits.some(t => !t.group || !t.group.name)) {
+        openedGroups.value.unshift(t('dropdownOptionTraitNoGroup'))
+      }
+    } else {
+      openedGroups.value = []
+    }
   }, { immediate: true })
 
   defineExpose({
