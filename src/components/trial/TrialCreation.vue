@@ -330,7 +330,7 @@
         setupCompleted.value = true
         return store.setSelectedTrial(t.localId || '')
       }).then(() => {
-        nextTick(() => router.push('/collect/grid'))
+        nextTick(() => router.push(store.storeDefaultDataEntryViewRoute))
       })
     } else {
       delete t.localId
@@ -422,7 +422,7 @@
           return store.setSelectedTrial(trialId)
         })
         .then(() => {
-          nextTick(() => router.push('/collect/grid'))
+          nextTick(() => router.push(store.storeDefaultDataEntryViewRoute))
         })
     }
   }

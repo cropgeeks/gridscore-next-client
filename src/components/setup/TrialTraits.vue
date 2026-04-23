@@ -57,6 +57,7 @@
                 class="mb-3"
                 v-model="group.name"
                 list="trait-groups"
+                clearable
                 :disabled="isDisabledDueToEdit"
                 :prepend-inner-icon="mdiTagText"
                 :label="$t('formLabelTraitGroup')"
@@ -266,6 +267,7 @@
         <template v-if="model && model.length > 0">
           <div
             ref="traitListRef"
+            class="trait-list"
           >
             <v-card
               v-for="(element, index) in model"
@@ -863,6 +865,8 @@
       currentTrait.value.group = {
         name: group.value.name.trim(),
       }
+    } else {
+      currentTrait.value.group = undefined
     }
 
     // Set timeframe
@@ -1051,5 +1055,9 @@
 <style scoped>
 .drag-handle:hover {
   cursor: move;
+}
+.trait-list {
+  max-height: 100vh;
+  overflow-y: auto;
 }
 </style>

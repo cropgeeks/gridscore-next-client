@@ -113,6 +113,15 @@
               <v-btn class="flex-grow-1" :prepend-icon="mdiCursorMove" :value="NavigationMode.JUMP" :text="$t('buttonNavModeJump')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeNavigationMode === NavigationMode.JUMP" /></template></v-btn>
             </v-btn-toggle>
 
+            <h4 class="mt-3">{{ $t('formLabelSettingsDefaultDataEntryView') }}</h4>
+            <p>{{ $t('formDescriptionSettingsDefaultDataEntryView') }}</p>
+
+            <v-btn-toggle mandatory v-model="defaultDataEntryView" variant="tonal" color="primary" class="d-flex">
+              <v-btn class="flex-grow-1" :prepend-icon="mdiGrid" :value="DataEntryView.GRID" :text="$t('menuDataEntryGrid')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeDefaultDataEntryView === DataEntryView.GRID" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiDirectionsFork" :value="DataEntryView.GUIDED_WALK" :text="$t('menuDataEntryGuidedWalk')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeDefaultDataEntryView === DataEntryView.GUIDED_WALK" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiBarcodeScan" :value="DataEntryView.SCAN_SEARCH" :text="$t('menuDataEntryInput')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeDefaultDataEntryView === DataEntryView.SCAN_SEARCH" /></template></v-btn>
+            </v-btn-toggle>
+
             <h4 class="mt-3">{{ $t('formLabelSettingsTraitGroupMode') }}</h4>
             <p>{{ $t('formDescriptionSettingsTraitGroupMode') }}</p>
 
@@ -393,10 +402,10 @@
 
 <script setup lang="ts">
   import { categoricalColors, THEME_COLORS } from '@/plugins/color'
-  import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode } from '@/plugins/types/client'
+  import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
-  import { mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDrag, mdiExport, mdiGestureTap, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiTab, mdiUndoVariant, mdiViewComfy, mdiViewDay, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDirectionsFork, mdiDrag, mdiExport, mdiGestureTap, mdiGrid, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiTab, mdiUndoVariant, mdiViewComfy, mdiViewDay, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
@@ -430,6 +439,7 @@
     { dragHandle: '.drag-handle' },
   )
   const gpsEnabled = ref(store.storeGpsEnabled)
+  const defaultDataEntryView = ref(store.storeDefaultDataEntryView)
   const navigationMode = ref(store.storeNavigationMode)
   const traitGroupMode = ref(store.storeTraitGroupMode)
   const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)
@@ -492,6 +502,7 @@
     currentTraitColor.value = '#000000'
     currentTraitIndex.value = undefined
     gpsEnabled.value = store.storeGpsEnabled
+    defaultDataEntryView.value = store.storeDefaultDataEntryView
     navigationMode.value = store.storeNavigationMode
     traitGroupMode.value = store.storeTraitGroupMode
     displayMarkerIndicators.value = store.storeDisplayMarkerIndicators
@@ -579,6 +590,10 @@
   watch(gpsEnabled, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { gpsEnabled: newValue } })
     store.setGpsEnabled(newValue)
+  })
+  watch(defaultDataEntryView, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { defaultDataEntryView: newValue } })
+    store.setDefaultDataEntryView(newValue)
   })
   watch(navigationMode, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { navigationMode: newValue } })

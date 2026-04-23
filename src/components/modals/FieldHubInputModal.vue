@@ -78,6 +78,17 @@
     value: string | undefined
   }
 
+  export interface ColumnMapping {
+    row?: string
+    column?: string
+    germplasm?: string
+    rep?: string
+    friendlyName?: string
+    barcode?: string
+    pedigree?: string
+    treatment?: string
+  }
+
   const compProps = defineProps<{
     currentLayout: Layout
     dimensionNames?: DimensionNames
@@ -89,7 +100,7 @@
   const dialog = ref(false)
   const content = ref<string>('')
   const file = ref<File>()
-  const columnMapping = ref<{ [key: string]: string | undefined }>({})
+  const columnMapping = ref<ColumnMapping>({})
   const fileColumns = ref<SelectOption[]>([])
   const errorMessages = ref<string[]>([])
   let parsedData: DSVParsedArray<object> | undefined
@@ -166,7 +177,7 @@
       }
     }
 
-    emit('content-loaded', mapping)
+    emit('content-loaded', mapping, columnMapping.value)
 
     hide()
   }

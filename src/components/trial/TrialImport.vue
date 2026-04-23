@@ -241,7 +241,7 @@
   async function navigateToLocal () {
     if (localTrialMatch.value) {
       await store.setSelectedTrial(localTrialMatch.value.localId)
-      router.push('/collect/grid')
+      router.push(store.storeDefaultDataEntryViewRoute)
     }
   }
 
@@ -259,7 +259,7 @@
     addTrial(trial.value)
       .then(async trialId => {
         await store.setSelectedTrial(trialId)
-        router.push('/collect/grid')
+        router.push(store.storeDefaultDataEntryViewRoute)
       })
   }
 

@@ -143,6 +143,7 @@ function initVuetify () {
     },
     locale: {
       adapter: createVueI18nAdapter({ i18n, useI18n }),
+      messages: { en, de },
     },
   })
 

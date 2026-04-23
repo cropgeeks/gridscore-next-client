@@ -99,7 +99,7 @@
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
   import { useI18n } from 'vue-i18n'
   import TabbedInputModal from '@/components/modals/TabbedInputModal.vue'
-  import FieldHubInputModal from '@/components/modals/FieldHubInputModal.vue'
+  import FieldHubInputModal, { type ColumnMapping } from '@/components/modals/FieldHubInputModal.vue'
 
   import emitter from 'tiny-emitter/instance'
   import type { TrialPlus } from '@/plugins/types/client'
@@ -331,9 +331,29 @@
     }
   }
 
-  function updateTableFromFile (grid: Grid) {
+  function updateTableFromFile (grid: Grid, columnMapping: ColumnMapping) {
     tableHasModifications.value = true
     gridData.value = grid
+
+    if (columnMapping) {
+      const vf = new Set<'treatment' | 'friendlyName' | 'pedigree' | 'barcode'>(visibleFields.value)
+
+      if (columnMapping.treatment) {
+        vf.add('treatment')
+      }
+      if (columnMapping.barcode) {
+        vf.add('barcode')
+      }
+      if (columnMapping.friendlyName) {
+        vf.add('friendlyName')
+      }
+      if (columnMapping.pedigree) {
+        vf.add('pedigree')
+      }
+
+      visibleFields.value = [...vf]
+    }
+
     update(true)
   }
 

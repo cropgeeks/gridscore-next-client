@@ -117,6 +117,12 @@ export const enum CanvasDensity {
   LOW = 'low',
 }
 
+export const enum DataEntryView {
+  GRID = 'grid',
+  GUIDED_WALK = 'guided-walk',
+  SCAN_SEARCH = 'scan-search',
+}
+
 export const enum CanvasSize {
   SMALL = 'small',
   MEDIUM = 'medium',

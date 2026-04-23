@@ -141,7 +141,7 @@
 
                   <DataEntrySection
                     v-model="cellData"
-                    ref="dataEntrySection"
+                    :ref="(el) => (refs[`${group.name}`] = el)"
                     :traits="group.traits"
                     :trial="trial"
                     :cell="cell"
@@ -149,7 +149,7 @@
                     :has-historic-data="hasHistoricData"
                     @show-history="trait => showHistory(trait)"
                     @set-valid="(traitId, valid) => setValid(traitId, valid)"
-                    @traverse="(trait, traitIndex, traits, setIndex) => traverse(trait, traitIndex, group.traits, setIndex)"
+                    @traverse="(trait, traitIndex, traits, setIndex) => traverse(group.name, trait, traitIndex, group.traits, setIndex)"
                   />
                 </div>
               </div>
@@ -165,7 +165,7 @@
                   <template #text>
                     <DataEntrySection
                       v-model="cellData"
-                      ref="dataEntrySection"
+                      :ref="(el) => (refs[`${group.name}`] = el)"
                       :traits="group.traits"
                       :group="group.name"
                       :trial="trial"
@@ -174,7 +174,7 @@
                       :has-historic-data="hasHistoricData"
                       @show-history="trait => showHistory(trait)"
                       @set-valid="(traitId, valid) => setValid(traitId, valid)"
-                      @traverse="(trait, traitIndex, traits, setIndex) => traverse(trait, traitIndex, group.traits, setIndex)"
+                      @traverse="(trait, traitIndex, traits, setIndex) => traverse(group.name, trait, traitIndex, group.traits, setIndex)"
                     />
                   </template>
                 </v-expansion-panel>
@@ -217,7 +217,7 @@
 
 <script setup lang="ts">
   import { changeTrialsData, getCell, getTrialValidPlots, type DataModification } from '@/plugins/idb'
-  import type { CellPlus, Geolocation, TraitPlus, TrialPlus } from '@/plugins/types/client'
+  import { TraitGroupMode, type CellPlus, type Geolocation, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
@@ -262,7 +262,7 @@
 
   const dataInputCloseModal = useTemplateRef('dataInputCloseModal')
   const traitDataHistoryModal = useTemplateRef('traitDataHistoryModal')
-  const dataEntrySection = useTemplateRef<typeof DataEntrySection>('dataEntrySection')
+  const refs = ref<{ [index: string]: any }>({})
 
   const compProps = defineProps<{
     trial: TrialPlus
@@ -290,8 +290,7 @@
 
   const isGuidedWalk = computed(() => guidedWalk.value !== undefined)
   const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
-  // const showAsTabs = computed(() => store.storeTraitGroupMode === TraitGroupMode.TABS || ((compProps.trial.traitGroupOrder || []).length > 1 && (compProps.trial.traits || []).length > 30))
-  const showAsTabs = computed(() => true)
+  const showAsTabs = computed(() => store.storeTraitGroupMode === TraitGroupMode.TABS || ((compProps.trial.traitGroupOrder || []).length > 1 && (compProps.trial.traits || []).length > 30))
 
   const hasHistoricData: ComputedRef<{ [index: string]: boolean }> = computed(() => {
     const result: { [index: string]: boolean } = {}
@@ -496,8 +495,9 @@
     const traitIds = new Set(newValue.map(t => t.id || ''))
 
     // Remove any mapping entry for traits that have been hidden
-    // @ts-ignore
-    dataEntrySection.value?.removeRefs(newValue)
+    Object.values(refs.value).forEach(section => {
+      section.removeRefs(newValue)
+    })
     Object.keys(itemsValid.value).forEach(k => {
       if (!traitIds.has(k)) {
         delete itemsValid.value[k]
@@ -707,20 +707,22 @@
     }
   }
 
-  function traverse (trait: TraitPlus, traitIndex: number, traits: TraitPlus[], setIndex: number, force = false) {
+  function traverse (group: string, trait: TraitPlus, traitIndex: number, traits: TraitPlus[], setIndex: number, force = false) {
     if (!force && !store.storeAutoProgressInputs) {
       return
     }
 
     if (setIndex < trait.setSize) {
-      dataEntrySection.value?.focus(trait.id, setIndex + 1)
+      // Focus next input in this trait
+      refs.value[group]?.focus(trait.id, setIndex + 1)
     } else if (traitIndex < traits.length - 1) {
-      dataEntrySection.value?.focus(traits[traitIndex + 1]?.id, 1)
+      // Focus the next trait in this group
+      refs.value[group]?.focus(traits[traitIndex + 1]?.id, 1)
     } else {
+      // We need to move to the next group
       const traitGroupIndex = traitsByGroup.value.findIndex(tg => tg.traits.some(tt => tt.id === trait.id))
 
       if (traitGroupIndex < traitsByGroup.value.length - 1) {
-        // TODO: Expand trait group
         const nextGroup = traitsByGroup.value[traitGroupIndex + 1]
         if (nextGroup) {
           if (showAsTabs.value) {
@@ -732,10 +734,11 @@
           }
 
           nextTick(() => {
-            dataEntrySection.value?.focus(nextGroup?.traits[0]?.id, 1)
+            refs.value[nextGroup.name]?.focus(nextGroup?.traits[0]?.id, 1)
           })
         }
       } else {
+        // Save if it's the last trait in the last group
         save(1)
       }
     }
@@ -777,7 +780,7 @@
         const trait = traitGroup?.traits[0]
 
         if (traitGroup && trait) {
-          traverse(trait, -1, traitGroup.traits, 0, true)
+          traverse(traitGroup.name, trait, -1, traitGroup.traits, 0, true)
         }
       })
     }

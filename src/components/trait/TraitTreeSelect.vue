@@ -50,6 +50,7 @@
 
   const compProps = defineProps<{
     traits: Trait[]
+    sortTraits: boolean
   }>()
 
   const id = ref(getId())
@@ -75,13 +76,14 @@
     const groupedTraits: TraitGroup[] = []
 
     Object.keys(result).forEach(k => {
+      const traits = result[k] || []
       groupedTraits.push({
         id: getId(),
         name: k,
         dataType: TraitDataType.boolean,
         setSize: 1,
         allowRepeats: true,
-        children: (result[k] || []).sort((a, b) => a.name.localeCompare(b.name)),
+        children: compProps.sortTraits ? traits.sort((a, b) => a.name.localeCompare(b.name)) : traits,
       })
     })
 

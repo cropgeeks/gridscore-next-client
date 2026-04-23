@@ -46,6 +46,7 @@
         v-for="(group, index) in traitsByGroup"
         :key="`trait-group-${group.name}-${index}`"
         :value="group.name"
+        v-memo="[group.allMarked === true, group.someMarked === true]"
       >
         <template #activator="{ props }">
           <v-list-item

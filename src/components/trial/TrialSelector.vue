@@ -507,7 +507,7 @@
   async function loadTrial (trial: TrialPlus) {
     await store.setSelectedTrial(trial.localId)
 
-    router.push('/collect/grid')
+    router.push(store.storeDefaultDataEntryViewRoute)
   }
 
   function lockSelectedTrial (trial: TrialPlus) {

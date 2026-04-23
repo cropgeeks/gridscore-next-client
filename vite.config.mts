@@ -1,7 +1,6 @@
 // Plugins
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import Fonts from 'unplugin-fonts/vite'
 import Layouts from 'vite-plugin-vue-layouts-next'
 import Vue from '@vitejs/plugin-vue'
 import VueRouter from 'unplugin-vue-router/vite'
@@ -9,6 +8,7 @@ import { VueRouterAutoImports } from 'unplugin-vue-router'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { VitePWA } from 'vite-plugin-pwa'
 // import { analyzer } from 'vite-bundle-analyzer'
+// import { visualizer } from 'rollup-plugin-visualizer'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -19,6 +19,10 @@ export default defineConfig({
   base: './',
   plugins: [
     // analyzer(),
+    // visualizer({
+    //   open: true,
+    //   template: 'treemap',
+    // }),
     VueRouter({
       dts: 'src/typed-router.d.ts',
     }),
@@ -48,17 +52,6 @@ export default defineConfig({
       autoImport: true,
       styles: {
         configFile: 'src/styles/settings.scss',
-      },
-    }),
-    Fonts({
-      fontsource: {
-        families: [
-          {
-            name: 'Roboto',
-            weights: [100, 300, 400, 500, 700, 900],
-            styles: ['normal'],
-          },
-        ],
       },
     }),
     VitePWA({

@@ -1,7 +1,7 @@
 // Utilities
 import { defineStore } from 'pinia'
 import { getTrialById } from '@/plugins/idb'
-import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode, TrialListMode, TrialListType } from '@/plugins/types/client'
+import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode, TrialListMode, TrialListType } from '@/plugins/types/client'
 import type { BrapiConfig } from '@/plugins/types/gridscore'
 import { ensureTraitImagesCached } from '@/plugins/traitcache'
 import { loadTrialData } from '@/plugins/datastore'
@@ -68,6 +68,7 @@ export const coreStore = defineStore('core', {
     canvasDensity: CanvasDensity.MEDIUM as CanvasDensity,
     canvasShape: CanvasShape.CIRCLE as CanvasShape,
     canvasSize: CanvasSize.MEDIUM as CanvasSize,
+    defaultDataEntryView: DataEntryView.GRID as DataEntryView,
     selectedTrial: undefined as (string | undefined),
     mapLayer: 'theme',
     traitGroupMode: TraitGroupMode.SECTIONS as TraitGroupMode,
@@ -119,7 +120,7 @@ export const coreStore = defineStore('core', {
     storeDisplayMarkerIndicators: (state): boolean => state.displayMarkerIndicators,
     storeDisplayMinCellWidth: (state): number => state.displayMinCellWidth,
     storeGpsEnabled: (state): boolean => state.gpsEnabled,
-    storeTraitGroupMode: (state): TraitGroupMode => state.traitGroupMode,
+    storeTraitGroupMode: (state): TraitGroupMode => state.traitGroupMode || TraitGroupMode.SECTIONS,
     storeVoiceFeedbackEnabled: (state): boolean => state.voiceFeedbackEnabled,
     storeRestrictInputToMarked: (state): boolean => state.restrictInputToMarked,
     storeNavigationMode: (state): NavigationMode => state.navigationMode,
@@ -137,6 +138,18 @@ export const coreStore = defineStore('core', {
     storeCanvasDensity: (state): CanvasDensity => state.canvasDensity,
     storeCanvasShape: (state): CanvasShape => state.canvasShape,
     storeCanvasSize: (state): CanvasSize => state.canvasSize,
+    storeDefaultDataEntryView: (state): DataEntryView => state.defaultDataEntryView || DataEntryView.GRID,
+    storeDefaultDataEntryViewRoute: (state): string => {
+      const view = state.defaultDataEntryView
+      switch (view) {
+        case DataEntryView.GUIDED_WALK:
+          return '/collect/walk'
+        case DataEntryView.SCAN_SEARCH:
+          return '/collect/input'
+        default:
+          return '/collect/grid'
+      }
+    },
     storeMainDisplayMode: (state): MainDisplayMode => state.mainDisplayMode || MainDisplayMode.AUTO,
     storeTrialShowDetails: (state): boolean => state.trialShowDetails,
     storeTrialListMode: (state): TrialListMode => state.trialListMode,
@@ -326,6 +339,9 @@ export const coreStore = defineStore('core', {
     },
     setRestrictInputToMarked (newRestrictInputToMarked: boolean) {
       this.restrictInputToMarked = newRestrictInputToMarked
+    },
+    setDefaultDataEntryView (newDefaultDataEntryView: DataEntryView) {
+      this.defaultDataEntryView = newDefaultDataEntryView
     },
     setNavigationMode (newNavigationMode: NavigationMode) {
       this.navigationMode = newNavigationMode

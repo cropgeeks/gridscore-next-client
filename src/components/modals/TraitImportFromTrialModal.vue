@@ -15,7 +15,7 @@
             v-model="selectedTrial"
           />
 
-          <TraitTreeSelect v-model="selectedTraits" :traits="selectedTrial.traits" v-if="selectedTrial" />
+          <TraitTreeSelect v-model="selectedTraits" :traits="selectedTrial.traits" :sort-traits="false" v-if="selectedTrial" />
         </v-form>
       </template>
 

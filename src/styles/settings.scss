@@ -1,7 +1,13 @@
+@use 'sass:string';
+
 @use 'vuetify/settings' with (
   $button-text-transform: uppercase,
   $card-text-text-transform: none,
   $system-bar-text-transform: none,
+
+  // Set default font. Use Roboto if available and then run through the font stack until one is found.
+  $body-font-family: string.unquote('Roboto, "San Francisco", "Liberation Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'),
+  $heading-font-family: string.unquote('Roboto, "San Francisco", "Liberation Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'),
 
   // v3 breakpoints
   $grid-breakpoints: (
@@ -10,4 +16,6 @@
     'xl': 1920px,
     'xxl': 2560px,
   ),
+
+  $color-pack: false,
 );

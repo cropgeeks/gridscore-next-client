@@ -851,8 +851,18 @@
       },
       {
         "type": "new",
+        "title": "Standardeinstellung für die Datenerfassungsansicht",
+        "text": "Es gibt nun eine neue Einstellung, mit der man wählen kann, welche der Datenerfassungsansichten standardmäßig angezeigt werden soll, wenn ein Versuch auswählt wird."
+      },
+      {
+        "type": "new",
         "title": "Warnung für Samsung-Geräte",
         "text": "Aufgrund anhaltender Probleme mit Samsung-Geräten (insbesondere dem Samsung Internet Browser) wurde auf der Startseite eine Warnmeldung hinzugefügt, um die Nutzer darauf hinzuweisen."
+      },
+      {
+        "type": "bugfix",
+        "title": "Entfernung von Merkmalsgruppe",
+        "text": "Fehler behoben der es unmöglich machte einer Merkmalsgruppe von einem Merkmal beim Erstellen/Bearbeiten von Versuchen zu entfernen."
       }
     ]
   }

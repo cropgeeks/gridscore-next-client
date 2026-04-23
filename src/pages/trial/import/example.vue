@@ -273,7 +273,7 @@
           }
         })
         .then(() => {
-          router.push('/collect/grid')
+          router.push(store.storeDefaultDataEntryViewRoute)
         })
     }
   }

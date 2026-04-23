@@ -6,7 +6,7 @@
           <BrapiConfig @brapi-config-updated="getTraits" />
         </v-form>
 
-        <TraitTreeSelect v-model="selectedTraits" :traits="traits" />
+        <TraitTreeSelect v-model="selectedTraits" :traits="traits" sort-traits />
       </template>
 
       <v-card-actions>

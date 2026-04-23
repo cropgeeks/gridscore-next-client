@@ -1,4 +1,5 @@
 <template>
+  <!-- <div class="mb-2" v-if="trait" v-memo="[model]"> -->
   <div class="mb-2" v-if="trait" :key="id">
     <v-text-field
       v-if="trait.dataType === TraitDataType.text"

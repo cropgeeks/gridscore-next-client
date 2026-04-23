@@ -851,8 +851,18 @@
       },
       {
         "type": "new",
+        "title": "Default data entry view setting",
+        "text": "There is now a new setting that lets you choose which of the data entry views you want to be shown by default when selecting a trial."
+      },
+      {
+        "type": "new",
         "title": "Samsung device warning",
         "text": "Due to ongoing issues with Samsung devices (specifically the Samsung Internet browser), a warning message has been added to the front page to let users know."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trait group removal",
+        "text": "Fixed a bug where it wasn't possible to remove the trait group from a trait during setup/edit."
       }
     ]
   }

@@ -15,7 +15,7 @@ import App from './App.vue'
 import { createApp } from 'vue'
 
 // Styles
-import 'unfonts.css'
+// import 'unfonts.css'
 
 import { registerSW } from 'virtual:pwa-register'
 
