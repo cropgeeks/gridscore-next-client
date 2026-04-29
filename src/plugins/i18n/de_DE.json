@@ -973,6 +973,7 @@
   "tooltipTrialSelectorMultiSelect": "Mehrfachauswahl von Versuchen",
   "tooltipTrialSelectorToggleDetails": "Versuchsdetails umschalten",
   "tooltipTrialSelectorStorageQuota": "Informationen zum Datenspeicher",
+  "tooltipTrialSelectorDownloadTrialInfo": "Versuchslisten-Metadaten herunterladen",
   "tooltipTraitImageUploadTrialNotShare": "Der Versuch muss geteilt werden bevor ein Bild hochgeladen werden kann.",
   "tooltipTraitImageClickToView": "Klicken um Referenzbild zu sehen",
   "tooltipGenericHide": "Ausblenden",

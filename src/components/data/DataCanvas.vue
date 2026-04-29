@@ -268,9 +268,6 @@
 
   watch(() => compProps.trial, async newValue => {
     if (newValue) {
-      markedRows.value = Array.from(new Array(compProps.trial.layout.rows).keys()).map(() => false)
-      markedColumns.value = Array.from(new Array(compProps.trial.layout.columns).keys()).map(() => false)
-
       reset()
     }
   }, { immediate: true })
@@ -290,6 +287,9 @@
 
   onMounted(() => {
     window.addEventListener('resize', reset)
+
+    markedRows.value = Array.from(new Array(compProps.trial.layout.rows).keys()).map(() => false)
+    markedColumns.value = Array.from(new Array(compProps.trial.layout.columns).keys()).map(() => false)
   })
 
   onBeforeUnmount(() => {

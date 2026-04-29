@@ -594,21 +594,6 @@
 
   watch(() => compProps.trial, newValue => {
     if (newValue) {
-      columns.value = Array.from(new Array(newValue.layout.columns).keys()).map(col => {
-        return {
-          marked: false,
-          text: n(getColumnLabel(newValue.layout, col)),
-          index: col,
-        }
-      })
-      rows.value = Array.from(new Array(newValue.layout.rows).keys()).map(row => {
-        return {
-          marked: false,
-          text: n(getRowLabel(newValue.layout, row)),
-          index: row,
-        }
-      })
-
       if (compProps.trial && compProps.trial.layout && compProps.trial.layout.corners && isGeographyValid(compProps.trial.layout.corners)) {
         const c = compProps.trial.layout.corners
         gridProjection = projectToEuclidean([
@@ -655,6 +640,21 @@
   }, { flush: 'sync' })
 
   onMounted(() => {
+    columns.value = Array.from(new Array(compProps.trial.layout.columns).keys()).map(col => {
+      return {
+        marked: false,
+        text: n(getColumnLabel(compProps.trial.layout, col)),
+        index: col,
+      }
+    })
+    rows.value = Array.from(new Array(compProps.trial.layout.rows).keys()).map(row => {
+      return {
+        marked: false,
+        text: n(getRowLabel(compProps.trial.layout, row)),
+        index: row,
+      }
+    })
+
     window.addEventListener('resize', updateDimensions)
 
     emitter.on('trial-data-loaded', reset)

@@ -120,11 +120,6 @@
         logo: 'crop-trust.svg',
       },
       {
-        name: 'Biodiversity for Opportunities, Livelihoods and Development',
-        href: 'https://bold.croptrust.org/',
-        logo: 'bold.svg',
-      },
-      {
         name: 'Norway',
         href: 'https://www.norway.no/',
         logo: store.storeIsDarkMode ? 'norway-white.svg' : 'norway-black.svg',

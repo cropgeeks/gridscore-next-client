@@ -21,7 +21,7 @@
         />
       </div>
 
-      <div class="me-3 d-flex align-center">
+      <div class="me-3 d-flex align-center flex-wrap">
         <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorRefresh')" :icon="mdiUpdate" @click="update" />
         <v-menu v-if="indexedDbQuotaValues">
           <template #activator="{ props }">
@@ -75,6 +75,7 @@
             <v-list-item :prepend-icon="mdiDelete" :title="$t('buttonDelete')" base-color="error" @click="deleteSelectedTrials" />
           </v-list>
         </v-menu>
+        <v-btn :disabled="loading" v-tooltip:top="$t('tooltipTrialSelectorDownloadTrialInfo')" :icon="mdiTableArrowDown" @click="downloadTrialInfo" />
       </div>
     </v-toolbar>
 
@@ -185,13 +186,15 @@
   import { postCheckUpdate } from '@/plugins/api'
   import type { Person, TrialUpdateCheck } from '@/plugins/types/gridscore'
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
-  import { mdiCalendarAlert, mdiCardBulleted, mdiCardBulletedOff, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDatabase, mdiDatabaseCog, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
+  import { mdiCalendarAlert, mdiCardBulleted, mdiCardBulletedOff, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDatabase, mdiDatabaseCog, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTableArrowDown, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
   import AddPersonModal from '@/components/modals/AddPersonModal.vue'
   import UpdateTrialMetadataModal from '@/components/modals/UpdateTrialMetadataModal.vue'
   import UpdateTrialDataModal from '@/components/modals/UpdateTrialDataModal.vue'
   import AddTrialGermplasmModal from '@/components/modals/AddTrialGermplasmModal.vue'
   import { useGeolocation } from '@vueuse/core'
   import { geodesicDistance } from '@/plugins/location'
+  import { downloadText } from '@/plugins/dataexport'
+  import { toLocalDateTimeString } from '@/plugins/util'
 
   interface TrialGroup {
     id: string
@@ -442,6 +445,17 @@
     selectedTrial.value = trial
 
     nextTick(() => updateTrialDataModal.value?.show())
+  }
+
+  function downloadTrialInfo () {
+    const dateParams = { timeSeparator: ':', overallSeparator: ' ' }
+    let result = 'Name\tDescription\tGroup\tCreated on\tLast updated on\tOwner code\tEditor code\tViewer code\n'
+
+    result += visibleTrials.value?.map(t => {
+      return `${t.name}\t${(t.description || '').replace(/(?:\r\n|\r|\n)/g, '')}\t${t.group?.name || ''}\t${toLocalDateTimeString(t.createdOn, dateParams)}\t${toLocalDateTimeString(t.updatedOn, dateParams)}\t${t.shareCodes?.ownerCode || ''}\t${t.shareCodes?.editorCode || ''}\t${t.shareCodes?.viewerCode || ''}`
+    }).join('\n')
+
+    downloadText(result, 'trial-info.txt')
   }
 
   function addPersonToSelectedTrials (person: Person) {

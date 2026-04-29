@@ -986,6 +986,7 @@
   "tooltipTrialSelectorMultiSelect": "Multi-select trials",
   "tooltipTrialSelectorToggleDetails": "Toggle trial details",
   "tooltipTrialSelectorStorageQuota": "Database storage information",
+  "tooltipTrialSelectorDownloadTrialInfo": "Download trial list metadata",
   "tooltipTraitImageUploadTrialNotShare": "The trial needs to be shared before an image can be uploaded.",
   "tooltipTraitImageClickToView": "Click to view reference image",
   "tooltipGenericHide": "Hide",

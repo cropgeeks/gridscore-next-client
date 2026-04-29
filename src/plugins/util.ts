@@ -458,7 +458,11 @@ function getDate (d: string) {
   }
 }
 
-function toLocalDateTimeString (str: (string | Date), opts?: any) {
+function toLocalDateTimeString (str: string | Date | undefined, opts?: any) {
+  if (str === undefined) {
+    return ''
+  }
+
   opts = Object.assign({}, { dateSeparator: '-', timeSeparator: '-', overallSeparator: '_' }, opts)
 
   const date = toLocalDateString(str, opts)

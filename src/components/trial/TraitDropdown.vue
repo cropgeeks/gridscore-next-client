@@ -16,6 +16,7 @@
       density="compact"
       v-model:opened="openedGroups"
       class="trait-list"
+      max-height="80vh"
       :open-on-click="false"
       select-strategy="classic"
     >
