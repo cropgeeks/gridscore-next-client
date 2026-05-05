@@ -137,4 +137,7 @@
 </script>
 
 <style>
+#qrcode canvas {
+  max-width: 100%;
+}
 </style>

@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-  import { CanvasDensity, CanvasShape, CanvasSize, MainDisplayMode, NavigationMode } from '@/plugins/types/client'
+  import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, TraitGroupMode } from '@/plugins/types/client'
   import { loadLanguageAsync } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
 
@@ -30,11 +30,14 @@
     return JSON.stringify({
       cd: store.storeCanvasDensity === CanvasDensity.HIGH ? 0 : (store.storeCanvasDensity === CanvasDensity.MEDIUM ? 1 : 2),
       sz: store.storeCanvasSize === CanvasSize.LARGE ? 2 : (store.storeCanvasSize === CanvasSize.MEDIUM ? 1 : 0),
+      ddev: store.storeDefaultDataEntryView === DataEntryView.GRID ? 2 : (store.storeDefaultDataEntryView === DataEntryView.GUIDED_WALK ? 1 : 0),
       cs: store.storeCanvasShape === CanvasShape.SQUARE ? 1 : 0,
       md: store.storeMainDisplayMode === MainDisplayMode.CANVAS_ONLY ? 1 : 0,
       df: store.storePlotDisplayField,
       lc: store.storeLocale,
+      th: store.storeTheme,
       hc: store.storeHideCitationMessage ? 1 : 0,
+      hh: store.storeHideHelpInformation ? 1 : 0,
       hi: store.storeHighlightControls ? 1 : 0,
       mi: store.storeDisplayMarkerIndicators ? 1 : 0,
       hw: (store.storeHomeWidgetOrder || []).join(','),
@@ -44,12 +47,14 @@
       rm: store.storeRestrictInputToMarked ? 1 : 0,
       nm: store.storeNavigationMode === NavigationMode.DRAG ? 1 : 0,
       tc: store.storeTraitColors.map(c => c.replace('#', '')).join(','),
+      tg: store.storeTraitGroupMode === TraitGroupMode.SECTIONS ? 1 : 0,
       ft: store.storeShowFullTraitDescription ? 1 : 0,
       lb: store.storeLargeButtonsForIntTraits ? 1 : 0,
       cc: store.storeCategoryCountInline,
       enb: store.storeEnterBarcode,
       esb: store.storeEscapeBarcode,
       ass: store.storeAutoSelectSearch,
+      asf: store.storeAutoSelectFirstInput,
       api: store.storeAutoProgressInputs,
       pm: store.storePerformanceMode ? 1 : 0,
       pc: store.storeThemeColor,
@@ -73,6 +78,9 @@
 
           if (parsed.pc) {
             store.setThemeColor(parsed.pc)
+          }
+          if (parsed.dm) {
+            store.setTheme(parsed.th)
           }
           if (parsed.pm === 1) {
             store.setPerformanceMode(true)
@@ -112,6 +120,11 @@
           } else if (parsed.hc === 0) {
             store.setHideCitationMessage(false)
           }
+          if (parsed.hh === 1) {
+            store.setHideHelpInformation(true)
+          } else if (parsed.hh === 0) {
+            store.setHideHelpInformation(false)
+          }
           if (parsed.hi === 1) {
             store.setHighlightControls(true)
           } else if (parsed.hi === 0) {
@@ -127,12 +140,24 @@
           } else if (parsed.nm === 0) {
             store.setNavigationMode(NavigationMode.JUMP)
           }
+          if (parsed.tg === 1) {
+            store.setTraitGroupMode(TraitGroupMode.SECTIONS)
+          } else if (parsed.tg === 0) {
+            store.setTraitGroupMode(TraitGroupMode.TABS)
+          }
           if (parsed.cd === 0) {
             store.setCanvasDensity(CanvasDensity.HIGH)
           } else if (parsed.cd === 1) {
             store.setCanvasDensity(CanvasDensity.MEDIUM)
           } else if (parsed.cd === 2) {
             store.setCanvasDensity(CanvasDensity.LOW)
+          }
+          if (parsed.ddev === 0) {
+            store.setDefaultDataEntryView(DataEntryView.SCAN_SEARCH)
+          } else if (parsed.cd === 1) {
+            store.setDefaultDataEntryView(DataEntryView.GUIDED_WALK)
+          } else if (parsed.cd === 2) {
+            store.setDefaultDataEntryView(DataEntryView.GRID)
           }
           if (parsed.cs === 0) {
             store.setCanvasShape(CanvasShape.CIRCLE)
@@ -180,6 +205,11 @@
             store.setAutoSelectSearch(true)
           } else if (parsed.ass === 0) {
             store.setAutoSelectSearch(false)
+          }
+          if (parsed.asf === 1) {
+            store.setAutoSelectFirstInput(true)
+          } else if (parsed.asf === 0) {
+            store.setAutoSelectFirstInput(false)
           }
           if (parsed.api === 1) {
             store.setAutoProgressInputs(true)
