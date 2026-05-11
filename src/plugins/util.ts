@@ -4,7 +4,7 @@ import { autoType, tsvParse } from 'd3-dsv'
 import { i18n } from '@/plugins/vuetify'
 import { coreStore } from '@/stores/app'
 import type { FilterMatch, InternalItem } from 'vuetify'
-import { ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
+import { PlotDisplayField, ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
 import { categoricalColors } from './color'
 
 import Ajv from 'ajv'
@@ -276,7 +276,7 @@ function tabularToTraits (traitString: string): Trait[] {
 
     names.add(trait.name)
 
-    if (trait.dataType === TraitDataType.categorical && p.Categories && p.Categories.length > 0) {
+    if (TraitDataType.isCategorical(trait.dataType) && p.Categories && p.Categories.length > 0) {
       if (!trait.restrictions) {
         trait.restrictions = {}
       }
@@ -504,6 +504,42 @@ function filterGermplasm (value: string, query: string, item?: InternalItem<stri
   }
 }
 
+function getCellTextGuaranteed (cell: CellPlus): string {
+  const result = getCellText(cell)
+
+  if (result === undefined || result.trim().length === 0) {
+    return cell.germplasm
+  } else {
+    return result
+  }
+}
+
+function getCellText (cell: CellPlus): string | undefined {
+  const store = coreStore()
+
+  let result = undefined
+
+  switch (store.storePlotDisplayField) {
+    case PlotDisplayField.DISPLAY_NAME:
+      result = cell.friendlyName || cell.germplasm
+      break
+    case PlotDisplayField.DISPLAY_NAME_REP:
+      result = [cell.friendlyName || cell.germplasm, cell.rep].filter(v => v !== undefined && v.trim().length > 0).join('-')
+      break
+    case PlotDisplayField.GERMPLASM:
+      result = cell.germplasm
+      break
+    case PlotDisplayField.GERMPLASM_REP:
+      result = [cell.germplasm, cell.rep].filter(v => v !== undefined && v.trim().length > 0).join('-')
+      break
+    case PlotDisplayField.REP:
+      result = cell.rep
+      break
+  }
+
+  return result
+}
+
 function filterCells (value: string, query: string, item?: InternalItem<CellPlus>): FilterMatch {
   if (query && query.length > 0 && item && item.raw) {
     const lower = query.toLowerCase()
@@ -586,4 +622,6 @@ export {
   getServerUrl,
   getPriorityShareCode,
   intersection,
+  getCellText,
+  getCellTextGuaranteed,
 }

@@ -76,7 +76,7 @@
             :hint="$t('formDescriptionTraitExample')"
             :trait="exampleTrait"
             bg-color="warning"
-            :cell="{ row: -1, column: -1, germplasm: '', categories: [] }"
+            :cell="{ row: -1, column: -1, germplasm: '', categories: [], displayName: '' }"
             editable
             :measurements="[]"
             v-model="exampleTraitValue"

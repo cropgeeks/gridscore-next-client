@@ -865,5 +865,46 @@
         "text": "Fixed a bug where it wasn't possible to remove the trait group from a trait during setup/edit."
       }
     ]
+  },
+  {
+    "version": "4.2.0",
+    "date": "2025-05-11",
+    "items": [
+      {
+        "type": "new",
+        "title": "Decimal separator",
+        "text": "You can now change the decimal separator used during data entry in the settings. This may be useful for countries/languages where a comma is used instead of a period."
+      },
+      {
+        "type": "new",
+        "title": "Trait and trial name wrapping",
+        "text": "On smaller sceens it can be difficult to differentiate between traits with similar names due to the names potentially being cut off at the end to keep them in a single line of text. This limit has now been increased to two lines giving the names more space."
+      },
+      {
+        "type": "new",
+        "title": "Troubleshooting FAQ",
+        "text": "A section on troubleshooting has been added to the GridScore documentation. This should cover some of the most common issues people may encounter."
+      },
+      {
+        "type": "new",
+        "title": "Data persistence permission",
+        "text": "When loading a new trial, GridScore may ask for permission to use the so-called persistent storage of the browser. This should prevent the browser from deleting any trials data when available storage gets low."
+      },
+      {
+        "type": "new",
+        "title": "Grid display field options",
+        "text": "There are now two additional options in the settings for grid display field which determines what text is shown in each plot on the data grid."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trait selector issue",
+        "text": "GridScore wasn't properly re-rendering the trait selection dropdown list when traits got toggled."
+      },
+      {
+        "type": "bugfix",
+        "title": "Multi category trait definition import",
+        "text": "Fixed an issue with the import of multi-category trait definitions from tabular format."
+      }
+    ]
   }
 ]

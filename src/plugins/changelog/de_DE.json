@@ -865,5 +865,46 @@
         "text": "Fehler behoben der es unmöglich machte einer Merkmalsgruppe von einem Merkmal beim Erstellen/Bearbeiten von Versuchen zu entfernen."
       }
     ]
+  },
+  {
+    "version": "4.2.0",
+    "date": "2025-05-11",
+    "items": [
+      {
+        "type": "new",
+        "title": "Dezimaltrennzeichen",
+        "text": "Es kann nun das bei der Dateneingabe verwendete Dezimaltrennzeichen in den Einstellungen geändert werden. Dies kann für Länder/Sprachen nützlich sein, in denen ein Komma anstelle eines Punktes verwendet wird."
+      },
+      {
+        "type": "new",
+        "title": "Zeilenumbruch für Merkmals- und Versuchsnamen",
+        "text": "Auf kleineren Bildschirmen kann es schwierig sein, zwischen Merkmalen mit ähnlichen Namen zu unterscheiden, da die Namen am Ende abgeschnitten werden könnten, um sie in einer einzigen Textzeile zu halten. Dieses Limit wurde nun auf zwei Zeilen erhöht, um den Namen mehr Platz zu geben."
+      },
+      {
+        "type": "new",
+        "title": "FAQ zur Fehlerbehebung",
+        "text": "Der GridScore-Dokumentation wurde ein Abschnitt zur Fehlerbehebung hinzugefügt. Dieser sollte einige der häufigsten Probleme abdecken, auf die Benutzer stoßen könnten."
+      },
+      {
+        "type": "new",
+        "title": "Berechtigung zur Datenspeicherung",
+        "text": "Beim Laden eines neuen Versuchs bittet GridScore unter Umständen um die Erlaubnis, den sogenannten persistenten Speicher des Browsers zu nutzen. Dies soll verhindern, dass der Browser Versuchsdaten löscht, wenn der verfügbare Speicherplatz knapp wird."
+      },
+      {
+        "type": "new",
+        "title": "Optionen für das Beetdarstellungsfeld",
+        "text": "In den Einstellungen für das Beetdarstellungsfeld gibt es nun zwei zusätzliche Optionen, mit denen festgelegt wird, welcher Text in jedem Beet des Datenrasters angezeigt wird."
+      },
+      {
+        "type": "bugfix",
+        "title": "Problem mit der Merkmalsauswahl",
+        "text": "GridScore hat die Dropdown-Liste zur Merkmalsauswahl nicht korrekt neu geladen, wenn Merkmale aktiviert oder deaktiviert wurden."
+      },
+      {
+        "type": "bugfix",
+        "title": "Import von Definitionen für Multi-Kategorie-Merkmale",
+        "text": "Ein Problem beim Import von Definitionen für Multi-Kategorie-Merkmale aus dem Tabellenformat wurde behoben."
+      }
+    ]
   }
 ]

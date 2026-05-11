@@ -71,6 +71,7 @@ export const coreStore = defineStore('core', {
     defaultDataEntryView: DataEntryView.GRID as DataEntryView,
     selectedTrial: undefined as (string | undefined),
     mapLayer: 'theme',
+    decimalSeparator: '.',
     traitGroupMode: TraitGroupMode.SECTIONS as TraitGroupMode,
     trialListMode: TrialListMode.ALL as TrialListMode,
     trialListArrangement: TrialListType.GRID as TrialListType,
@@ -114,6 +115,7 @@ export const coreStore = defineStore('core', {
     storeIsDarkMode: (state): boolean => (state.theme === 'system' ? state.systemTheme : state.theme) === 'dark',
     storeSystemTheme: (state): string => state.systemTheme || 'dark',
     storeHideCitationMessage: (state): boolean => state.hideCitationMessage,
+    storeDecimalSeparator: (state): string => state.decimalSeparator || '.',
     storeHideHelpInformation: (state): boolean => state.hideHelpInformation || false,
     storeHighlightControls: (state): boolean => state.highlightControls,
     storeHighlightConfig: (state): HighlightConfig => state.highlightConfig,
@@ -321,6 +323,9 @@ export const coreStore = defineStore('core', {
     },
     setCanvasDensity (newCanvasDensity: CanvasDensity) {
       this.canvasDensity = newCanvasDensity
+    },
+    setDecimalSeparator (newDecimalSeparator: string) {
+      this.decimalSeparator = newDecimalSeparator || '.'
     },
     setCanvasShape (newCanvasShape: CanvasShape) {
       this.canvasShape = newCanvasShape

@@ -134,7 +134,7 @@
               selectionField = c.germplasm
               break
             case 'cell':
-              selectionField = `${c.displayRow}|${c.displayColumn} - ${c.displayName || c.germplasm}`
+              selectionField = `${c.displayRow}|${c.displayColumn} - ${c.displayName}`
               break
             case 'reps':
               selectionField = c.rep || ''

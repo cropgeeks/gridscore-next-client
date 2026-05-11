@@ -317,7 +317,7 @@
           break
         }
         case 'germplasm':
-          isHighlighted = (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
+          isHighlighted = (cell.displayName || '').toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
           break
         case 'previous':
           isHighlighted = store.storePreviouslyScoredPlot?.row === cell.row && store.storePreviouslyScoredPlot?.column === cell.column
@@ -365,9 +365,9 @@
 
     let maxY
     // Add the name text
-    if (store.storePlotDisplayField !== null) {
+    if (store.storePlotDisplayField !== null && store.storePlotDisplayField !== '') {
       // @ts-ignore
-      const text = fittingString(cell[store.storePlotDisplayField] || 'N/A', compProps.dimensions.coreWidth)
+      const text = fittingString(cell.gridName, compProps.dimensions.coreWidth)
       ccctx.fillStyle = cell.isLocked ? fillStyleHiddenTrait.value : fillStyleText.value
       ccctx.fillText(text, x + compProps.dimensions.cellWidth / 2, y + compProps.dimensions.padding + compProps.dimensions.fontSize / 2)
       maxY = y + compProps.dimensions.padding + compProps.dimensions.fontSize / 2

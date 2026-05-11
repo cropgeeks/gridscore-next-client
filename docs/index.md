@@ -52,6 +52,10 @@ There are a few sub-pages that contain specific information about how GridScore 
 - <a href="accessing-images.html">Accessing images</a>
 - <a href="self-hosting.html">Self-hosting GridScore</a>
 
+---
+
+- <a href="troubleshooting.html">Troubleshooting FAQ</a>
+
 
 ## GridScore NEXT website
 

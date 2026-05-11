@@ -155,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-  import { addTrial, deleteTrial, getTransactionForTrial } from '@/plugins/idb'
+  import { addTrial, deleteTrial, getTransactionForTrial, requestPersistence } from '@/plugins/idb'
   import type { RemoteConfig, TrialPlus } from '@/plugins/types/client'
   import type { Transaction } from '@/plugins/types/gridscore'
   import { UseOnline } from '@vueuse/components'
@@ -206,6 +206,8 @@
   }
 
   function askToSynchronize () {
+    requestPersistence()
+
     if (trial.value && !trial.value.shareCodes?.ownerCode && !trial.value.shareCodes?.editorCode) {
       loadTrial(trial.value.shareCodes?.viewerCode || '')
     } else {

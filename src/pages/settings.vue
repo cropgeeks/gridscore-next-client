@@ -35,16 +35,26 @@
               </v-col>
             </v-row>
 
-            <v-select
-              v-model="locale"
-              :items="locales"
-              item-value="locale"
-              item-title="name"
-              class="mt-3"
-              :label="$t('formLabelSettingsLocale')"
-              :hint="$t('formDescriptionSettingsLocale')"
-              persistent-hint
-            />
+            <div class="mt-3 d-flex flex-wrap ga-3">
+              <v-select
+                v-model="locale"
+                :items="locales"
+                item-value="locale"
+                item-title="name"
+                :label="$t('formLabelSettingsLocale')"
+                :hint="$t('formDescriptionSettingsLocale')"
+                persistent-hint
+              />
+              <v-text-field
+                v-model="decimalSeparator"
+                :label="$t('formLabelSettingsDecimalSeparator')"
+                maxlength="1"
+                counter="1"
+                :hint="$t('formDescriptionSettingsDecimalSeparator')"
+                persistent-hint
+                @focus="$event.target.select()"
+              />
+            </div>
 
             <h4 class="mt-3">{{ $t('formLabelSettingsTheme') }}</h4>
             <p>{{ $t('formDescriptionSettingsTheme') }}</p>
@@ -447,6 +457,7 @@
   const largeButtonsForIntTraits = ref(store.storeLargeButtonsForIntTraits)
   const displayMinCellWidth = ref(store.storeDisplayMinCellWidth)
   const plotDisplayField = ref(store.storePlotDisplayField)
+  const decimalSeparator = ref(store.storeDecimalSeparator)
   const autoSelectSearch = ref(store.storeAutoSelectSearch)
   const autoSelectFirstInput = ref(store.storeAutoSelectFirstInput)
   const hideHelpInformation = ref(store.storeHideHelpInformation)
@@ -479,8 +490,14 @@
       value: PlotDisplayField.DISPLAY_NAME,
       title: t('formSettingsOptionPlotDisplayFieldDisplayName'),
     }, {
+      value: PlotDisplayField.DISPLAY_NAME_REP,
+      title: t('formSettingsOptionPlotDisplayFieldDisplayNameRep'),
+    }, {
       value: PlotDisplayField.GERMPLASM,
       title: t('formSettingsOptionPlotDisplayFieldGermplasm'),
+    }, {
+      value: PlotDisplayField.GERMPLASM_REP,
+      title: t('formSettingsOptionPlotDisplayFieldGermplasmRep'),
     }, {
       value: PlotDisplayField.REP,
       title: t('formSettingsOptionPlotDisplayFieldRep'),
@@ -510,6 +527,7 @@
     largeButtonsForIntTraits.value = store.storeLargeButtonsForIntTraits
     displayMinCellWidth.value = store.storeDisplayMinCellWidth
     plotDisplayField.value = store.storePlotDisplayField
+    decimalSeparator.value = store.storeDecimalSeparator
     autoSelectSearch.value = store.storeAutoSelectSearch
     autoSelectFirstInput.value = store.storeAutoSelectFirstInput
     hideHelpInformation.value = store.storeHideHelpInformation
@@ -591,6 +609,12 @@
     emitter.emit('plausible-event', { key: 'settings-changed', props: { gpsEnabled: newValue } })
     store.setGpsEnabled(newValue)
   })
+  watch(decimalSeparator, async newValue => {
+    if (newValue && newValue.trim().length > 0) {
+      emitter.emit('plausible-event', { key: 'settings-changed', props: { gpsEnabled: newValue } })
+      store.setDecimalSeparator(newValue)
+    }
+  })
   watch(defaultDataEntryView, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { defaultDataEntryView: newValue } })
     store.setDefaultDataEntryView(newValue)
@@ -630,6 +654,7 @@
   watch(plotDisplayField, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { plotDisplayField: newValue } })
     store.setPlotDisplayField(newValue)
+    store.setSelectedTrial(undefined)
   })
   watch(autoSelectSearch, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { autoSelectSearch: newValue } })

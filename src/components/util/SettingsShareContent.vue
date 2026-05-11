@@ -36,6 +36,7 @@
       df: store.storePlotDisplayField,
       lc: store.storeLocale,
       th: store.storeTheme,
+      ds: store.storeDecimalSeparator,
       hc: store.storeHideCitationMessage ? 1 : 0,
       hh: store.storeHideHelpInformation ? 1 : 0,
       hi: store.storeHighlightControls ? 1 : 0,
@@ -104,6 +105,9 @@
           }
           if (parsed.cc !== undefined && parsed.cc !== null) {
             store.setCategoryCountInline(+parsed.cc)
+          }
+          if (parsed.ds !== undefined && parsed.ds !== null && parsed.ds.trim().length > 0) {
+            store.setDecimalSeparator(parsed.ds)
           }
           if (parsed.ge === 1) {
             store.setGpsEnabled(true)

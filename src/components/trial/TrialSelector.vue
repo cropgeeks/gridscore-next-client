@@ -184,7 +184,7 @@
   import { getNumberWithSuffix } from '@/plugins/formatting'
   import type { FilterMatch, InternalItem } from 'vuetify'
   import { postCheckUpdate } from '@/plugins/api'
-  import type { Person, TrialUpdateCheck } from '@/plugins/types/gridscore'
+  import { TraitDataType, type Person, type TrialUpdateCheck } from '@/plugins/types/gridscore'
   import AddTraitModal from '@/components/modals/AddTraitModal.vue'
   import { mdiCalendarAlert, mdiCardBulleted, mdiCardBulletedOff, mdiCheck, mdiCheckboxBlankOffOutline, mdiCheckboxMultipleBlankOutline, mdiCheckboxMultipleMarked, mdiCloudDownload, mdiCloudUpload, mdiDatabase, mdiDatabaseCog, mdiDelete, mdiMagnify, mdiSort, mdiSortAscending, mdiSortDescending, mdiTableArrowDown, mdiTagPlus, mdiUpdate, mdiViewGrid, mdiViewSequential } from '@mdi/js'
   import AddPersonModal from '@/components/modals/AddPersonModal.vue'
@@ -484,6 +484,15 @@
     } else if (selectedTrial.value) {
       trials = [selectedTrial.value]
     }
+
+    traits.forEach(tt => {
+      if (tt.dataType === TraitDataType.boolean) {
+        tt.dataType = TraitDataType.categorical
+        tt.restrictions = Object.assign({
+          categories: ['true', 'false'],
+        }, tt.restrictions)
+      }
+    })
 
     emitter.emit('show-loading', true)
     Promise.all(trials.map(t => addTrialTraits(t.localId || '', traits)))

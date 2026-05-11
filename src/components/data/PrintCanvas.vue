@@ -80,7 +80,7 @@
       const td = trialData[key]
       if (td && td.germplasm) {
         const [row, column] = key.split('|').map(Number)
-        const dims = ctxx.measureText(td.displayName || '')
+        const dims = ctxx.measureText(td.gridName || '')
 
         textHeight = Math.max(textHeight, dims.fontBoundingBoxAscent + dims.fontBoundingBoxDescent)
         columnTextWidths[(column || 0) + 1] = Math.max(columnTextWidths[(column || 0) + 1] || 0, dims.width)
@@ -216,7 +216,7 @@
         const td = trialData[`${row}|${column}`]
         if (td) {
           ctx.fillStyle = 'black'
-          ctx.fillText(td.displayName || '', x + (config.columnTextWidths[column + 1] || 0) / 2, y + config.cellHeight / 2)
+          ctx.fillText(td.gridName || '', x + (config.columnTextWidths[column + 1] || 0) / 2, y + config.cellHeight / 2)
         }
 
         x += config.columnTextWidths[column + 1] || 0

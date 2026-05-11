@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
   import { getTrialByCode } from '@/plugins/api'
-  import { addTrial, getTrialGroups, getTrials, updateTrial } from '@/plugins/idb'
+  import { addTrial, getTrialGroups, getTrials, requestPersistence, updateTrial } from '@/plugins/idb'
   import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import { UseOnline } from '@vueuse/components'
@@ -255,6 +255,8 @@
         name: trialGroup.value,
       }
     }
+
+    requestPersistence()
 
     addTrial(trial.value)
       .then(async trialId => {

@@ -18,7 +18,7 @@
             >
               <TraitInputSection
                 v-model="traitData[mIndex]"
-                :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
+                :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories, displayName: cell.displayName || cell.germplasm }"
                 :trait="trait"
                 :is-locked="cell.isLocked === true"
                 :measurements="undefined"

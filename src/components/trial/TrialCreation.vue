@@ -133,7 +133,7 @@
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
-  import { addTrial, getTrialData, updateTrialProperties } from '@/plugins/idb'
+  import { addTrial, getTrialData, requestPersistence, updateTrialProperties } from '@/plugins/idb'
   import { coreStore } from '@/stores/app'
   import { mediaFilenameParts } from '@/plugins/constants'
   import { mdiArrowLeft, mdiArrowRight, mdiFileDocumentMultiple, mdiNotebookCheck, mdiNotebookMultiple, mdiNotebookPlus, mdiTagMultiple, mdiViewGridPlus } from '@mdi/js'
@@ -415,6 +415,8 @@
           corners: t.layout.corners !== null,
         },
       })
+
+      requestPersistence()
 
       addTrial(t)
         .then(trialId => {

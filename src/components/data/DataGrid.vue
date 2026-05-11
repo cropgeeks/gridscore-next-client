@@ -68,7 +68,7 @@
                 <v-icon size="20" :icon="mdiLock" class="grid-icon lock" v-if="cell.isLocked" />
                 <v-icon size="20" :icon="mdiMessageText" class="mdi-flip-h grid-icon comment" v-if="cell.comments && cell.comments.length > 0" />
                 <v-icon size="20" :icon="mdiCheckboxMarked" class="grid-icon check" v-if="cell && cell.categories && cell.categories.includes(CellCategory.CONTROL)" />
-                <div class="cell-text my-1" :style="cell.isLocked ? { color: fillStyleHiddenTrait } : undefined">{{ cell[store.storePlotDisplayField] }}</div>
+                <div class="cell-text my-1" :style="cell.isLocked ? { color: fillStyleHiddenTrait } : undefined">{{ cell.gridName }}</div>
                 <template v-for="trait in visibleTraits">
                   <template v-if="cell.measurements[trait.id] && cell.measurements[trait.id].length > 0 && (!traitCutoff || !cell.latestDates || !cell.latestDates[trait.id] || (cell.latestDates[trait.id] > traitCutoff))">
                     <template v-if="trait.allowRepeats">
@@ -324,7 +324,7 @@
           break
         }
         case 'germplasm':
-          isHighlighted = (cell.displayName || cell.germplasm).toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
+          isHighlighted = (cell.displayName || '').toLowerCase().includes(store.storeHighlightConfig.germplasm || '')
           break
         case 'previous':
           isHighlighted = store.storePreviouslyScoredPlot?.row === cell.row && store.storePreviouslyScoredPlot?.column === cell.column
@@ -427,7 +427,7 @@
       const circleRows = Math.ceil(visibleTraits.value.length / circlesPerRow)
 
       const heightProportion = wrapper.value.clientHeight / compProps.trial.layout.rows
-      const textHeight = store.storePlotDisplayField === null ? 0 : 30
+      const textHeight = (store.storePlotDisplayField === null && store.storePlotDisplayField !== '') ? 0 : 30
       let tempHeight = Math.max(textHeight + circleRows * (circleDiameter.value + padding) + padding, heightProportion)
 
       // Check if we need to increase the minimum height to allow space for the display of the trait value below the circles

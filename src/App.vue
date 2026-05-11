@@ -506,6 +506,16 @@ code {
   transform: scaleY(-1);
 }
 
+.clamp-two {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
 .mdi-rotate-45, .mdi-rotate-45:before {
   transform: rotate(45deg);
 }

@@ -53,7 +53,7 @@
       max-height="75vh"
       v-if="selectedCell && trial"
     >
-      <v-card :title="selectedCell.displayName || selectedCell.germplasm">
+      <v-card :title="selectedCell.displayName">
         <PlotDataInformation :trial="trial" :trait="selectedTrait" :cell="selectedCell" />
       </v-card>
     </v-bottom-sheet>

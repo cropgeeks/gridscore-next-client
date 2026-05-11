@@ -164,7 +164,7 @@
       dimensions.value.cellWidth = Math.max(dimensions.value.canvasWidth / compProps.trial.layout.columns, dimensions.value.padding * 2 + store.storeDisplayMinCellWidth * dimensions.value.circleRadius * 2 + (store.storeDisplayMinCellWidth - 1) * dimensions.value.padding / 2)
       dimensions.value.coreWidth = dimensions.value.cellWidth - dimensions.value.padding * 2
       dimensions.value.circlesPerRow = getCirclesPerRow()
-      dimensions.value.textPartHeight = store.storePlotDisplayField === null ? dimensions.value.padding : (dimensions.value.fontSize + 2 * dimensions.value.padding)
+      dimensions.value.textPartHeight = (store.storePlotDisplayField === null || store.storePlotDisplayField === '') ? dimensions.value.padding : (dimensions.value.fontSize + 2 * dimensions.value.padding)
       dimensions.value.circleRows = Math.ceil(dimensions.value.visibleTraitCount / dimensions.value.circlesPerRow)
       dimensions.value.scaledCanvasHeight = dimensions.value.canvasHeight * window.devicePixelRatio
       dimensions.value.scaledCanvasWidth = dimensions.value.canvasWidth * window.devicePixelRatio

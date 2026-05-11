@@ -64,8 +64,6 @@ async function loadTrialData () {
       trialTreatments = [...treatments].sort((a, b) => a.localeCompare(b, store.storeLocale || 'en', { numeric: true, sensitivity: 'base' }))
       trialControls = controls
       trialBookmarks = bookmarks
-
-      emitter.emit('trial-data-loaded')
     } catch {
       trial = undefined
       trialData = undefined
@@ -76,6 +74,8 @@ async function loadTrialData () {
     trialData = undefined
     trialGermplasm = undefined
   }
+
+  emitter.emit('trial-data-loaded')
 }
 
 async function updateTrialInformation () {
@@ -156,7 +156,7 @@ function getTrialDataCached () {
 }
 
 function getTrialCached () {
-  return JSON.parse(JSON.stringify(trial))
+  return trial !== undefined ? JSON.parse(JSON.stringify(trial)) : trial
 }
 
 export {

@@ -2,10 +2,13 @@ import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
 import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type DimensionNames, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type PlotCoords } from '@/plugins/types/client'
-import { getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl } from '@/plugins/util'
+import { getCellText, getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl } from '@/plugins/util'
 import { getId } from '@/plugins/id'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
 import { isGeographyValid, isLocationValid, trialLayoutToPlots, type XY } from '@/plugins/location'
+
+import emitter from 'tiny-emitter/instance'
+import { i18n } from '@/plugins/vuetify'
 
 let store: any | undefined
 
@@ -232,6 +235,25 @@ async function updateTrialBrapiConfig (localId: string, brapiConfig: BrapiConfig
     return db.put('trials', trial)
   } else {
     return new Promise<void>(resolve => resolve())
+  }
+}
+
+async function requestPersistence () {
+  // @ts-ignore
+  if (navigator.storage && navigator.storage.persist) {
+    let isPersisted = await navigator.storage.persisted()
+
+    if (!isPersisted) {
+      isPersisted = await navigator.storage.persist()
+    }
+
+    if (!isPersisted) {
+      // Show toast
+      emitter.emit('show-snackbar', {
+        text: i18n.global.t('toastPersistencePermissionDenied'),
+        color: 'warning',
+      })
+    }
   }
 }
 
@@ -806,6 +828,7 @@ async function getCell (trialId: string, row: number, column: number) {
         }
 
         c.displayName = displayName
+        c.gridName = getCellText(c)
         c.displayRow = getRowLabel(trial.layout, c.row)
         c.displayColumn = getColumnLabel(trial.layout, c.column)
       }
@@ -834,6 +857,7 @@ async function getTrialData (trialId: string): Promise<{ [key: string]: CellPlus
             }
 
             c.displayName = displayName
+            c.gridName = getCellText(c)
             c.displayRow = getRowLabel(trial.layout, c.row || 0)
             c.displayColumn = getColumnLabel(trial.layout, c.column || 0)
 
@@ -1141,6 +1165,7 @@ async function changeTrialsData (trialId: string, dataMapping: DataModification,
 
         // Remove this as it was only added temporarily
         delete cell.displayName
+        delete cell.gridName
         delete cell.displayRow
         delete cell.displayColumn
 
@@ -1543,6 +1568,7 @@ async function updatePlotMetadata (trialId: string, plotMetadata: PlotModificati
       const cell = await getCell(trialId, row || 0, column || 0)
       // Remove this as it was only added temporarily
       delete cell.displayName
+      delete cell.gridName
       delete cell.displayRow
       delete cell.displayColumn
 
@@ -1713,4 +1739,5 @@ export {
   updateTraitBrapiIds,
   getPlotGeolocations,
   lockTrial,
+  requestPersistence,
 }

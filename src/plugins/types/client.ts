@@ -45,6 +45,7 @@ export interface CellPlus extends Cell {
   row?: number
   column?: number
   displayName?: string
+  gridName?: string
   displayColumn?: number
   displayRow?: number
 }
@@ -52,7 +53,7 @@ export interface CellPlus extends Cell {
 export interface MiniCell extends CellMetadata {
   row: number
   column: number
-  displayName?: string
+  displayName: string
   displayRow?: number
   displayColumn?: number
   categories: string[];
@@ -106,6 +107,8 @@ export const enum TraitGroupMode {
 
 export const enum PlotDisplayField {
   DISPLAY_NAME = 'displayName',
+  DISPLAY_NAME_REP = 'displayNameRep',
+  GERMPLASM_REP = 'germplasmRep',
   GERMPLASM = 'germplasm',
   REP = 'rep',
   NOTHING = '',

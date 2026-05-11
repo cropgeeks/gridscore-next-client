@@ -1,7 +1,7 @@
 <template>
   <v-card :variant="isSelected ? 'outlined' : undefined" class="d-flex flex-column flex-grow-1">
     <template #title>
-      <span v-tooltip:top="trial.name">{{ trial.name }}</span>
+      <span v-tooltip:top="trial.name" class="clamp-two">{{ trial.name }}</span>
     </template>
     <template #prepend>
       <slot name="prepend">
@@ -12,7 +12,7 @@
       <v-btn v-if="trial.hasLocalUpdate" :icon="mdiCloudUpload" color="info" v-tooltip:top="$t('tooltipTrialHasTransactions')" @click="emitter.emit('synchronize-trial', trial)" />
       <v-btn v-else-if="trial.hasRemoteUpdate" :icon="mdiCloudDownload" color="warning" v-tooltip:top="$t('tooltipTrialHasRemoteUpdate')" @click="emitter.emit('synchronize-trial', trial)" />
     </template>
-    <template #subtitle>
+    <template #subtitle v-if="trial.description">
       <span class="text-wrap" v-if="wrapDescription" v-html="trial.description || '&nbsp;'" />
       <span v-tooltip:top="trial.description" v-html="trial.description || '&nbsp;'" v-else />
     </template>

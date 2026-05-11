@@ -19,7 +19,7 @@
         <TraitInputSection
           v-model="cellData[item.id || '']"
           v-if="cellData[item.id || '']"
-          :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
+          :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories, displayName: cell.displayName || '' }"
           :trait="item"
           :editable="isEditable || false"
           :measurements="cell.measurements[item.id || '']"
@@ -28,7 +28,7 @@
           :ref="(el) => (refs[`${item.id}`] = el)"
           @valid-changed="v => emit('set-valid', item.id || '', v)"
         >
-          <div class="d-flex flex-column flex-sm-row ga-2">
+          <div class="ms-2 my-1 d-flex ga-2">
             <v-btn
               :icon="mdiHistory"
               size="small"
@@ -55,7 +55,7 @@
     <TraitInputSection
       v-model="cellData[trait.id || '']"
       v-if="cellData[trait.id || '']"
-      :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories }"
+      :cell="{ row: cell.row || 0, column: cell.column || 0, germplasm: cell.germplasm, categories: cell.categories, displayName: cell.displayName || '' }"
       :trait="trait"
       :editable="isEditable || false"
       :measurements="cell.measurements[trait.id || '']"
@@ -64,7 +64,7 @@
       :ref="(el) => (refs[`${trait.id}`] = el)"
       @valid-changed="v => emit('set-valid', trait.id || '', v)"
     >
-      <div class="d-flex flex-column flex-sm-row ga-2">
+      <div class="ms-2 my-1 d-flex ga-2">
         <v-btn
           :icon="mdiHistory"
           size="small"

@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-  import { addTrial } from '@/plugins/idb'
+  import { addTrial, requestPersistence } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
   import { DisplayOrder, EventType, PersonType, TraitDataType, type Event, type Person, type Trait } from '@/plugins/types/gridscore'
   import { getThemeColor } from '@/plugins/util'
@@ -263,6 +263,8 @@
     if (json.name) {
       json.createdOn = new Date().toISOString()
       json.updatedOn = new Date().toISOString()
+
+      requestPersistence()
 
       addTrial(json)
         .then(trialId => {

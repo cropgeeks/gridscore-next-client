@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-list-item v-if="trait" slim class="px-1 full-opacity-subtitle">
+    <v-list-item v-if="trait" slim class="px-1 full-opacity-subtitle trait-section d-flex flex-wrap">
       <template #prepend>
         <v-icon :icon="store.storeCanvasShape === CanvasShape.SQUARE ? mdiSquare : mdiCircle" :color="trait.color" size="x-large" />
       </template>
       <template #title>
         <div class="d-flex flex-wrap align-center justify-space-between ga-2">
           <div class="d-flex flex-wrap align-center ga-2">
-            <span class="text-title-large" :style="{ color: trait.color }">{{ trait.name }}</span>
+            <span class="text-title-large clamp-two" :style="{ color: trait.color }">{{ trait.name }}</span>
             <template v-if="showDetails">
               <v-chip size="small" label :text="$t((shortTitle ? dataTypeMap[trait.dataType]?.shortTitle : dataTypeMap[trait.dataType]?.title) || '')" :prepend-icon="dataTypeMap[trait.dataType]?.icon" />
 

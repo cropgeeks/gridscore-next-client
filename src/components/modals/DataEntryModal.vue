@@ -496,7 +496,7 @@
 
     // Remove any mapping entry for traits that have been hidden
     Object.values(refs.value).forEach(section => {
-      section.removeRefs(newValue)
+      section?.removeRefs(traitIds)
     })
     Object.keys(itemsValid.value).forEach(k => {
       if (!traitIds.has(k)) {

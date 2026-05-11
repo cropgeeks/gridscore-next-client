@@ -47,7 +47,6 @@
         v-for="(group, index) in traitsByGroup"
         :key="`trait-group-${group.name}-${index}`"
         :value="group.name"
-        v-memo="[group.allMarked === true, group.someMarked === true]"
       >
         <template #activator="{ props }">
           <v-list-item
@@ -61,10 +60,12 @@
         </template>
         <v-list-item
           v-for="trait in group.traits"
-          :key="`trait-visibility-${group.name}-${index}-${trait.id}`"
+          :key="`trait-visibility-${group.name}-${trait.id}`"
           @click="toggleTraitVisibility(trait)"
-          :title="trait.name"
         >
+          <template #title>
+            <div class="clamp-two">{{ trait.name }}</div>
+          </template>
           <v-progress-linear
             :color="trait.visible ? trait.color : 'muted'"
             location="bottom"
