@@ -167,6 +167,7 @@
       :rules="rules"
       :precision="null"
       :readonly="isEditable === false"
+      :decimal-separator="store.storeDecimalSeparator || '.'"
       :bg-color="bgColor"
       @keyup.enter="emit('traverse')"
       control-variant="split"
