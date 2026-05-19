@@ -10,7 +10,9 @@
             <v-btn stacked :disabled="!shareCodes.viewerCode" class="flex-grow-1" :value="ShareStatus.VIEWER" :prepend-icon="shareStatusTypes[ShareStatus.VIEWER]?.icon" :text="$t(shareStatusTypes[ShareStatus.VIEWER]?.text || '')" />
           </v-btn-toggle>
 
-          <StyledQRCode class="mt-3" :base-url="remoteUrlWithoutApi" :text="selectedShareCode" v-if="selectedShareCode" />
+          <StyledQRCode class="mt-3" v-model="finalUrl" :base-url="remoteUrlWithoutApi" :text="selectedShareCode" v-if="selectedShareCode" />
+
+          <v-list-item slim v-if="mailto && selectedShareCode" :href="mailto" :prepend-icon="mdiEmailArrowRight" :title="$t('modalTextTrialShareEmailTitle')" :subtitle="$t('modalTextTrialShareEmailSubtitle')" />
         </div>
 
         <!-- We don't have the codes yet, so need to be able to share the trial -->
@@ -69,7 +71,8 @@
   import { useI18n } from 'vue-i18n'
   import { shareTrial } from '@/plugins/api'
   import emitter from 'tiny-emitter/instance'
-  import { mdiLanDisconnect, mdiQrcode } from '@mdi/js'
+  import { mdiEmailArrowRight, mdiLanDisconnect, mdiQrcode } from '@mdi/js'
+  import { emailValid } from '@/plugins/util'
 
   const { t } = useI18n()
 
@@ -84,9 +87,28 @@
   const remoteUrl = ref<string>()
   const remoteToken = ref<string>()
 
+  // Readonly!
+  const finalUrl = ref<string>()
+
   const error = ref<string>()
 
   const dialog = ref(false)
+
+  const peopleWithEmails = computed(() => {
+    if (compProps.trial && compProps.trial.people && compProps.trial.people.length > 0) {
+      return compProps.trial.people.filter(p => p.email && p.email.trim().length > 0 && emailValid(p.email))
+    } else {
+      return []
+    }
+  })
+
+  const mailto = computed(() => {
+    if (peopleWithEmails.value && peopleWithEmails.value.length > 0 && finalUrl.value) {
+      return `mailto:${peopleWithEmails.value.map(p => p.email).join(',')}?subject=${encodeURIComponent(`GridScore trial: ${compProps.trial.name}`)}&body=${encodeURIComponent(finalUrl.value)}`
+    } else {
+      return undefined
+    }
+  })
 
   const selectedShareCode = computed(() => {
     if (selectedShareStatus.value) {

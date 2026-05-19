@@ -15,8 +15,10 @@
             v-model="email"
             :label="$t('formLabelPersonEmail')"
             :hint="$t('formDescriptionPersonEmail')"
+            :error-messages="emailIsValid ? [] : [$t('formFeedbackEmailInvalid')]"
             persistent-hint
             type="email"
+            @blur="checkEmail"
           />
 
           <h4 class="mt-5 mb-2">{{ $t('formLabelPersonRole') }}</h4>
@@ -48,22 +50,28 @@
   import { getId } from '@/plugins/id'
   import { PersonType, type Person } from '@/plugins/types/gridscore'
   import { personTypes } from '@/plugins/types/types'
+  import { emailValid } from '@/plugins/util'
 
   const dialog = ref(false)
   const name = ref<string>('')
   const email = ref<string>('')
   const selectedTypes = ref<string[]>([PersonType.DATA_COLLECTOR])
+  const emailIsValid = ref(true)
 
   const emit = defineEmits(['person-added'])
 
-  const canContinue = computed(() => name.value && name.value.trim().length > 0 && selectedTypes.value.length > 0)
+  const canContinue = computed(() => name.value && name.value.trim().length > 0 && selectedTypes.value.length > 0 && emailIsValid.value)
 
+  function checkEmail () {
+    emailIsValid.value = email.value.trim().length === 0 || emailValid(email.value)
+  }
   function show () {
     dialog.value = true
   }
   function hide () {
     name.value = ''
     email.value = ''
+    emailIsValid.value = true
     selectedTypes.value = [PersonType.DATA_COLLECTOR]
     dialog.value = false
   }

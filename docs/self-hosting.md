@@ -85,7 +85,7 @@ services:
       - "gridscore_mysql"
 
   gridscore_mysql:
-    image: mysql:5.7
+    image: mysql:8.4
     # We're exposing the MySQL port for remote access at 9306
     ports:
       - <MYSQL_PORT>:3306

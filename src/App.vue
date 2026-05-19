@@ -102,6 +102,7 @@
 
           <v-list-item :prepend-icon="mdiExport" :disabled="!selectedTrial" :title="$t('menuDataExport')" to="/export" />
 
+          <v-divider />
           <v-list-item :prepend-icon="mdiCog" :title="$t('menuSettings')" to="/settings" />
           <v-list-item prepend-icon="$gridscore" :title="$t('menuAbout')" to="/about" />
         </v-list>

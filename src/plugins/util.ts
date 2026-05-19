@@ -26,6 +26,10 @@ const DIVISIONS = [
   { amount: Number.POSITIVE_INFINITY, name: 'years' as const },
 ]
 
+function emailValid (email: string): boolean {
+  return email.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) != null
+}
+
 function isNumber (value: string, isInt = false) {
   try {
     const int = Number(value)
@@ -624,4 +628,5 @@ export {
   intersection,
   getCellText,
   getCellTextGuaranteed,
+  emailValid,
 }

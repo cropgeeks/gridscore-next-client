@@ -36,6 +36,8 @@
 
   const canShare = computed(() => navigator.canShare !== undefined)
 
+  const url = defineModel<string>()
+
   export interface StyledQRCodeProps {
     baseUrl?: string
     text: string
@@ -86,7 +88,10 @@
     }
   })
 
-  watch(code, async () => updateBarcode())
+  watch(code, async newValue => {
+    updateBarcode()
+    url.value = newValue
+  }, { immediate: true })
 
   function share () {
     try {
