@@ -63,7 +63,7 @@ export const coreStore = defineStore('core', {
     navigationMode: NavigationMode.DRAG as NavigationMode,
     traitColors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
     homeWidgetOrder: ['banners', 'trials'],
-    plotDisplayField: PlotDisplayField.DISPLAY_NAME as PlotDisplayField,
+    plotDisplayField: PlotDisplayField.DISPLAY_NAME_REP as PlotDisplayField,
     selectedTrialPerson: undefined as (string | undefined),
     canvasDensity: CanvasDensity.MEDIUM as CanvasDensity,
     canvasShape: CanvasShape.CIRCLE as CanvasShape,

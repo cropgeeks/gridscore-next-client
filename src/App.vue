@@ -7,7 +7,7 @@
         <v-img
           class="ms-4"
           style="cursor: pointer" @click="$router.push('/')"
-          src="/img/gridscore-next.svg"
+          src="/img/gridscore-next-text.svg"
           max-height="40"
           max-width="40"
           contain

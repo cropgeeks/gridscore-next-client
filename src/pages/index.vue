@@ -13,7 +13,7 @@
           class="ma-3"
           rounded="0"
           size="150"
-          image="/img/gridscore-next.svg"
+          image="/img/gridscore-next-text.svg"
         />
       </div>
     </v-card>
