@@ -23,7 +23,7 @@
       :key="`${trait.id}-${setIndex}`"
       @traverse="emit('traverse', setIndex)"
       :ref="(el) => (refs[setIndex] = el)"
-      @valid-changed="v => inputsValid[setIndex - 1] = v"
+      @valid-changed="(v: boolean) => inputsValid[setIndex - 1] = v"
     />
   </div>
 </template>

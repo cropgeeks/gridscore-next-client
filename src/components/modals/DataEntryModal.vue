@@ -172,9 +172,9 @@
                       :cell="cell"
                       :is-editable="isEditable"
                       :has-historic-data="hasHistoricData"
-                      @show-history="trait => showHistory(trait)"
-                      @set-valid="(traitId, valid) => setValid(traitId, valid)"
-                      @traverse="(trait, traitIndex, traits, setIndex) => traverse(group.name, trait, traitIndex, group.traits, setIndex)"
+                      @show-history="(trait: TraitPlus) => showHistory(trait)"
+                      @set-valid="(traitId: string, valid: boolean) => setValid(traitId, valid)"
+                      @traverse="(trait: TraitPlus, traitIndex: number, traits: TraitPlus[], setIndex: number) => traverse(group.name, trait, traitIndex, group.traits, setIndex)"
                     />
                   </template>
                 </v-expansion-panel>

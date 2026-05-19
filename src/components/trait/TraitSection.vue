@@ -115,6 +115,10 @@
   max-height: 90vh;
 }
 
+.trait-section .v-list-item__content {
+  flex-grow: 1;
+}
+
 .reference-image-fullscreen {
   max-width: 100%;
   max-height: 100%;

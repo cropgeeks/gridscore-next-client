@@ -26,7 +26,7 @@
           :people="trial.people"
           @traverse="(setIndex: number) => emit('traverse', item, index, traits, setIndex)"
           :ref="(el) => (refs[`${item.id}`] = el)"
-          @valid-changed="v => emit('set-valid', item.id || '', v)"
+          @valid-changed="(v: boolean) => emit('set-valid', item.id || '', v)"
         >
           <div class="ms-2 my-1 d-flex ga-2">
             <v-btn
@@ -62,7 +62,7 @@
       :people="trial.people"
       @traverse="(setIndex: number) => emit('traverse', trait, traitIndex, traits, setIndex)"
       :ref="(el) => (refs[`${trait.id}`] = el)"
-      @valid-changed="v => emit('set-valid', trait.id || '', v)"
+      @valid-changed="(v: boolean) => emit('set-valid', trait.id || '', v)"
     >
       <div class="ms-2 my-1 d-flex ga-2">
         <v-btn
