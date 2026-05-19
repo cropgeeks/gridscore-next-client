@@ -40,7 +40,7 @@
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
   import { TraitDataType } from '@/plugins/types/gridscore'
-  import { getI18nParams } from '@/plugins/formatting';
+  import { getI18nParams } from '@/plugins/formatting'
 
   const compProps = defineProps<{
     cell: CellPlus
