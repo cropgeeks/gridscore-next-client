@@ -906,5 +906,21 @@
         "text": "Fixed an issue with the import of multi-category trait definitions from tabular format."
       }
     ]
+  },
+  {
+    "version": "4.2.1",
+    "date": "2025-05-20",
+    "items": [
+      {
+        "type": "new",
+        "title": "Share trial via email",
+        "text": "A new button has been added below the trial share code text box on the share screen to easily share a trial via email. If people have been defined as part of the trial with email addresses, these will automatically be selected."
+      },
+      {
+        "type": "bugfix",
+        "title": "Long format export",
+        "text": "Fixed an issue with the long format export where non-aggregated data had a mismatch between column headers and data."
+      }
+    ]
   }
 ]

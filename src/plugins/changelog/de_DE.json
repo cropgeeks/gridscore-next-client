@@ -906,5 +906,21 @@
         "text": "Ein Problem beim Import von Definitionen für Multi-Kategorie-Merkmale aus dem Tabellenformat wurde behoben."
       }
     ]
+  },
+  {
+    "version": "4.2.1",
+    "date": "2025-05-20",
+    "items": [
+      {
+        "type": "new",
+        "title": "Versuch per E-Mail teilen",
+        "text": "Auf dem Bildschirm zum Teilen wurde unter dem Textfeld für den Freigabecode der Versuch eine neue Schaltfläche hinzugefügt, um eine Versuch ganz einfach per E-Mail zu teilen. Wenn Personen mit E-Mail-Adressen als Teil der Versuchs definiert wurden, werden diese automatisch ausgewählt."
+      },
+      {
+        "type": "bugfix",
+        "title": "Export im langen Format",
+        "text": "Es wurde ein Problem beim Export im langen Format behoben, bei dem es bei nicht aggregierten Daten zu einer Unstimmigkeit zwischen Spaltenüberschriften und Daten kam."
+      }
+    ]
   }
 ]

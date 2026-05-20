@@ -328,7 +328,7 @@ function trialsDataToLongFormat (data: { [index: string]: CellPlus }, trial: Tri
                       result += '\t\t'
                     }
 
-                    result += `\t${t.name}\t${(TraitDataType.isCategorical(t.dataType) && restrictions && categories && value !== undefined) ? categories[+value] : value}`
+                    result += `\t${t.group ? t.group.name : ''}\t${t.name}\t${(TraitDataType.isCategorical(t.dataType) && restrictions && categories && value !== undefined) ? categories[+value] : value}`
 
                     if (includePeople && trial.people && trial.people.length > 0) {
                       const person = trial.people.find(p => p.id === dp.personId)

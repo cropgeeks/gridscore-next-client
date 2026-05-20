@@ -103,7 +103,7 @@
   })
 
   const mailto = computed(() => {
-    if (peopleWithEmails.value && peopleWithEmails.value.length > 0 && finalUrl.value) {
+    if (peopleWithEmails.value && finalUrl.value) {
       return `mailto:${peopleWithEmails.value.map(p => p.email).join(',')}?subject=${encodeURIComponent(`GridScore trial: ${compProps.trial.name}`)}&body=${encodeURIComponent(finalUrl.value)}`
     } else {
       return undefined
