@@ -144,7 +144,7 @@
     <v-dialog
       v-model="updateExists"
       persistent
-      :max-width="`min(90vw, 400px)`"
+      :max-width="`min(90vw, 401px)`"
     >
       <v-card :title="$t('modalTitleAppUpdateAvailable')" :text="$t('modalTextAppUpdateAvailable')">
         <template #actions>
