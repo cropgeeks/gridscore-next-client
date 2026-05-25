@@ -70,8 +70,6 @@
         try {
           const parsed = JSON.parse(c)
 
-          console.log(parsed)
-
           if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) {
             errorMessage.value = 'errorMessageInvalidSettingsQR'
             return

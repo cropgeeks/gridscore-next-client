@@ -168,6 +168,7 @@
   import { useDisplay } from 'vuetify'
   import type { XY } from '@/plugins/location'
   import { getI18nParams } from '@/plugins/formatting'
+  import { calculateTraitStats } from '@/plugins/stats'
 
   export interface ContextMenuConfig {
     target?: Element
@@ -327,18 +328,7 @@
     const data = getTrialDataCached()
 
     if (data && trial.value) {
-      const total = Object.values(data).length
-
-      Object.values(data).forEach(c => {
-        if (c && c.measurements) {
-          trial.value?.traits.forEach(t => {
-            const id = t.id || ''
-            if (c.measurements[id] && c.measurements[id].length > 0) {
-              t.progress = t.progress ? (t.progress + 1) : 1
-            }
-          })
-        }
-      })
+      calculateTraitStats(trial.value, data)
 
       trialReps.value = getTrialRepsCached()
       trialTreatments.value = getTrialTreatmentsCached()
@@ -356,20 +346,15 @@
           highlightSearch.value = store.storeHighlightConfig.germplasm
         })
       }
-
-      trial.value.traits.forEach(t => {
-        t.progress = t.progress ? (100 * t.progress / total) : 0
-      })
     }
   }
 
   function startGeoTracking () {
-    console.log('start geotracking', store.storeGpsEnabled, navigator.geolocation, geolocationWatchId)
     if (navigator.geolocation && store.storeGpsEnabled && !geolocationWatchId) {
       const options = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20_000 }
       geolocationWatchId = navigator.geolocation.watchPosition(position => {
-        console.log(position)
         if (position && position.coords) {
+          console.log(position)
           geolocation.value = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -525,6 +510,10 @@
   })
 
   onBeforeUnmount(() => {
+    if (geolocationWatchId) {
+      navigator.geolocation.clearWatch(geolocationWatchId)
+    }
+
     emitter.off('trial-properties-changed', trialPropertiesChanged)
     emitter.off('plot-cache-changed', updateLocalCaches)
     emitter.off('trial-data-loaded', updateLocalCaches)

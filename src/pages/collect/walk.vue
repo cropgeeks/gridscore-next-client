@@ -47,8 +47,10 @@
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import type { GuideOrderConfig } from '@/components/trial/GuideOrderSelector.vue'
   import GuideOrderSelector from '@/components/trial/GuideOrderSelector.vue'
+  import { getTrialDataCached } from '@/plugins/datastore'
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
+  import { calculateTraitStats } from '@/plugins/stats'
   import { coreStore } from '@/stores/app'
   import emitter from 'tiny-emitter/instance'
 
@@ -83,6 +85,8 @@
 
       startGeoTracking()
 
+      updateLocalCaches()
+
       if (isValidConfig.value) {
         startGuidedWalk()
       }
@@ -102,6 +106,14 @@
           }
         }
       }, null, options)
+    }
+  }
+
+  function updateLocalCaches () {
+    const data = getTrialDataCached()
+
+    if (data && trial.value) {
+      calculateTraitStats(trial.value, data)
     }
   }
 
@@ -186,6 +198,9 @@
     }
 
     emitter.on('tts', tts)
+
+    emitter.on('plot-cache-changed', updateLocalCaches)
+    emitter.on('trial-data-loaded', updateLocalCaches)
   })
 
   onBeforeUnmount(() => {
@@ -194,5 +209,8 @@
     if (geolocationWatchId && navigator.geolocation) {
       navigator.geolocation.clearWatch(geolocationWatchId)
     }
+
+    emitter.off('plot-cache-changed', updateLocalCaches)
+    emitter.off('trial-data-loaded', updateLocalCaches)
   })
 </script>

@@ -776,6 +776,7 @@ async function updateTrial (localId: string, updatedTrial: TrialPlus) {
         delete t.color
         delete t.editable
         delete t.progress
+        delete t.suspiciousChecker
       })
     }
 

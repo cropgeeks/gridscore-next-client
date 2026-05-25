@@ -162,7 +162,8 @@
     <v-number-input
       @wheel="$event.target.blur()"
       :messages="description ? [description] : undefined"
-      :error-messages="valid ? [] : [$t('formFeedbackInputOutwithValidRange')]"
+      :class="(valid && warning) ? 'suspicious-value-warning' : undefined"
+      :error-messages="valid ? (warning ? [$t('formFeedbackInputSuspicious')] : []) : [$t('formFeedbackInputOutwithValidRange')]"
       :label="label"
       :rules="rules"
       :precision="null"
@@ -298,6 +299,7 @@
   import emitter from 'tiny-emitter/instance'
   import { mdiCalendarToday, mdiCamera, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker, mdiVideo } from '@mdi/js'
   import { getId } from '@/plugins/id'
+  import { isSuspicious } from '@/plugins/stats'
 
   const nonTtsTraitTypes = new Set([TraitDataType.gps, TraitDataType.video, TraitDataType.image, TraitDataType.date, TraitDataType.text, TraitDataType.range])
 
@@ -332,6 +334,14 @@
     } else {
       return true
     }
+  })
+
+  const warning = computed(() => {
+    const mv = model.value
+    if (mv !== undefined && mv !== null && TraitDataType.isNumeric(compProps.trait.dataType) && compProps.trait.suspiciousChecker && compProps.trait.suspiciousChecker.validRangeInfo?.isReady) {
+      return isSuspicious(compProps.trait.suspiciousChecker, +mv)
+    }
+    return false
   })
 
   type ValidationRule = (value: string) => boolean
@@ -524,8 +534,6 @@
       emitter.emit('tts', t('ttsCurrentLocation'))
 
       emit('traverse')
-    } else {
-      console.log(latitude, longitude)
     }
   }
 
@@ -572,5 +580,22 @@
 .large-buttons .v-field__append-inner button .v-btn__content i,
 .large-buttons .v-field__prepend-inner button .v-btn__content i {
   --v-icon-size-multiplier: 3;
+}
+/* Color suspicious value in yellow */
+.suspicious-value-warning .v-messages__message {
+  color: rgb(var(--v-theme-warning));
+}
+.suspicious-value-warning .v-field--error .v-field__outline {
+  --v-field-border-color: rgb(var(--v-theme-warning));
+  color: rgb(var(--v-theme-warning));
+}
+.suspicious-value-warning .v-field--error .v-label {
+  color: rgb(var(--v-theme-warning));
+}
+.suspicious-value-warning .v-field--error {
+  --v-theme-error: var(--v-theme-warning);
+}
+.suspicious-value-warning .v-field__clearable .v-icon__svg {
+  color: rgb(var(--v-theme-warning));
 }
 </style>

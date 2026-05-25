@@ -332,6 +332,7 @@
   "formFeedbackTraitInvalidMinMax": "Invalid combination of minimum and maximum specified.",
   "formFeedbackTraitCategoryOnlyOne": "Please specify at least two categories.",
   "formFeedbackInputOutwithValidRange": "The specified value is outside the valid value range.",
+  "formFeedbackInputSuspicious": "The specified value looks suspicious when considering the data distribution for this trait.",
   "formFeedbackEmailInvalid": "Invalid email format",
   "formLabelFielDBookInput": "Fieldbook from e.g. FielDHub",
   "formPlaceholderFielDBookInput": "ID\t\tLOCATION\tPLOT\tROW\tCOLUMN\tREP\t\t\t\t\tTREATMENT\nID-1\tL-1\t\t\t101\t\t1\t\t1\t\t\tRep in {rowMiddle} 1 {columnMiddle} 1\tGermplasm in {rowMiddle} 1 {columnMiddle} 1\nID-2\tL-1\t\t\t102\t\t1\t\t2\t\t\tRep in {rowMiddle} 1 {columnMiddle} 2\tGermplasm in {rowMiddle} 1 {columnMiddle} 2",

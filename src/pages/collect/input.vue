@@ -41,6 +41,7 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
+  import { calculateTraitStats } from '@/plugins/stats'
   import { coreStore } from '@/stores/app'
   import { mdiCameraBurst, mdiCancel, mdiCheck, mdiImage, mdiVideo } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
@@ -76,22 +77,7 @@
     const data = getTrialDataCached()
 
     if (data && trial.value) {
-      const total = Object.values(data).length
-
-      Object.values(data).forEach(c => {
-        if (c && c.measurements) {
-          trial.value?.traits.forEach(t => {
-            const id = t.id || ''
-            if (c.measurements[id] && c.measurements[id].length > 0) {
-              t.progress = t.progress ? (t.progress + 1) : 1
-            }
-          })
-        }
-      })
-
-      trial.value.traits.forEach(t => {
-        t.progress = t.progress ? (100 * t.progress / total) : 0
-      })
+      calculateTraitStats(trial.value, data)
     }
   }
 
@@ -128,11 +114,17 @@
 
   onMounted(() => {
     loadTrial()
+
+    emitter.on('plot-cache-changed', updateLocalCaches)
+    emitter.on('trial-data-loaded', updateLocalCaches)
   })
 
   onBeforeUnmount(() => {
     if (geolocationWatchId && navigator.geolocation) {
       navigator.geolocation.clearWatch(geolocationWatchId)
     }
+
+    emitter.off('plot-cache-changed', updateLocalCaches)
+    emitter.off('trial-data-loaded', updateLocalCaches)
   })
 </script>

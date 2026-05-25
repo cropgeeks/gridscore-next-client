@@ -2,12 +2,14 @@
 /* eslint-disable */
 
 import type { Cell, CellMetadata, Measurement, Trait, Trial } from '@/plugins/types/gridscore'
+import type { DynamicQuantile } from '@/plugins/stats'
 
 export interface TraitPlus extends Trait {
   color?: string
   progress?: number
   editable?: boolean
   visible?: boolean
+  suspiciousChecker?: DynamicQuantile
 }
 
 export interface Geolocation {

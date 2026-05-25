@@ -93,8 +93,6 @@
 
       const data = [start, end]
 
-      console.log(data)
-
       const layout = {
         hovermode: 'y unified',
         showlegend: false,
