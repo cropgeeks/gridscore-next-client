@@ -14,7 +14,7 @@
         <v-card-text>
           <p>{{ $t('pageVisualizationGermplasmRepHeatmapText') }}</p>
 
-          <div class="d-flex flex-wrap">
+          <div class="d-flex flex-wrap ga-3">
             <TraitSelect
               v-model="selectedTrait"
               :traits="trial.traits"
@@ -35,6 +35,19 @@
                 {{ $t('formDescriptionCurrentTimepoint', { date: new Date(timepoints[currentTimepoint] || '').toLocaleDateString() }) }}
               </template>
             </v-slider>
+
+            <v-switch
+              v-model="highlightSus"
+              color="primary"
+              :hint="$t('formDescriptionHighlightSuspiciousRep')"
+              persistent-hint
+              :label="$t('formLabelHighlightSuspiciousRep')"
+              v-if="store.storeSuspiciousDataPointHighlight && isNumericDateOrCat"
+            >
+              <template #append>
+                <v-icon size="small" :icon="mdiInformation" v-tooltip:top="$t('tooltipChartZScore')" />
+              </template>
+            </v-switch>
           </div>
 
           <v-alert color="warning" :text="$t(message)" variant="tonal" :icon="mdiAlert" class="my-5" v-if="message" />
@@ -76,8 +89,9 @@
   import { useI18n } from 'vue-i18n'
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
-  import { mdiAlert, mdiCounter } from '@mdi/js'
+  import { mdiAlert, mdiCounter, mdiInformation } from '@mdi/js'
   import { getI18nParams } from '@/plugins/formatting'
+  import { zScoreRepAnalysis } from '@/plugins/stats'
 
   interface RepInfo {
     row: number
@@ -107,6 +121,7 @@
   const interactive = ref(false)
   const canDownload = ref(false)
   const bottomSheetVisible = ref(false)
+  const highlightSus = ref<boolean | undefined>()
 
   const replicates = ref<string[]>([])
   const allGermplasm = ref<string[]>([])
@@ -115,6 +130,8 @@
   const heatmapChart = useTemplateRef('heatmapChart')
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
+
+  const isNumericDateOrCat = computed(() => selectedTrait.value && (TraitDataType.isNumeric(selectedTrait.value.dataType) || selectedTrait.value.dataType === TraitDataType.date || TraitDataType.isCategorical(selectedTrait.value.dataType)))
 
   const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
@@ -139,6 +156,7 @@
         // Do nothing here, this might fail on first run
       }
 
+      const color = invertHex(trait.color || '#00acef')
       message.value = undefined
 
       let minDate = new Date('9999-12-31')
@@ -197,7 +215,7 @@
               y1: allGermplasm.value.length - row + 0.5,
               line: {
                 width: 2,
-                color: invertHex(trait.color || '#00acef'),
+                color,
               },
             })
           }
@@ -333,6 +351,40 @@
           : `${t('tooltipChartHeatmapGermplasm')}: %{y}<br>${t('tooltipChartHeatmapRep')}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`,
       }]
 
+      const germplasmTickText = allGermplasm.value.concat()
+
+      if (highlightSus.value && store.storeSuspiciousDataPointHighlight && isNumericDateOrCat) {
+        const res = zScoreRepAnalysis(z)
+        res.forEach(r => {
+          if (r.isSignificant) {
+            // Highlight the label in color and bold
+            const index = germplasmTickText.length - r.rowIndex - 1
+            germplasmTickText[index] = `<span style='color: #${color}; font-weight: bold;'>${germplasmTickText[index]}</span>`
+
+            // Also add a vertical bar to the left of the chart (right of the germplasm name)
+            replicates.value.forEach((rep, ri) => {
+              if (!isNaN(z[r.rowIndex]?.[ri])) {
+                shapes.push({
+                  type: 'line' as const,
+                  // x-reference is assigned to the x-values
+                  xref: 'paper' as const,
+                  // y-reference is assigned to the plot paper [0,1]
+                  yref: 'y' as const,
+                  x0: 0,
+                  y0: r.rowIndex + 0.5,
+                  x1: 0,
+                  y1: r.rowIndex + 1.5,
+                  line: {
+                    width: 2,
+                    color,
+                  },
+                })
+              }
+            })
+          }
+        })
+      }
+
       if (traces.length > 0 && traces[0]) {
         switch (trait.dataType) {
           case TraitDataType.int:
@@ -343,7 +395,7 @@
             traces[0].zmax = maxValue
             traces[0].colorbar = {
               title: {
-                side: 'right',
+                side: window.innerWidth < 768 ? 'top' : 'right',
                 font: { color: store.storeIsDarkMode ? 'white' : 'black' },
               },
               tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
@@ -355,7 +407,7 @@
             traces[0].colorbar = {
               title: {
                 text: t('widgetChartLegendDaysSinceFirstRecording'),
-                side: 'right',
+                side: window.innerWidth < 768 ? 'top' : 'right',
                 font: { color: store.storeIsDarkMode ? 'white' : 'black' },
               },
               tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
@@ -372,7 +424,7 @@
                 tickvals: restrictions.categories.map((c, i) => i),
                 ticktext: restrictions.categories,
                 title: {
-                  side: 'right',
+                  side: window.innerWidth < 768 ? 'top' : 'right',
                   font: { color: store.storeIsDarkMode ? 'white' : 'black' },
                 },
                 tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
@@ -380,6 +432,7 @@
                 tick0: 0,
                 dtick: 1,
                 nticks: restrictions.categories.length,
+                orientation: window.innerWidth < 768 ? 'h' : 'v',
               }
             }
             break
@@ -409,7 +462,7 @@
           zeroline: false,
           tickmode: 'array' as const,
           tickvals: Array.from(new Array(allGermplasm.value.length).keys()).map(i => allGermplasm.value.length - i),
-          ticktext: allGermplasm.value,
+          ticktext: germplasmTickText,
           title: { text: t('widgetChartHeatmapAxisTitleGermplasm'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
           tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
           fixedrange: !interactive.value,
@@ -458,12 +511,18 @@
 
   watch(currentTimepoint, async () => redraw())
 
+  watch(highlightSus, async () => redraw())
+
   watch(selectedTrait, async newValue => {
     currentTimepoint.value = 0
 
     const td = trialData
 
     if (newValue) {
+      if (highlightSus.value === undefined) {
+        highlightSus.value = isNumericDateOrCat.value
+      }
+
       if (!newValue.allowRepeats || !td) {
         timepoints.value = []
       } else {

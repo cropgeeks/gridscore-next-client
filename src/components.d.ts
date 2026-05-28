@@ -22,6 +22,7 @@ declare module 'vue' {
     CalendarHeatmap: typeof import('./components/chart/CalendarHeatmap.vue')['default']
     CellAutocomplete: typeof import('./components/inputs/CellAutocomplete.vue')['default']
     ChangelogModal: typeof import('./components/modals/ChangelogModal.vue')['default']
+    ColorGradient: typeof import('./components/chart/ColorGradient.vue')['default']
     ColumnHeader: typeof import('./components/data/ColumnHeader.vue')['default']
     CommentModal: typeof import('./components/modals/CommentModal.vue')['default']
     ConfirmModal: typeof import('./components/modals/ConfirmModal.vue')['default']

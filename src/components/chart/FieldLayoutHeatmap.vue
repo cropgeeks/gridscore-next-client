@@ -14,7 +14,7 @@
         <v-card-text>
           <p>{{ $t('pageVisualizationFieldHeatmapText') }}</p>
 
-          <div class="d-flex flex-wrap">
+          <div class="d-flex flex-wrap ga-3">
             <TraitSelect
               v-model="selectedTrait"
               :traits="trial.traits"
@@ -35,6 +35,19 @@
                 {{ $t('formDescriptionCurrentTimepoint', { date: new Date(timepoints[currentTimepoint] || '').toLocaleDateString() }) }}
               </template>
             </v-slider>
+
+            <v-switch
+              v-model="highlightSus"
+              color="primary"
+              :hint="$t('formDescriptionHighlightSuspiciousDP')"
+              persistent-hint
+              :label="$t('formLabelHighlightSuspiciousDP')"
+              v-if="store.storeSuspiciousDataPointHighlight && isNumericOrDate"
+            >
+              <template #append>
+                <v-icon size="small" :icon="mdiInformation" v-tooltip:top="$t('tooltipChartTDigest')" />
+              </template>
+            </v-switch>
           </div>
 
           <v-alert color="warning" :text="$t(message)" variant="tonal" :icon="mdiAlert" class="my-5" v-if="message" />
@@ -69,6 +82,7 @@
 
   import Plotly from 'plotly.js/lib/core'
   import heatmap from 'plotly.js/lib/heatmap'
+  import scatter from 'plotly.js/lib/scatter'
   import { getTrialDataCached } from '@/plugins/datastore'
   import { coreStore } from '@/stores/app'
   import { CellCategory, TraitDataType, type Measurement } from '@/plugins/types/gridscore'
@@ -76,12 +90,14 @@
   import { useI18n } from 'vue-i18n'
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
-  import { mdiAlert, mdiLandFields } from '@mdi/js'
+  import { mdiAlert, mdiInformation, mdiLandFields } from '@mdi/js'
   import { getI18nParams } from '@/plugins/formatting'
+  import { calculateTraitStatsIndividual, createDynamicQuantiles, isSuspicious } from '@/plugins/stats'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
     heatmap,
+    scatter,
   ])
 
   const compProps = defineProps<{
@@ -101,6 +117,7 @@
   const interactive = ref(false)
   const canDownload = ref(false)
   const bottomSheetVisible = ref(false)
+  const highlightSus = ref<boolean | undefined>()
 
   const heatmapChart = useTemplateRef('heatmapChart')
 
@@ -108,6 +125,8 @@
 
   const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
+
+  const isNumericOrDate = computed(() => selectedTrait.value && (TraitDataType.isNumeric(selectedTrait.value.dataType) || selectedTrait.value.dataType === TraitDataType.date))
 
   const filename = computed(() => {
     if (safeTrialName.value && selectedTrait.value) {
@@ -129,6 +148,7 @@
         // Do nothing here, this might fail on first run
       }
 
+      const color = invertHex(trait.color || '#00acef')
       message.value = undefined
 
       let minDate = new Date('9999-12-31')
@@ -170,7 +190,7 @@
               y1: compProps.trial.layout.rows - 1 - (cell.row || 0) + 1.5,
               line: {
                 width: 2,
-                color: invertHex(trait.color || '#00acef'),
+                color,
               },
             })
           }
@@ -257,9 +277,27 @@
       if (trait.dataType === TraitDataType.date || trait.dataType === TraitDataType.text || trait.dataType === TraitDataType.gps || trait.dataType === TraitDataType.image || trait.dataType === TraitDataType.video) {
         for (let row = compProps.trial.layout.rows - 1; row >= 0; row--) {
           for (let column = 0; column < compProps.trial.layout.columns; column++) {
-            // @ts-ignore
-            z[row][column] = (z[row][column] - minDate.getTime()) / (1000 * 60 * 60 * 24)
+            // @ts-expect-error
+            if (z[row][column] !== undefined && z[row][column] !== null && !isNaN(z[row][column])) {
+              // @ts-expect-error
+              z[row][column] = (z[row][column] - minDate.getTime()) / (1000 * 60 * 60 * 24)
+            }
           }
+        }
+      }
+
+      if (isNumericOrDate.value && store.storeSuspiciousDataPointHighlight) {
+        if (highlightSus.value) {
+          trait.suspiciousChecker = createDynamicQuantiles()
+          calculateTraitStatsIndividual(trait, trialData, v => {
+            if (trait.dataType === TraitDataType.date) {
+              return (new Date(v).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)
+            } else {
+              return +v
+            }
+          })
+        } else {
+          delete trait.suspiciousChecker
         }
       }
 
@@ -302,6 +340,32 @@
           : `${t('tooltipChartHeatmapRow', i18nParams.value)}: %{y}<br>${t('tooltipChartHeatmapColumn', i18nParams.value)}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`,
       }]
 
+      if (store.storeSuspiciousDataPointHighlight && trait.suspiciousChecker && trait.suspiciousChecker.validRangeInfo?.isReady) {
+        const susDots = {
+          x: [] as number[],
+          y: [] as number[],
+          type: 'scatter',
+          mode: 'markers',
+          hoverinfo: 'skip',
+          marker: {
+            color,
+          },
+        }
+        for (let row = compProps.trial.layout.rows - 1; row >= 0; row--) {
+          for (let column = 0; column < compProps.trial.layout.columns; column++) {
+            const v = z[row]?.[column]
+
+            if (v !== undefined && v !== null && isSuspicious(trait.suspiciousChecker, +v)) {
+              susDots.x.push(column + 1)
+              susDots.y.push(row + 1)
+            }
+          }
+        }
+        if (susDots.x.length > 0) {
+          traces.push(susDots)
+        }
+      }
+
       if (traces.length > 0 && traces[0]) {
         switch (trait.dataType) {
           case TraitDataType.int:
@@ -312,7 +376,7 @@
             traces[0].zmax = maxValue
             traces[0].colorbar = {
               title: {
-                side: 'right',
+                side: window.innerWidth < 768 ? 'top' : 'right',
                 font: { color: store.storeIsDarkMode ? 'white' : 'black' },
               },
               tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
@@ -324,7 +388,7 @@
             traces[0].colorbar = {
               title: {
                 text: t('widgetChartLegendDaysSinceFirstRecording'),
-                side: 'right',
+                side: window.innerWidth < 768 ? 'top' : 'right',
                 font: { color: store.storeIsDarkMode ? 'white' : 'black' },
               },
               tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
@@ -341,7 +405,7 @@
                 tickvals: restrictions.categories.map((c, i) => i),
                 ticktext: restrictions.categories,
                 title: {
-                  side: 'right',
+                  side: window.innerWidth < 768 ? 'top' : 'right',
                   font: { color: store.storeIsDarkMode ? 'white' : 'black' },
                 },
                 tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
@@ -349,6 +413,7 @@
                 tick0: 0,
                 dtick: 1,
                 nticks: restrictions.categories.length,
+                orientation: window.innerWidth < 768 ? 'h' : 'v',
               }
             }
             break
@@ -360,7 +425,7 @@
       const yTicks = Array.from(new Array(compProps.trial.layout.rows).keys()).map(i => `${getRowLabel(compProps.trial.layout, i)}`).reverse()
 
       const layout = {
-        margin: { autoexpand: true },
+        margin: { autoexpand: true, t: 10 },
         dragmode: false as const,
         autosize: true,
         height: (25 * compProps.trial.layout.rows) + 200,
@@ -430,12 +495,18 @@
 
   watch(currentTimepoint, async () => redraw())
 
+  watch(highlightSus, async () => redraw())
+
   watch(selectedTrait, async newValue => {
     currentTimepoint.value = 0
 
     const td = trialData
 
     if (newValue) {
+      if (highlightSus.value === undefined) {
+        highlightSus.value = isNumericOrDate.value
+      }
+
       if (!newValue.allowRepeats || !td) {
         timepoints.value = []
       } else {

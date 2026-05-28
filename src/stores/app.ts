@@ -68,6 +68,7 @@ export const coreStore = defineStore('core', {
     canvasDensity: CanvasDensity.MEDIUM as CanvasDensity,
     canvasShape: CanvasShape.CIRCLE as CanvasShape,
     canvasSize: CanvasSize.MEDIUM as CanvasSize,
+    suspiciousDataPointHighlight: true,
     defaultDataEntryView: DataEntryView.GRID as DataEntryView,
     selectedTrial: undefined as (string | undefined),
     mapLayer: 'theme',
@@ -140,6 +141,7 @@ export const coreStore = defineStore('core', {
     storeCanvasDensity: (state): CanvasDensity => state.canvasDensity,
     storeCanvasShape: (state): CanvasShape => state.canvasShape,
     storeCanvasSize: (state): CanvasSize => state.canvasSize,
+    storeSuspiciousDataPointHighlight: (state): boolean => state.suspiciousDataPointHighlight || false,
     storeDefaultDataEntryView: (state): DataEntryView => state.defaultDataEntryView || DataEntryView.GRID,
     storeDefaultDataEntryViewRoute: (state): string => {
       const view = state.defaultDataEntryView
@@ -198,6 +200,9 @@ export const coreStore = defineStore('core', {
     },
     setRunCount (newRunCount: number) {
       this.runCount = newRunCount
+    },
+    setSuspiciousDataPointHighlight (newSuspiciousDataPointHighlight: boolean) {
+      this.suspiciousDataPointHighlight = newSuspiciousDataPointHighlight
     },
     setHideTraitCircles (newHideTraitCircles: boolean) {
       this.hideTraitCircles = newHideTraitCircles

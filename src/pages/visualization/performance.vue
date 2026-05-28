@@ -7,16 +7,16 @@
     <template v-if="trial">
       <v-row class="mt-5">
         <v-col cols="12" md="6">
+          <GermplasmAutocomplete
+            v-model="searchMatch"
+            :trial="trial"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
           <TraitSelect
             v-model="selectedTraits"
             multiple
             :traits="trial.traits"
-          />
-        </v-col>
-        <v-col cols="12" md="6">
-          <GermplasmAutocomplete
-            v-model="searchMatch"
-            :trial="trial"
           />
         </v-col>
       </v-row>

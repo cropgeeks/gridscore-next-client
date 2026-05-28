@@ -123,6 +123,8 @@
       :readonly="isEditable === false"
       :bg-color="bgColor"
       :messages="description ? [description] : undefined"
+      :class="(valid && warning) ? 'suspicious-value-warning' : undefined"
+      :error-messages="valid ? (warning ? [$t('formFeedbackInputSuspicious')] : []) : [$t('formFeedbackInputOutwithValidRange')]"
       @keyup.enter="setDate"
       @keyup.exact="handleDateInputChar"
       @blur="validateDate"
@@ -140,9 +142,13 @@
       </template>
     </v-text-field>
     <v-number-input
-      :error-messages="valid ? [] : [$t('formFeedbackInputOutwithValidRange')]"
       @wheel="$event.target.blur()"
       :messages="description ? [description] : undefined"
+      :class="{
+        'suspicious-value-warning': valid && warning,
+        'large-buttons': store.storeLargeButtonsForIntTraits,
+      }"
+      :error-messages="valid ? (warning ? [$t('formFeedbackInputSuspicious')] : []) : [$t('formFeedbackInputOutwithValidRange')]"
       :label="label"
       :readonly="isEditable === false"
       :bg-color="bgColor"
@@ -151,7 +157,6 @@
       :model-value="model !== undefined ? +model : undefined"
       @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
       :clearable="isEditable !== false"
-      :class="store.storeLargeButtonsForIntTraits ? 'large-buttons' : undefined"
       ref="input"
       v-else-if="trait.dataType === TraitDataType.int"
     >
@@ -338,8 +343,8 @@
 
   const warning = computed(() => {
     const mv = model.value
-    if (mv !== undefined && mv !== null && TraitDataType.isNumeric(compProps.trait.dataType) && compProps.trait.suspiciousChecker && compProps.trait.suspiciousChecker.validRangeInfo?.isReady) {
-      return isSuspicious(compProps.trait.suspiciousChecker, +mv)
+    if (mv !== undefined && mv !== null && (TraitDataType.isNumeric(compProps.trait.dataType) || compProps.trait.dataType === TraitDataType.date) && compProps.trait.suspiciousChecker && compProps.trait.suspiciousChecker.validRangeInfo?.isReady) {
+      return isSuspicious(compProps.trait.suspiciousChecker, TraitDataType.isNumeric(compProps.trait.dataType) ? +mv : new Date(mv).getTime())
     }
     return false
   })

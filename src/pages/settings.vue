@@ -187,6 +187,14 @@
             />
 
             <v-switch
+              :label="$t('formLabelSettingsSusHighlight')"
+              :hint="$t('formDescriptionSettingsSusHighlight')"
+              persistent-hint
+              color="primary"
+              v-model="suspiciousDataPointHighlight"
+            />
+
+            <v-switch
               :label="$t('formLabelSettingsAutoSelectSearch')"
               :hint="$t('formDescriptionSettingsAutoSelectSearch')"
               persistent-hint
@@ -462,6 +470,7 @@
   const autoSelectFirstInput = ref(store.storeAutoSelectFirstInput)
   const hideHelpInformation = ref(store.storeHideHelpInformation)
   const autoProgressInputs = ref(store.storeAutoProgressInputs)
+  const suspiciousDataPointHighlight = ref(store.storeSuspiciousDataPointHighlight)
   const voiceFeedbackEnabled = ref(store.storeVoiceFeedbackEnabled)
   const categoryCountInline = ref(store.storeCategoryCountInline)
   const enterBarcode = ref(store.storeEnterBarcode)
@@ -532,6 +541,7 @@
     autoSelectFirstInput.value = store.storeAutoSelectFirstInput
     hideHelpInformation.value = store.storeHideHelpInformation
     autoProgressInputs.value = store.storeAutoProgressInputs
+    suspiciousDataPointHighlight.value = store.storeSuspiciousDataPointHighlight
     voiceFeedbackEnabled.value = store.storeVoiceFeedbackEnabled
     categoryCountInline.value = store.storeCategoryCountInline
     enterBarcode.value = store.storeEnterBarcode
@@ -667,6 +677,10 @@
   watch(autoProgressInputs, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { autoProgressInputs: newValue } })
     store.setAutoProgressInputs(newValue)
+  })
+  watch(suspiciousDataPointHighlight, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { suspiciousDataPointHighlight: newValue } })
+    store.setSuspiciousDataPointHighlight(newValue)
   })
   watch(voiceFeedbackEnabled, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { voiceFeedbackEnabled: newValue } })

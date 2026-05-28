@@ -36,6 +36,7 @@
       df: store.storePlotDisplayField,
       lc: store.storeLocale,
       th: store.storeTheme,
+      sd: store.storeSuspiciousDataPointHighlight ? 1 : 0,
       ds: store.storeDecimalSeparator,
       hc: store.storeHideCitationMessage ? 1 : 0,
       hh: store.storeHideHelpInformation ? 1 : 0,
@@ -92,6 +93,11 @@
           }
           if (parsed.hw) {
             store.setHomeWidgetOrder(parsed.hw.split(','))
+          }
+          if (parsed.sd === 1) {
+            store.setSuspiciousDataPointHighlight(true)
+          } else if (parsed.sd === 0) {
+            store.setSuspiciousDataPointHighlight(false)
           }
           if (parsed.mi === 1) {
             store.setDisplayMarkerIndicators(true)

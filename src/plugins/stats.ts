@@ -1,5 +1,7 @@
-import type { CellPlus, TrialPlus } from '@/plugins/types/client'
+import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
 import { TraitDataType } from '@/plugins/types/gridscore'
+import { coreStore } from '@/stores/app'
+import { fa } from 'vuetify/locale'
 
 export interface Centroid {
   mean: number
@@ -19,14 +21,100 @@ export interface DynamicQuantile {
   validRangeInfo: ValidRangeInfo | undefined
 }
 
+/**
+ * Identifies rows in a 2D array where replicate values are significantly different.
+ * @param {Array<Array<number|null>>} matrix - 2D array of trait values.
+ * @param {number} thresholdZ - Z-score threshold for significance (default: 2.5)
+ * @returns {Array<Object>} - Analysis results mapping to the original matrix indices.
+ */
+export function zScoreRepAnalysis(matrix: number[][], thresholdZ = 2.5) {
+  // Step 1: Calculate Mean, SD, and CV for each row index
+  const rowStats = matrix.map((row, rowIndex) => {
+    // Filter out null, undefined, or NaN values
+    const validValues = row.filter(val => val !== null && val !== undefined && !isNaN(val))
+
+    // Need at least 2 replicates to evaluate variation
+    if (validValues.length < 2) {
+      return { rowIndex, cv: null, mean: null, isSignificant: false }
+    }
+
+    const n = validValues.length
+    const mean = validValues.reduce((sum, val) => sum + val, 0) / n
+
+    // Sample standard deviation (n - 1)
+    const variance = validValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (n - 1)
+    const sd = Math.sqrt(variance)
+
+    // Coefficient of Variation (CV) to normalize across different value ranges
+    const cv = mean === 0 ? 0 : sd / Math.abs(mean)
+
+    return { rowIndex, cv, mean, sd, isSignificant: false, zScore: 0 }
+  })
+
+  // Step 2: Calculate the baseline trial-wide variation metrics
+  const validCVs = rowStats.map(r => r.cv).filter(cv => cv !== null)
+
+  if (validCVs.length === 0) {
+    // Return an empty/false structure if no valid data exists
+    return matrix.map((_, rowIndex) => ({ rowIndex, isSignificant: false }))
+  }
+
+  const trialMeanCV = validCVs.reduce((sum, cv) => sum + cv, 0) / validCVs.length
+  const trialVarianceCV = validCVs.reduce((sum, cv) => sum + Math.pow(cv - trialMeanCV, 2), 0) / validCVs.length
+  const trialSdCV = Math.sqrt(trialVarianceCV)
+
+  // Step 3: Flag the outlier rows
+  return rowStats.map(row => {
+    if (row.cv === null) {
+      row.isSignificant = false
+    } else {
+      // How many standard deviations is this row's CV from the trial average?
+      const zScore = (row.cv - trialMeanCV) / (trialSdCV || 1)
+
+      row.isSignificant = zScore > thresholdZ
+      row.zScore = zScore
+    }
+    return row
+  })
+}
+
+export function calculateTraitStatsIndividual (trait: TraitPlus, data: { [key: string]: CellPlus }, adjuster: (v: string) => number) {
+  if (TraitDataType.isNumeric(trait.dataType) || trait.dataType === TraitDataType.date) {
+    trait.suspiciousChecker = createDynamicQuantiles()
+
+    Object.values(data).forEach(c => {
+      if (c && c.measurements) {
+        const id = trait.id || ''
+        if (c.measurements[id] && c.measurements[id].length > 0) {
+          const svc = trait.suspiciousChecker
+          if (svc) {
+            c.measurements[id].forEach(v => {
+              v.values.forEach(vv => {
+                if (vv !== undefined && vv !== null && vv.trim().length > 0) {
+                  addValue(svc, adjuster(vv))
+                }
+              })
+            })
+          }
+        }
+      }
+    })
+
+    calculateRange(trait.suspiciousChecker)
+  }
+}
+
 export function calculateTraitStats (trial: TrialPlus, data: { [key: string]: CellPlus }) {
   const total = Object.values(data).length
+  const store = coreStore()
 
-  trial.traits.forEach(t => {
-    if (TraitDataType.isNumeric(t.dataType)) {
-      t.suspiciousChecker = createDynamicQuantiles()
-    }
-  })
+  if (store.suspiciousDataPointHighlight) {
+    trial.traits.forEach(t => {
+      if (TraitDataType.isNumeric(t.dataType) || t.dataType === TraitDataType.date) {
+        t.suspiciousChecker = createDynamicQuantiles()
+      }
+    })
+  }
 
   Object.values(data).forEach(c => {
     if (c && c.measurements) {
@@ -34,13 +122,14 @@ export function calculateTraitStats (trial: TrialPlus, data: { [key: string]: Ce
         const id = t.id || ''
         if (c.measurements[id] && c.measurements[id].length > 0) {
           t.progress = t.progress ? (t.progress + 1) : 1
+          const isNumeric = TraitDataType.isNumeric(t.dataType)
 
           const svc = t.suspiciousChecker
           if (svc) {
             c.measurements[id].forEach(v => {
               v.values.forEach(vv => {
                 if (vv !== undefined && vv !== null && vv.trim().length > 0) {
-                  addValue(svc, +vv)
+                  addValue(svc, isNumeric ? +vv : new Date(vv).getTime())
                 }
               })
             })
@@ -52,7 +141,7 @@ export function calculateTraitStats (trial: TrialPlus, data: { [key: string]: Ce
 
   trial.traits.forEach(t => {
     t.progress = t.progress ? (100 * t.progress / total) : 0
-    if (t.suspiciousChecker) {
+    if (store.suspiciousDataPointHighlight && t.suspiciousChecker) {
       calculateRange(t.suspiciousChecker)
     }
   })
@@ -65,7 +154,7 @@ export function calculateTraitStats (trial: TrialPlus, data: { [key: string]: Ce
  * This in turn can be used to give estimations on whether a new data point should be considered
  * to be an outlier or not.
  */
-export function createDynamicQuantiles (maxCentroids = 32) {
+export function createDynamicQuantiles (maxCentroids = 32): DynamicQuantile {
   return {
     maxCentroids,
     centroids: [],
