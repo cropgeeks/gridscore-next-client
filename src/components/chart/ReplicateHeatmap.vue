@@ -91,7 +91,7 @@
   import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { mdiAlert, mdiCounter, mdiInformation } from '@mdi/js'
   import { getI18nParams } from '@/plugins/formatting'
-  import { zScoreRepAnalysis } from '@/plugins/stats'
+  import { flagHighDisagreementRows, zScoreRepAnalysis } from '@/plugins/stats'
 
   interface RepInfo {
     row: number
@@ -131,7 +131,8 @@
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
 
-  const isNumericDateOrCat = computed(() => selectedTrait.value && (TraitDataType.isNumeric(selectedTrait.value.dataType) || selectedTrait.value.dataType === TraitDataType.date || TraitDataType.isCategorical(selectedTrait.value.dataType)))
+  const isNumericOrDate = computed(() => selectedTrait.value && (TraitDataType.isNumeric(selectedTrait.value.dataType) || selectedTrait.value.dataType === TraitDataType.date))
+  const isNumericDateOrCat = computed(() => selectedTrait.value && (isNumericOrDate.value || TraitDataType.isCategorical(selectedTrait.value.dataType)))
 
   const i18nParams = computed(() => getI18nParams(compProps.trial.dimensionNames))
   const safeTrialName = computed(() => compProps.trial ? compProps.trial.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : '')
@@ -353,36 +354,69 @@
 
       const germplasmTickText = allGermplasm.value.concat()
 
-      if (highlightSus.value && store.storeSuspiciousDataPointHighlight && isNumericDateOrCat) {
-        const res = zScoreRepAnalysis(z)
-        res.forEach(r => {
-          if (r.isSignificant) {
-            // Highlight the label in color and bold
-            const index = germplasmTickText.length - r.rowIndex - 1
-            germplasmTickText[index] = `<span style='color: #${color}; font-weight: bold;'>${germplasmTickText[index]}</span>`
+      if (highlightSus.value && store.storeSuspiciousDataPointHighlight && isNumericOrDate) {
+        if (isNumericDateOrCat.value) {
+          const res = flagHighDisagreementRows(z, 0.5)
 
-            // Also add a vertical bar to the left of the chart (right of the germplasm name)
-            replicates.value.forEach((rep, ri) => {
-              if (!isNaN(z[r.rowIndex]?.[ri])) {
-                shapes.push({
-                  type: 'line' as const,
-                  // x-reference is assigned to the x-values
-                  xref: 'paper' as const,
-                  // y-reference is assigned to the plot paper [0,1]
-                  yref: 'y' as const,
-                  x0: 0,
-                  y0: r.rowIndex + 0.5,
-                  x1: 0,
-                  y1: r.rowIndex + 1.5,
-                  line: {
-                    width: 2,
-                    color,
-                  },
-                })
-              }
-            })
-          }
-        })
+          res.forEach(r => {
+            if (r.suspicious) {
+              // Highlight the label in color and bold
+              const index = germplasmTickText.length - r.germplasmIndex - 1
+              germplasmTickText[index] = `<span style='color: #${color}; font-weight: bold;'>${germplasmTickText[index]}</span>`
+
+              // Also add a vertical bar to the left of the chart (right of the germplasm name)
+              replicates.value.forEach((rep, ri) => {
+                if (!isNaN(z[r.germplasmIndex]?.[ri])) {
+                  shapes.push({
+                    type: 'line' as const,
+                    // x-reference is assigned to the x-values
+                    xref: 'paper' as const,
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y' as const,
+                    x0: 0,
+                    y0: r.germplasmIndex + 0.5,
+                    x1: 0,
+                    y1: r.germplasmIndex + 1.5,
+                    line: {
+                      width: 2,
+                      color,
+                    },
+                  })
+                }
+              })
+            }
+          })
+        } else {
+          const res = zScoreRepAnalysis(z)
+          res.forEach(r => {
+            if (r.isSignificant) {
+              // Highlight the label in color and bold
+              const index = germplasmTickText.length - r.rowIndex - 1
+              germplasmTickText[index] = `<span style='color: #${color}; font-weight: bold;'>${germplasmTickText[index]}</span>`
+
+              // Also add a vertical bar to the left of the chart (right of the germplasm name)
+              replicates.value.forEach((rep, ri) => {
+                if (!isNaN(z[r.rowIndex]?.[ri])) {
+                  shapes.push({
+                    type: 'line' as const,
+                    // x-reference is assigned to the x-values
+                    xref: 'paper' as const,
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y' as const,
+                    x0: 0,
+                    y0: r.rowIndex + 0.5,
+                    x1: 0,
+                    y1: r.rowIndex + 1.5,
+                    line: {
+                      width: 2,
+                      color,
+                    },
+                  })
+                }
+              })
+            }
+          })
+        }
       }
 
       if (traces.length > 0 && traces[0]) {
@@ -440,7 +474,7 @@
       }
 
       const layout = {
-        margin: { autoexpand: true },
+        margin: { autoexpand: true, t: 10 },
         dragmode: false as const,
         autosize: true,
         height: (20 * allGermplasm.value.length) + 200,

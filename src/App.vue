@@ -25,7 +25,7 @@
           <template #activator="{ props }">
             <v-btn :icon="mdiNotebook" v-bind="props" />
           </template>
-          <TrialCard max-width="400px" :trial="selectedTrial" :show-actions="false" interactive force-show-details :can-share="false" ref="selectedTrialCard" />
+          <TrialCard max-width="400px" :trial="selectedTrial" :show-options="false" :show-select="false" interactive force-show-details :can-share="false" ref="selectedTrialCard" />
         </v-menu>
 
         <v-menu>
@@ -103,6 +103,7 @@
           <v-list-item :prepend-icon="mdiExport" :disabled="!selectedTrial" :title="$t('menuDataExport')" to="/export" />
 
           <v-divider />
+          <v-list-item :prepend-icon="mdiMapMarkerPath" :title="$t('menuTrialMap')" to="/trial-map" />
           <v-list-item :prepend-icon="mdiCog" :title="$t('menuSettings')" to="/settings" />
           <v-list-item prepend-icon="$gridscore" :title="$t('menuAbout')" to="/about" />
         </v-list>
@@ -174,7 +175,7 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
-  import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiFinance, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiFinance, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiMapMarkerPath, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
   import ServerMessageModal from '@/components/modals/ServerMessageModal.vue'
   // import { useTrial } from '@/plugins/composition/useTrial'

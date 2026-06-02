@@ -43,7 +43,7 @@
 <script setup lang="ts">
   import { coreStore } from '@/stores/app'
 
-  import L, { type TileLayer, type Map, type Circle } from 'leaflet'
+  import L, { type TileLayer, type Map } from 'leaflet'
   import 'leaflet/dist/leaflet.css'
   import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
   import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -128,6 +128,13 @@
       maxNativeZoom: 19,
     })
 
+    const topo = L.tileLayer('//{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      id: 'OpenTopoMap',
+      attribution: 'Kartendaten: &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: &copy; <a href="http://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)</code>',
+      maxZoom: 19,
+      maxNativeZoom: 17,
+    })
+
     switch (store.storeMapLayer) {
       case 'theme': {
         map.addLayer(themeLayer)
@@ -135,6 +142,10 @@
       }
       case 'satellite': {
         map.addLayer(satellite)
+        break
+      }
+      case 'topo': {
+        map.addLayer(topo)
         break
       }
       default: {
@@ -147,6 +158,7 @@
       'Theme-based': themeLayer,
       OpenStreetMap: openstreetmap,
       'Esri WorldImagery': satellite,
+      OpenTopoMap: topo,
     }
 
     map.on('baselayerchange', e => {
@@ -161,6 +173,10 @@
         }
         case 'Esri WorldImagery': {
           store.setMapLayer('satellite')
+          break
+        }
+        case 'OpenTopoMap': {
+          store.setMapLayer('topo')
           break
         }
       }
@@ -211,6 +227,7 @@
         chunkedLoading: true,
         disableClusteringAtZoom: 16,
       })
+      map.addLayer(clusterer)
     }
 
     // Extract all the individual polygons from the data
@@ -293,7 +310,6 @@
           map.fitBounds(bounds, { padding: [50, 50] })
         }
       }
-      map.addLayer(clusterer)
     }
 
     hasData.value = hasLocationData

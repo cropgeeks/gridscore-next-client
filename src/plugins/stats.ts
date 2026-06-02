@@ -78,7 +78,7 @@ export function zScoreRepAnalysis(matrix: number[][], thresholdZ = 2.5) {
   })
 }
 
-export function calculateTraitStatsIndividual (trait: TraitPlus, data: { [key: string]: CellPlus }, adjuster: (v: string) => number) {
+export function calculateTraitStatsIndividual (trait: TraitPlus, data: { [key: string]: CellPlus }, timepoint: string | undefined, adjuster: (v: string) => number) {
   if (TraitDataType.isNumeric(trait.dataType) || trait.dataType === TraitDataType.date) {
     trait.suspiciousChecker = createDynamicQuantiles()
 
@@ -88,10 +88,10 @@ export function calculateTraitStatsIndividual (trait: TraitPlus, data: { [key: s
         if (c.measurements[id] && c.measurements[id].length > 0) {
           const svc = trait.suspiciousChecker
           if (svc) {
-            c.measurements[id].forEach(v => {
+            c.measurements[id].filter(m => timepoint === undefined || new Date(timepoint).toISOString().split('T')[0] === new Date(m.timestamp).toISOString().split('T')[0]).forEach(v => {
               v.values.forEach(vv => {
-                if (vv !== undefined && vv !== null && vv.trim().length > 0) {
-                  addValue(svc, adjuster(vv))
+                if (vv !== undefined && vv !== null && `${vv}`.trim().length > 0) {
+                  addValue(svc, adjuster(`${vv}`))
                 }
               })
             })
@@ -284,4 +284,41 @@ export function isSuspicious (state: DynamicQuantile, value: number): boolean {
   } else {
     return false
   }
+}
+
+function disagreementRate (repValues: (number | null)[]) {
+  const vals = repValues.filter(v => v !== null && !isNaN(v))
+  if (vals.length < 2) {
+    return null
+}
+  let pairs = 0, disagreements = 0
+  for (let i = 0; i < vals.length; i++) {
+    for (let j = i + 1; j < vals.length; j++) {
+      pairs++
+      if (vals[i] !== vals[j]) {
+        disagreements++
+      }
+    }
+  }
+  return disagreements / pairs // 0 = perfect agreement, 1 = all different
+}
+
+export function flagHighDisagreementRows (data: (number | null)[][], threshold: number | null = null) {
+  const rates = data.map(row => disagreementRate(row))
+  const validRates = rates.filter(r => r !== null)
+
+  // if no threshold supplied, derive one empirically:
+  // flag rows that are outliers in the trial's own disagreement distribution
+  if (threshold === null) {
+    const mean = validRates.reduce((a, b) => a + b, 0) / validRates.length
+    const sd = Math.sqrt(validRates.reduce((s, r) => s + (r - mean) ** 2, 0) / validRates.length)
+    threshold = mean + 2 * sd // flag anything > 2 SD above trial mean
+  }
+
+  return rates.map((rate, gi) => ({
+    germplasmIndex: gi,
+    disagreementRate: rate,
+    threshold,
+    suspicious: rate === null ? null : rate > (threshold || 0),
+  }))
 }

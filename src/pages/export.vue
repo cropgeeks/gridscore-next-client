@@ -6,7 +6,8 @@
       horizontal
       :interactive="false"
       :can-share="false"
-      :show-actions="false"
+      :show-options="false"
+      :show-select="false"
       force-show-details
     />
 

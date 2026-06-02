@@ -76,11 +76,11 @@
       </template>
     </v-list>
 
-    <template v-if="showActions">
+    <template v-if="showOptions || showSelect">
       <v-card-actions>
         <slot name="actions">
           <div class="d-flex justify-space-between flex-grow-1 flex-wrap ga-2">
-            <div>
+            <div v-if="showOptions">
               <v-btn variant="tonal" :color="selected ? 'info' : undefined" :text="$t(selected ? 'buttonDeselect' : 'buttonSelect')" :prepend-icon="selected ? mdiCheckboxMarked : mdiCheckboxBlankOutline" v-if="selectionEnabled" @click="emit('toggle-select')" />
               <template v-else>
                 <v-btn variant="tonal" :append-icon="mdiMenuDown" v-if="horizontal === false && showDetails === true" @click="menuShown = true"><v-icon :icon="mdiCog" /></v-btn>
@@ -112,7 +112,8 @@
                 </v-menu>
               </template>
             </div>
-            <v-btn :prepend-icon="isSelected ? mdiNotebookCheck : mdiNotebookEdit" :text="$t(isSelected ? 'buttonActive' : 'buttonSelect')" :color="isSelected ? 'primary' : 'info'" variant="tonal" @click="emit('load')" />
+            <v-spacer v-else />
+            <v-btn v-if="showSelect" :prepend-icon="isSelected ? mdiNotebookCheck : mdiNotebookEdit" :text="$t(isSelected ? 'buttonActive' : 'buttonSelect')" :color="isSelected ? 'primary' : 'info'" variant="tonal" @click="emit('load')" />
           </div>
         </slot>
       </v-card-actions>
@@ -222,7 +223,8 @@
     selectionEnabled?: boolean
     selected?: boolean
     wrapDescription?: boolean
-    showActions?: boolean
+    showOptions?: boolean
+    showSelect?: boolean
     interactive?: boolean
     canShare?: boolean
     horizontal?: boolean
@@ -233,7 +235,8 @@
     selectionEnabled: false,
     selected: false,
     wrapDescription: false,
-    showActions: true,
+    showOptions: true,
+    showSelect: true,
     interactive: true,
     canShare: true,
     horizontal: false,

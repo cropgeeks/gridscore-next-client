@@ -289,7 +289,8 @@
       if (isNumericOrDate.value && store.storeSuspiciousDataPointHighlight) {
         if (highlightSus.value) {
           trait.suspiciousChecker = createDynamicQuantiles()
-          calculateTraitStatsIndividual(trait, trialData, v => {
+          const timepoint = (timepoints.value.length > 0 && trait.allowRepeats) ? timepoints.value[currentTimepoint.value] : undefined
+          calculateTraitStatsIndividual(trait, trialData, timepoint, v => {
             if (trait.dataType === TraitDataType.date) {
               return (new Date(v).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)
             } else {
