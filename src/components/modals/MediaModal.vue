@@ -72,6 +72,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <InternalCameraModal v-if="store.storeCameraMode === 'internal'" :selected-mode="mode" ref="internalCameraModal" @media-selected="setMediaFromInternal" />
 </template>
 
 <script setup lang="ts">
@@ -108,6 +110,7 @@
   const imageInput = useTemplateRef('imageInput')
   const videoInput = useTemplateRef('videoInput')
   const video = useTemplateRef('video')
+  const internalCameraModal = useTemplateRef('internalCameraModal')
 
   const canContinue = computed(() => {
     return mediaData.value !== undefined
@@ -142,6 +145,14 @@
 
     return mapped.join('_') + extension
   })
+
+  function setMediaFromInternal (newData: Blob) {
+    // Convert to base64 for displaying
+    inputFile.value = new File([newData], `internal.${mode.value === 'image' ? 'jpg' : '.mp4'}`, {
+      type: newData.type,
+      lastModified: Date.now(),
+    })
+  }
 
   watch(inputFile, newValue => {
     // If there is a new media file, reset data
@@ -190,6 +201,47 @@
     }
   })
 
+  // async function save () {
+  //   if (inputFile.value && mediaData.value) {
+  //     const file = new File([inputFile.value], filename.value, { type: inputFile.value.type })
+
+  //     // 1. File System Access API — best UX on desktop, works on newer Samsung Internet too
+  //     if ('showSaveFilePicker' in window) {
+  //       try {
+  //         // @ts-expect-error
+  //         const handle = await window.showSaveFilePicker({ suggestedName: filename.value })
+  //         const writable = await handle.createWritable()
+  //         await writable.write(inputFile.value)
+  //         await writable.close()
+  //         return
+  //       } catch (e: unknown) {
+  //         if (e instanceof DOMException && e.name === 'AbortError') {
+  //           return
+  //         }
+  //         console.warn('showSaveFilePicker failed:', e)
+  //         // Fall through
+  //       }
+  //     }
+
+  //     // 2. Web Share API — best on mobile where showSaveFilePicker is absent
+  //     if (navigator.canShare?.({ files: [file] })) {
+  //       try {
+  //         await navigator.share({ files: [file], title: filename.value })
+  //         return
+  //       } catch (e: unknown) {
+  //         if (e instanceof DOMException && e.name === 'AbortError') {
+  //           return
+  //         }
+  //         console.warn('Web Share failed:', e)
+  //         // Fall through
+  //       }
+  //     }
+
+  //     // 3. FileSaver.js — desktop browsers without File System Access, and most other cases
+  //     saveAs(inputFile.value, filename.value)
+  //   }
+  // }
+
   function save () {
     if (mediaData.value) {
       saveAs(mediaData.value, filename.value)
@@ -219,10 +271,15 @@
         cell.value = c
       })
     dialog.value = true
-    if (type === 'image') {
-      imageInput.value?.click()
+
+    if (store.storeCameraMode === 'internal') {
+      internalCameraModal.value?.show()
     } else {
-      videoInput.value?.click()
+      if (type === 'image') {
+        imageInput.value?.click()
+      } else {
+        videoInput.value?.click()
+      }
     }
   }
   function hide () {

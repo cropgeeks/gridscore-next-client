@@ -87,6 +87,32 @@ function hexToRgba (hex: string, a: number) {
   }
 }
 
+/**
+ * Creates a linear gradient between the two given colors with the given number of steps
+ * @param {String} one The first color in HEX
+ * @param {String} two The second color in HEX
+ * @param {Number} steps The number of steps between the two colors
+ */
+function createColorGradient (one: string, two: string, steps: number) {
+  const oneRgb = hexToRgb(one)
+  const twoRgb = hexToRgb(two)
+
+  const result = []
+
+  if (oneRgb && twoRgb) {
+    for (let i = 0; i < steps; i++) {
+      const iNorm = i / (steps - 1)
+      result.push(rgbToHex({
+        r: Math.floor(oneRgb.r + iNorm * (twoRgb.r - oneRgb.r)),
+        g: Math.floor(oneRgb.g + iNorm * (twoRgb.g - oneRgb.g)),
+        b: Math.floor(oneRgb.b + iNorm * (twoRgb.b - oneRgb.b)),
+      }))
+    }
+  }
+
+  return result
+}
+
 const categoricalColors = {
   GridScoreDefault: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600'],
   CBQuantPair12: ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928'],
@@ -142,6 +168,7 @@ export {
   invertHex,
   getPrimaryColor,
   brighten,
+  createColorGradient,
   categoricalColors,
   THEME_COLORS,
 }

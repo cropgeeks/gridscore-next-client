@@ -2,7 +2,7 @@ import { type IDBPDatabase, openDB } from 'idb'
 import { coreStore } from '@/stores/app'
 import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type DimensionNames, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type PlotCoords } from '@/plugins/types/client'
-import { getCellText, getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl } from '@/plugins/util'
+import { getCellText, getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl, toLocalDateString } from '@/plugins/util'
 import { getId } from '@/plugins/id'
 import { clearTraitImageCache, forceUpdateTraitImageCache } from '@/plugins/traitcache'
 import { isGeographyValid, isLocationValid, trialLayoutToPlots, type XY } from '@/plugins/location'
@@ -18,6 +18,10 @@ export interface DataModification {
 
 export interface PlotModification {
   [index: string]: PlotDetailContent
+}
+
+export interface TrialActivity {
+  [index: string]: number
 }
 
 export interface TrialModification {
@@ -783,6 +787,38 @@ async function updateTrial (localId: string, updatedTrial: TrialPlus) {
     return db.put('trials', updatedTrial)
   } else {
     return new Promise<void>(resolve => resolve())
+  }
+}
+
+async function extractTrialActivity (localId: string): Promise<TrialActivity> {
+  const db = await getDb()
+
+  const trial = await db.get('trials', localId)
+
+  if (trial) {
+    const range = IDBKeyRange.bound([localId, 0, 0], [localId, trial.layout.rows, trial.layout.columns])
+    return db.getAll('data', range)
+      .then(grid => {
+        const density: TrialActivity = {}
+
+        if (grid) {
+          grid.forEach((c: CellPlus) => {
+            if (c && c.measurements) {
+              trial.traits.forEach((t: TraitPlus) => {
+                c.measurements[t.id || '']?.forEach(dp => {
+                  const date = toLocalDateString(new Date(dp.timestamp))
+
+                  density[date] = (density[date] || 0) + dp.values.length
+                })
+              })
+            }
+          })
+        }
+
+        return density
+      })
+  } else {
+    return new Promise(resolve => resolve({}))
   }
 }
 
@@ -1741,4 +1777,5 @@ export {
   getPlotGeolocations,
   lockTrial,
   requestPersistence,
+  extractTrialActivity,
 }

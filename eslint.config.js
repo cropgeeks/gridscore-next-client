@@ -14,6 +14,7 @@ export default vuetify({
     'unicorn/no-new-array': 'off',
     'unicorn/no-for-loop': 'off',
     'unicorn/no-array-callback-reference': 'off',
+    'unicorn/prefer-dom-node-dataset': 'off',
     'unicorn/catch-error-name': 'off',
     'unicorn/no-document-cookie': 'off',
     'unicorn/prefer-at': 'off',

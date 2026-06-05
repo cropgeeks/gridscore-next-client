@@ -140,6 +140,14 @@
               <v-btn class="flex-grow-1" :prepend-icon="mdiTab" :value="TraitGroupMode.TABS" :text="$t('buttonTraitGroupTabs')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeTraitGroupMode === TraitGroupMode.TABS" /></template></v-btn>
             </v-btn-toggle>
 
+            <h4 class="mt-3">{{ $t('formLabelSettingsCameraMode') }}</h4>
+            <p>{{ $t('formDescriptionSettingsCameraMode') }}</p>
+
+            <v-btn-toggle mandatory v-model="cameraMode" variant="tonal" color="primary" class="d-flex">
+              <v-btn class="flex-grow-1" :prepend-icon="mdiCameraFront" value="external" :text="$t('buttonCameraModeExternal')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeCameraMode === 'external'" /></template></v-btn>
+              <v-btn class="flex-grow-1" :prepend-icon="mdiCellphoneScreenshot" value="internal" :text="$t('buttonCameraModeInternal')"><template #append><v-icon :icon="mdiCheck" v-if="store.storeCameraMode === 'internal'" /></template></v-btn>
+            </v-btn-toggle>
+
             <div class="text-title-small mt-3">{{ $t('formLabelSettingsCategoryCountInline') }}</div>
             <v-slider
               v-model="categoryCountInline"
@@ -423,7 +431,7 @@
   import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
   import { coreStore } from '@/stores/app'
-  import { mdiBarcodeScan, mdiBrightnessAuto, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDirectionsFork, mdiDrag, mdiExport, mdiGestureTap, mdiGrid, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiTab, mdiUndoVariant, mdiViewComfy, mdiViewDay, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiBrightnessAuto, mdiCameraFront, mdiCellphoneScreenshot, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDirectionsFork, mdiDrag, mdiExport, mdiGestureTap, mdiGrid, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiTab, mdiUndoVariant, mdiViewComfy, mdiViewDay, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
@@ -460,6 +468,7 @@
   const defaultDataEntryView = ref(store.storeDefaultDataEntryView)
   const navigationMode = ref(store.storeNavigationMode)
   const traitGroupMode = ref(store.storeTraitGroupMode)
+  const cameraMode = ref(store.storeCameraMode)
   const displayMarkerIndicators = ref(store.storeDisplayMarkerIndicators)
   const showFullTraitDescription = ref(store.storeShowFullTraitDescription)
   const largeButtonsForIntTraits = ref(store.storeLargeButtonsForIntTraits)
@@ -531,6 +540,7 @@
     defaultDataEntryView.value = store.storeDefaultDataEntryView
     navigationMode.value = store.storeNavigationMode
     traitGroupMode.value = store.storeTraitGroupMode
+    cameraMode.value = store.storeCameraMode
     displayMarkerIndicators.value = store.storeDisplayMarkerIndicators
     showFullTraitDescription.value = store.storeShowFullTraitDescription
     largeButtonsForIntTraits.value = store.storeLargeButtonsForIntTraits
@@ -636,6 +646,10 @@
   watch(traitGroupMode, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { traitGroupMode: newValue } })
     store.setTraitGroupMode(newValue)
+  })
+  watch(cameraMode, async newValue => {
+    emitter.emit('plausible-event', { key: 'settings-changed', props: { cameraMode: newValue } })
+    store.setCameraMode(newValue)
   })
   watch(mainDisplayMode, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { mainDisplayMode: newValue } })

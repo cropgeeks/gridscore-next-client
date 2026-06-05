@@ -72,6 +72,7 @@ export const coreStore = defineStore('core', {
     defaultDataEntryView: DataEntryView.GRID as DataEntryView,
     selectedTrial: undefined as (string | undefined),
     mapLayer: 'theme',
+    cameraMode: 'external' as 'internal' | 'external',
     decimalSeparator: '.',
     traitGroupMode: TraitGroupMode.SECTIONS as TraitGroupMode,
     trialListMode: TrialListMode.ALL as TrialListMode,
@@ -123,6 +124,7 @@ export const coreStore = defineStore('core', {
     storeDisplayMarkerIndicators: (state): boolean => state.displayMarkerIndicators,
     storeDisplayMinCellWidth: (state): number => state.displayMinCellWidth,
     storeGpsEnabled: (state): boolean => state.gpsEnabled,
+    storeCameraMode: (state): 'internal' | 'external' => state.cameraMode || 'external',
     storeTraitGroupMode: (state): TraitGroupMode => state.traitGroupMode || TraitGroupMode.SECTIONS,
     storeVoiceFeedbackEnabled: (state): boolean => state.voiceFeedbackEnabled,
     storeRestrictInputToMarked: (state): boolean => state.restrictInputToMarked,
@@ -206,6 +208,9 @@ export const coreStore = defineStore('core', {
     },
     setHideTraitCircles (newHideTraitCircles: boolean) {
       this.hideTraitCircles = newHideTraitCircles
+    },
+    setCameraMode (newCameraMode: 'internal' | 'external') {
+      this.cameraMode = newCameraMode
     },
     setPreviouslyScoredPlot (newPreviouslyScoredPlot: RowColumn | undefined) {
       this.previouslyScoredPlot = newPreviouslyScoredPlot

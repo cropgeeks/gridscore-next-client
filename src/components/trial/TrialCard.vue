@@ -1,5 +1,8 @@
 <template>
-  <v-card :variant="isSelected ? 'outlined' : undefined" class="d-flex flex-column flex-grow-1">
+  <v-card :variant="isSelected ? 'outlined' : undefined" class="d-flex flex-column flex-grow-1 trial-card">
+    <!-- <template #loader>
+      <TrialActivity :data="trialActivityData" v-if="trialActivityData" />
+    </template> -->
     <template #title>
       <span v-tooltip:top="trial.name" class="clamp-two">{{ trial.name }}</span>
     </template>
@@ -251,6 +254,31 @@
   const canEdit = computed(() => compProps.trial.editable === true && compProps.trial.isLocked !== true)
   const showDetails = computed(() => compProps.forceShowDetails || (store.storeTrialShowDetails !== false))
 
+  // const activity = ref<TrialActivity>()
+  // const trialActivityData = computed(() => {
+  //   if (activity.value) {
+  //     const dates = Object.keys(activity.value).sort((a, b) => a.localeCompare(b))
+
+  //     const startDate = dates[0] || new Date()
+
+  //     const values: number[] = []
+  //     // Parse the start date and get "today" at midnight for an accurate comparison
+  //     const currentDate = new Date(startDate)
+  //     const endDate = new Date()
+  //     endDate.setHours(0, 0, 0, 0)
+
+  //     while (currentDate <= endDate) {
+  //       const formattedDate = toLocalDateString(currentDate)
+  //       values.push(activity.value[formattedDate] || 0)
+  //       currentDate.setDate(currentDate.getDate() + 1)
+  //     }
+
+  //     return values
+  //   } else {
+  //     return undefined
+  //   }
+  // })
+
   const hasTimeframeTraits = computed(() => compProps.trial?.traits.some(t => t.timeframe))
 
   const trialDuration = computed(() => {
@@ -311,4 +339,21 @@
         emitter.emit('plausible-event', { key: 'trial-comment', props: { type: 'deleted' } })
       })
   }
+
+  // function getActivity () {
+  //   extractTrialActivity(compProps.trial.localId || '')
+  //     .then(act => {
+  //       activity.value = act
+  //     })
+  // }
+
+  // onMounted(() => {
+  //   getActivity()
+  // })
 </script>
+
+<style>
+/* .trial-card {
+  overflow: visible !important;
+} */
+</style>

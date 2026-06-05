@@ -34,6 +34,7 @@
       cs: store.storeCanvasShape === CanvasShape.SQUARE ? 1 : 0,
       md: store.storeMainDisplayMode === MainDisplayMode.CANVAS_ONLY ? 1 : 0,
       df: store.storePlotDisplayField,
+      cm: store.storeCameraMode === 'external' ? 1 : 0,
       lc: store.storeLocale,
       th: store.storeTheme,
       sd: store.storeSuspiciousDataPointHighlight ? 1 : 0,
@@ -178,6 +179,11 @@
             store.setCanvasSize(CanvasSize.MEDIUM)
           } else if (parsed.sz === 2) {
             store.setCanvasSize(CanvasSize.LARGE)
+          }
+          if (parsed.cm === 0) {
+            store.setCameraMode('internal')
+          } else {
+            store.setCameraMode('external')
           }
           if (parsed.md === 0) {
             store.setMainDisplayMode(MainDisplayMode.AUTO)
