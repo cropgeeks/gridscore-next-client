@@ -53,6 +53,30 @@ export function useCamera () {
     return null
   }
 
+  function convertToJpeg (pngBlob: Blob): Promise<Blob> {
+    return new Promise(resolve => {
+      const img = new Image()
+      img.src = URL.createObjectURL(pngBlob)
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width
+        canvas.height = img.height
+        const ctx = canvas.getContext('2d')
+
+        if (ctx) {
+          ctx.drawImage(img, 0, 0)
+          canvas.toBlob(jpegBlob => {
+            URL.revokeObjectURL(img.src)
+            resolve(jpegBlob || pngBlob)
+          }, 'image/jpeg', 0.95)
+        } else {
+          resolve(pngBlob)
+        }
+      }
+      img.onerror = () => resolve(pngBlob)
+    })
+  }
+
   async function startCamera (constraints: MediaStreamConstraints = {}) {
     // Clear any previous review state on restart
     reviewingBlob.value = null
@@ -114,8 +138,12 @@ export function useCamera () {
     }
 
     try {
-      const blob = await imageCapture.takePhoto()
+      let blob = await imageCapture.takePhoto()
       if (blob) {
+        if (blob.type === 'image/png') {
+          blob = await convertToJpeg(blob)
+        }
+
         reviewingBlob.value = blob
         lastCapturedType.value = 'image'
       }

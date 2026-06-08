@@ -71,6 +71,11 @@
   import { useCamera } from '@/plugins/composition/useCamera'
   import { mdiAlert, mdiCameraFlip, mdiCheck, mdiRefresh } from '@mdi/js'
   import { useDisplay } from 'vuetify'
+  import * as piexif from 'piexifjs'
+
+  import { useGeolocation } from '@vueuse/core'
+
+  const { coords } = useGeolocation()
 
   export interface CameraViewProps {
     canSwitchModes?: boolean
@@ -165,8 +170,72 @@
         URL.revokeObjectURL(lastSavedUrl.value)
       }
 
-      emit('media-selected', reviewingBlob.value)
+      let finalBlob = reviewingBlob.value
+      if (compProps.selectedMode === 'image' && coords.value && isFinite(coords.value.latitude) && isFinite(coords.value.longitude)) {
+        const base64DataUrl = await blobToDataUrl(reviewingBlob.value)
+        const gpsExifData: any = {}
+
+        // Define North/South and East/West designators
+        gpsExifData[piexif.GPSIFD.GPSLatitudeRef] = coords.value.latitude >= 0 ? 'N' : 'S'
+        gpsExifData[piexif.GPSIFD.GPSLatitude] = degToExifRational(coords.value.latitude)
+
+        gpsExifData[piexif.GPSIFD.GPSLongitudeRef] = coords.value.longitude >= 0 ? 'E' : 'W'
+        gpsExifData[piexif.GPSIFD.GPSLongitude] = degToExifRational(coords.value.longitude)
+
+        const exifObj = {
+          '0th': {},
+          'Exif': {},
+          'GPS': gpsExifData,
+        }
+
+        // Generate the binary EXIF string block
+        const exifBytes = piexif.dump(exifObj)
+
+        // Inject the metadata bytes straight into the image string payload
+        const modifiedBase64DataUrl = piexif.insert(exifBytes, base64DataUrl)
+
+        finalBlob = dataUrlToBlob(modifiedBase64DataUrl, reviewingBlob.value.type)
+      }
+
+      emit('media-selected', finalBlob)
     }
+  }
+
+  function degToExifRational (decimalDegrees: number): number[][] {
+    const absolute = Math.abs(decimalDegrees)
+    const degrees = Math.floor(absolute)
+    const minutesNotTruncated = (absolute - degrees) * 60
+    const minutes = Math.floor(minutesNotTruncated)
+    const seconds = Math.floor((minutesNotTruncated - minutes) * 60 * 100)
+
+    return [
+      [degrees, 1],
+      [minutes, 1],
+      [seconds, 100],
+    ]
+  }
+
+  // Helper function: Reads a Blob as a Data URL string
+  function blobToDataUrl (blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
+  }
+
+  // Helper function: Converts a base64/DataURL string back into a raw binary Blob
+  function dataUrlToBlob (dataUrl: string, mimeType: string): Blob {
+    const byteString = atob(dataUrl.split(',')[1] || '')
+    const ab = new ArrayBuffer(byteString.length)
+    const ia = new Uint8Array(ab)
+
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i)
+    }
+
+    return new Blob([ab], { type: mimeType })
   }
 
   onMounted(() => {

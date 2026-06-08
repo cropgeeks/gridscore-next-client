@@ -20,7 +20,6 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/about': RouteRecordInfo<'/about', '/about', Record<never, never>, Record<never, never>>,
-    '/camera': RouteRecordInfo<'/camera', '/camera', Record<never, never>, Record<never, never>>,
     '/collect/grid': RouteRecordInfo<'/collect/grid', '/collect/grid', Record<never, never>, Record<never, never>>,
     '/collect/input': RouteRecordInfo<'/collect/input', '/collect/input', Record<never, never>, Record<never, never>>,
     '/collect/walk': RouteRecordInfo<'/collect/walk', '/collect/walk', Record<never, never>, Record<never, never>>,
@@ -58,10 +57,6 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/about.vue': {
       routes: '/about'
-      views: never
-    }
-    'src/pages/camera.vue': {
-      routes: '/camera'
       views: never
     }
     'src/pages/collect/grid.vue': {
