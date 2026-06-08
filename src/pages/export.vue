@@ -106,10 +106,10 @@
               <template #subtitle><span class="text-wrap">{{ $t('pageExportTrialFormatLayoutTrialCardSubtitle') }}</span></template>
               <template #text>
                 <div class="d-flex flex-wrap">
-                  <v-list-item slim :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows')">
+                  <v-list-item slim :prepend-icon="mdiLandRowsHorizontal" :title="$t('widgetTrialSelectorRows', i18nParams)">
                     <template #append><v-chip class="ms-3" size="small">{{ getNumberWithSuffix(trial.layout.rows, 1) }}</v-chip></template>
                   </v-list-item>
-                  <v-list-item slim :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns')">
+                  <v-list-item slim :prepend-icon="mdiLandRowsVertical" :title="$t('widgetTrialSelectorColumns', i18nParams)">
                     <template #append><v-chip class="ms-3" size="small">{{ getNumberWithSuffix(trial.layout.columns, 1) }}</v-chip></template>
                   </v-list-item>
                   <v-list-item slim :prepend-icon="mdiSprout" :title="$t('widgetTrialSelectorGermplasm')">
@@ -309,7 +309,7 @@
 <script setup lang="ts">
   import { downloadText, exportDataTab, exportPlotComments, exportTrialComments, exportTrialEvents, exportTrialLayout, traitsToGerminate, traitsToGridScore, traitsToTabular, trialToPotentialGerminate, type TabExportConfig } from '@/plugins/dataexport'
   import { getTrialDataCached } from '@/plugins/datastore'
-  import { getNumberWithSuffix } from '@/plugins/formatting'
+  import { getI18nParams, getNumberWithSuffix } from '@/plugins/formatting'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
@@ -341,6 +341,8 @@
 
   const trialCommentCount = computed(() => (trial.value?.comments || []).length)
   const trialEventCount = computed(() => (trial.value?.events || []).length)
+
+  const i18nParams = computed(() => getI18nParams(trial.value?.dimensionNames))
 
   function exportTrialLayoutLocal () {
     if (trial.value && trialData.value) {
