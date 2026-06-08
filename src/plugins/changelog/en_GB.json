@@ -922,5 +922,21 @@
         "text": "Fixed an issue with the long format export where non-aggregated data had a mismatch between column headers and data."
       }
     ]
+  },
+  {
+    "version": "4.3.0",
+    "date": "2025-06-08",
+    "items": [
+      {
+        "type": "new",
+        "title": "Suspicious data highlight",
+        "text": "During data input as well as for data visualizations, we have added warnings/highlights for suspicious trait values. These could be numeric data points that stray too far from the main data distribution or categorical values that have a high disagreement rate between replicates."
+      },
+      {
+        "type": "new",
+        "title": "Internal camera",
+        "text": "For devices that show issues with saving images, we have added an internal camera view for taking and tagging images and videos. This should finally resolve any issues on Samsung devices. To enable, please check the settings for the 'camera mode'."
+      }
+    ]
   }
 ]
