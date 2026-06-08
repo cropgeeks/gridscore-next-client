@@ -172,29 +172,33 @@
 
       let finalBlob = reviewingBlob.value
       if (compProps.selectedMode === 'image' && coords.value && isFinite(coords.value.latitude) && isFinite(coords.value.longitude)) {
-        const base64DataUrl = await blobToDataUrl(reviewingBlob.value)
-        const gpsExifData: any = {}
+        try {
+          const base64DataUrl = await blobToDataUrl(reviewingBlob.value)
+          const gpsExifData: any = {}
 
-        // Define North/South and East/West designators
-        gpsExifData[piexif.GPSIFD.GPSLatitudeRef] = coords.value.latitude >= 0 ? 'N' : 'S'
-        gpsExifData[piexif.GPSIFD.GPSLatitude] = degToExifRational(coords.value.latitude)
+          // Define North/South and East/West designators
+          gpsExifData[piexif.GPSIFD.GPSLatitudeRef] = coords.value.latitude >= 0 ? 'N' : 'S'
+          gpsExifData[piexif.GPSIFD.GPSLatitude] = degToExifRational(coords.value.latitude)
 
-        gpsExifData[piexif.GPSIFD.GPSLongitudeRef] = coords.value.longitude >= 0 ? 'E' : 'W'
-        gpsExifData[piexif.GPSIFD.GPSLongitude] = degToExifRational(coords.value.longitude)
+          gpsExifData[piexif.GPSIFD.GPSLongitudeRef] = coords.value.longitude >= 0 ? 'E' : 'W'
+          gpsExifData[piexif.GPSIFD.GPSLongitude] = degToExifRational(coords.value.longitude)
 
-        const exifObj = {
-          '0th': {},
-          'Exif': {},
-          'GPS': gpsExifData,
+          const exifObj = {
+            '0th': {},
+            'Exif': {},
+            'GPS': gpsExifData,
+          }
+
+          // Generate the binary EXIF string block
+          const exifBytes = piexif.dump(exifObj)
+
+          // Inject the metadata bytes straight into the image string payload
+          const modifiedBase64DataUrl = piexif.insert(exifBytes, base64DataUrl)
+
+          finalBlob = dataUrlToBlob(modifiedBase64DataUrl, reviewingBlob.value.type)
+        } catch {
+          // Do nothing here... something with the tagging failed. We'll use the fallback instead.
         }
-
-        // Generate the binary EXIF string block
-        const exifBytes = piexif.dump(exifObj)
-
-        // Inject the metadata bytes straight into the image string payload
-        const modifiedBase64DataUrl = piexif.insert(exifBytes, base64DataUrl)
-
-        finalBlob = dataUrlToBlob(modifiedBase64DataUrl, reviewingBlob.value.type)
       }
 
       emit('media-selected', finalBlob)
