@@ -25,7 +25,7 @@
           :measurements="cell.measurements[item.id || '']"
           :people="trial.people"
           @traverse="(setIndex: number) => emit('traverse', item, index, traits, setIndex)"
-          :ref="(el) => (refs[`${item.id}`] = el)"
+          :ref="(el: any) => (refs[`${item.id}`] = el)"
           @valid-changed="(v: boolean) => emit('set-valid', item.id || '', v)"
         >
           <div class="ms-2 my-1 d-flex ga-2">
@@ -61,7 +61,7 @@
       :measurements="cell.measurements[trait.id || '']"
       :people="trial.people"
       @traverse="(setIndex: number) => emit('traverse', trait, traitIndex, traits, setIndex)"
-      :ref="(el) => (refs[`${trait.id}`] = el)"
+      :ref="(el: any) => (refs[`${trait.id}`] = el)"
       @valid-changed="(v: boolean) => emit('set-valid', trait.id || '', v)"
     >
       <div class="ms-2 my-1 d-flex ga-2">

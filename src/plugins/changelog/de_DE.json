@@ -936,6 +936,11 @@
       "type": "new",
       "title": "Interne Kamera",
       "text": "Für Geräte, bei denen Probleme beim Speichern von Bildern auftreten, haben wir eine interne Kameraansicht zum Aufnehmen und Verschlagworten von Bildern und Videos hinzugefügt. Dies sollte die Probleme auf Samsung-Geräten endgültig beheben. Zum Aktivieren bitte die Einstellung für den 'Kameramodus' durchsuchen."
+    },
+    {
+      "type": "new",
+      "title": "Versuchsübersichtskarte",
+      "text": "Eine Versuchsübersichtskarte wurde zum Hauptmenü hinzugefügt welche alle Versuche die Eckpunkte definiert haben auf einer globalen Karte anzeigt."
     }
   ]
 }

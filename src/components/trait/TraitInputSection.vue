@@ -22,7 +22,7 @@
       v-for="setIndex in (trait.setSize || 1)"
       :key="`${trait.id}-${setIndex}`"
       @traverse="emit('traverse', setIndex)"
-      :ref="(el) => (refs[setIndex] = el)"
+      :ref="(el: any) => (refs[setIndex] = el)"
       @valid-changed="(v: boolean) => inputsValid[setIndex - 1] = v"
     />
   </div>

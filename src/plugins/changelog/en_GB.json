@@ -936,6 +936,11 @@
         "type": "new",
         "title": "Internal camera",
         "text": "For devices that show issues with saving images, we have added an internal camera view for taking and tagging images and videos. This should finally resolve any issues on Samsung devices. To enable, please check the settings for the 'camera mode'."
+      },
+      {
+        "type": "new",
+        "title": "Trial overview map",
+        "text": "Added a trial overview map to the main menu which will show all trials which have corner points defined on a global map."
       }
     ]
   }

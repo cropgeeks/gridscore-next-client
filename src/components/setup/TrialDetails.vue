@@ -115,7 +115,7 @@
       </v-col>
     </v-row>
 
-    <AddPersonModal ref="addPersonModal" @person-added="p => { model?.people.push(p) }" />
+    <AddPersonModal ref="addPersonModal" @person-added="(p: Person) => { model?.people.push(p) }" />
   </div>
 </template>
 
@@ -123,6 +123,7 @@
   import { mediaFilenameParts } from '@/plugins/constants'
   import { getTrialGroups } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
+  import type { Person } from '@/plugins/types/gridscore'
   import { personTypes } from '@/plugins/types/types'
   import { getThemeColor } from '@/plugins/util'
   import { useDragAndDrop } from '@formkit/drag-and-drop/vue'

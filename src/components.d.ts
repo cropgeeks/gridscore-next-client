@@ -26,7 +26,6 @@ declare module 'vue' {
     ColumnHeader: typeof import('./components/data/ColumnHeader.vue')['default']
     CommentModal: typeof import('./components/modals/CommentModal.vue')['default']
     ConfirmModal: typeof import('./components/modals/ConfirmModal.vue')['default']
-    copy: typeof import('./components/modals/InternalCameraModal.vue/index.js')['default']
     CornerPointsMap: typeof import('./components/setup/CornerPointsMap.vue')['default']
     DataCanvas: typeof import('./components/data/DataCanvas.vue')['default']
     DataEntryActions: typeof import('./components/modals/DataEntryActions.vue')['default']

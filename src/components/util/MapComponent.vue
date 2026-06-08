@@ -338,7 +338,7 @@
           break
       }
 
-      if (userSelection.value.selectedItems.includes(selectionField)) {
+      if (selectionField && userSelection.value.selectedItems.includes(selectionField)) {
         color = highlightColors.value[selectionField]
 
         if (!color) {
