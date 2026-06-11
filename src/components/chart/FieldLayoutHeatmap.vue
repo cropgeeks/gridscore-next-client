@@ -511,25 +511,22 @@
       if (!newValue.allowRepeats || !td) {
         timepoints.value = []
       } else {
-        const tp: number[] = []
+        const tp: string[] = []
         Object.keys(td).forEach(k => {
           const traitData = td[k]?.measurements[newValue.id || '']
           if (traitData) {
             traitData.forEach(dp => {
               if (dp.timestamp) {
                 const date = new Date(dp.timestamp)
-                date.setHours(0, 0, 0, 0)
-                tp.push(date.getTime())
+                tp.push(date.toISOString().split('T')[0] || '')
               }
             })
           }
         })
 
-        tp.sort((a, b) => a - b)
+        tp.sort((a, b) => a.localeCompare(b))
 
-        const set = new Set<string>()
-        tp.forEach(dp => set.add(toLocalDateString(new Date(dp))))
-
+        const set = new Set<string>(tp)
         timepoints.value = [...set]
         currentTimepoint.value = timepoints.value.length - 1
       }
