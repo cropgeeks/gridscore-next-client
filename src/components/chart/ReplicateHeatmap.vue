@@ -32,7 +32,7 @@
               v-if="timepoints && timepoints.length > 0"
             >
               <template #message>
-                {{ $t('formDescriptionCurrentTimepoint', { date: new Date(timepoints[currentTimepoint] || '').toLocaleDateString() }) }}
+                {{ $t('formDescriptionCurrentTimepoint', { date: getDateTSIndependent(timepoints[currentTimepoint] || '').toLocaleDateString() }) }}
               </template>
             </v-slider>
 
@@ -90,7 +90,7 @@
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { mdiAlert, mdiCounter, mdiInformation } from '@mdi/js'
-  import { getI18nParams } from '@/plugins/formatting'
+  import { getDateTSIndependent, getI18nParams } from '@/plugins/formatting'
   import { flagHighDisagreementRows, zScoreRepAnalysis } from '@/plugins/stats'
 
   interface RepInfo {
@@ -241,7 +241,7 @@
               }
 
               if (timepoints.value && timepoints.value.length > 0) {
-                if (date <= new Date(timepoints.value[currentTimepoint.value || 0] || '')) {
+                if (date <= getDateTSIndependent(timepoints.value[currentTimepoint.value || 0] || '')) {
                   finalValue = m
                 }
               } else {

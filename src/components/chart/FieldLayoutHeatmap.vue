@@ -32,7 +32,7 @@
               v-if="timepoints && timepoints.length > 0"
             >
               <template #message>
-                {{ $t('formDescriptionCurrentTimepoint', { date: new Date(timepoints[currentTimepoint] || '').toLocaleDateString() }) }}
+                {{ $t('formDescriptionCurrentTimepoint', { date: getDateTSIndependent(timepoints[currentTimepoint] || '').toLocaleDateString() }) }}
               </template>
             </v-slider>
 
@@ -91,7 +91,7 @@
   import type { DownloadBlob } from '@/plugins/file'
   import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { mdiAlert, mdiInformation, mdiLandFields } from '@mdi/js'
-  import { getI18nParams } from '@/plugins/formatting'
+  import { getDateTSIndependent, getI18nParams } from '@/plugins/formatting'
   import { calculateTraitStatsIndividual, createDynamicQuantiles, isSuspicious } from '@/plugins/stats'
 
   // Only register the chart types we're actually using to reduce the final bundle size
@@ -215,7 +215,7 @@
               }
 
               if (timepoints.value && timepoints.value.length > 0) {
-                if (date <= new Date(timepoints.value[currentTimepoint.value || 0] || '')) {
+                if (date <= getDateTSIndependent(timepoints.value[currentTimepoint.value || 0] || '')) {
                   finalValue = m
                 }
               } else {
@@ -527,6 +527,7 @@
         tp.sort((a, b) => a.localeCompare(b))
 
         const set = new Set<string>(tp)
+        console.log(set)
         timepoints.value = [...set]
         currentTimepoint.value = timepoints.value.length - 1
       }

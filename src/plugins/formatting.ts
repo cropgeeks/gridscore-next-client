@@ -20,6 +20,12 @@ function getDateString (date: Date) {
   return `${date.getFullYear()}-${padTo2Digits(date.getMonth() + 1)}-${padTo2Digits(date.getDate())}`
 }
 
+function getDateTSIndependent (asString: string) {
+  const date = new Date(asString)
+  const userTimezoneOffset = date.getTimezoneOffset() * 60_000
+  return new Date(date.getTime() + userTimezoneOffset)
+}
+
 /**
  * Formats the given value into a human-readable number (e.g. 1.000 -> 1K, 1.000.000 -> 1G)
  * @param {Number} value The value to format
@@ -159,6 +165,7 @@ export {
   padTo2Digits,
   getDateTimeString,
   getDateString,
+  getDateTSIndependent,
   getNumberWithSuffix,
   toUrlString,
   truncateAfterChars,
