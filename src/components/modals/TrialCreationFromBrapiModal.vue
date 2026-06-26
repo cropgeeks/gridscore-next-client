@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" scrollable max-width="min(90vw, 1024px)">
+  <v-dialog v-model="dialog" scrollable width="min(90vw, 1024px)">
     <v-card :title="$t('modalTitleBrapiTrialImport')">
       <template #text>
         <p>{{ $t('modalTextBrapiTrialImport') }}</p>

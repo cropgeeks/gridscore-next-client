@@ -38,10 +38,8 @@
   import DataEntryModal from '@/components/modals/DataEntryModal.vue'
   import MediaModal from '@/components/modals/MediaModal.vue'
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
-  import { getTrialDataCached } from '@/plugins/datastore'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
-  import { calculateTraitStats } from '@/plugins/stats'
   import { coreStore } from '@/stores/app'
   import { mdiCameraBurst, mdiCancel, mdiCheck, mdiImage, mdiVideo } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
@@ -62,8 +60,6 @@
       trial.value = t
 
       startGeoTracking()
-
-      updateLocalCaches()
     })
   }
 
@@ -71,14 +67,6 @@
     nextTick(() => {
       searchField.value?.focus()
     })
-  }
-
-  function updateLocalCaches () {
-    const data = getTrialDataCached()
-
-    if (data && trial.value) {
-      calculateTraitStats(trial.value, data)
-    }
   }
 
   function startGeoTracking () {
@@ -114,17 +102,11 @@
 
   onMounted(() => {
     loadTrial()
-
-    emitter.on('plot-cache-changed', updateLocalCaches)
-    emitter.on('trial-data-loaded', updateLocalCaches)
   })
 
   onBeforeUnmount(() => {
     if (geolocationWatchId && navigator.geolocation) {
       navigator.geolocation.clearWatch(geolocationWatchId)
     }
-
-    emitter.off('plot-cache-changed', updateLocalCaches)
-    emitter.off('trial-data-loaded', updateLocalCaches)
   })
 </script>

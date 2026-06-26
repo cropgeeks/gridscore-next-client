@@ -37,6 +37,12 @@
     heatmap,
   ])
 
+  interface HeatmapCell {
+    row: string
+    column: string
+    value: number | null
+  }
+
   const compProps = defineProps<{
     year: number
     trial: TrialPlus
@@ -61,6 +67,9 @@
     } else {
       return []
     }
+  })
+  const heatmapMonths = computed(() => {
+    return (months.value || []).concat().reverse()
   })
 
   const isHorizontal = computed(() => width.value < 720)
@@ -101,9 +110,26 @@
 
       let max = 0
 
+      const hd: { [key: string]: HeatmapCell } = {}
+
+      z.forEach((monthData, month) => {
+        monthData.forEach((_, day) => {
+          hd[`${month}|${day}`] = {
+            row: heatmapMonths.value[month] || '',
+            column: `${day + 1}`,
+            value: null,
+          }
+        })
+      })
+
       Object.keys(cData).forEach(key => {
         const value = cData[key] || 0
         const d = new Date(key)
+
+        const hmd = hd[`${d.getMonth()}|${d.getDate() - 1}`]
+        if (hmd) {
+          hmd.value = value
+        }
         // @ts-ignore
         z[11 - d.getMonth()][d.getDate() - 1] = value
 

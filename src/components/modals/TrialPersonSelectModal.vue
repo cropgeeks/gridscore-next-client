@@ -1,5 +1,5 @@
 <template>
-  <v-dialog persistent :model-value="dialog || forced" scrollable max-width="min(90vw, 1024px)">
+  <v-dialog persistent :model-value="dialog || forced" scrollable width="min(90vw, 1024px)">
     <v-card :title="$t('modalTitleSelectTrialPerson')">
       <v-card-text>
         <p>{{ $t('modalTextSelectTrialPerson') }}</p>

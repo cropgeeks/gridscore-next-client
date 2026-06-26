@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="min(90vw, 1024px)" scrollable>
+  <v-dialog v-model="dialog" width="min(90vw, 1024px)" scrollable>
     <v-card :title="$t('modalTitleTraitDataHistory')">
       <v-list>
         <DataOutwithRangeBanner v-model:accepted="dataOutsideRangeAccepted" v-if="dataOutsideRangeAccepted || !valid" />
@@ -24,7 +24,7 @@
                 :measurements="undefined"
                 :editable="editable && measurements.delete !== true"
                 :ref="(el) => (refs.push(el))"
-                @valid-changed="v => setValid(`${mIndex}`, v)"
+                @valid-changed="(v: boolean) => setValid(`${mIndex}`, v)"
               >
                 <v-chip size="small" label :prepend-icon="mdiCalendar" :text="new Date(measurements.timestamp).toLocaleString()" />
               </TraitInputSection>
@@ -68,10 +68,11 @@
   import type { TraitMeasurement } from '@/plugins/types/gridscore'
 
   import { coreStore } from '@/stores/app'
-  import { changeTrialsData, type DataModification } from '@/plugins/idb'
+  import type { DataModification } from '@/plugins/idb'
 
   import emitter from 'tiny-emitter/instance'
   import { mdiCalendar, mdiDelete, mdiDeleteOffOutline } from '@mdi/js'
+  import { changeTrialsData } from '@/plugins/datastore'
 
   const compProps = defineProps<{
     editable: boolean
@@ -125,6 +126,7 @@
           traitId: compProps.trait.id || '',
           values: v,
           timestamp: mv.timestamp,
+          isNew: false,
           delete: true,
         })
       } else if (changed) {
@@ -133,6 +135,7 @@
           personId: store.storeSelectedTrialPerson,
           values: v,
           timestamp: mv.timestamp,
+          isNew: false,
           delete: false,
         })
       }

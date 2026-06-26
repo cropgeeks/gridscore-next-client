@@ -83,7 +83,7 @@
   import Plotly from 'plotly.js/lib/core'
   import heatmap from 'plotly.js/lib/heatmap'
   import scatter from 'plotly.js/lib/scatter'
-  import { getTrialDataCached } from '@/plugins/datastore'
+  import { getTrialDataCached, trialTraitStats } from '@/plugins/datastore'
   import { coreStore } from '@/stores/app'
   import { CellCategory, TraitDataType, type Measurement } from '@/plugins/types/gridscore'
   import { categoricalColors, invertHex, toCssNamedColors } from '@/plugins/color'
@@ -92,7 +92,7 @@
   import TraitSelect from '@/components/trait/TraitSelect.vue'
   import { mdiAlert, mdiInformation, mdiLandFields } from '@mdi/js'
   import { getDateTSIndependent, getI18nParams } from '@/plugins/formatting'
-  import { calculateTraitStatsIndividual, createDynamicQuantiles, isSuspicious } from '@/plugins/stats'
+  import { isSuspicious } from '@/plugins/stats'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
@@ -286,22 +286,6 @@
         }
       }
 
-      if (isNumericOrDate.value && store.storeSuspiciousDataPointHighlight) {
-        if (highlightSus.value) {
-          trait.suspiciousChecker = createDynamicQuantiles()
-          const timepoint = (timepoints.value.length > 0 && trait.allowRepeats) ? timepoints.value[currentTimepoint.value] : undefined
-          calculateTraitStatsIndividual(trait, trialData, timepoint, v => {
-            if (trait.dataType === TraitDataType.date) {
-              return (new Date(v).getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24)
-            } else {
-              return +v
-            }
-          })
-        } else {
-          delete trait.suspiciousChecker
-        }
-      }
-
       const catColors = ((trait.dataType === TraitDataType.categorical && restrictions) ? restrictions.categories : []) || []
       const colorMap = toCssNamedColors(catColors)
       const allValidNamedColors = Object.keys(colorMap).length === catColors.length
@@ -341,7 +325,10 @@
           : `${t('tooltipChartHeatmapRow', i18nParams.value)}: %{y}<br>${t('tooltipChartHeatmapColumn', i18nParams.value)}: %{x}<br>${t('tooltipChartHeatmapValue')}: %{z}<extra>%{text}</extra>`,
       }]
 
-      if (store.storeSuspiciousDataPointHighlight && trait.suspiciousChecker && trait.suspiciousChecker.validRangeInfo?.isReady) {
+      const traitStats = trialTraitStats.value[trait.id || '']
+
+      if (traitStats && store.storeSuspiciousDataPointHighlight && traitStats.suspiciousChecker && traitStats.suspiciousChecker.validRangeInfo?.isReady) {
+        console.log(traitStats)
         const susDots = {
           x: [] as number[],
           y: [] as number[],
@@ -356,7 +343,7 @@
           for (let column = 0; column < compProps.trial.layout.columns; column++) {
             const v = z[row]?.[column]
 
-            if (v !== undefined && v !== null && isSuspicious(trait.suspiciousChecker, +v)) {
+            if (v !== undefined && v !== null && isSuspicious(traitStats.suspiciousChecker, trait.dataType === TraitDataType.date ? (+v * (1000 * 60 * 60 * 24)) : +v)) {
               susDots.x.push(column + 1)
               susDots.y.push(row + 1)
             }

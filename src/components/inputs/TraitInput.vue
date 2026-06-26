@@ -305,6 +305,7 @@
   import { mdiCalendarToday, mdiCamera, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker, mdiVideo } from '@mdi/js'
   import { getId } from '@/plugins/id'
   import { isSuspicious } from '@/plugins/stats'
+  import { trialTraitStats } from '@/plugins/datastore'
 
   const nonTtsTraitTypes = new Set([TraitDataType.gps, TraitDataType.video, TraitDataType.image, TraitDataType.date, TraitDataType.text, TraitDataType.range])
 
@@ -332,6 +333,8 @@
   const input = useTemplateRef('input')
   const id = ref(`data-input-${getId()}`)
 
+  const traitStats = computed(() => trialTraitStats.value[compProps.trait.id || ''])
+
   const valid = computed(() => {
     const mv = model.value
     if (mv !== undefined && mv !== null && rules.value && rules.value.length > 0) {
@@ -343,8 +346,8 @@
 
   const warning = computed(() => {
     const mv = model.value
-    if (mv !== undefined && mv !== null && (TraitDataType.isNumeric(compProps.trait.dataType) || compProps.trait.dataType === TraitDataType.date) && compProps.trait.suspiciousChecker && compProps.trait.suspiciousChecker.validRangeInfo?.isReady) {
-      return isSuspicious(compProps.trait.suspiciousChecker, TraitDataType.isNumeric(compProps.trait.dataType) ? +mv : new Date(mv).getTime())
+    if (mv !== undefined && mv !== null && (TraitDataType.isNumeric(compProps.trait.dataType) || compProps.trait.dataType === TraitDataType.date) && traitStats.value && traitStats.value.suspiciousChecker && traitStats.value.suspiciousChecker.validRangeInfo?.isReady) {
+      return isSuspicious(traitStats.value.suspiciousChecker, TraitDataType.isNumeric(compProps.trait.dataType) ? +mv : new Date(mv).getTime())
     }
     return false
   })

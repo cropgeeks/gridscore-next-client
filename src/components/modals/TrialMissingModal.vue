@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="min(75vw, 720px)" scrollable>
+  <v-dialog v-model="dialog" width="min(75vw, 720px)" scrollable>
     <UseOnline v-slot="{ isOnline }">
       <v-card :title="$t('modalTitleMissingTrial')">
         <template #text>

@@ -939,6 +939,7 @@
   "toastNfcNoMatchFound": "Kein passendes Keimplasma gefunden für '{search}'",
   "toastMediaSavedAs": "Mediendatei gespeichert als: {filename}",
   "toastNoMatchingDataFound": "Keine passenden Daten gefunden",
+  "toastCustomDimensionNamesInvalid": "Benutzerdefinierte Dimensionsnamen ungültig. Bitte einen Wert in jedes Feld eintragen.",
   "tooltipBrapiExportBrapiTraitRunSearch": "Bitte zuerst eine Suche laufen lassen bevor die Merkmale als neue Merkmale importiert werden.",
   "tooltipDontShowAgain": "Nicht nochmal anzeigen.",
   "toolbarTraitVisibility": "Merkmale",

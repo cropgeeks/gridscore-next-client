@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="min(90vw, 1024px)">
+  <v-dialog v-model="dialog" width="min(90vw, 1024px)">
     <v-card :title="$t('modalTitleFielDBookInput')">
       <template #text>
         <p>{{ $t('modalTextFielDBookInput') }}</p>

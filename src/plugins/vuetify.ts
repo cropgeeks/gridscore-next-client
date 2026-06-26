@@ -20,8 +20,7 @@ import { createI18n, useI18n } from 'vue-i18n'
 import { en, de } from 'vuetify/locale'
 import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
 
-import { VDateInput } from 'vuetify/labs/VDateInput'
-import { VStepperVertical, VStepperVerticalItem } from 'vuetify/labs/VStepperVertical'
+// import { VHeatmap } from 'vuetify/labs/VHeatmap'
 import { coreStore } from '@/stores/app'
 
 const aliases: IconAliases = {
@@ -75,6 +74,13 @@ const i18n = createI18n({
   warnHtmlMessage: false,
 })
 
+// Derive the group separator directly from Intl, locale-aware
+function getGroupSeparator (locale: string): string {
+  const parts = new Intl.NumberFormat(locale, { useGrouping: true })
+    .formatToParts(1_234_567)
+  return parts.find(p => p.type === 'group')?.value ?? ','
+}
+
 type VuetifyType = ReturnType<typeof createVuetify>
 
 let vuetify: VuetifyType
@@ -92,6 +98,11 @@ function initVuetify () {
         ripple: store.rippleEnabled !== false,
         transition: store.transitionsEnabled === false ? 'no' : 'yes',
       },
+      VNumberInput: {
+        // Derive from the i18n instance's current locale at startup.
+        // For reactive locale switching, use a computed in your components instead.
+        groupSeparator: getGroupSeparator(i18n.global.locale.value),
+      },
     },
     // v3 breakpoints
     display: {
@@ -103,9 +114,7 @@ function initVuetify () {
       },
     },
     components: {
-      VStepperVertical,
-      VStepperVerticalItem,
-      VDateInput,
+      // VHeatmap,
     },
     icons: {
       defaultSet: 'mdi',

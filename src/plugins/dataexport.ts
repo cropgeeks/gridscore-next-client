@@ -140,6 +140,7 @@ function traitsToGridScore (traits: TraitPlus[]): string {
   const copy: TraitPlus[] = JSON.parse(JSON.stringify(traits))
   copy.forEach(t => {
     delete t.id
+    // @ts-expect-error
     delete t.progress
     delete t.editable
     delete t.color

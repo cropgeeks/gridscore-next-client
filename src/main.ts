@@ -33,6 +33,13 @@ const updateSW = registerSW({
 
 const app = createApp(App)
 
+// Add this to log the hidden native error
+// app.config.errorHandler = function (err, instance, info) {
+//   console.error('Captured Global Error:', err)
+//   console.error('Vue Component Instance:', instance)
+//   console.error('Error Info:', info)
+// }
+
 registerPlugins(app)
 
 app.mount('#app')

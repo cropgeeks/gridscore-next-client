@@ -39,7 +39,7 @@
 
     <v-dialog
       v-model="showInstallInfo"
-      max-width="min(75vw, 720px)"
+      width="min(75vw, 720px)"
     >
       <v-card :title="$t('widgetHelpToolbarInstall')">
         <template #text>

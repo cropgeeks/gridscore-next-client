@@ -1,8 +1,3 @@
-import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
-import { TraitDataType } from '@/plugins/types/gridscore'
-import { coreStore } from '@/stores/app'
-import { fa } from 'vuetify/locale'
-
 export interface Centroid {
   mean: number
   weight: number
@@ -27,7 +22,7 @@ export interface DynamicQuantile {
  * @param {number} thresholdZ - Z-score threshold for significance (default: 2.5)
  * @returns {Array<Object>} - Analysis results mapping to the original matrix indices.
  */
-export function zScoreRepAnalysis(matrix: number[][], thresholdZ = 2.5) {
+export function zScoreRepAnalysis (matrix: number[][], thresholdZ = 2.5) {
   // Step 1: Calculate Mean, SD, and CV for each row index
   const rowStats = matrix.map((row, rowIndex) => {
     // Filter out null, undefined, or NaN values
@@ -78,75 +73,6 @@ export function zScoreRepAnalysis(matrix: number[][], thresholdZ = 2.5) {
   })
 }
 
-export function calculateTraitStatsIndividual (trait: TraitPlus, data: { [key: string]: CellPlus }, timepoint: string | undefined, adjuster: (v: string) => number) {
-  if (TraitDataType.isNumeric(trait.dataType) || trait.dataType === TraitDataType.date) {
-    trait.suspiciousChecker = createDynamicQuantiles()
-
-    Object.values(data).forEach(c => {
-      if (c && c.measurements) {
-        const id = trait.id || ''
-        if (c.measurements[id] && c.measurements[id].length > 0) {
-          const svc = trait.suspiciousChecker
-          if (svc) {
-            c.measurements[id].filter(m => timepoint === undefined || new Date(timepoint).toISOString().split('T')[0] === new Date(m.timestamp).toISOString().split('T')[0]).forEach(v => {
-              v.values.forEach(vv => {
-                if (vv !== undefined && vv !== null && `${vv}`.trim().length > 0) {
-                  addValue(svc, adjuster(`${vv}`))
-                }
-              })
-            })
-          }
-        }
-      }
-    })
-
-    calculateRange(trait.suspiciousChecker)
-  }
-}
-
-export function calculateTraitStats (trial: TrialPlus, data: { [key: string]: CellPlus }) {
-  const total = Object.values(data).length
-  const store = coreStore()
-
-  if (store.suspiciousDataPointHighlight) {
-    trial.traits.forEach(t => {
-      if (TraitDataType.isNumeric(t.dataType) || t.dataType === TraitDataType.date) {
-        t.suspiciousChecker = createDynamicQuantiles()
-      }
-    })
-  }
-
-  Object.values(data).forEach(c => {
-    if (c && c.measurements) {
-      trial.traits.forEach(t => {
-        const id = t.id || ''
-        if (c.measurements[id] && c.measurements[id].length > 0) {
-          t.progress = t.progress ? (t.progress + 1) : 1
-          const isNumeric = TraitDataType.isNumeric(t.dataType)
-
-          const svc = t.suspiciousChecker
-          if (svc) {
-            c.measurements[id].forEach(v => {
-              v.values.forEach(vv => {
-                if (vv !== undefined && vv !== null && vv.trim().length > 0) {
-                  addValue(svc, isNumeric ? +vv : new Date(vv).getTime())
-                }
-              })
-            })
-          }
-        }
-      })
-    }
-  })
-
-  trial.traits.forEach(t => {
-    t.progress = t.progress ? (100 * t.progress / total) : 0
-    if (store.suspiciousDataPointHighlight && t.suspiciousChecker) {
-      calculateRange(t.suspiciousChecker)
-    }
-  })
-}
-
 /**
  * This class utilises a T-digest or dynamic quantile approach to provide information
  * about percentiles without actually keeping track of all individual data points.
@@ -161,6 +87,33 @@ export function createDynamicQuantiles (maxCentroids = 32): DynamicQuantile {
     totalCount: 0,
     validRangeInfo: undefined,
   }
+}
+
+export function removeValue (state: DynamicQuantile, val: number) {
+  let nearestIdx = 0
+  let minDist = Math.abs(val - (state.centroids[0]?.mean || 0))
+
+  for (let i = 1; i < state.centroids.length; i++) {
+    const dist = Math.abs(val - (state.centroids[i]?.mean || 0))
+    if (dist < minDist) {
+      minDist = dist
+      nearestIdx = i
+    }
+  }
+
+  const nearest = state.centroids[nearestIdx] || { weight: 0, mean: 0 }
+
+  if (nearest.weight > 1) {
+    // Reverse the weighted moving average formula
+    const newWeight = nearest.weight - 1
+    nearest.mean = ((nearest.mean * nearest.weight) - val) / newWeight
+    nearest.weight = newWeight
+  } else {
+    // If this was the only item in the cluster, remove the cluster entirely
+    state.centroids.splice(nearestIdx, 1)
+  }
+
+  state.totalCount--
 }
 
 /**
@@ -290,7 +243,7 @@ function disagreementRate (repValues: (number | null)[]) {
   const vals = repValues.filter(v => v !== null && !isNaN(v))
   if (vals.length < 2) {
     return null
-}
+  }
   let pairs = 0, disagreements = 0
   for (let i = 0; i < vals.length; i++) {
     for (let j = i + 1; j < vals.length; j++) {

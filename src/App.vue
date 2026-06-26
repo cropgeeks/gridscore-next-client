@@ -30,7 +30,7 @@
 
         <v-menu>
           <template #activator="{ props }">
-            <v-btn :icon="mdiThemeLightDark" v-bind="props" />
+            <v-btn :icon="mdiThemeLightDark" v-bind="props" id="theme-button" />
           </template>
           <v-list>
             <v-list-subheader class="text-high-emphasis text-uppercase font-weight-black">{{ $t('menuTheme') }}</v-list-subheader>
@@ -145,7 +145,7 @@
     <v-dialog
       v-model="updateExists"
       persistent
-      :max-width="`min(90vw, 401px)`"
+      width="min(90vw, 401px)"
     >
       <v-card :title="$t('modalTitleAppUpdateAvailable')" :text="$t('modalTextAppUpdateAvailable')">
         <template #actions>
@@ -330,7 +330,8 @@
   // Listen for theme changes in the store
   watchEffect(() => {
     const str = isDark.value ? 'dark' : 'light'
-    theme.change(store.storeTheme === 'system' ? str : store.storeTheme)
+    theme.setTransitionOrigin(document.querySelector('#theme-button'))
+    theme.change(store.storeTheme === 'system' ? str : store.storeTheme, store.storeTransitionsEnabled === true)
     store.setSystemTheme(str)
   })
 

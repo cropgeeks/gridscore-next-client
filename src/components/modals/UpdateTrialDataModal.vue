@@ -30,13 +30,14 @@
   import LineNumberTextarea from '@/components/inputs/LineNumberTextarea.vue'
   import { csvParse, tsvParse } from 'd3-dsv'
   import { useI18n } from 'vue-i18n'
-  import { changeTrialsData, getTrialData, type DataModification } from '@/plugins/idb'
+  import { getTrialData, type DataModification } from '@/plugins/idb'
   import { checkDataMatchesTraitType, getColumnIndex, getRowIndex, isValidDateString } from '@/plugins/util'
 
   import emitter from 'tiny-emitter/instance'
   import { mdiAlert } from '@mdi/js'
   import { TraitDataType } from '@/plugins/types/gridscore'
   import { getI18nParams } from '@/plugins/formatting'
+  import { changeTrialsData } from '@/plugins/datastore'
 
   const requiredColumns = new Set(['Germplasm', 'Rep', 'Row', 'Column', 'Trait name', 'Date', 'Value'])
 
@@ -200,6 +201,7 @@
         traitId: trait.id || '',
         timestamp,
         values,
+        isNew: true,
       })
     }
 

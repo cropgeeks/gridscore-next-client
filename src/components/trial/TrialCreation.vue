@@ -153,7 +153,7 @@
   const router = useRouter()
   const { t } = useI18n()
 
-  const stepperIndex = ref(1)
+  const stepperIndex = shallowRef(1)
   const bottomSheetVisible = ref(false)
   const copyData = ref(false)
   const setupCompleted = ref(false)

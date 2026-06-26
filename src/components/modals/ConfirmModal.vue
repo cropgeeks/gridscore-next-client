@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" :max-width="`min(90vw, ${internalWidth || 400}px)`">
+  <v-dialog v-model="dialog" :width="`min(90vw, ${internalWidth || 400}px)`">
     <v-card>
       <v-toolbar dark dense flat>
         <v-toolbar-title class="white--text">{{ internalTitle }}</v-toolbar-title>

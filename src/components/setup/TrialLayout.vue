@@ -103,10 +103,10 @@
 
           <v-stepper-actions class="mt-4 pa-0">
             <template #prev>
-              <v-btn :prepend-icon="mdiArrowUp" :disabled="stepperIndex === 1" color="primary" @click="stepperIndex--" />
+              <v-btn :prepend-icon="mdiArrowUp" :disabled="stepperIndex === 1" color="primary" @click="checkLeave(undefined, -1)" />
             </template>
             <template #next>
-              <v-btn :append-icon="mdiArrowDown" color="primary" @click="stepperIndex++" />
+              <v-btn :append-icon="mdiArrowDown" color="primary" @click="checkLeave(undefined, 1)" />
             </template>
           </v-stepper-actions>
         </v-stepper-vertical-item>
@@ -204,6 +204,8 @@
   import { getI18nParams, isEmpty } from '@/plugins/formatting'
   import type { DimensionNames } from '@/plugins/types/gridscore'
 
+  import emitter from 'tiny-emitter/instance'
+
   const { t } = useI18n()
 
   const emit = defineEmits(['next'])
@@ -248,7 +250,21 @@
   })
 
   function checkLeave (callback: (() => void) | undefined, internalDelta: number) {
-    if (stepperIndex.value === 2) {
+    if (stepperIndex.value === 1) {
+      if (useCustomNames.value === true && customNamesValid.value !== true) {
+        // Show toast
+        emitter.emit('show-snackbar', {
+          text: t('toastCustomDimensionNamesInvalid'),
+          color: 'error',
+        })
+      } else {
+        if (callback) {
+          callback()
+        } else {
+          stepperIndex.value += internalDelta
+        }
+      }
+    } else if (stepperIndex.value === 2) {
       germplasmLayoutTable.value?.removeTable()
         .then(() => {
           if (callback) {

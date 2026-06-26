@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="min(90vw, 1024px)" scrollable>
+  <v-dialog v-model="dialog" width="min(90vw, 1024px)" scrollable>
     <v-card :title="$t('modalTitlePlotComments')">
       <template #text>
         <p>{{ $t('modalTextPlotComments') }}</p>

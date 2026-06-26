@@ -186,6 +186,7 @@ export interface PlotDetailContent extends PlotContent {
 
 export interface MeasurementChange extends Measurement {
     delete?: boolean;
+    isNew?: boolean;
 }
 
 export interface PlotCommentContent extends PlotContent {

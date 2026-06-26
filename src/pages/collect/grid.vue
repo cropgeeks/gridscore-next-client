@@ -168,7 +168,6 @@
   import { useDisplay } from 'vuetify'
   import type { XY } from '@/plugins/location'
   import { getI18nParams } from '@/plugins/formatting'
-  import { calculateTraitStats } from '@/plugins/stats'
 
   export interface ContextMenuConfig {
     target?: Element
@@ -328,8 +327,6 @@
     const data = getTrialDataCached()
 
     if (data && trial.value) {
-      calculateTraitStats(trial.value, data)
-
       trialReps.value = getTrialRepsCached()
       trialTreatments.value = getTrialTreatmentsCached()
       trialControls.value = getTrialControlsCached()

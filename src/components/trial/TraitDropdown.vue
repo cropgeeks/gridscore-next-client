@@ -70,7 +70,7 @@
             :color="trait.visible ? trait.color : 'muted'"
             location="bottom"
             absolute
-            v-model="trait.progress"
+            :model-value="trialTraitStats[trait.id || '']?.progress"
           />
           <template #prepend>
             <v-icon :icon="getIcon(trait)" :color="trait.visible ? trait.color : 'muted'" />
@@ -88,6 +88,7 @@
   import { useI18n } from 'vue-i18n'
   import { useDate } from 'vuetify'
   import ResponsiveButton from '@/components/util/ResponsiveButton.vue'
+  import { trialTraitStats } from '@/plugins/datastore'
   import { mdiCalendarStart, mdiCheck, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCircle, mdiCircleHalfFull, mdiCircleOutline, mdiMinusBox, mdiSquare, mdiSquareOpacity, mdiSquareOutline, mdiTagMultiple } from '@mdi/js'
 
   const date = useDate()
@@ -159,7 +160,7 @@
           name: trait.name,
           color: trait.color,
           allowRepeats: trait.allowRepeats,
-          progress: trait.progress,
+          progress: trialTraitStats.value[trait.id || '']?.progress || 0,
           visible: !store.storeHiddenTraits.includes(trait.id || ''),
         }
 

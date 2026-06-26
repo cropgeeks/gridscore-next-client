@@ -1,5 +1,5 @@
 <template>
-  <v-dialog eager scrollable v-model="dialog" max-width="min(90vw, 1024px)">
+  <v-dialog eager scrollable v-model="dialog" width="min(90vw, 1024px)">
     <v-card :title="$t('modalTitleUploadTraitImage')" id="media-modal">
       <template #text>
         <p>{{ $t('modalTextUploadTraitImage') }}</p>

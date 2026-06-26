@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" scrollable max-width="min(90vw, 1024px)">
+    <v-dialog v-model="dialog" scrollable width="min(90vw, 1024px)">
       <v-card>
         <template #title>
           <div class="d-flex justify-space-between">

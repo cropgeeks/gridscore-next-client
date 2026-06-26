@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="min(75vw, 720px)" scrollable>
+  <v-dialog v-model="dialog" width="min(75vw, 720px)" scrollable>
     <v-card :title="$t('modalTitleTrialExpiration')" v-if="trial">
       <template #text>
         <!-- We don't have the codes yet, so need to be able to share the trial -->

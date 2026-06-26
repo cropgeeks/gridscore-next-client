@@ -4,7 +4,7 @@
     If we didn't do this (either with nextTick or waiting for the modal to be mounted etc) some browsers
     would not allow to call the `.click()` method on the file input as it's not triggered from a user interaction.
   -->
-  <v-dialog eager scrollable v-model="dialog" max-width="min(90vw, 1024px)">
+  <v-dialog eager scrollable v-model="dialog" width="min(90vw, 1024px)">
     <v-card :title="$t(mode === 'video' ? 'modalTitleVideoTag' : 'modalTitleImageTag')" id="media-modal">
       <template #text>
         <v-file-input

@@ -674,7 +674,6 @@ function handleTrial (trial: TrialPlus) {
           t.imageUrl = `${trialImageConfig.serverUrl}trait/${trialImageConfig.priorityShareCode}/${t.id}/img`
         }
         t.color = getStore().storeTraitColors[i % getStore().storeTraitColors.length]
-        t.progress = 0
         t.editable = true
         if (t.timeframe && t.timeframe.type === TimeframeType.ENFORCE) {
           const now = new Date().toISOString()
@@ -779,7 +778,9 @@ async function updateTrial (localId: string, updatedTrial: TrialPlus) {
       updatedTrial.traits.forEach((t: TraitPlus) => {
         delete t.color
         delete t.editable
+        // @ts-expect-error
         delete t.progress
+        // @ts-expect-error
         delete t.suspiciousChecker
       })
     }
@@ -1095,7 +1096,7 @@ async function updateTraitBrapiIds (trialId: string, traitBrapiIds: { [index: st
   }
 }
 
-async function changeTrialsData (trialId: string, dataMapping: DataModification, geolocation?: Geolocation) {
+async function changeTrialsDataInternal (trialId: string, dataMapping: DataModification, geolocation?: Geolocation) {
   const trial = await getTrialById(trialId)
 
   if (trial) {
@@ -1758,7 +1759,7 @@ export {
   updateTrial,
   deleteTrial,
   addTrialPeople,
-  changeTrialsData,
+  changeTrialsDataInternal,
   addTrialTraits,
   getTrialValidPlots,
   getTransactionForTrial,

@@ -181,7 +181,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="trialTimeFrameModal" max-width="min(90vw, 1024px)">
+    <v-dialog v-model="trialTimeFrameModal" width="min(90vw, 1024px)">
       <v-card :title="$t('modalTitleTraitTimeframe')">
         <template #text>
           <p>{{ $t('modalTextTraitTimeframe') }}</p>

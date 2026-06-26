@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="min(75vw, 720px)" scrollable>
+  <v-dialog v-model="dialog" width="min(75vw, 720px)" scrollable>
     <UseOnline v-slot="{ isOnline }">
       <v-card :title="$t('modalTitleTrialSynchronization')">
         <v-banner class="pa-2" sticky style="z-index: 100;" :color="lockOverride ? 'success' : 'error'" :lines="lines" :bg-color="lockOverride ? 'success' : 'error'" density="compact" :icon="lockOverride ? mdiCheckboxMarkedCircle : mdiAlert" @click="toggleVisibility" v-if="showAskForLockOverride">

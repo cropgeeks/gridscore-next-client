@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="dialog"
-    max-width="min(90vw, 1024px)"
+    width="min(90vw, 1024px)"
     ref="serverMessageModal"
   >
     <v-card :title="$t('modalTitleServerMessages')">

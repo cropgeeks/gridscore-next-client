@@ -216,7 +216,7 @@
 </template>
 
 <script setup lang="ts">
-  import { changeTrialsData, getCell, getTrialValidPlots, type DataModification } from '@/plugins/idb'
+  import { getCell, getTrialValidPlots, type DataModification } from '@/plugins/idb'
   import { TraitGroupMode, type CellPlus, type Geolocation, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import PlotInformation from '@/components/plot/PlotInformation.vue'
@@ -235,6 +235,7 @@
   import { KeySequenceListener } from '@/plugins/types/KeySequenceListener'
   import type { CellData } from '@/components/inputs/DataEntrySection.vue'
   import DataEntrySection from '@/components/inputs/DataEntrySection.vue'
+  import { changeTrialsData } from '@/plugins/datastore'
 
   interface TraitGroup {
     name: string
@@ -641,6 +642,7 @@
             traitId: t.id || '',
             personId: store.storeSelectedTrialPerson,
             values: setValues,
+            isNew: true,
             timestamp: date.toISOString(),
           })
         }
