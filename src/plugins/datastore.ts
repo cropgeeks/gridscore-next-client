@@ -120,83 +120,88 @@ function updateCellCache (row: number, column: number, trialId: string) {
 }
 
 export function calculateTraitStats () {
-  const t = trial
-  const td = trialData
-  if (t && td) {
-    const total = Object.values(td).length
-    const store = coreStore()
+  trialTraitStats.value = {}
 
-    t.traits.forEach(t => {
-      trialTraitStats.value[t.id || ''] = {
-        progress: 0,
-        dpCount: 0,
-        totalCount: 0,
-        minValue: Number.MAX_SAFE_INTEGER,
-      }
-    })
+  const store = coreStore()
+  if (store.storeSuspiciousDataPointHighlight) {
+    const t = trial
+    const td = trialData
+    if (t && td) {
+      const total = Object.values(td).length
+      const store = coreStore()
 
-    if (store.suspiciousDataPointHighlight) {
       t.traits.forEach(t => {
-        const stats = trialTraitStats.value[t.id || '']
-        if (stats && (TraitDataType.isNumeric(t.dataType) || t.dataType === TraitDataType.date)) {
-          stats.suspiciousChecker = createDynamicQuantiles()
+        trialTraitStats.value[t.id || ''] = {
+          progress: 0,
+          dpCount: 0,
+          totalCount: 0,
+          minValue: Number.MAX_SAFE_INTEGER,
         }
       })
-    }
 
-    Object.values(td).forEach(c => {
-      if (c && c.measurements) {
+      if (store.suspiciousDataPointHighlight) {
         t.traits.forEach(t => {
-          const id = t.id || ''
-          const stats = trialTraitStats.value[id]
-          const isNumeric = TraitDataType.isNumeric(t.dataType)
-          if (stats && c.measurements[id] && c.measurements[id].length > 0 && (isNumeric || t.dataType === TraitDataType.date)) {
-            c.measurements[id].forEach(v => {
-              v.values.forEach(vv => {
-                if (vv !== undefined && vv !== null && vv.trim().length > 0) {
-                  stats.minValue = Math.min(stats.minValue || Number.MAX_SAFE_INTEGER, isNumeric ? +vv : new Date(vv).getTime())
-                }
-              })
-            })
+          const stats = trialTraitStats.value[t.id || '']
+          if (stats && (TraitDataType.isNumeric(t.dataType) || t.dataType === TraitDataType.date)) {
+            stats.suspiciousChecker = createDynamicQuantiles()
           }
         })
       }
-    })
 
-    Object.values(td).forEach(c => {
-      if (c && c.measurements) {
-        t.traits.forEach(t => {
-          const id = t.id || ''
-          const stats = trialTraitStats.value[id]
-          if (stats && c.measurements[id] && c.measurements[id].length > 0) {
-            stats.dpCount = stats.dpCount ? (stats.dpCount + 1) : 1
+      Object.values(td).forEach(c => {
+        if (c && c.measurements) {
+          t.traits.forEach(t => {
+            const id = t.id || ''
+            const stats = trialTraitStats.value[id]
             const isNumeric = TraitDataType.isNumeric(t.dataType)
-
-            const svc = stats.suspiciousChecker
-            if (svc) {
+            if (stats && c.measurements[id] && c.measurements[id].length > 0 && (isNumeric || t.dataType === TraitDataType.date)) {
               c.measurements[id].forEach(v => {
                 v.values.forEach(vv => {
                   if (vv !== undefined && vv !== null && vv.trim().length > 0) {
-                    addValue(svc, isNumeric ? +vv : (new Date(vv).getTime() - (stats.minValue || 0)))
+                    stats.minValue = Math.min(stats.minValue || Number.MAX_SAFE_INTEGER, isNumeric ? +vv : new Date(vv).getTime())
                   }
                 })
               })
             }
-          }
-        })
-      }
-    })
-
-    t.traits.forEach(t => {
-      const stats = trialTraitStats.value[t.id || '']
-      if (stats) {
-        stats.totalCount = total
-        stats.progress = Math.max(0, Math.min(100, stats.dpCount ? (100 * stats.dpCount / stats.totalCount) : 0))
-        if (store.suspiciousDataPointHighlight && stats.suspiciousChecker) {
-          calculateRange(stats.suspiciousChecker)
+          })
         }
-      }
-    })
+      })
+
+      Object.values(td).forEach(c => {
+        if (c && c.measurements) {
+          t.traits.forEach(t => {
+            const id = t.id || ''
+            const stats = trialTraitStats.value[id]
+            if (stats && c.measurements[id] && c.measurements[id].length > 0) {
+              stats.dpCount = stats.dpCount ? (stats.dpCount + 1) : 1
+              const isNumeric = TraitDataType.isNumeric(t.dataType)
+
+              const svc = stats.suspiciousChecker
+              if (svc) {
+                c.measurements[id].forEach(v => {
+                  v.values.forEach(vv => {
+                    if (vv !== undefined && vv !== null && vv.trim().length > 0) {
+                      addValue(svc, isNumeric ? +vv : (new Date(vv).getTime() - (stats.minValue || 0)))
+                    }
+                  })
+                })
+              }
+            }
+          })
+        }
+      })
+
+      t.traits.forEach(t => {
+        const stats = trialTraitStats.value[t.id || '']
+        if (stats) {
+          stats.totalCount = total
+          stats.progress = Math.max(0, Math.min(100, stats.dpCount ? (100 * stats.dpCount / stats.totalCount) : 0))
+          if (store.suspiciousDataPointHighlight && stats.suspiciousChecker) {
+            calculateRange(stats.suspiciousChecker)
+          }
+        }
+      })
+    }
   }
 }
 

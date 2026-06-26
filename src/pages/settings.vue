@@ -436,6 +436,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
+import { calculateTraitStats } from '@/plugins/datastore'
 
   const store = coreStore()
   const { t } = useI18n()
@@ -695,6 +696,8 @@
   watch(suspiciousDataPointHighlight, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { suspiciousDataPointHighlight: newValue } })
     store.setSuspiciousDataPointHighlight(newValue)
+
+    calculateTraitStats()
   })
   watch(voiceFeedbackEnabled, async newValue => {
     emitter.emit('plausible-event', { key: 'settings-changed', props: { voiceFeedbackEnabled: newValue } })
