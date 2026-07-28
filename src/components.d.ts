@@ -46,7 +46,6 @@ declare module 'vue' {
     GuideOrderSelector: typeof import('./components/trial/GuideOrderSelector.vue')['default']
     HelpCard: typeof import('./components/util/HelpCard.vue')['default']
     HighlightSelect: typeof import('./components/util/HighlightSelect.vue')['default']
-    HScroll: typeof import('./components/data/HScroll.vue')['default']
     InternalCameraModal: typeof import('./components/modals/InternalCameraModal.vue')['default']
     JumpToDropdown: typeof import('./components/util/JumpToDropdown.vue')['default']
     LabelEditor: typeof import('./components/setup/LabelEditor.vue')['default']
@@ -73,6 +72,7 @@ declare module 'vue' {
     RowHeader: typeof import('./components/data/RowHeader.vue')['default']
     SamsungInfoModal: typeof import('./components/modals/SamsungInfoModal.vue')['default']
     Scale: typeof import('./components/chart/Scale.vue')['default']
+    Scrollbar: typeof import('./components/data/Scrollbar.vue')['default']
     SearchResultModal: typeof import('./components/modals/SearchResultModal.vue')['default']
     ServerMessageModal: typeof import('./components/modals/ServerMessageModal.vue')['default']
     SettingsShareContent: typeof import('./components/util/SettingsShareContent.vue')['default']
@@ -114,6 +114,5 @@ declare module 'vue' {
     UpdateTrialDataModal: typeof import('./components/modals/UpdateTrialDataModal.vue')['default']
     UpdateTrialMetadataModal: typeof import('./components/modals/UpdateTrialMetadataModal.vue')['default']
     UploadTraitImageModal: typeof import('./components/modals/UploadTraitImageModal.vue')['default']
-    VScroll: typeof import('./components/data/VScroll.vue')['default']
   }
 }

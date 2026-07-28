@@ -32,9 +32,9 @@
       @click:plot="(row, column) => emit('click:plot', row, column)"
       ref="plotCanvas"
     />
-    <VScroll :dimensions="dimensions" :y="origin.y" :rows="trial.layout.rows" ref="vScroll" />
+    <Scrollbar orientation="vertical" :dimensions="dimensions" :offset="origin.y" :count="trial.layout.rows" ref="vScroll" @scroll="y => setScroll(undefined, y)" />
     <div class="corner" />
-    <HScroll :dimensions="dimensions" :x="origin.x" :columns="trial.layout.columns" ref="hScroll" />
+    <Scrollbar orientation="horizontal" :dimensions="dimensions" :offset="origin.x" :count="trial.layout.columns" ref="hScroll" @scroll="x => setScroll(x, undefined)" />
     <div class="corner" />
   </div>
 </template>
@@ -48,8 +48,7 @@
   import RowHeader from '@/components/data/RowHeader.vue'
   import ColumnHeader from '@/components/data/ColumnHeader.vue'
   import PlotCanvas from '@/components/data/PlotCanvas.vue'
-  import VScroll from '@/components/data/VScroll.vue'
-  import HScroll from '@/components/data/HScroll.vue'
+  import Scrollbar from '@/components/data/Scrollbar.vue'
 
   export interface Dimensions {
     canvasWidth: number
@@ -119,6 +118,10 @@
     origin.value = newOrigin
   }
 
+  function setScroll (x: number | undefined, y: number | undefined) {
+    plotCanvas.value?.setOrigin(x || origin.value.x, y || origin.value.y)
+  }
+
   function clearMarkedRowsCols () {
     markedRows.value = Array.from(new Array(compProps.trial.layout.rows).keys()).map(() => false)
     markedColumns.value = Array.from(new Array(compProps.trial.layout.columns).keys()).map(() => false)
@@ -158,9 +161,9 @@
       }
 
       dimensions.value.rowHeaderWidth = dimensions.value.padding + (dimensions.value.fontSize * `${compProps.trial.layout.rows}`.length)
-      dimensions.value.canvasWidth = (canvasWrapper.value?.offsetWidth || 0) - dimensions.value.rowHeaderWidth - dimensions.value.hScrollHeight
+      dimensions.value.canvasWidth = (canvasWrapper.value?.offsetWidth || 0) - dimensions.value.rowHeaderWidth - dimensions.value.vScrollWidth
       dimensions.value.columnHeaderHeight = 2 * dimensions.value.padding + dimensions.value.fontSize
-      dimensions.value.canvasHeight = window.innerHeight - dimensions.value.columnHeaderHeight - dimensions.value.vScrollWidth
+      dimensions.value.canvasHeight = window.innerHeight - dimensions.value.columnHeaderHeight - dimensions.value.hScrollHeight
       dimensions.value.cellWidth = Math.max(dimensions.value.canvasWidth / compProps.trial.layout.columns, dimensions.value.padding * 2 + store.storeDisplayMinCellWidth * dimensions.value.circleRadius * 2 + (store.storeDisplayMinCellWidth - 1) * dimensions.value.padding / 2)
       dimensions.value.coreWidth = dimensions.value.cellWidth - dimensions.value.padding * 2
       dimensions.value.circlesPerRow = getCirclesPerRow()

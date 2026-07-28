@@ -789,6 +789,7 @@
 }
 .marker {
   z-index: 1;
+  contain: paint;
 }
 .cell .bookmark {
   position: absolute;

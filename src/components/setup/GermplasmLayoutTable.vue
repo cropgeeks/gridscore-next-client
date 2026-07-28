@@ -355,6 +355,8 @@
     }
 
     update(true)
+
+    checkData()
   }
 
   function setTabInputConfig (key: string) {

@@ -441,6 +441,10 @@
 </script>
 
 <style>
+html {
+  scrollbar-width: thin;
+}
+
 .prevent-pull-to-refresh {
   /* Only prevents refresh when interacting with this div */
   overscroll-behavior-y: contain;

@@ -943,5 +943,21 @@
         "text": "Added a trial overview map to the main menu which will show all trials which have corner points defined on a global map."
       }
     ]
+  },
+  {
+    "version": "4.3.1",
+    "date": "2025-07-28",
+    "items": [
+      {
+        "type": "new",
+        "title": "Canvas display scrollbars",
+        "text": "GridScore uses a canvas to paint the main display for larger trials. While this natively doesn't have scrollbars, we felt there was a need to add these. You will now be able to scroll the main canvas with these scrollbars on desktop/laptop devices."
+      },
+      {
+        "type": "bugfix",
+        "title": "Trial setup germplasm skip",
+        "text": "Under certain conditions it was possible to skip the germplasm verification step during setup which would result in a blank trial when loaded. This has now been resolved."
+      }
+    ]
   }
 ]

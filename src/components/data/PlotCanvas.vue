@@ -490,6 +490,27 @@
     ctx?.drawImage(lockImg, x, y)
   }
 
+  function setOrigin (x: number | undefined, y: number | undefined) {
+    if (x !== undefined) {
+      origin.value.x = x
+    }
+    if (y !== undefined) {
+      origin.value.y = y
+    }
+
+    emit('origin-changed', { x: origin.value.x, y: origin.value.y })
+
+    // @ts-ignore
+    if (requestAnimationFrame in window) {
+      if (timer) {
+        window.cancelAnimationFrame(timer)
+      }
+      timer = window.requestAnimationFrame(() => update())
+    } else {
+      update()
+    }
+  }
+
   function scrollTo (x: number | undefined, y: number | undefined) {
     if (x !== undefined && x >= 0 && x <= 100) {
       origin.value.x = Math.round(-(compProps.trial.layout.columns * compProps.dimensions.cellWidth - compProps.dimensions.canvasWidth) * x / 100)
@@ -1053,6 +1074,7 @@
     reset,
     update,
     getCenterPosition,
+    setOrigin,
   })
 </script>
 
