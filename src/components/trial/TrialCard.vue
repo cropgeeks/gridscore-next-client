@@ -16,8 +16,8 @@
       <v-btn v-else-if="trial.hasRemoteUpdate" :icon="mdiCloudDownload" color="warning" v-tooltip:top="$t('tooltipTrialHasRemoteUpdate')" @click="emitter.emit('synchronize-trial', trial)" />
     </template>
     <template #subtitle v-if="trial.description">
-      <span class="text-wrap" v-if="wrapDescription" v-html="trial.description || '&nbsp;'" />
-      <span v-tooltip:top="trial.description" v-html="trial.description || '&nbsp;'" v-else />
+      <span class="text-wrap" v-if="wrapDescription">{{ trial.description || '&nbsp;' }}</span>
+      <span v-tooltip:top="trial.description" v-else>{{ trial.description || '&nbsp;' }}</span>
     </template>
 
     <v-card-text class="pb-0">
