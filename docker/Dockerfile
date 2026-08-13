@@ -17,7 +17,7 @@ RUN apk add --no-cache git && \
 # Build the client code
 WORKDIR /opt/gridscore-client
 RUN rm -f .env && \
-    echo "VUE_APP_BASE_URL=./api/" > .env && \
+    echo "VITE_BASE_URL=./api/" > .env && \
     apk add --no-cache python3 build-base gcc wget && \
     npm i && \
     npm run build && \

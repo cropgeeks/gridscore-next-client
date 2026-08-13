@@ -327,8 +327,7 @@
 
       const traitStats = trialTraitStats.value[trait.id || '']
 
-      if (traitStats && store.storeSuspiciousDataPointHighlight && traitStats.suspiciousChecker && traitStats.suspiciousChecker.validRangeInfo?.isReady) {
-        console.log(traitStats)
+      if (highlightSus.value && traitStats && store.storeSuspiciousDataPointHighlight && traitStats.suspiciousChecker && traitStats.suspiciousChecker.validRangeInfo?.isReady) {
         const susDots = {
           x: [] as number[],
           y: [] as number[],
