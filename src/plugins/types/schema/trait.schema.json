@@ -117,7 +117,8 @@
         "gps",
         "image",
         "video",
-        "text"
+        "text",
+        "vegindex"
       ],
       "type": "string"
     }

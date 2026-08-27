@@ -306,6 +306,7 @@
             break
           case TraitDataType.float:
           case TraitDataType.int:
+          case TraitDataType.vegindex:
           case TraitDataType.range:
             scale.dataType = 'Numerical'
             break

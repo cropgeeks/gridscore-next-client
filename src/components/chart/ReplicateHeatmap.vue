@@ -422,6 +422,7 @@
       if (traces.length > 0 && traces[0]) {
         switch (trait.dataType) {
           case TraitDataType.int:
+          case TraitDataType.vegindex:
           case TraitDataType.float:
           case TraitDataType.range:
             traces[0].zauto = false

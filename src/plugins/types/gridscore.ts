@@ -325,11 +325,12 @@ export enum TraitDataType {
     image = 'image',
     video = 'video',
     text = 'text',
+    vegindex = 'vegindex',
 }
 
 export namespace TraitDataType {
     export function isNumeric (dataType: TraitDataType): boolean {
-        return dataType === TraitDataType.int || dataType === TraitDataType.float || dataType === TraitDataType.range
+        return dataType === TraitDataType.int || dataType === TraitDataType.float || dataType === TraitDataType.range || dataType === TraitDataType.vegindex
     }
     export function isCategorical (dataType: TraitDataType): boolean {
         return dataType === TraitDataType.categorical || dataType === TraitDataType.multicat

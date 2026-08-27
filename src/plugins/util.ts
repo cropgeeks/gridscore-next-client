@@ -98,6 +98,7 @@ function getRowIndex (layout: Layout, row: number) {
 function toGerminateDataType (type: TraitDataType) {
   switch (type) {
     case TraitDataType.int:
+    case TraitDataType.vegindex:
     case TraitDataType.float:
     case TraitDataType.range:
       return 'numeric'

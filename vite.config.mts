@@ -84,6 +84,9 @@ export default defineConfig({
         short_name: 'GridScore NEXT',
         description: 'GridScore is a field trial phenotyping app for trait data. It lets you keep track of what\'s happening in the field on a plot-level basis. This could be anything from plant emergence, flowering date, plant height, flower colour, etc. You can define the layout of your field trial and the traits you want to score. GridScore then presents your data in a table format representing your field layout. Data is recorded by clicking on a specific plot in a field and then entering your data.',
         theme_color: '#325D88',
+        launch_handler: {
+          client_mode: 'focus-existing',
+        },
         display: 'standalone',
         icons: [
           {

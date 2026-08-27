@@ -71,6 +71,17 @@
             </v-col>
           </v-row>
 
+          <v-alert
+            v-if="currentTrait.dataType === TraitDataType.vegindex"
+            class="mb-3"
+            color="warning"
+            :icon="mdiAlert"
+            variant="tonal"
+            border="start"
+          >
+            <div v-html="$t('pageTrialTraitsSprigglesNotice')" />
+          </v-alert>
+
           <TraitInput
             :label="$t('formLabelTraitExample')"
             :hint="$t('formDescriptionTraitExample')"
@@ -111,7 +122,7 @@
                 v-model="restrictions.min"
                 class="mb-3"
                 control-variant="stacked"
-                :disabled="isDisabledDueToEdit || !canEdit"
+                :disabled="isDisabledDueToEdit || !canEdit || currentTrait.dataType === TraitDataType.vegindex"
                 :prepend-inner-icon="mdiFormatVerticalAlignBottom"
                 :label="$t('formLabelTraitRestrictionsMin')"
                 :hint="$t('formDescriptionTraitRestrictionsMin')"
@@ -124,7 +135,7 @@
                 v-model="restrictions.max"
                 class="mb-3"
                 control-variant="stacked"
-                :disabled="isDisabledDueToEdit || !canEdit"
+                :disabled="isDisabledDueToEdit || !canEdit || currentTrait.dataType === TraitDataType.vegindex"
                 :prepend-inner-icon="mdiFormatVerticalAlignTop"
                 :label="$t('formLabelTraitRestrictionsMax')"
                 :hint="$t('formDescriptionTraitRestrictionsMax')"
@@ -575,6 +586,13 @@
         result.dataType = TraitDataType.categorical
         result.restrictions = {
           categories: ['true', 'false'],
+        }
+        break
+      case TraitDataType.vegindex:
+        result.restrictions = {
+          min: restrictions.value.min || 0,
+          max: restrictions.value.max || 1,
+          step: restrictions.value.step || 0.1,
         }
         break
       case TraitDataType.int:
@@ -1039,8 +1057,17 @@
     })
   })
 
-  watch(() => currentTrait.value.dataType, async () => {
+  watch(() => currentTrait.value.dataType, async newValue => {
     exampleTraitValue.value = undefined
+
+    if (newValue === TraitDataType.vegindex) {
+      restrictions.value = {
+        min: 0,
+        max: 1,
+        step: undefined,
+        categories: undefined,
+      }
+    }
   })
 
   watch(restrictions, async () => {

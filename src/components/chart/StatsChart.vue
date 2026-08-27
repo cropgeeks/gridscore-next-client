@@ -130,6 +130,7 @@
       switch (compProps.trait.dataType) {
         case TraitDataType.float:
         case TraitDataType.int:
+        case TraitDataType.vegindex:
         case TraitDataType.range:
         case TraitDataType.date: {
           chartType = 'box'

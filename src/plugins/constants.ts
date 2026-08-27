@@ -1,7 +1,7 @@
 import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
 import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
 import { toLocalDateTimeString } from '@/plugins/util'
-import { mdiAlphabeticalVariant, mdiCalendar, mdiCamera, mdiCheckboxMarked, mdiDecimal, mdiFormatListChecks, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiMapMarkerMultiple, mdiNotebook, mdiNumeric, mdiSprout, mdiTag, mdiTuneVariant, mdiVideo } from '@mdi/js'
+import { mdiAlphabeticalVariant, mdiCalendar, mdiCamera, mdiCheckboxMarked, mdiDecimal, mdiFormatListChecks, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLeaf, mdiMapMarkerMultiple, mdiNotebook, mdiNumeric, mdiSprout, mdiTag, mdiTuneVariant, mdiVideo } from '@mdi/js'
 
 const gridScoreVersion = '4.3.1'
 
@@ -140,6 +140,11 @@ const dataTypes: DataType[] = [{
   shortTitle: 'traitTypeShortVideo',
   icon: mdiVideo,
   value: TraitDataType.video,
+}, {
+  title: 'traitTypeVegIndex',
+  shortTitle: 'traitTypeShortVegIndex',
+  icon: mdiLeaf,
+  value: TraitDataType.vegindex,
 }, {
   title: 'traitTypeText',
   shortTitle: 'traitTypeShortText',

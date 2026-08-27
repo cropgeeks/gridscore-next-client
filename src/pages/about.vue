@@ -45,6 +45,16 @@
       </v-list-item>
     </v-list>
 
+    <h2 class="mb-3">{{ $t('pageAboutGridScoreDonationsTitle') }}<small class="text-muted"> - {{ $t('pageAboutGridScoreDonationsSubtitle') }}</small></h2>
+    <v-row>
+      <v-col cols="12" md="3" xl="2">
+        <v-img :src="`./img/funders/hutton-unearthed-${store.storeIsDarkMode ? 'white' : 'black'}.svg`" max-height="150px" />
+      </v-col>
+      <v-col cols="12" md="9" xl="10">
+        <div v-html="$t('pageAboutGridScoreDonationsText')" />
+      </v-col>
+    </v-row>
+
     <h2 class="mb-3">{{ $t('pageAboutGridScoreFundersTitle') }}<small class="text-muted"> - {{ $t('pageAboutGridScoreFundersSubtitle') }}</small></h2>
     <p>{{ $t('pageAboutGridScoreFundersText') }}</p>
     <v-row class="funders">

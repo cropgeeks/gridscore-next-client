@@ -187,6 +187,32 @@
         <span v-html="message" />
       </template>
     </v-number-input>
+    <v-number-input
+      @wheel="$event.target.blur()"
+      :messages="description ? [description] : undefined"
+      :class="(valid && warning) ? 'suspicious-value-warning' : undefined"
+      :error-messages="valid ? (warning ? [$t('formFeedbackInputSuspicious')] : []) : [$t('formFeedbackInputOutwithValidRange')]"
+      :label="label"
+      :rules="rules"
+      :precision="null"
+      readonly
+      :decimal-separator="store.storeDecimalSeparator || '.'"
+      :bg-color="bgColor"
+      @keyup.enter="emit('traverse')"
+      control-variant="split"
+      :model-value="model !== undefined ? +model : undefined"
+      @update:model-value="v => model = (v === undefined || v === null) ? undefined : `${v}`"
+      :clearable="isEditable !== false"
+      ref="input"
+      v-else-if="trait.dataType === TraitDataType.vegindex"
+    >
+      <template #message="{ message }">
+        <span v-html="message" />
+      </template>
+      <template #append>
+        <v-btn v-tooltip:top="$t('tooltipDataEntryGetVegIndexSpriggles')" :disabled="isEditable === false" variant="tonal" size="small" @click="getVegetationIndex" :icon="mdiLeaf" />
+      </template>
+    </v-number-input>
     <template v-else-if="trait.dataType === TraitDataType.categorical">
       <v-autocomplete
         :label="label"
@@ -296,13 +322,13 @@
 <script setup lang="ts">
   import type { MiniCell, TraitPlus } from '@/plugins/types/client'
   import { type Measurement, type Person, TraitDataType } from '@/plugins/types/gridscore'
-  import { getDate, getToday, isValidDateString, toLocalDateString } from '@/plugins/util'
+  import { getDate, getToday, isValidDateString, toLocalDateString, isNumber } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { UseGeolocation } from '@vueuse/components'
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiCalendarToday, mdiCamera, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiMapMarker, mdiVideo } from '@mdi/js'
+  import { mdiCalendarToday, mdiCamera, mdiCancel, mdiChevronLeft, mdiChevronRight, mdiLeaf, mdiMapMarker, mdiVideo } from '@mdi/js'
   import { getId } from '@/plugins/id'
   import { isSuspicious } from '@/plugins/stats'
   import { trialTraitStats } from '@/plugins/datastore'
@@ -515,6 +541,49 @@
       dateInput.value = ''
     }
     emit('traverse')
+  }
+
+  function getVegetationIndex () {
+    // Construct return URL pointing back to a page/route the PWA domain
+    const currentAppUrl = window.location.origin + window.location.pathname
+    const callbackUrl = encodeURIComponent(currentAppUrl)
+
+    // Point to Spriggles
+    const toolUrl = `https://cropgeeks.github.io/spriggles/#/?imageRequestCallback=${callbackUrl}`
+
+    // Open in a popup
+    const popup = window.open(toolUrl, 'SprigglesVegetationIndex', 'popup=true,width=1280,height=800')
+
+    // Poll until the popup redirects back to your domain
+    const checkInterval = setInterval(() => {
+      try {
+        if (popup && popup.location.origin === window.location.origin) {
+          const params = new URLSearchParams(popup.location.search)
+
+          // Check if the result exists
+          if (params.has('externalRequestResult')) {
+            // Parse it
+            const result = JSON.parse(params.get('externalRequestResult') || '') as string
+
+            // Check if it's a number and within [0-1]
+            if (isNumber(result) && (+result >= 0) && (+result <= 1)) {
+              // And set it
+              model.value = result
+            }
+
+            // We close and stop listening even if the result isn't of the correct type, because the user has finished the interaction with Spriggles
+            popup.close()
+            clearInterval(checkInterval)
+          }
+        }
+      } catch {
+        // Cross-origin access blocked while user is interacting on external domain (expected)
+      }
+
+      if (popup && popup.closed) {
+        clearInterval(checkInterval)
+      }
+    }, 500)
   }
 
   function focus () {
