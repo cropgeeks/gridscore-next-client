@@ -3,9 +3,9 @@ import type { CellPlus, MiniCell, TraitPlus, TrialPlus } from '@/plugins/types/c
 import { toLocalDateTimeString } from '@/plugins/util'
 import { mdiAlphabeticalVariant, mdiCalendar, mdiCamera, mdiCheckboxMarked, mdiDecimal, mdiFormatListChecks, mdiFormatListNumbered, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiLeaf, mdiMapMarkerMultiple, mdiNotebook, mdiNumeric, mdiSprout, mdiTag, mdiTuneVariant, mdiVideo } from '@mdi/js'
 
-const gridScoreVersion = '4.4.0'
+export const gridScoreVersion = '4.4.0'
 
-const givenNames = ['Adie', 'Angie', 'Ashleigh', 'Ashton', 'Aubrey', 'Barnes', 'Barry', 'Basil', 'Bernadine', 'Bethany', 'Braden', 'Bradley', 'Brent', 'Bret', 'Brett', 'Burdine', 'Caden', 'Cadence', 'Carrington', 'Charlene', 'Charles', 'Charlton', 'Chay', 'Chet', 'Christopher', 'Cowden', 'Daris', 'Darleen', 'Darlene', 'Darnell', 'Deb', 'Demi', 'Dennis', 'Diamond', 'Doreen', 'Dorothy', 'Dustin', 'Earlene', 'Elaine', 'Elfriede', 'Ellis', 'Emery', 'Emory', 'Evan', 'Gabriel', 'Georgiana', 'Gladys', 'Greenbury', 'Gregory', 'Greig', 'Gwen', 'Harley', 'Hastings', 'Hazel', 'Heather', 'Helton', 'Henrietta', 'Heston', 'Holly', 'Hulda', 'Increase', 'India', 'Irene', 'Jackie', 'Jade', 'January', 'Jaylon', 'Jean', 'Jemma', 'Jenny', 'Jensen', 'Jerald', 'Jerrold', 'Jerry', 'Jessie', 'Jethro', 'Jigar', 'Jill', 'Jocelyn', 'Jodie', 'Joey', 'Justine', 'Kate', 'Kathryn', 'Keaton', 'Kendra', 'Kerr', 'Kimball', 'Kitty', 'Kristy', 'Kylie', 'Laren', 'Lawrence', 'Lawson', 'Leanne', 'Lianne', 'Louise', 'Luci', 'Maddox', 'Malford', 'Marlene', 'Maud', 'Melinda', 'Melville', 'Millicent', 'Mindi', 'Mindy', 'Molly', 'Mort', 'Nancy', 'Nelson', 'Nigel', 'Osbert', 'Ottilie', 'Pamela', 'Pascoe', 'Percy', 'Piper', 'Pippa', 'Poppy', 'Raleigh', 'Rebecca', 'Reynold', 'Rhoda', 'Riley', 'Roland', 'Rosaleen', 'Rosalie', 'Rosie', 'Ruby', 'Rupert', 'Ruth', 'Savannah', 'Scarlett', 'Sharon', 'Sheridan', 'Shiloh', 'Sidney', 'Stacy', 'Sue', 'Sydney', 'Tammy', 'Tim', 'Timmy', 'Timothy', 'Tracy', 'Travis', 'Trent', 'Trudie', 'Tucker', 'Velma', 'Vicary', 'Violet', 'Walker', 'Warren', 'Whitney', 'Wilfried', 'Woodrow']
+export const givenNames = ['Adie', 'Angie', 'Ashleigh', 'Ashton', 'Aubrey', 'Barnes', 'Barry', 'Basil', 'Bernadine', 'Bethany', 'Braden', 'Bradley', 'Brent', 'Bret', 'Brett', 'Burdine', 'Caden', 'Cadence', 'Carrington', 'Charlene', 'Charles', 'Charlton', 'Chay', 'Chet', 'Christopher', 'Cowden', 'Daris', 'Darleen', 'Darlene', 'Darnell', 'Deb', 'Demi', 'Dennis', 'Diamond', 'Doreen', 'Dorothy', 'Dustin', 'Earlene', 'Elaine', 'Elfriede', 'Ellis', 'Emery', 'Emory', 'Evan', 'Gabriel', 'Georgiana', 'Gladys', 'Greenbury', 'Gregory', 'Greig', 'Gwen', 'Harley', 'Hastings', 'Hazel', 'Heather', 'Helton', 'Henrietta', 'Heston', 'Holly', 'Hulda', 'Increase', 'India', 'Irene', 'Jackie', 'Jade', 'January', 'Jaylon', 'Jean', 'Jemma', 'Jenny', 'Jensen', 'Jerald', 'Jerrold', 'Jerry', 'Jessie', 'Jethro', 'Jigar', 'Jill', 'Jocelyn', 'Jodie', 'Joey', 'Justine', 'Kate', 'Kathryn', 'Keaton', 'Kendra', 'Kerr', 'Kimball', 'Kitty', 'Kristy', 'Kylie', 'Laren', 'Lawrence', 'Lawson', 'Leanne', 'Lianne', 'Louise', 'Luci', 'Maddox', 'Malford', 'Marlene', 'Maud', 'Melinda', 'Melville', 'Millicent', 'Mindi', 'Mindy', 'Molly', 'Mort', 'Nancy', 'Nelson', 'Nigel', 'Osbert', 'Ottilie', 'Pamela', 'Pascoe', 'Percy', 'Piper', 'Pippa', 'Poppy', 'Raleigh', 'Rebecca', 'Reynold', 'Rhoda', 'Riley', 'Roland', 'Rosaleen', 'Rosalie', 'Rosie', 'Ruby', 'Rupert', 'Ruth', 'Savannah', 'Scarlett', 'Sharon', 'Sheridan', 'Shiloh', 'Sidney', 'Stacy', 'Sue', 'Sydney', 'Tammy', 'Tim', 'Timmy', 'Timothy', 'Tracy', 'Travis', 'Trent', 'Trudie', 'Tucker', 'Velma', 'Vicary', 'Violet', 'Walker', 'Warren', 'Whitney', 'Wilfried', 'Woodrow']
 
 export interface MapAreaType {
   name: string
@@ -27,7 +27,7 @@ export interface MediaFilenamePart {
   extract: (trial: TrialPlus, cell: MiniCell | CellPlus, trait?: TraitPlus, date?: Date) => string
 }
 
-const mapAreaTypes = [{
+export const mapAreaTypes = [{
   name: 'meter',
   text: 'areaUnitMeter',
   convert: (v: number) => v,
@@ -64,13 +64,11 @@ const mapAreaTypes = [{
   unit: 'sq yd',
 }]
 
-const mapAreaTypeMap: { [index: string]: MapAreaType } = {}
+export const mapAreaTypeMap: Record<string, MapAreaType> = Object.fromEntries(
+  mapAreaTypes.map(dt => [dt.name, dt]),
+)
 
-mapAreaTypes.forEach(dt => {
-  mapAreaTypeMap[dt.name] = dt
-})
-
-const mediaFilenameParts: MediaFilenamePart[] = [
+export const mediaFilenameParts: MediaFilenamePart[] = [
   { id: 'trial', title: 'widgetMediaFilenameTrial', icon: mdiNotebook, example: 'Barley-trial-Season24', extract: (trial, cell) => trial.name },
   { id: 'timestamp', title: 'widgetMediaFilenameTimestamp', icon: mdiCalendar, example: toLocalDateTimeString(new Date()), extract: (trial, cell, trait, date) => toLocalDateTimeString(date || new Date()) },
   { id: 'germplasm', title: 'widgetMediaFilenameGermplasm', icon: mdiSprout, example: 'Laureate', extract: (trial, cell) => cell.displayName || cell.germplasm },
@@ -79,9 +77,9 @@ const mediaFilenameParts: MediaFilenamePart[] = [
   { id: 'trait', title: 'widgetMediaFilenameTrait', icon: mdiTag, example: 'Awn length', extract: (trial, cell, trait) => trait?.name || '' },
 ]
 
-const CELL_CATEGORIES: { [key: string]: CellCategoryInfo } = {}
-
-CELL_CATEGORIES[CellCategory.CONTROL] = { title: 'cellCategoryControl', color: 'info' }
+export const CELL_CATEGORIES: Record<string, CellCategoryInfo> = {
+  [CellCategory.CONTROL]: { title: 'cellCategoryControl', color: 'info' },
+}
 
 export interface DataType {
   title: string
@@ -90,7 +88,7 @@ export interface DataType {
   value: TraitDataType
 }
 
-const dataTypes: DataType[] = [{
+export const dataTypes: DataType[] = [{
   title: 'traitTypeInt',
   shortTitle: 'traitTypeShortInt',
   icon: mdiNumeric,
@@ -152,22 +150,10 @@ const dataTypes: DataType[] = [{
   value: TraitDataType.text,
 }]
 
-const dataTypeMap: { [index: string]: DataType } = {}
+export const dataTypeMap: Record<string, DataType> = Object.fromEntries(
+  dataTypes.map(dt => [dt.value, dt]),
+)
 
-dataTypes.forEach(dt => {
-  dataTypeMap[dt.value] = dt
-})
-
-function getRandomGivenName () {
+export function getRandomGivenName () {
   return givenNames[Math.floor(Math.random() * givenNames.length)]
-}
-
-export {
-  gridScoreVersion,
-  CELL_CATEGORIES,
-  getRandomGivenName,
-  dataTypes,
-  dataTypeMap,
-  mediaFilenameParts,
-  mapAreaTypeMap,
 }
