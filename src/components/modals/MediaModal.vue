@@ -77,15 +77,16 @@
 </template>
 
 <script setup lang="ts">
-  import { mediaFilenameParts } from '@/plugins/constants'
   import { getCell } from '@/plugins/idb'
-  import type { TraitPlus, CellPlus, TrialPlus } from '@/plugins/types/client'
+  import type { TraitPlus, CellPlus, TrialPlus, MiniCell } from '@/plugins/types/client'
   import { coreStore } from '@/stores/app'
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
   import { saveAs } from 'file-saver'
   import { mdiAlert, mdiCalendar } from '@mdi/js'
+  import { getMediaFilename } from '@/plugins/formatting'
+  import { isNumber } from '@/plugins/util'
 
   const store = coreStore()
   const { platform } = useDisplay()
@@ -95,7 +96,7 @@
     trial: TrialPlus
   }>()
 
-  type ResultCallback = (filename: string) => void
+  type ResultCallback = (result: string) => void
 
   const dialog = ref(false)
   const inputFile = ref<File>()
@@ -115,36 +116,7 @@
   const canContinue = computed(() => {
     return mediaData.value !== undefined
   })
-  const filename = computed(() => {
-    const c = cell.value
-
-    if (!inputFile.value) {
-      return 'NA'
-    }
-
-    const parts = compProps.trial.mediaFilenameFormat || mediaFilenameParts.map(p => p.id)
-    const extension = inputFile.value.name.includes('.') ? `.${inputFile.value.name.split('.').pop()}` : ''
-
-    let mapped: string[] = []
-
-    if (c) {
-      mapped = parts.map(p => {
-        if (p === 'trait' && selectedTraits.value.length > 0) {
-          return selectedTraits.value.map(t => mediaFilenameParts.find(op => op.id === p)?.extract(compProps.trial, c, t)).join('-')
-        } else {
-          return mediaFilenameParts.find(op => op.id === p)?.extract(compProps.trial, c, undefined, inputFileDate.value) || ''
-        }
-      }).filter(p => p !== undefined && p.length > 0)
-    } else {
-      mapped.push(compProps.trial.name)
-    }
-
-    if (postfix.value && postfix.value.trim().length > 0) {
-      mapped.push(postfix.value.trim())
-    }
-
-    return mapped.join('_') + extension
-  })
+  const filename = computed(() => getMediaFilename(inputFile.value, cell.value, compProps.trial, selectedTraits.value, inputFileDate.value, postfix.value))
 
   function setMediaFromInternal (newData: Blob) {
     // Convert to base64 for displaying
@@ -287,6 +259,53 @@
     emit('hide')
   }
 
+  function spriggles (cell: MiniCell, trait: TraitPlus, rc?: ResultCallback) {
+    // Construct return URL pointing back to a page/route the PWA domain
+    const currentAppUrl = window.location.origin + window.location.pathname
+    const callbackUrl = encodeURIComponent(currentAppUrl)
+
+    const file = new File([], 'spriggles.jpg')
+    const filename = getMediaFilename(file, cell, compProps.trial, [trait], new Date(), undefined)
+
+    // Point to Spriggles
+    // const toolUrl = `http://localhost:3001/#/?imageRequestCallback=${callbackUrl}&imageRequestFilename=${filename}`
+    const toolUrl = `https://cropgeeks.github.io/spriggles/#/?imageRequestCallback=${callbackUrl}&imageRequestFilename=${filename}`
+
+    // Open in a popup
+    const popup = window.open(toolUrl, 'SprigglesVegetationIndex', 'popup=true,width=1280,height=800')
+
+    // Poll until the popup redirects back to your domain
+    const checkInterval = setInterval(() => {
+      try {
+        if (popup && popup.location.origin === window.location.origin) {
+          const params = new URLSearchParams(popup.location.search)
+
+          // Check if the result exists
+          if (params.has('externalRequestResult')) {
+            // Parse it
+            const result = JSON.parse(params.get('externalRequestResult') || '') as string
+
+            // Check if it's a number and within [0-1]
+            if (isNumber(result) && (+result >= 0) && (+result <= 1)) {
+              // And set it
+              rc?.(result)
+            }
+
+            // We close and stop listening even if the result isn't of the correct type, because the user has finished the interaction with Spriggles
+            popup.close()
+            clearInterval(checkInterval)
+          }
+        }
+      } catch {
+        // Cross-origin access blocked while user is interacting on external domain (expected)
+      }
+
+      if (popup && popup.closed) {
+        clearInterval(checkInterval)
+      }
+    }, 500)
+  }
+
   watch(dialog, async newValue => {
     if (!newValue) {
       cell.value = undefined
@@ -304,12 +323,14 @@
 
   onMounted(() => {
     emitter.on('tag-media', show)
+    emitter.on('spriggles', spriggles)
 
     // Manually force this attribute onto the input field as Vuetify does not support setting it otherwise
     document.querySelector('#media-modal input[type=file]')?.setAttribute('capture', 'environment')
   })
   onBeforeUnmount(() => {
     emitter.off('tag-media', show)
+    emitter.off('spriggles', spriggles)
   })
 
   defineExpose({

@@ -1,6 +1,8 @@
 import { coreStore } from '@/stores/app'
-import type { DimensionNames } from '@/plugins/types/gridscore'
+import type { DimensionNames, Trait } from '@/plugins/types/gridscore'
 import { i18n } from '@/plugins/vuetify'
+import { mediaFilenameParts } from '@/plugins/constants'
+import type { CellPlus, MiniCell, TrialPlus } from '@/plugins/types/client'
 
 const padTo2Digits = (num: number) => num.toString().padStart(2, '0')
 
@@ -161,6 +163,37 @@ function getI18nParams (dimensionNames: DimensionNames | undefined): { [key: str
   }
 }
 
+function getMediaFilename (inputFile: File | undefined, cell: MiniCell | CellPlus | undefined, trial: TrialPlus, selectedTraits: Trait[], inputFileDate: Date | undefined, postfix: string | undefined): string {
+  const c = cell
+
+  if (!inputFile || !c) {
+    return 'NA'
+  }
+
+  const parts = trial.mediaFilenameFormat || mediaFilenameParts.map(p => p.id)
+  const extension = inputFile.name.includes('.') ? `.${inputFile.name.split('.').pop()}` : ''
+
+  let mapped: string[] = []
+
+  if (c) {
+    mapped = parts.map(p => {
+      if (p === 'trait' && selectedTraits.length > 0) {
+        return selectedTraits.map(t => mediaFilenameParts.find(op => op.id === p)?.extract(trial, c, t)).join('-')
+      } else {
+        return mediaFilenameParts.find(op => op.id === p)?.extract(trial, c, undefined, inputFileDate) || ''
+      }
+    }).filter(p => p !== undefined && p.length > 0)
+  } else {
+    mapped.push(trial.name)
+  }
+
+  if (postfix && postfix.trim().length > 0) {
+    mapped.push(postfix.trim())
+  }
+
+  return mapped.join('_') + extension
+}
+
 export {
   padTo2Digits,
   getDateTimeString,
@@ -176,4 +209,5 @@ export {
   toIsoString,
   isEmpty,
   getI18nParams,
+  getMediaFilename,
 }

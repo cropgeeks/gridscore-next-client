@@ -750,7 +750,7 @@
   },
   {
     "version": "4.0.0",
-    "date": "2025-04-09",
+    "date": "2026-04-09",
     "description": "Diese neue Version enthält ein umfassendes Update der Benutzeroberfläche. Wir haben versucht, die Benutzererfahrung von GridScore zu verbessern und gleichzeitig die Vertrautheit mit den Funktionen beizubehalten. Alle Versuche werden in diese neue Version übertragen. Bitte setz dich mit uns in Verbindung, falls es Probleme mit dieser neuen Version gibt. Nachfolgend finden Sie einige Highlights der neuen/geänderten Funktionen.",
     "items": [
       {
@@ -837,7 +837,7 @@
   },
   {
     "version": "4.1.0",
-    "date": "2025-04-21",
+    "date": "2026-04-21",
     "items": [
       {
         "type": "new",
@@ -868,7 +868,7 @@
   },
   {
     "version": "4.2.0",
-    "date": "2025-05-11",
+    "date": "2026-05-11",
     "items": [
       {
         "type": "new",
@@ -909,7 +909,7 @@
   },
   {
     "version": "4.2.1",
-    "date": "2025-05-20",
+    "date": "2026-05-20",
     "items": [
       {
         "type": "new",
@@ -925,7 +925,7 @@
   },
   {
     "version": "4.3.0",
-    "date": "2025-06-08",
+    "date": "2026-06-08",
     "items": [
       {
         "type": "new",
@@ -946,7 +946,7 @@
   },
   {
     "version": "4.3.1",
-    "date": "2025-07-28",
+    "date": "2026-07-28",
     "items": [
       {
         "type": "new",
@@ -957,6 +957,17 @@
         "type": "bugfix",
         "title": "Überspringen des Keimplasma-Schritts bei der Versuchseinrichtung",
         "text": "Unter bestimmten Bedingungen war es möglich, den Keimplasma-Überprüfungsschritt während der Einrichtung zu überspringen, was beim Laden zu einem leeren Versuch führte. Dieses Problem wurde nun behoben."
+      }
+    ]
+  },
+  {
+    "version": "4.4.0",
+    "date": "2026-07-28",
+    "items": [
+      {
+        "type": "new",
+        "title": "Merkmal zur Kronendachabdeckung",
+        "text": "<p>Mithilfe des externen Werkzeugs Spriggles kann GridScore nun den Prozentsatz der Kronendachabdeckung aus Bildern extrahieren. Um diese Funktion zu nutzen, stelle bitte sicher, dass eine Internetverbindung besteht oder dass Spriggles für die Offline-Nutzung installiert wurde.</p><p>Weitere Informationen zu Spriggles sind auf der Website zu finden: <a href='https://cropgeeks.github.io/spriggles' target='_blank'>https://cropgeeks.github.io/spriggles</a>.</p><p>Ein Video zu dieser Funktion ist auch auf <a target='_blank' href='https://www.youtube.com/watch?v=2pkaTgqNG3M'>unserem YouTube-Kanal</a> anzusehen.</p>"
       }
     ]
   }

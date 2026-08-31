@@ -750,7 +750,7 @@
   },
   {
     "version": "4.0.0",
-    "date": "2025-04-09",
+    "date": "2026-04-09",
     "description": "This new version includes a big update to the user interface. We tried to improve the user experience of using GridScore while maintaining the familiarity with its functionality. Your trials will transfer over to this new version. Please get in touch if you notice any issues with this new version. Below are some highlights of new/changed features.",
     "items": [
       {
@@ -837,7 +837,7 @@
   },
   {
     "version": "4.1.0",
-    "date": "2025-04-21",
+    "date": "2026-04-21",
     "items": [
       {
         "type": "new",
@@ -868,7 +868,7 @@
   },
   {
     "version": "4.2.0",
-    "date": "2025-05-11",
+    "date": "2026-05-11",
     "items": [
       {
         "type": "new",
@@ -909,7 +909,7 @@
   },
   {
     "version": "4.2.1",
-    "date": "2025-05-20",
+    "date": "2026-05-20",
     "items": [
       {
         "type": "new",
@@ -925,7 +925,7 @@
   },
   {
     "version": "4.3.0",
-    "date": "2025-06-08",
+    "date": "2026-06-08",
     "items": [
       {
         "type": "new",
@@ -946,7 +946,7 @@
   },
   {
     "version": "4.3.1",
-    "date": "2025-07-28",
+    "date": "2026-07-28",
     "items": [
       {
         "type": "new",
@@ -957,6 +957,17 @@
         "type": "bugfix",
         "title": "Trial setup germplasm skip",
         "text": "Under certain conditions it was possible to skip the germplasm verification step during setup which would result in a blank trial when loaded. This has now been resolved."
+      }
+    ]
+  },
+  {
+    "version": "4.4.0",
+    "date": "2026-07-28",
+    "items": [
+      {
+        "type": "new",
+        "title": "Canopy cover trait",
+        "text": "<p>Using an external tool called Spriggles, GridScore can now extract the canopy cover percentage from images. To use this feature, make sure you either have an internet connection or you have installed Spriggles for offline use.</p><p>More information on Spriggles can be found on the website: <a href='https://cropgeeks.github.io/spriggles' target='_blank'>https://cropgeeks.github.io/spriggles</a>.</p><p>You can also watch a video showcasing this feature on <a target='_blank' href='https://www.youtube.com/watch?v=2pkaTgqNG3M'>our Youtube channel</a></p>"
       }
     ]
   }

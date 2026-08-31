@@ -322,7 +322,7 @@
 <script setup lang="ts">
   import type { MiniCell, TraitPlus } from '@/plugins/types/client'
   import { type Measurement, type Person, TraitDataType } from '@/plugins/types/gridscore'
-  import { getDate, getToday, isValidDateString, toLocalDateString, isNumber } from '@/plugins/util'
+  import { getDate, getToday, isValidDateString, toLocalDateString } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { UseGeolocation } from '@vueuse/components'
   import { useI18n } from 'vue-i18n'
@@ -544,46 +544,9 @@
   }
 
   function getVegetationIndex () {
-    // Construct return URL pointing back to a page/route the PWA domain
-    const currentAppUrl = window.location.origin + window.location.pathname
-    const callbackUrl = encodeURIComponent(currentAppUrl)
-
-    // Point to Spriggles
-    const toolUrl = `https://cropgeeks.github.io/spriggles/#/?imageRequestCallback=${callbackUrl}`
-
-    // Open in a popup
-    const popup = window.open(toolUrl, 'SprigglesVegetationIndex', 'popup=true,width=1280,height=800')
-
-    // Poll until the popup redirects back to your domain
-    const checkInterval = setInterval(() => {
-      try {
-        if (popup && popup.location.origin === window.location.origin) {
-          const params = new URLSearchParams(popup.location.search)
-
-          // Check if the result exists
-          if (params.has('externalRequestResult')) {
-            // Parse it
-            const result = JSON.parse(params.get('externalRequestResult') || '') as string
-
-            // Check if it's a number and within [0-1]
-            if (isNumber(result) && (+result >= 0) && (+result <= 1)) {
-              // And set it
-              model.value = result
-            }
-
-            // We close and stop listening even if the result isn't of the correct type, because the user has finished the interaction with Spriggles
-            popup.close()
-            clearInterval(checkInterval)
-          }
-        }
-      } catch {
-        // Cross-origin access blocked while user is interacting on external domain (expected)
-      }
-
-      if (popup && popup.closed) {
-        clearInterval(checkInterval)
-      }
-    }, 500)
+    emitter.emit('spriggles', compProps.cell, compProps.trait, (value: string) => {
+      model.value = value
+    })
   }
 
   function focus () {
