@@ -194,6 +194,31 @@ function getMediaFilename (inputFile: File | undefined, cell: MiniCell | CellPlu
   return mapped.join('_') + extension
 }
 
+export function escapeTsvField (value: string) {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\t/g, '\\t')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+}
+
+export function unescapeTsvField (value: string) {
+  return value.replace(/\\(\\|t|n|r)/g, (match, char) => {
+    switch (char) {
+      case 't':
+        return '\t'
+      case 'n':
+        return '\n'
+      case 'r':
+        return '\r'
+      case '\\':
+        return '\\'
+      default:
+        return match
+    }
+  })
+}
+
 export {
   padTo2Digits,
   getDateTimeString,

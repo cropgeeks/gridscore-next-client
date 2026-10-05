@@ -8,6 +8,7 @@ import { i18n } from '@/plugins/vuetify'
 import { exportToGerminate, exportToShapefile, shareTrial } from './api'
 import { coreStore } from '@/stores/app'
 import { getTrialById } from './idb'
+import { escapeTsvField } from './formatting'
 
 interface IndividualMeasurement {
   traitId: string
@@ -152,7 +153,7 @@ function traitsToGerminate (traits: Trait[]): string {
   let text = `${GERMINATE_EXPECTED_COLUMNS.join('\t')}\tSet size\tIs timeseries\tTrait category`
 
   traits.forEach(t => {
-    text += `\n${t.name}\t\t${t.description || ''}\t${toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}\t${t.group ? t.group.name : ''}`
+    text += `\n${t.name}\t\t${escapeTsvField(t.description || '')}\t${toGerminateDataType(t.dataType)}\t\t\t\t${(t.restrictions && t.restrictions.categories) ? ('[[' + t.restrictions.categories.join(',') + ']]') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}\t${t.setSize}\t${t.allowRepeats ? 'true' : 'false'}\t${t.group ? t.group.name : ''}`
   })
 
   return text
@@ -162,7 +163,7 @@ function traitsToTabular (traits: Trait[]): string {
   let text = TABULAR_EXPECTED_COLUMNS.join('\t')
 
   traits.forEach(t => {
-    text += `\n${t.name}\t${t.description || ''}\t${t.dataType}\t${t.allowRepeats ? 1 : 0}\t${t.setSize}\t${t.group ? t.group.name : ''}`
+    text += `\n${t.name}\t${escapeTsvField(t.description || '')}\t${t.dataType}\t${t.allowRepeats ? 1 : 0}\t${t.setSize}\t${t.group ? t.group.name : ''}`
 
     // Restrictions
     text += `\t${(t.restrictions && t.restrictions.categories) ? t.restrictions.categories.join(',') : ''}\t${(t.restrictions && t.restrictions.min !== undefined && t.restrictions.min !== null) ? t.restrictions.min : ''}\t${(t.restrictions && t.restrictions.max !== undefined && t.restrictions.max !== null) ? t.restrictions.max : ''}`

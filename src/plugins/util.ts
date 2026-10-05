@@ -9,6 +9,7 @@ import { categoricalColors } from './color'
 
 import Ajv from 'ajv'
 import traitSchema from '@/plugins/types/schema/trait.schema.json'
+import { unescapeTsvField } from './formatting'
 
 const ajv = new Ajv()
 const traitValidator = ajv.compile(traitSchema)
@@ -151,7 +152,7 @@ function germinateToTraits (traitString: string): Trait[] {
 
       const trait: Trait = {
         name: p.Name || 'N/A',
-        description: p.Description,
+        description: p.Description ? unescapeTsvField(p.Description) : undefined,
         dataType: dt,
         setSize: 1,
         allowRepeats: false,
@@ -267,7 +268,7 @@ function tabularToTraits (traitString: string): Trait[] {
 
     const trait: Trait = {
       name: p.Name,
-      description: p.Description,
+      description: p.Description ? unescapeTsvField(p.Description) : undefined,
       dataType: dt,
       allowRepeats: p['Allow repeats'] === '1' || p['Allow repeats'] === 1,
       group: p['Group name'] ? { name: p['Group name'] } : undefined,
