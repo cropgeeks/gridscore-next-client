@@ -184,8 +184,11 @@
       for (const part of parts) {
         if (part !== undefined && part !== null && part !== '') {
           if (trait.dataType === TraitDataType.categorical && trait.restrictions && trait.restrictions.categories) {
-            const index = trait.restrictions.categories.indexOf(part)
-            values.push(`${index}`)
+            values.push(`${trait.restrictions.categories.indexOf(part)}`)
+          } else if (trait.dataType === TraitDataType.multicat && trait.restrictions && trait.restrictions.categories) {
+            values.push(part.split(':').map(p => trait.restrictions?.categories?.indexOf(p)).join(':'))
+          } else if (TraitDataType.isNumeric(trait.dataType)) {
+            values.push(part)
           } else {
             values.push(part)
           }

@@ -31,5 +31,6 @@ export default vuetify({
     'vue/attributes-order': 'off',
     'vue/max-attributes-per-line': 'off',
     'vue/order-in-components': 'off',
+    'complexity': 'off',
   },
 })

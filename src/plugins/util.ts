@@ -582,6 +582,9 @@ function checkDataMatchesTraitType (trait: Trait, value: string, checkDatesAndCa
     }
   } else if (trait.dataType === TraitDataType.categorical && trait.restrictions && trait.restrictions.categories && checkDatesAndCategories) {
     return trait.restrictions.categories.includes(value)
+  } else if (trait.dataType === TraitDataType.multicat && trait.restrictions && trait.restrictions.categories && checkDatesAndCategories) {
+    const parts = value.split(':')
+    return parts.every(p => trait.restrictions?.categories?.includes(p))
   } else if (trait.dataType === TraitDataType.date && checkDatesAndCategories) {
     return isValidDateString(value)
   } else if (trait.dataType === TraitDataType.gps) {
