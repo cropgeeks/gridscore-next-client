@@ -1,4 +1,3 @@
-import { coreStore } from '@/stores/app'
 import type { DimensionNames, Trait } from '@/plugins/types/gridscore'
 import { i18n } from '@/plugins/vuetify'
 import { mediaFilenameParts } from '@/plugins/constants'

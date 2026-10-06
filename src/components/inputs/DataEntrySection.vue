@@ -91,7 +91,6 @@
   import { mdiCamera, mdiHistory } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
 
-
   export type CellData = { [key: string]: TraitData }
   export type TraitData = { [key: string]: string | undefined }
 
@@ -103,7 +102,9 @@
   const refs = ref<{ [index: string]: any }>({})
 
   const cellData = defineModel<CellData>({
-    default: {},
+    default: () => {
+      return {}
+    },
   })
 
   const compProps = defineProps<{

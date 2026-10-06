@@ -1,5 +1,4 @@
 import { changeTrialsDataInternal, getCell, getTrialById, getTrialData, type DataModification } from '@/plugins/idb'
-import { coreStore } from '@/stores/app'
 
 import emitter from 'tiny-emitter/instance'
 import { CellCategory, TraitDataType, type Cell } from '@/plugins/types/gridscore'
@@ -268,7 +267,7 @@ async function init () {
   emitter.on('plot-locked-changed', updateCellCache)
   emitter.on('plot-data-changed', updateCellCache)
 
-  if (coreStore().storeSelectedTrial) {
+  if (useCoreStore().storeSelectedTrial) {
     await loadTrialData()
   }
 }

@@ -54,7 +54,7 @@
 
   const edit = ref(false)
   const model = defineModel<number[]>({
-    default: [],
+    default: () => [],
   })
 
   const parent = ref()

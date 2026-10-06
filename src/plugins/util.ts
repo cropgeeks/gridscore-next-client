@@ -2,7 +2,6 @@ import { DisplayOrder, TraitDataType, type Layout, type Trait } from '@/plugins/
 import { autoType, tsvParse } from 'd3-dsv'
 
 import { i18n } from '@/plugins/vuetify'
-import { coreStore } from '@/stores/app'
 import type { FilterMatch, InternalItem } from 'vuetify'
 import { PlotDisplayField, ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
 import { categoricalColors } from './color'

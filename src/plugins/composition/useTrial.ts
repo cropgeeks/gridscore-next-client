@@ -1,6 +1,5 @@
 import type { CellPlus, TrialPlus } from '@/plugins/types/client'
 import { getTrialById, getTrialData } from '@/plugins/idb'
-import { coreStore } from '@/stores/app'
 import { CellCategory } from '@/plugins/types/gridscore'
 
 import emitter from 'tiny-emitter/instance'

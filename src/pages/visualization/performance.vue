@@ -89,7 +89,6 @@
   import type { TrialPlus, CellPlus, TraitPlus } from '@/plugins/types/client'
   import { TraitDataType } from '@/plugins/types/gridscore'
 
-
   import emitter from 'tiny-emitter/instance'
 
   const trial = ref<TrialPlus>()

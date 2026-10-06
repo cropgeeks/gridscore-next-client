@@ -1,4 +1,3 @@
-import { coreStore } from '@/stores/app'
 import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
 
 async function forceUpdateTraitImageCache (trial: TrialPlus) {

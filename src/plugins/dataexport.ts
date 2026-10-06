@@ -6,7 +6,6 @@ import { GERMINATE_EXPECTED_COLUMNS, safeTrialName, TABULAR_EXPECTED_COLUMNS, to
 import { saveAs } from 'file-saver'
 import { i18n } from '@/plugins/vuetify'
 import { exportToGerminate, exportToShapefile, shareTrial } from './api'
-import { coreStore } from '@/stores/app'
 import { getTrialById } from './idb'
 import { escapeTsvField } from './formatting'
 

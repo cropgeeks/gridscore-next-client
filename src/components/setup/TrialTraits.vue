@@ -447,9 +447,9 @@
   }
 
   const model = defineModel<TraitPlus[]>({
-    default: [],
+    default: () => [],
   })
-  const traitGroupOrder = defineModel<string[]>('traitGroupOrder', { default: [] })
+  const traitGroupOrder = defineModel<string[]>('traitGroupOrder', { default: () => [] })
 
   export interface TrialTraitsProps {
     trialIdsForTraitGroups?: string[]

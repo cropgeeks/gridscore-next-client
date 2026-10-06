@@ -1,5 +1,4 @@
 import { updateTrialBrapiConfig } from '@/plugins/idb'
-import { coreStore } from '@/stores/app'
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
 import emitter from 'tiny-emitter/instance'
 import { i18n } from '@/plugins/vuetify'

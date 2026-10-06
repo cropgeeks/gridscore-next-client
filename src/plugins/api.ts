@@ -1,4 +1,4 @@
-import { coreStore, type PlausibleConfig } from '@/stores/app'
+import type { PlausibleConfig } from '@/stores/app'
 import { getTrialById, getTrialData, getTrials, updateTrial } from '@/plugins/idb'
 
 import emitter from 'tiny-emitter/instance'

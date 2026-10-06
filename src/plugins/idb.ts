@@ -1,5 +1,4 @@
 import { type IDBPDatabase, openDB } from 'idb'
-import { coreStore } from '@/stores/app'
 import { DisplayOrder, TimeframeType, type BrapiConfig, type CellMetadata, type Comment, type Corners, type DimensionNames, type Event, type Group, type Markers, type Measurement, type Person, type PlotDetailContent, type SocialShareConfig, type Trait, type TraitMeasurement, type Transaction } from '@/plugins/types/gridscore'
 import { ShareStatus, type CellPlus, type TraitPlus, type TrialPlus, type Geolocation, type PlotCoords } from '@/plugins/types/client'
 import { getCellText, getColumnLabel, getPriorityShareCode, getRowLabel, getServerUrl, toLocalDateString } from '@/plugins/util'
@@ -40,7 +39,7 @@ export interface TrialModification {
 
 function getStore () {
   if (!store) {
-    store = coreStore()
+    store = useCoreStore()
   }
   return store
 }

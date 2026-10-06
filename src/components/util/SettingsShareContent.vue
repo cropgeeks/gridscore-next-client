@@ -13,7 +13,6 @@
   import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, TraitGroupMode } from '@/plugins/types/client'
   import { loadLanguageAsync } from '@/plugins/vuetify'
 
-
   import emitter from 'tiny-emitter/instance'
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
 
