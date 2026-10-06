@@ -17,7 +17,7 @@ const BRAPI_OBSERVATION_UNIT_MISSING = 'BrAPI endpoint is missing observation un
 function brapiDefaultCatchHandler (err: AxiosError | string) {
   if (err instanceof AxiosError) {
     if (err.response) {
-      const store = coreStore()
+      const store = useCoreStore()
       // The request was made and the server responded with a status code that falls out of the range of 2xx
       // Log the user out if the result is forbidden and no error method has been provided
       // Otherwise, we assume that the calling method takes care of the error
@@ -105,7 +105,7 @@ function brapiDefaultCatchHandler (err: AxiosError | string) {
  * @returns Promise
  */
 async function brapiAxios (url: string, callName: string, params: any = undefined, method: 'get' | 'post' | 'put' | 'patch' = 'get', infoCheck = true) {
-  const store = coreStore()
+  const store = useCoreStore()
   const brapiConfig = store.storeBrapiConfig
   const baseUrl = brapiConfig?.url || 'undefined'
   const token = brapiConfig?.token
@@ -154,7 +154,7 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
  * Retrieves the `serverinfo` from the BrAPI server to check availability of certain endpoints. Sets the field `serverInfo` for this BrAPI server
  */
 async function brapiGetInfo () {
-  const store = coreStore()
+  const store = useCoreStore()
   const url = store.storeBrapiConfig ? store.storeBrapiConfig.url : null
   if (url && url.length > 0) {
     await brapiAxios('serverinfo', 'serverinfo', null, 'get', false)

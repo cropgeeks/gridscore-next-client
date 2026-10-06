@@ -25,7 +25,7 @@
   import { getId } from '@/plugins/id'
   import type { TrialPlus } from '@/plugins/types/client'
   import { toLocalDateString } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { mdiBlurLinear } from '@mdi/js'
 
   import Plotly, { type ColorScale } from 'plotly.js/lib/core'
@@ -49,7 +49,7 @@
     chartData: { [index: string]: number } | undefined
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const id = ref(`time-heatmap-${getId()}`)

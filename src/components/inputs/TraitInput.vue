@@ -323,7 +323,7 @@
   import type { MiniCell, TraitPlus } from '@/plugins/types/client'
   import { type Measurement, type Person, TraitDataType } from '@/plugins/types/gridscore'
   import { getDate, getToday, isValidDateString, toLocalDateString } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { UseGeolocation } from '@vueuse/components'
   import { useI18n } from 'vue-i18n'
 
@@ -351,7 +351,7 @@
 
   const emit = defineEmits(['traverse', 'valid-changed'])
 
-  const store = coreStore()
+  const store = useCoreStore()
   // const date = useDate()
 
   const model = defineModel<string>()

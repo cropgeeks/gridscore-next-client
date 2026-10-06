@@ -103,14 +103,14 @@
   import { CanvasDensity, CanvasShape, CanvasSize, NavigationMode, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
   import { CellCategory, TraitDataType, type Cell } from '@/plugins/types/gridscore'
   import { getColumnLabel, getRowLabel } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
   import emitter from 'tiny-emitter/instance'
   import { categoricalColors } from '@/plugins/color'
   import { mdiCircle, mdiNavigation, mdiRecordCircleOutline, mdiLock, mdiBookmark, mdiMessageText, mdiCheckboxMarked } from '@mdi/js'
 
   const { n } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
 
   const compProps = defineProps<{
     trial: TrialPlus

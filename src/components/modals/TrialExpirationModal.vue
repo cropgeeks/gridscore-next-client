@@ -72,14 +72,14 @@
   import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
   import emitter from 'tiny-emitter/instance'
   import { mdiLanDisconnect, mdiRefresh } from '@mdi/js'
-  import { coreStore } from '@/stores/app'
+
   import { extendTrialPeriod } from '@/plugins/api'
 
   const compProps = defineProps<{
     trial: TrialPlus
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const error = ref<string>()
   const captcha = ref<string>()
   const captchaUrl = ref<string>()

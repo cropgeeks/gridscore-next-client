@@ -79,7 +79,7 @@
 <script setup lang="ts">
   import { getCell } from '@/plugins/idb'
   import type { TraitPlus, CellPlus, TrialPlus, MiniCell } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
   import { useDisplay } from 'vuetify'
@@ -88,7 +88,7 @@
   import { getMediaFilename } from '@/plugins/formatting'
   import { isNumber } from '@/plugins/util'
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { platform } = useDisplay()
   const { t } = useI18n()
 

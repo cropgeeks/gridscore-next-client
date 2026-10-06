@@ -42,7 +42,7 @@
 <script lang="ts" setup>
   import { downloadBlob, downloadSvgsFromContainer, type DownloadBlob } from '@/plugins/file'
   import { getDateTimeString } from '@/plugins/formatting'
-  import { coreStore } from '@/stores/app'
+
   import { mdiChartAreaspline, mdiDotsVertical, mdiFileCode, mdiFileDocument, mdiFileImage } from '@mdi/js'
   import Plotly from 'plotly.js/lib/core'
   import { useI18n } from 'vue-i18n'
@@ -77,7 +77,7 @@
     headerIconColor: 'primary',
   })
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { locale } = useI18n()
 
   const localLoading = ref(false)

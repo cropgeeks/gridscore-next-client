@@ -57,11 +57,11 @@
   import emitter from 'tiny-emitter/instance'
   import type { ArchiveInformation } from '@/plugins/types/gridscore'
   import { checkTrialArchiveExists } from '@/plugins/api'
-  import { coreStore } from '@/stores/app'
+
   import { mdiArchive, mdiArchiveLock, mdiDownload, mdiFileCog, mdiLanDisconnect, mdiRepeat } from '@mdi/js'
   import { getNumberWithSuffix } from '@/plugins/formatting'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const serverError = ref<string>()

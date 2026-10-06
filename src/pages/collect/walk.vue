@@ -49,11 +49,11 @@
   import GuideOrderSelector from '@/components/trial/GuideOrderSelector.vue'
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import emitter from 'tiny-emitter/instance'
 
   const route = useRoute('/collect/walk')
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const geolocation = ref<Geolocation>()

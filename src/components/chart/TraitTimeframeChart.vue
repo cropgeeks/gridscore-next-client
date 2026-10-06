@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
   import { getId } from '@/plugins/id'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCalendarExpandHorizontal } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
@@ -34,7 +34,7 @@
     trial: TrialPlus
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const id = ref('trait-timeline' + getId())

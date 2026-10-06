@@ -38,14 +38,14 @@
   import { updateTrialBrapiConfig } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
   import type { BrapiConfig } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
   import { mdiRefresh } from '@mdi/js'
 
   const compProps = defineProps<{
     trial?: TrialPlus
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const brapiUrl = ref<string | undefined>(store.storeBrapiConfig?.url)
   const brapiToken = ref<string | undefined>(store.storeBrapiConfig?.token)

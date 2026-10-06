@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
   import type { Dimensions } from '@/components/data/DataCanvas.vue'
-  import { coreStore } from '@/stores/app'
+
 
   const compProps = defineProps<{
     orientation: 'vertical' | 'horizontal'
@@ -27,7 +27,7 @@
     scroll: [offset: number]
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const scaledWidth = ref(5)
   const scaledHeight = ref(10)

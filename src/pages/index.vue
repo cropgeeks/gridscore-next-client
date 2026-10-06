@@ -99,11 +99,11 @@
   import TrialSelector from '@/components/trial/TrialSelector.vue'
   import HelpCard from '@/components/util/HelpCard.vue'
   import { categoricalColors } from '@/plugins/color'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCellphoneInformation, mdiClipboardTextClock, mdiCog, mdiNewspaperVariantOutline, mdiNotebookPlus, mdiQrcodeScan } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const samsungInfoModal = useTemplateRef('samsungInfoModal')
 

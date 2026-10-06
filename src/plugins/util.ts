@@ -49,7 +49,7 @@ function getThemeColor (index: number) {
 }
 
 function getTraitColor (index: number) {
-  const store = coreStore()
+  const store = useCoreStore()
 
   return store.storeTraitColors[index % store.storeTraitColors.length]
 }
@@ -211,7 +211,7 @@ function germinateToTraits (traitString: string): Trait[] {
 
 function getServerUrl (trial: TrialPlus) {
   if (trial) {
-    const store = coreStore()
+    const store = useCoreStore()
     let baseUrl = trial.remoteUrl || store.storeServerUrl || ''
 
     if (!baseUrl.endsWith('/')) {
@@ -426,7 +426,7 @@ function toLocalDateString (date: (string | Date | null) = null, opts?: any) {
 }
 
 function formatTimeAgo (date: string) {
-  const store = coreStore()
+  const store = useCoreStore()
   const formatter = new Intl.RelativeTimeFormat((store.storeLocale || 'en-GB').split('-')[0], {
     numeric: 'always',
   })
@@ -521,7 +521,7 @@ function getCellTextGuaranteed (cell: CellPlus): string {
 }
 
 function getCellText (cell: CellPlus): string | undefined {
-  const store = coreStore()
+  const store = useCoreStore()
 
   let result = undefined
 

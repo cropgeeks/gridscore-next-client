@@ -90,12 +90,12 @@
   import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { mdiCamera, mdiHistory } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
-  import { coreStore } from '@/stores/app'
+
 
   export type CellData = { [key: string]: TraitData }
   export type TraitData = { [key: string]: string | undefined }
 
-  const store = coreStore()
+  const store = useCoreStore()
   const emit = defineEmits(['traverse', 'set-valid', 'show-history'])
 
   const scroller = useTemplateRef<typeof DynamicScroller>('scroller')

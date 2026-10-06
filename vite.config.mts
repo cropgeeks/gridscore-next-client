@@ -35,6 +35,12 @@ export default defineConfig({
           pinia: ['defineStore', 'storeToRefs'],
         },
       ],
+      dirs: [
+        'src/stores',
+      ],
+      dirsScanOptions: {
+        types: true, // Forces v20 AST parser to treat values and types equally in dirs
+      },
       dts: 'src/auto-imports.d.ts',
       eslintrc: {
         enabled: true,

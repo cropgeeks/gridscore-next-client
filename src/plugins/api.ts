@@ -96,7 +96,7 @@ function axiosForm<T> ({ baseUrl, url, remoteToken, formData, method = 'get', ig
 }
 
 function internalAxiosForm<T> (baseUrl: string | undefined, url: string | undefined, remoteToken: string | undefined, method: string | undefined, formData: any | undefined, ignoreErrors: boolean | undefined, resolve: (args: T) => void, reject: ((args: Error) => void) | undefined) {
-  const store = coreStore()
+  const store = useCoreStore()
   const config: any = {
     baseURL: baseUrl || store.storeServerUrl,
     url,
@@ -160,7 +160,7 @@ function internalAxiosForm<T> (baseUrl: string | undefined, url: string | undefi
 }
 
 function internalAxiosCall<T> (baseUrl: string | undefined, url: string | undefined, remoteToken: string | undefined, method: string | undefined, requestParams: any | undefined, requestData: any | undefined, ignoreErrors: boolean | undefined, resolve: (args: T) => void, reject: ((args: Error) => void) | undefined) {
-  const store = coreStore()
+  const store = useCoreStore()
   const config: any = {
     baseURL: baseUrl || store.storeServerUrl,
     url,

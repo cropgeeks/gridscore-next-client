@@ -88,7 +88,7 @@
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { TrialPlus, CellPlus, TraitPlus } from '@/plugins/types/client'
   import { TraitDataType } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
 
   import emitter from 'tiny-emitter/instance'
 
@@ -104,7 +104,7 @@
   const featuredTrait = ref<TraitPlus>()
 
   const route = useRoute()
-  const store = coreStore()
+  const store = useCoreStore()
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
 

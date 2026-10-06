@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
   import type { Corners, DimensionNames, Layout } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
 
   import L, { type TileLayer, type Map, type Marker, type LatLngBounds } from 'leaflet'
   import 'leaflet/dist/leaflet.css'
@@ -88,7 +88,7 @@
     dimensionNames?: DimensionNames
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const model = defineModel<Layout>()
   const cornersEnabled = ref<boolean>(false)

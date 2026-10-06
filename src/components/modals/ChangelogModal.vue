@@ -67,7 +67,7 @@
   import viVN from '@/plugins/changelog/vi_VN.json'
 
   import semver from 'semver'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
   import type { FilterMatch, InternalItem } from 'vuetify'
   import { mdiBugCheck, mdiCalendar, mdiChevronTripleUp, mdiNewBox } from '@mdi/js'
@@ -93,7 +93,7 @@
     icon: string
   }
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   function sorting (a: VersionInfo, b: VersionInfo) {
     if (semver.eq(a.version, b.version)) {

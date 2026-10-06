@@ -9,7 +9,7 @@
   import type { Step } from '@/plugins/guidedwalk'
   import type { XY } from '@/plugins/location'
   import type { Layout } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
   import { useTheme } from 'vuetify'
 
   interface TrialPreviewCanvasProps {
@@ -24,7 +24,7 @@
 
   const compProps = defineProps<TrialPreviewCanvasProps>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const theme = useTheme()
 
   const canvas = useTemplateRef('canvas')

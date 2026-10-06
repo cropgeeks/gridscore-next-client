@@ -83,7 +83,7 @@
   import Plotly from 'plotly.js/lib/core'
   import heatmap from 'plotly.js/lib/heatmap'
   import { getTrialDataCached } from '@/plugins/datastore'
-  import { coreStore } from '@/stores/app'
+
   import { CellCategory, TraitDataType, type Measurement } from '@/plugins/types/gridscore'
   import { categoricalColors, invertHex, toCssNamedColors } from '@/plugins/color'
   import { useI18n } from 'vue-i18n'
@@ -108,7 +108,7 @@
     trial: TrialPlus
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { n, t } = useI18n()
 
   const id = ref('rep-heatmap' + getId())

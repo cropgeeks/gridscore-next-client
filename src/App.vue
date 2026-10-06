@@ -159,7 +159,7 @@
 
 <script lang="ts" setup>
   import { useDisplay, useTheme, type SnackbarQueueMessage } from 'vuetify'
-  import { coreStore } from '@/stores/app'
+
   import AppFooter from '@/components/AppFooter.vue'
   import { loadLanguageAsync, locales } from '@/plugins/vuetify'
   import ConfirmModal from '@/components/modals/ConfirmModal.vue'
@@ -182,7 +182,7 @@
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()
-  const store = coreStore()
+  const store = useCoreStore()
   const route = useRoute()
   const isDark = useDark()
 

@@ -430,15 +430,15 @@
   import { categoricalColors, THEME_COLORS } from '@/plugins/color'
   import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, PlotDisplayField, TraitGroupMode } from '@/plugins/types/client'
   import { locales } from '@/plugins/vuetify'
-  import { coreStore } from '@/stores/app'
+
   import { mdiBarcodeScan, mdiBrightnessAuto, mdiCameraFront, mdiCellphoneScreenshot, mdiCheck, mdiCircle, mdiCloseCircle, mdiCursorMove, mdiDirectionsFork, mdiDrag, mdiExport, mdiGestureTap, mdiGrid, mdiImport, mdiLeaf, mdiMenuDown, mdiPaletteSwatch, mdiPlus, mdiShare, mdiSpeedometer, mdiSquare, mdiTab, mdiUndoVariant, mdiViewComfy, mdiViewDay, mdiViewGridCompact, mdiViewModule, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   import emitter from 'tiny-emitter/instance'
   import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
-import { calculateTraitStats } from '@/plugins/datastore'
+  import { calculateTraitStats } from '@/plugins/datastore'
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const shareBottomSheetVisible = ref(false)
@@ -457,7 +457,7 @@ import { calculateTraitStats } from '@/plugins/datastore'
   const currentTraitColor = ref<string>('#000000')
   const currentTraitIndex = ref<number>()
   const [homeWidgetOrderParent, homeWidgetOrder] = useDragAndDrop<HomeOrder>(
-    store.storeHomeWidgetOrder.map((o, i) => {
+    store.storeHomeWidgetOrder.map((o: string, i: number) => {
       return {
         id: i,
         value: o,
@@ -558,7 +558,7 @@ import { calculateTraitStats } from '@/plugins/datastore'
     enterBarcode.value = store.storeEnterBarcode
     escapeBarcode.value = store.storeEscapeBarcode
     restrictInputToMarked.value = store.storeRestrictInputToMarked
-    homeWidgetOrder.value = store.storeHomeWidgetOrder.map((o, i) => {
+    homeWidgetOrder.value = store.storeHomeWidgetOrder.map((o: string, i: number) => {
       return {
         id: i,
         value: o,

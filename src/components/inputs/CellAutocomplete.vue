@@ -75,7 +75,7 @@
   import { getTrialDataCached, getTrialGermplasmCached } from '@/plugins/datastore'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import { filterCells } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { mdiMagnify, mdiNfcVariant, mdiQrcodeScan } from '@mdi/js'
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
@@ -84,7 +84,7 @@
   import { useI18n } from 'vue-i18n'
   import { getI18nParams } from '@/plugins/formatting'
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const searchMatch = defineModel<CellPlus[] | CellPlus>()

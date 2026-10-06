@@ -12,7 +12,7 @@
 <script setup lang="ts">
   import { CanvasDensity, CanvasShape, CanvasSize, DataEntryView, MainDisplayMode, NavigationMode, TraitGroupMode } from '@/plugins/types/client'
   import { loadLanguageAsync } from '@/plugins/vuetify'
-  import { coreStore } from '@/stores/app'
+
 
   import emitter from 'tiny-emitter/instance'
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
@@ -24,7 +24,7 @@
   const errorMessage = ref<string>()
   const size = ref(300)
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const settingsShareCodeContent = computed(() => {
     return JSON.stringify({
@@ -49,7 +49,7 @@
       vf: store.storeVoiceFeedbackEnabled ? 1 : 0,
       rm: store.storeRestrictInputToMarked ? 1 : 0,
       nm: store.storeNavigationMode === NavigationMode.DRAG ? 1 : 0,
-      tc: store.storeTraitColors.map(c => c.replace('#', '')).join(','),
+      tc: store.storeTraitColors.map((c: string) => c.replace('#', '')).join(','),
       tg: store.storeTraitGroupMode === TraitGroupMode.SECTIONS ? 1 : 0,
       ft: store.storeShowFullTraitDescription ? 1 : 0,
       lb: store.storeLargeButtonsForIntTraits ? 1 : 0,

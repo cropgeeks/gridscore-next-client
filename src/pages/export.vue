@@ -312,7 +312,7 @@
   import { getI18nParams, getNumberWithSuffix } from '@/plugins/formatting'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { mdiAlert, mdiCommentMultiple, mdiDownload, mdiFileTable, mdiFlag, mdiLandFields, mdiLanDisconnect, mdiLandRowsHorizontal, mdiLandRowsVertical, mdiSprout, mdiTagMultiple } from '@mdi/js'
   import { UseOnline } from '@vueuse/components'
 
@@ -322,7 +322,7 @@
   import BrapiExportSection from '@/components/dataexport/BrapiExportSection.vue'
   import TrialCard from '@/components/trial/TrialCard.vue'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const trialData = shallowRef<{ [index: string]: CellPlus } | undefined>({})

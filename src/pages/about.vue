@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
   import { gridScoreVersion } from '@/plugins/constants'
-  import { coreStore } from '@/stores/app'
+
   import { mdiBookEducation, mdiGithub, mdiInformation, mdiLaptop, mdiMessageAlert, mdiNewspaperVariant, mdiTagOutline } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
@@ -152,7 +152,7 @@
     ]
   })
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const storeDeviceConfigString = computed(() => {
     if (store.storeDeviceConfig) {

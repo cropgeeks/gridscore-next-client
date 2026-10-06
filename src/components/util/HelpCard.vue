@@ -55,12 +55,12 @@
 </template>
 
 <script setup lang="ts">
-  import { coreStore } from '@/stores/app'
+
   import { mdiAccountQuestion, mdiCellphoneArrowDown, mdiClose, mdiGithub, mdiHelpCircle, mdiInformation } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const showInstall = ref(false)
   const showInstallInfo = ref(false)

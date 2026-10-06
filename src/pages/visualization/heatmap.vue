@@ -20,9 +20,9 @@
   import ReplicateHeatmap from '@/components/chart/ReplicateHeatmap.vue'
   import { getTrialById } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
 
-  const store = coreStore()
+
+  const store = useCoreStore()
 
   const repCount = ref(10)
   const trial = ref<TrialPlus>()

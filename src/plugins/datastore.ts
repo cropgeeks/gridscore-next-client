@@ -24,7 +24,7 @@ let trialControls: Set<string> = new Set()
 let trialBookmarks: Set<string> = new Set()
 
 async function loadTrialData () {
-  const store = coreStore()
+  const store = useCoreStore()
   const selectedTrial = store.storeSelectedTrial
   if (selectedTrial) {
     try {
@@ -92,7 +92,7 @@ async function loadTrialData () {
 }
 
 async function updateTrialInformation () {
-  const store = coreStore()
+  const store = useCoreStore()
   const selectedTrial = store.storeSelectedTrial
   if (selectedTrial) {
     try {
@@ -105,7 +105,7 @@ async function updateTrialInformation () {
 }
 
 function updateCellCache (row: number, column: number, trialId: string) {
-  const store = coreStore()
+  const store = useCoreStore()
   if (store.storeSelectedTrial === trialId && trialData) {
     getCell(trialId, row, column)
       .then((cell: Cell) => {
@@ -122,13 +122,13 @@ function updateCellCache (row: number, column: number, trialId: string) {
 export function calculateTraitStats () {
   trialTraitStats.value = {}
 
-  const store = coreStore()
+  const store = useCoreStore()
   if (store.storeSuspiciousDataPointHighlight) {
     const t = trial
     const td = trialData
     if (t && td) {
       const total = Object.values(td).length
-      const store = coreStore()
+      const store = useCoreStore()
 
       t.traits.forEach(t => {
         trialTraitStats.value[t.id || ''] = {

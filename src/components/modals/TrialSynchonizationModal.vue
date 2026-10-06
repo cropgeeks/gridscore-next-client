@@ -163,12 +163,12 @@
   import TraitSection from '@/components/trait/TraitSection.vue'
   import { useI18n } from 'vue-i18n'
   import { getTrialByCode, synchronizeTrial } from '@/plugins/api'
-  import { coreStore } from '@/stores/app'
+
   import { mdiAccountPlus, mdiAlert, mdiBookmark, mdiCancel, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCheckboxMarkedCircle, mdiCloudDownload, mdiCommentMinus, mdiCommentPlus, mdiDatabaseSync, mdiDelete, mdiFlagMinus, mdiFlagPlus, mdiFormatListNumbered, mdiLanDisconnect, mdiLockAlert, mdiNotebookEdit, mdiTableEdit, mdiTableRowPlusAfter, mdiTagArrowDown, mdiTagEdit, mdiTagPlus, mdiTextBoxEdit, mdiVectorPolylineEdit } from '@mdi/js'
 
   const { t } = useI18n()
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const transaction = ref<Transaction>()

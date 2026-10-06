@@ -67,7 +67,7 @@
   import type { TraitData } from '@/components/inputs/DataEntrySection.vue'
   import type { TraitMeasurement } from '@/plugins/types/gridscore'
 
-  import { coreStore } from '@/stores/app'
+
   import type { DataModification } from '@/plugins/idb'
 
   import emitter from 'tiny-emitter/instance'
@@ -82,7 +82,7 @@
   }>()
 
   const refs = ref<any[]>([])
-  const store = coreStore()
+  const store = useCoreStore()
 
   const measurementsList = ref<HistoryMeasurement[]>([])
   const traitData = ref<TraitData[]>()

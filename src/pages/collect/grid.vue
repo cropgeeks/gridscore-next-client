@@ -159,7 +159,7 @@
   import { getTrialControlsCached, getTrialBookmarksCached, getTrialDataCached, getTrialRepsCached, getTrialTreatmentsCached, loadTrialData } from '@/plugins/datastore'
   import { getTrialById, setPlotsLocked } from '@/plugins/idb'
   import { MainDisplayMode, NavigationMode, ShareStatus, type CellPlus, type Geolocation, type TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { mdiAccountMultiple, mdiBookArrowLeft, mdiBookmark, mdiCameraBurst, mdiCancel, mdiCheck, mdiCheckboxMarked, mdiCommentMultiple, mdiCursorMove, mdiFormatListNumbered, mdiHelpCircle, mdiImage, mdiLockAlert, mdiLockOpenVariant, mdiMarker, mdiMarkerCancel, mdiSprinklerFire, mdiSprout, mdiVideo } from '@mdi/js'
   import { watchIgnorable } from '@vueuse/core'
 
@@ -178,7 +178,7 @@
     index: number
   }
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { lgAndUp, smAndUp } = useDisplay()
   const { t } = useI18n()
 

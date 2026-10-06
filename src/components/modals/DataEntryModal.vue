@@ -218,7 +218,7 @@
 <script setup lang="ts">
   import { getCell, getTrialValidPlots, type DataModification } from '@/plugins/idb'
   import { TraitGroupMode, type CellPlus, type Geolocation, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import PlotInformation from '@/components/plot/PlotInformation.vue'
   import { useI18n } from 'vue-i18n'
   import { getI18nParams, getNumberWithSuffix } from '@/plugins/formatting'
@@ -271,7 +271,7 @@
   }>()
 
   const { t } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
 
   const dialog = ref(false)
   const cell = ref<CellPlus>()

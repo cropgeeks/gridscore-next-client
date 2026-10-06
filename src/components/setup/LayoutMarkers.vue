@@ -26,14 +26,14 @@
 
 <script setup lang="ts">
   import { Anchor, type DimensionNames, type Layout, type Markers } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
   import NumberInputWithFallback from '@/components/inputs/NumberInputWithFallback.vue'
   import { getThemeColor } from '@/plugins/util'
   import { getI18nParams } from '@/plugins/formatting'
 
   const { t } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
 
   const model = defineModel<Layout>()
   const markersEnabled = ref<boolean>(false)

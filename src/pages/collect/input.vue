@@ -40,11 +40,11 @@
   import TrialPersonSelectModal from '@/components/modals/TrialPersonSelectModal.vue'
   import { getTrialById } from '@/plugins/idb'
   import type { CellPlus, Geolocation, TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCameraBurst, mdiCancel, mdiCheck, mdiImage, mdiVideo } from '@mdi/js'
   import emitter from 'tiny-emitter/instance'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const geolocation = ref<Geolocation>()

@@ -204,7 +204,7 @@
   import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
   import { shareStatusTypes } from '@/plugins/types/types'
   import { formatTimeAgo, getThemeColor, toLocalDateString } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import TrialOptionsDropdown from '@/components/trial/TrialOptionsDropdown.vue'
 
   import emitter from 'tiny-emitter/instance'
@@ -215,7 +215,7 @@
   import EventModal from '@/components/modals/EventModal.vue'
   import PrintCanvas from '@/components/data/PrintCanvas.vue'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const menuShown = ref(false)
   const trialTimeFrameModal = ref(false)

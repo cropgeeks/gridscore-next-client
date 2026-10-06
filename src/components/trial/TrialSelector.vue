@@ -174,7 +174,7 @@
 <script setup lang="ts">
   import { addTrialPeople, addTrialTraits, deleteTrial, getPlotGeolocations, getTrials, lockTrial } from '@/plugins/idb'
   import { TrialListType, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import TrialCard from '@/components/trial/TrialCard.vue'
   import TrialShareModal from '@/components/modals/TrialShareModal.vue'
 
@@ -208,7 +208,7 @@
   const ALL_TRIALS = '__ALL__'
   const UNCATEGORIZED_TRIALS = '__UNCATEGORIZED__'
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
   const router = useRouter()
   const { isSupported: isGpsSupported, coords: gpsCoords } = useGeolocation()

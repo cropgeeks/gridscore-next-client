@@ -43,7 +43,7 @@
   import { getNumberWithSuffix } from '@/plugins/formatting'
   import { getId } from '@/plugins/id'
   import type { TraitPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { mdiArrowDownBold, mdiArrowUpBold, mdiDiameterVariant, mdiNumeric, mdiSprout } from '@mdi/js'
 
   export interface BaseStats {
@@ -64,7 +64,7 @@
     showTraitHeading: boolean
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const id = ref<string>(getId())
 
   const germplasmPercentage = computed(() => {

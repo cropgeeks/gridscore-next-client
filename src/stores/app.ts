@@ -35,7 +35,7 @@ if (!name) {
   name = 'gridscore-next-' + window.location.pathname
 }
 
-export const coreStore = defineStore('core', {
+export const useCoreStore = defineStore('core', {
   state: () => ({
     rippleEnabled: undefined as boolean | undefined,
     transitionsEnabled: undefined as boolean | undefined,

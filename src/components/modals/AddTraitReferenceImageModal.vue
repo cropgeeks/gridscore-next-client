@@ -147,7 +147,7 @@
   import { useI18n } from 'vue-i18n'
   import UploadTraitImageModal from '@/components/modals/UploadTraitImageModal.vue'
   import { updateTrialTraitImage } from '@/plugins/idb'
-  import { coreStore } from '@/stores/app'
+
   import emitter from 'tiny-emitter/instance'
   import { getId } from '@/plugins/id'
   import { clearTraitImageCache } from '@/plugins/traitcache'
@@ -162,7 +162,7 @@
     trial: TrialPlus
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const dialog = ref(false)
   const selectedTrait = ref<TraitPlus>()
   const expandedTraitGroups = ref<number[]>([])

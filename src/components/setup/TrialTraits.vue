@@ -413,7 +413,7 @@
   import { getTrials } from '@/plugins/idb'
   import type { TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { type Restrictions, TraitDataType, type Group, type Trait, type Timeframe, TimeframeType } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
   import { useDate } from 'vuetify'
   import GenericAddEditFormModal from '@/components/modals/GenericAddEditFormModal.vue'
@@ -428,7 +428,7 @@
   import { dragAndDrop } from '@formkit/drag-and-drop/vue'
 
   const { t } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
   const date = useDate()
 
   interface FormState {

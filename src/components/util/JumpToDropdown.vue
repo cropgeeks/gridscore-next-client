@@ -30,12 +30,12 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import type { CellPlus } from '@/plugins/types/client'
   import type { Cell } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
+
   import { mdiArrowExpandAll, mdiCircle, mdiMapMarker, mdiPlaylistCheck } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const menuShown = ref(false)
   const markedPlots = ref<Set<string>>(new Set())

@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
   import { CanvasShape, type TraitPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
   import { useDate } from 'vuetify'
@@ -92,7 +92,7 @@
   import { mdiCalendarStart, mdiCheck, mdiCheckboxBlankOutline, mdiCheckboxMarked, mdiCircle, mdiCircleHalfFull, mdiCircleOutline, mdiMinusBox, mdiSquare, mdiSquareOpacity, mdiSquareOutline, mdiTagMultiple } from '@mdi/js'
 
   const date = useDate()
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n ()
 
   // Type definitions

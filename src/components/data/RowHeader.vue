@@ -14,10 +14,10 @@
   import { getTouchPosition } from '@/plugins/touchinput'
   import type { Layout } from '@/plugins/types/gridscore'
   import { getRowLabel } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const { n } = useI18n()
 

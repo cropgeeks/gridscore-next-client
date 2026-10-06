@@ -14,7 +14,7 @@ const trialBookmarks = ref<Set<string>>(new Set())
 
 export function useTrial () {
   const reloadTrial = async (force = false, localId?: string) => {
-    const store = coreStore()
+    const store = useCoreStore()
     const id = localId || store.storeSelectedTrial || ''
 
     if (force || !trial.value || id !== trial.value.localId) {

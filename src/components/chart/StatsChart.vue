@@ -44,7 +44,7 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import { useI18n } from 'vue-i18n'
   import { hexToRgba, invertHex } from '@/plugins/color'
-  import { coreStore } from '@/stores/app'
+
   import { CELL_CATEGORIES } from '@/plugins/constants'
   import type { UserSelection } from '@/components/util/HighlightSelect.vue'
   import { getI18nParams } from '@/plugins/formatting'
@@ -81,7 +81,7 @@
   }>()
 
   const { t } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
 
   const id = ref('trait-stats' + getId())
   const interactive = ref(false)

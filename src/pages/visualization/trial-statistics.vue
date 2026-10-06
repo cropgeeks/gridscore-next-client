@@ -91,7 +91,7 @@
   import type { CellPlus, TrialPlus } from '@/plugins/types/client'
   import type { Person, LatLng } from '@/plugins/types/gridscore'
   import { toLocalDateString } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCalendarCollapseHorizontal, mdiCalendarMultiselect, mdiCheck, mdiCommentMultiple, mdiFlag, mdiLandFields, mdiPencilRuler, mdiTagMultiple, mdiTextureBox } from '@mdi/js'
 
   export type CalendarData = { [index: number]: { [index: string]: number } }
@@ -121,7 +121,7 @@
     peopleLocationData: TrialLocationData
   }
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const trialData = shallowRef<{ [index: string]: CellPlus } | undefined>({})

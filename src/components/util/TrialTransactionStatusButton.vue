@@ -5,12 +5,12 @@
 <script setup lang="ts">
   import { getTrialById } from '@/plugins/idb'
   import type { TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCloudUpload } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
 

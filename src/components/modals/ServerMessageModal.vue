@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { coreStore } from '@/stores/app'
+
   import type { ServerMessage } from '@/plugins/types/client'
   import { useI18n } from 'vue-i18n'
 
@@ -54,7 +54,7 @@
   import emitter from 'tiny-emitter/instance'
 
   // Composition stuff
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const dialog = ref(false)

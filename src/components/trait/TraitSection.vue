@@ -60,10 +60,10 @@
   import { dataTypeMap } from '@/plugins/constants'
   import { CanvasShape, type TraitPlus, type TrialPlus } from '@/plugins/types/client'
   import { getPriorityShareCode, getServerUrl } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCircle, mdiSquare, mdiGreaterThanOrEqual, mdiLessThanOrEqual, mdiRepeat, mdiRepeatOff, mdiSetSplit, mdiImageSearch, mdiClose } from '@mdi/js'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const referenceImageSheetVisible = ref(false)
 

@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
   import { CanvasShape, type TraitPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { mdiCircle, mdiSquare } from '@mdi/js'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const selectedTraits = defineModel<TraitPlus[] | TraitPlus>()
 

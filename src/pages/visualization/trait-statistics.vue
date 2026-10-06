@@ -65,9 +65,9 @@
   import { getCell, getTrialById } from '@/plugins/idb'
   import type { CellPlus, TraitPlus, TrialPlus } from '@/plugins/types/client'
   import { TraitDataType } from '@/plugins/types/gridscore'
-  import { coreStore } from '@/stores/app'
 
-  const store = coreStore()
+
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
   const selectedTraits = ref<TraitPlus[]>([])

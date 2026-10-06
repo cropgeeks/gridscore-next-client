@@ -71,14 +71,14 @@
   import { getTrialDataCached } from '@/plugins/datastore'
   import type { TrialPlus } from '@/plugins/types/client'
   import { filterGermplasm } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { mdiMagnify, mdiNfcVariant, mdiQrcodeScan } from '@mdi/js'
   import { QrcodeStream, type DetectedBarcode } from 'vue-qrcode-reader'
 
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const searchMatch = defineModel<string[] | string>()

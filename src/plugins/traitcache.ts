@@ -27,7 +27,7 @@ async function updateTraitImageCache (trial: TrialPlus, traitId: string) {
   const trait = toCheck.find(t => t.id === traitId)
 
   if (trait) {
-    const store = coreStore()
+    const store = useCoreStore()
     let baseUrl = trial.remoteUrl || store.storeServerUrl || ''
 
     if (!baseUrl.endsWith('/')) {
@@ -72,7 +72,7 @@ async function ensureTraitImagesCached (trial: TrialPlus) {
   }
 
   if (toCheck && toCheck.length > 0) {
-    const store = coreStore()
+    const store = useCoreStore()
     let baseUrl = trial.remoteUrl || store.storeServerUrl || ''
 
     if (!baseUrl.endsWith('/')) {
@@ -113,7 +113,7 @@ async function clearTraitImageCache (trial: TrialPlus, traitIds: string[]) {
   }
 
   try {
-    const store = coreStore()
+    const store = useCoreStore()
     let baseUrl = trial.remoteUrl || store.storeServerUrl || ''
 
     if (!baseUrl.endsWith('/')) {
@@ -158,7 +158,7 @@ async function clearTrialImageCache (trial: TrialPlus) {
   }
 
   try {
-    const store = coreStore()
+    const store = useCoreStore()
     let baseUrl = trial.remoteUrl || store.storeServerUrl || ''
 
     if (!baseUrl.endsWith('/')) {

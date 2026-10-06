@@ -32,7 +32,7 @@
   import emitter from 'tiny-emitter/instance'
   import Plotly from 'plotly.js/lib/core'
   import scatter from 'plotly.js/lib/scatter'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
   import type { UserSelection } from '@/components/util/HighlightSelect.vue'
   import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
@@ -50,7 +50,7 @@
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const id = ref('trait-timeline' + getId())

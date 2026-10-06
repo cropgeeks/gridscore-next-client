@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-  import { coreStore } from '@/stores/app'
+
 
   import L, { type TileLayer, type Map } from 'leaflet'
   import 'leaflet/dist/leaflet.css'
@@ -72,7 +72,7 @@
     shadowUrl: shadowUrl,
   })
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const trial = ref<TrialPlus>()
 

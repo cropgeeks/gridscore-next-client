@@ -12,12 +12,12 @@
 </template>
 
 <script setup lang="ts">
-  import { coreStore } from '@/stores/app'
+
   import emitter from 'tiny-emitter/instance'
   import { useSpeechRecognition } from '@vueuse/core'
   import { mdiMicrophoneMessage } from '@mdi/js'
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const {
     isSupported,

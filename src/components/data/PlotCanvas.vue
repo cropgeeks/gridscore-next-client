@@ -12,7 +12,7 @@
   import type { Dimensions } from '@/components/data/DataCanvas.vue'
   import { type CellPlus, type TrialPlus, type Geolocation, NavigationMode } from '@/plugins/types/client'
   import { isGeographyValid, projectToEuclidean, type XY } from '@/plugins/location'
-  import { coreStore } from '@/stores/app'
+
 
   import emitter from 'tiny-emitter/instance'
   import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
@@ -54,7 +54,7 @@
   const emit = defineEmits(['origin-changed', 'click:plot'])
 
   const { t } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
 
   let gridProjection: any
   let ctx: CanvasRenderingContext2D | null = null

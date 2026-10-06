@@ -90,7 +90,7 @@ function getVuetify () {
 }
 
 function initVuetify () {
-  const store = coreStore()
+  const store = useCoreStore()
   // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
   vuetify = createVuetify({
     defaults: {

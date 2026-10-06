@@ -35,7 +35,7 @@
   import type { Person } from '@/plugins/types/gridscore'
   import { personTypes } from '@/plugins/types/types'
   import { getThemeColor } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
 
   import emitter from 'tiny-emitter/instance'
 
@@ -43,7 +43,7 @@
     trial: TrialPlus
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const forced = ref(false)
   const dialog = computed(() => {

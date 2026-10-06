@@ -50,12 +50,12 @@
   import type { TrialPlus } from '@/plugins/types/client'
   import { DisplayOrder, EventType, PersonType, TraitDataType, type Event, type Person, type Trait } from '@/plugins/types/gridscore'
   import { getThemeColor } from '@/plugins/util'
-  import { coreStore } from '@/stores/app'
+
   import { mdiAccountMultiple, mdiCalendar, mdiCalendarMultiselect, mdiCellphoneArrowDownVariant, mdiChartTimeline, mdiCow, mdiFormatListNumbered, mdiSchool, mdiSetSplit, mdiSprinkler, mdiSprinklerFire, mdiSprout, mdiViewGrid, mdiViewList } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
-  const store = coreStore()
+  const store = useCoreStore()
   const router = useRouter()
 
   const selectedTag = ref<string>()

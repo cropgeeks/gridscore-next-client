@@ -42,7 +42,7 @@
 <script setup lang="ts">
   import type { XY } from '@/plugins/location'
   import { type TrialPlus, type Geolocation, CanvasSize, CanvasDensity } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
 
   import emitter from 'tiny-emitter/instance'
   import RowHeader from '@/components/data/RowHeader.vue'
@@ -84,7 +84,7 @@
   const vScroll = useTemplateRef('vScroll')
   const plotCanvas = useTemplateRef('plotCanvas')
 
-  const store = coreStore()
+  const store = useCoreStore()
   const emit = defineEmits(['click:plot', 'context:header'])
 
   const markedColumns = ref<boolean[]>([])

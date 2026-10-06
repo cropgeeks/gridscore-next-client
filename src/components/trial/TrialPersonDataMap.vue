@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
   import type { TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import L, { type Polygon, type Map, type TileLayer } from 'leaflet'
   import 'leaflet/dist/leaflet.css'
   import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
@@ -30,7 +30,7 @@
     areaType: string
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const mapElement = useTemplateRef('mapElement')
   let themeLayer: TileLayer

@@ -134,7 +134,7 @@
 
   import emitter from 'tiny-emitter/instance'
   import { addTrial, getTrialData, requestPersistence, updateTrialProperties } from '@/plugins/idb'
-  import { coreStore } from '@/stores/app'
+
   import { mediaFilenameParts } from '@/plugins/constants'
   import { mdiArrowLeft, mdiArrowRight, mdiFileDocumentMultiple, mdiNotebookCheck, mdiNotebookMultiple, mdiNotebookPlus, mdiTagMultiple, mdiViewGridPlus } from '@mdi/js'
 
@@ -149,7 +149,7 @@
     isClone: false,
   })
 
-  const store = coreStore()
+  const store = useCoreStore()
   const router = useRouter()
   const { t } = useI18n()
 

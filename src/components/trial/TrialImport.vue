@@ -86,7 +86,7 @@
   import { getTrialByCode } from '@/plugins/api'
   import { addTrial, getTrialGroups, getTrials, requestPersistence, updateTrial } from '@/plugins/idb'
   import { ShareStatus, type TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
   import { UseOnline } from '@vueuse/components'
   import { useI18n } from 'vue-i18n'
 
@@ -98,7 +98,7 @@
     code?: string
   }>()
 
-  const store = coreStore()
+  const store = useCoreStore()
   const router = useRouter()
   const { t } = useI18n()
 

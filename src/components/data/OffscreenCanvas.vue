@@ -5,7 +5,7 @@
 <script setup lang="ts">
   import { categoricalColors } from '@/plugins/color'
   import { CanvasShape, type TraitPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
 
   const compProps = defineProps<{
     traits: TraitPlus[]
@@ -15,7 +15,7 @@
   const canvas = document.createElement('canvas')
   let ctx = canvas.getContext('2d', { alpha: false })
 
-  const store = coreStore()
+  const store = useCoreStore()
 
   const fillStyleWhite = computed(() => store.storeIsDarkMode ? '#000000' : '#ffffff')
   const fillStyleLightGray = computed(() => store.storeIsDarkMode ? '#0d0d0d' : '#f2f2f2')

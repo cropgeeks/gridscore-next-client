@@ -117,7 +117,7 @@ function trialToShapefile (remoteConfig: RemoteConfig | undefined, shareCode: st
   return new Promise<string>((resolve, reject) => {
     exportToShapefile(remoteConfig, shareCode)
       .then(uuid => {
-        const store = coreStore()
+        const store = useCoreStore()
         resolve(`${store.storeServerUrl}trial/${shareCode}/export/shapefile/${uuid}`)
         emitter.emit('show-loading', false)
       })
@@ -129,7 +129,7 @@ function trialToGerminate (remoteConfig: RemoteConfig | undefined, shareCode: st
   return new Promise<string>((resolve, reject) => {
     exportToGerminate(remoteConfig, shareCode, aggregate)
       .then(uuid => {
-        const store = coreStore()
+        const store = useCoreStore()
         resolve(`${store.storeServerUrl}trial/${shareCode}/export/g8/${uuid}`)
         emitter.emit('show-loading', false)
       })

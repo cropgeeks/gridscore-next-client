@@ -28,7 +28,7 @@
   import emitter from 'tiny-emitter/instance'
   import Plotly from 'plotly.js/lib/core'
   import scatter from 'plotly.js/lib/scatter'
-  import { coreStore } from '@/stores/app'
+
   import { useI18n } from 'vue-i18n'
 
   // Only register the chart types we're actually using to reduce the final bundle size
@@ -43,7 +43,7 @@
 
   let trialData: { [index: string]: CellPlus } | undefined = {}
 
-  const store = coreStore()
+  const store = useCoreStore()
   const { t } = useI18n()
 
   const id = ref('plot-trait-completion' + getId())

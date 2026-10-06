@@ -40,7 +40,7 @@
 <script setup lang="ts">
   import { addPlotComment, deletePlotComment, setPlotLocked, setPlotMarked } from '@/plugins/idb'
   import { ShareStatus, type CellPlus, type TrialPlus } from '@/plugins/types/client'
-  import { coreStore } from '@/stores/app'
+
 
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
@@ -50,7 +50,7 @@
   import OverflowMenu, { type MenuItem } from '@/components/util/OverflowMenu.vue'
   import { mdiBookmark, mdiBookmarkOutline, mdiCalendar, mdiCamera, mdiCommentText, mdiDirectionsFork, mdiLockAlert, mdiLockOpenVariant } from '@mdi/js'
 
-  const store = coreStore()
+  const store = useCoreStore()
   const router = useRouter()
   const { t } = useI18n()
   const { mdAndUp, lgAndUp } = useDisplay()
