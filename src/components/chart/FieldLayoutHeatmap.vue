@@ -84,6 +84,7 @@
   import heatmap from 'plotly.js/lib/heatmap'
   import scatter from 'plotly.js/lib/scatter'
   import { getTrialDataCached, trialTraitStats } from '@/plugins/datastore'
+  import { DEFAULT_PLOTLY_CONFIG } from '@/plugins/constants'
 
   import { CellCategory, TraitDataType, type Measurement } from '@/plugins/types/gridscore'
   import { categoricalColors, invertHex, toCssNamedColors } from '@/plugins/color'
@@ -457,11 +458,7 @@
       }
 
       // @ts-ignore
-      Plotly.react(heatmapChart.value, traces, layout, {
-        responsive: true,
-        modeBarButtonsToRemove: ['toImage'],
-        displaylogo: false,
-      }).then(element => {
+      Plotly.react(heatmapChart.value, traces, layout, DEFAULT_PLOTLY_CONFIG).then(element => {
         canDownload.value = true
         element.on('plotly_click', (data: any) => {
           if (data && data.points && data.points.length === 1 && trialData) {

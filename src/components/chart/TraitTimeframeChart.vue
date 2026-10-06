@@ -24,6 +24,7 @@
   import scatter from 'plotly.js/lib/scatter'
   import type { TrialPlus } from '@/plugins/types/client'
   import { toLocalDateString } from '@/plugins/util'
+  import { DEFAULT_PLOTLY_CONFIG } from '@/plugins/constants'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
@@ -167,11 +168,7 @@
       }
 
       // @ts-ignore
-      Plotly.react(timeframeChart.value, data, layout, {
-        responsive: true,
-        modeBarButtonsToRemove: ['toImage'],
-        displaylogo: false,
-      }).then(() => {
+      Plotly.react(timeframeChart.value, data, layout, DEFAULT_PLOTLY_CONFIG).then(() => {
         canDownload.value = true
       })
     }

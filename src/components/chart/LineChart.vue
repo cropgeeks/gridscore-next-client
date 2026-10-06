@@ -117,6 +117,7 @@
         responsive: true,
         displaylogo: false,
         modeBarButtonsToRemove: ['toImage' as const, 'lasso2d' as const, 'select2d' as const],
+        showSendToCloud: false,
       }
 
       sourceFile.value = {

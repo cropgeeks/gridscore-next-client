@@ -28,6 +28,7 @@
   import emitter from 'tiny-emitter/instance'
   import Plotly from 'plotly.js/lib/core'
   import scatter from 'plotly.js/lib/scatter'
+  import { DEFAULT_PLOTLY_CONFIG } from '@/plugins/constants'
 
   import { useI18n } from 'vue-i18n'
 
@@ -192,11 +193,7 @@
       }
 
       // @ts-ignore
-      Plotly.react(completionChart.value, traces, layout, {
-        responsive: true,
-        modeBarButtonsToRemove: ['toImage'],
-        displaylogo: false,
-      }).then(() => {
+      Plotly.react(completionChart.value, traces, layout, DEFAULT_PLOTLY_CONFIG).then(() => {
         canDownload.value = true
       })
     }

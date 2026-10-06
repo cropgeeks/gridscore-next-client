@@ -157,3 +157,10 @@ export const dataTypeMap: Record<string, DataType> = Object.fromEntries(
 export function getRandomGivenName () {
   return givenNames[Math.floor(Math.random() * givenNames.length)]
 }
+
+export const DEFAULT_PLOTLY_CONFIG = {
+  modeBarButtonsToRemove: ['toImage' as const],
+  responsive: true,
+  displaylogo: false,
+  showSendToCloud: false,
+}

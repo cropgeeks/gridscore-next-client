@@ -36,6 +36,7 @@
   import { useI18n } from 'vue-i18n'
   import type { UserSelection } from '@/components/util/HighlightSelect.vue'
   import { CellCategory, TraitDataType } from '@/plugins/types/gridscore'
+  import { DEFAULT_PLOTLY_CONFIG } from '@/plugins/constants'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
@@ -308,11 +309,7 @@
       }
 
       // @ts-ignore
-      Plotly.react(timelineChart.value, traces, layout, {
-        responsive: true,
-        modeBarButtonsToRemove: ['toImage'],
-        displaylogo: false,
-      }).then(() => {
+      Plotly.react(timelineChart.value, traces, layout, DEFAULT_PLOTLY_CONFIG).then(() => {
         canDownload.value = true
       })
     }

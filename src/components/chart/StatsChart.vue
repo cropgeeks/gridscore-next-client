@@ -485,6 +485,7 @@
         responsive: true,
         modeBarButtonsToRemove: ['toImage', 'lasso2d', 'select2d'],
         displaylogo: false,
+        showSendToCloud: false,
       }).then(element => {
         canDownload.value = true
         if (supportsClicking) {

@@ -25,6 +25,7 @@
   import { getId } from '@/plugins/id'
   import type { TrialPlus } from '@/plugins/types/client'
   import { toLocalDateString } from '@/plugins/util'
+  import { DEFAULT_PLOTLY_CONFIG } from '@/plugins/constants'
 
   import { mdiBlurLinear } from '@mdi/js'
 
@@ -217,13 +218,7 @@
         yaxis: yAxis,
       }
 
-      const config = {
-        responsive: true,
-        displaylogo: false,
-        modeBarButtonsToRemove: ['toImage' as const],
-      }
-
-      Plotly.newPlot(heatmapChart.value, data, layout, config)
+      Plotly.newPlot(heatmapChart.value, data, layout, DEFAULT_PLOTLY_CONFIG)
         .then(() => {
           canDownload.value = true
         })

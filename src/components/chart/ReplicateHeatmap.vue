@@ -92,6 +92,7 @@
   import { mdiAlert, mdiCounter, mdiInformation } from '@mdi/js'
   import { getDateTSIndependent, getI18nParams } from '@/plugins/formatting'
   import { flagHighDisagreementRows, zScoreRepAnalysis } from '@/plugins/stats'
+  import { DEFAULT_PLOTLY_CONFIG } from '@/plugins/constants'
 
   interface RepInfo {
     row: number
@@ -519,11 +520,7 @@
       }
 
       // @ts-ignore
-      Plotly.react(heatmapChart.value, traces, layout, {
-        responsive: true,
-        modeBarButtonsToRemove: ['toImage'],
-        displaylogo: false,
-      }).then(element => {
+      Plotly.react(heatmapChart.value, traces, layout, DEFAULT_PLOTLY_CONFIG).then(element => {
         canDownload.value = true
         element.on('plotly_click', (data: any) => {
           if (data && data.points && data.points.length === 1 && trialData) {
