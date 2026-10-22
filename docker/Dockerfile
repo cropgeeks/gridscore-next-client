@@ -33,7 +33,7 @@ RUN apk add --no-cache openjdk21 && \
     /opt/gradle-8.8/bin/gradle -p /opt/gridscore-server war
 
 
-FROM tomcat:10.1-jdk21
+FROM tomcat:11-jdk21
 
 LABEL org.opencontainers.image.authors="sebastian.raubach@hutton.ac.uk"
 LABEL org.opencontainers.image.url="https://ics.hutton.ac.uk/get-gridscore/"
