@@ -37,6 +37,7 @@ export interface DimensionNames {
 export interface Trait {
     id?: string;
     brapiId?: string;
+    brapiVariable?: MinimalVariableInfo;
     name: string;
     description?: string;
     dataType: TraitDataType;
@@ -47,6 +48,40 @@ export interface Trait {
     timeframe?: Timeframe;
     hasImage?: boolean;
     imageUrl?: string | undefined;
+}
+
+export interface MinimalVariableInfo {
+    variableId: string;
+    variableName: string;
+    variableDescription?: string;
+    variableOntologyId?: string;
+    variableOntologyName?: string;
+    traitId: string;
+    traitName: string;
+    traitDescription?: string;
+    traitClass?: string;
+    traitAbbreviation?: string;
+    traitCategory?: string;
+    traitOntologyId?: string;
+    traitOntologyName?: string;
+    methodId: string;
+    methodName: string;
+    methodDescription?: string;
+    methodClass?: string;
+    methodSetSize?: number;
+    methodIsTimeseries?: boolean;
+    methodOntologyId?: string;
+    methodOntologyName?: string;
+    scaleId: string;
+    scaleName: string;
+    scaleDescription?: string;
+    scaleUnit?: string;
+    scaleDataType: string;
+    scaleMinValue?: number;
+    scaleMaxValue?: number;
+    scaleValidValues?: string[][];
+    scaleOntologyId?: string;
+    scaleOntologyName?: string;
 }
 
 export interface Comment {

@@ -6,7 +6,17 @@
           <BrapiConfig @brapi-config-updated="getTraits" />
         </v-form>
 
-        <TraitTreeSelect v-model="selectedTraits" :traits="traits" sort-traits />
+        <v-alert
+          color="error"
+          class="mt-5"
+          variant="tonal"
+          border="start"
+          :icon="mdiAlert"
+          :text="error"
+          v-if="error"
+        />
+
+        <TraitTreeSelect class="mt-5" v-model="selectedTraits" :traits="traits" sort-traits />
       </template>
 
       <v-card-actions>
@@ -19,21 +29,25 @@
 </template>
 
 <script setup lang="ts">
-  import { TraitDataType, type Restrictions, type Trait } from '@/plugins/types/gridscore'
+  import { TraitDataType, type MinimalVariableInfo, type Restrictions, type Trait } from '@/plugins/types/gridscore'
   import BrapiConfig from '@/components/util/BrapiConfig.vue'
   import { brapiGetVariables } from '@/plugins/brapi'
   import { isNumber } from '@/plugins/util'
   import { getId } from '@/plugins/id'
   import TraitTreeSelect from '@/components/trait/TraitTreeSelect.vue'
+  import { mdiAlert } from '@mdi/js'
 
   const dialog = ref(false)
   const traits = ref<Trait[]>([])
   const selectedTraits = ref<Trait[]>([])
   const canContinue = computed(() => (selectedTraits.value || []).length > 0)
+  const error = ref<string>()
 
   const emit = defineEmits(['traits-selected'])
 
   function getTraits () {
+    error.value = undefined
+
     brapiGetVariables()
       .then(variables => {
         traits.value = variables.map(v => {
@@ -114,9 +128,39 @@
             }
           }
 
-          return {
+          const mv: MinimalVariableInfo = {
+            variableId: v.observationVariableDbId ?? '',
+            variableName: v.observationVariableName ?? '',
+            variableOntologyId: v.ontologyReference?.ontologyDbId,
+            variableOntologyName: v.ontologyReference?.ontologyName,
+
+            traitId: v.trait?.traitDbId ?? '',
+            traitName: v.trait?.traitName ?? '',
+            traitOntologyId: v.trait?.ontologyReference?.ontologyDbId,
+            traitOntologyName: v.trait?.ontologyReference?.ontologyName,
+            traitClass: v.trait?.traitClass,
+
+            methodId: v.method?.methodDbId ?? '',
+            methodName: v.method?.methodName ?? '',
+            methodOntologyId: v.method?.ontologyReference?.ontologyDbId,
+            methodOntologyName: v.method?.ontologyReference?.ontologyName,
+            methodSetSize: setSize,
+            methodIsTimeseries: allowRepeats,
+
+            scaleId: v.scale?.scaleDbId ?? '',
+            scaleName: v.scale?.scaleName ?? '',
+            scaleDataType: v.scale?.dataType ?? 'text',
+            scaleOntologyId: v.scale?.ontologyReference?.ontologyDbId,
+            scaleOntologyName: v.scale?.ontologyReference?.ontologyName,
+            scaleMinValue: v.scale?.validValues?.minimumValue ? +v.scale?.validValues?.minimumValue : undefined,
+            scaleMaxValue: v.scale?.validValues?.maximumValue ? +v.scale?.validValues?.maximumValue : undefined,
+            scaleValidValues: v.scale?.validValues?.categories ? [v.scale?.validValues.categories.map(c => c.value ?? c.label ?? '')] : undefined,
+          }
+
+          const result: Trait = {
             id: getId(),
             brapiId: v.observationVariableDbId,
+            brapiVariable: mv,
             name: v.observationVariableName || '',
             dataType: type,
             restrictions: Object.keys(restrictions).length === 0 ? undefined : restrictions,
@@ -128,7 +172,12 @@
             imageUrl,
             hasImage: imageUrl !== undefined,
           }
+
+          return result
         })
+      })
+      .catch(e => {
+        error.value = e
       })
   }
   function show () {
@@ -138,6 +187,7 @@
     dialog.value = false
     traits.value = []
     selectedTraits.value = []
+    error.value = undefined
   }
   function save () {
     emit('traits-selected', selectedTraits.value)

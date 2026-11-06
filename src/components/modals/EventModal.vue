@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="dialog" scrollable width="min(90vw, 1024px)">
-    <v-card :title="$t('modalTitleTrialEvent')">
+    <v-card :title="$t('modalTitleTrialEvent')" id="trial-event-card">
       <template #text>
         <p>{{ $t('modalTextTrialEvent') }}</p>
 
@@ -85,6 +85,7 @@
                   :display-format="(d: any) => d ? d.toLocaleDateString() : ''"
                   :hint="$t('formDescriptionEventDate')"
                   persistent-hint
+                  :menu-props="{ attach: '#trial-event-card' }"
                   prepend-icon=""
                   prepend-inner-icon="$calendar"
                   :model-value="newEvent.timestamp ? date.toJsDate(newEvent.timestamp) : undefined"
@@ -178,6 +179,9 @@
   function hide () {
     dialog.value = false
   }
+
+  watch(dialog, v => console.trace('dialog changed ->', v))
+  onBeforeUnmount(() => console.trace('dialog component unmounting'))
 
   const emit = defineEmits(['event-added', 'event-deleted'])
 

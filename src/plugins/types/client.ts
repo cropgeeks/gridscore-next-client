@@ -2,7 +2,6 @@
 /* eslint-disable */
 
 import type { Cell, CellMetadata, Measurement, Trait, Trial } from '@/plugins/types/gridscore'
-import type { DynamicQuantile } from '@/plugins/stats'
 
 export interface TraitPlus extends Trait {
   color?: string

@@ -21,11 +21,13 @@
 
         <v-spacer />
 
-        <v-menu v-if="selectedTrial && trialInfoPages.includes(route.path)">
+        <v-menu v-model="trialInfoModal" v-if="selectedTrial && trialInfoPages.includes(route.path)" persistent>
           <template #activator="{ props }">
             <v-btn :icon="mdiNotebook" v-bind="props" />
           </template>
           <TrialCard max-width="400px" :trial="selectedTrial" :show-options="false" :show-select="false" interactive force-show-details :can-share="false" ref="selectedTrialCard" />
+
+          <v-btn :prepend-icon="mdiClose" block :text="$t('buttonClose')" @click="trialInfoModal = false" />
         </v-menu>
 
         <v-menu>
@@ -175,7 +177,7 @@
   import { gridScoreVersion } from '@/plugins/constants'
   import { UAParser } from 'ua-parser-js'
   import { getId } from '@/plugins/id'
-  import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiCog, mdiDirectionsFork, mdiExport, mdiFinance, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiMapMarkerPath, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
+  import { mdiBarcodeScan, mdiBrightnessAuto, mdiChartGantt, mdiChartTimeline, mdiChartTimelineVariant, mdiChartWaterfall, mdiCheck, mdiClose, mdiCog, mdiDirectionsFork, mdiExport, mdiFinance, mdiGradientHorizontal, mdiGrid, mdiHome, mdiMap, mdiMapMarkerPath, mdiNotebook, mdiNotebookPlus, mdiPencilRuler, mdiThemeLightDark, mdiTranslate, mdiWeatherNight, mdiWhiteBalanceSunny } from '@mdi/js'
   import TrialSynchonizationModal from '@/components/modals/TrialSynchonizationModal.vue'
   import ServerMessageModal from '@/components/modals/ServerMessageModal.vue'
   // import { useTrial } from '@/plugins/composition/useTrial'
@@ -199,6 +201,7 @@
   // PWA update stuff
   let registration: any
   const updateExists = ref(false)
+  const trialInfoModal = ref(false)
 
   const changelogVersionNumber = ref<string>()
 

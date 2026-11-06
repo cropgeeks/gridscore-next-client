@@ -956,6 +956,7 @@
   "toastNoMatchingDataFound": "No matching data found",
   "toastCustomDimensionNamesInvalid": "Invalid custom dimension names. Please provide a value for each input field.",
   "tooltipBrapiExportBrapiTraitRunSearch": "Please run a lookup search before uploading your traits as new traits.",
+  "tooltipBrapiHasOntology": "Has ontology information",
   "tooltipDontShowAgain": "Don't show again",
   "toolbarTraitVisibility": "Traits",
   "toolbarTraitGroupGeneric": "Ungrouped traits",

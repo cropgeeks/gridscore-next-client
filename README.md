@@ -5,7 +5,8 @@
 </p>
 
 ![GitHub License](https://img.shields.io/github/license/cropgeeks/gridscore-next-client?style=for-the-badge&logo=apache)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/cropgeeks/gridscore-next-client?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/cropgeeks/gridscore-next-client?style=for-the-badge)
+![GitHub development](https://img.shields.io/github/package-json/v/cropgeeks/gridscore-next-client?style=for-the-badge&label=dev)
 ![GitHub last commit](https://img.shields.io/github/last-commit/cropgeeks/gridscore-next-client?style=for-the-badge&logo=git)
 
 ![Docker Pulls](https://img.shields.io/docker/pulls/cropgeeks/gridscore-next?style=for-the-badge&logo=docker)

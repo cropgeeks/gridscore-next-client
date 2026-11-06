@@ -111,7 +111,11 @@ async function brapiAxios (url: string, callName: string, params: any = undefine
 
   if (baseUrl !== 'undefined' && infoCheck) {
     if (!serverInfos[baseUrl] || Object.keys(serverInfos[baseUrl]).length === 0) {
-      await brapiGetInfo()
+      try {
+        await brapiGetInfo()
+      } catch (e) {
+        throw new Error(`BrAPI endpoint couldn't be reached: ${e}`)
+      }
     }
 
     if (!serverInfos[baseUrl] || !serverInfos[baseUrl].some(c => c.service === callName && c.versions.includes(Version.TWO_ONE))) {
@@ -662,7 +666,6 @@ function sendObservations (trial: TrialPlus, brapiStudy: Study, trialData: { [in
 
 export {
   brapiAxios,
-  brapiGetInfo,
   brapiGetVariables,
   brapiGetPrograms,
   brapiGetTrials,
