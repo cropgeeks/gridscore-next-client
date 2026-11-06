@@ -11,6 +11,122 @@
       },
       "type": "object"
     },
+    "MinimalVariableInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "methodClass": {
+          "type": "string"
+        },
+        "methodDescription": {
+          "type": "string"
+        },
+        "methodId": {
+          "type": "string"
+        },
+        "methodIsTimeseries": {
+          "type": "boolean"
+        },
+        "methodName": {
+          "type": "string"
+        },
+        "methodOntologyId": {
+          "type": "string"
+        },
+        "methodOntologyName": {
+          "type": "string"
+        },
+        "methodSetSize": {
+          "type": "number"
+        },
+        "scaleDataType": {
+          "type": "string"
+        },
+        "scaleDescription": {
+          "type": "string"
+        },
+        "scaleId": {
+          "type": "string"
+        },
+        "scaleMaxValue": {
+          "type": "number"
+        },
+        "scaleMinValue": {
+          "type": "number"
+        },
+        "scaleName": {
+          "type": "string"
+        },
+        "scaleOntologyId": {
+          "type": "string"
+        },
+        "scaleOntologyName": {
+          "type": "string"
+        },
+        "scaleUnit": {
+          "type": "string"
+        },
+        "scaleValidValues": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "traitAbbreviation": {
+          "type": "string"
+        },
+        "traitCategory": {
+          "type": "string"
+        },
+        "traitClass": {
+          "type": "string"
+        },
+        "traitDescription": {
+          "type": "string"
+        },
+        "traitId": {
+          "type": "string"
+        },
+        "traitName": {
+          "type": "string"
+        },
+        "traitOntologyId": {
+          "type": "string"
+        },
+        "traitOntologyName": {
+          "type": "string"
+        },
+        "variableDescription": {
+          "type": "string"
+        },
+        "variableId": {
+          "type": "string"
+        },
+        "variableName": {
+          "type": "string"
+        },
+        "variableOntologyId": {
+          "type": "string"
+        },
+        "variableOntologyName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "variableId",
+        "variableName",
+        "traitId",
+        "traitName",
+        "methodId",
+        "methodName",
+        "scaleId",
+        "scaleName",
+        "scaleDataType"
+      ],
+      "type": "object"
+    },
     "Restrictions": {
       "additionalProperties": false,
       "properties": {
@@ -65,6 +181,9 @@
         },
         "brapiId": {
           "type": "string"
+        },
+        "brapiVariable": {
+          "$ref": "#/definitions/MinimalVariableInfo"
         },
         "dataType": {
           "$ref": "#/definitions/TraitDataType"
