@@ -1,7 +1,7 @@
 <template>
   <v-number-input
     v-model="model"
-    v-bind="compProps"
+    v-bind="$attrs"
     @update:model-value="resetIfRequired"
   />
 </template>

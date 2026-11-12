@@ -448,6 +448,11 @@ html {
   scrollbar-width: thin;
 }
 
+html, body {
+  /* Prevents double-tap zooming but keeps regular pinch-to-zoom intact */
+  touch-action: manipulation;
+}
+
 .prevent-pull-to-refresh {
   /* Only prevents refresh when interacting with this div */
   overscroll-behavior-y: contain;

@@ -105,7 +105,7 @@
             :min="trait.restrictions?.min"
             :max="trait.restrictions?.max"
             :step="trait.restrictions?.step || 1"
-            :precision="trait.restrictions.step !== undefined ? null : 0"
+            :precision="trait.restrictions?.step !== undefined ? null : 0"
             control-variant="stacked"
             variant="outlined"
             hide-details

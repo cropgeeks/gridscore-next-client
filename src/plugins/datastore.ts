@@ -76,7 +76,8 @@ async function loadTrialData () {
       trialBookmarks = bookmarks
 
       calculateTraitStats()
-    } catch {
+    } catch (e) {
+      console.error(e)
       trial = undefined
       trialData = undefined
       trialGermplasm = undefined
@@ -156,7 +157,7 @@ export function calculateTraitStats () {
             if (stats && c.measurements[id] && c.measurements[id].length > 0 && (isNumeric || t.dataType === TraitDataType.date)) {
               c.measurements[id].forEach(v => {
                 v.values.forEach(vv => {
-                  if (vv !== undefined && vv !== null && vv.trim().length > 0) {
+                  if (vv !== undefined && vv !== null && `${vv}`.trim().length > 0) {
                     stats.minValue = Math.min(stats.minValue || Number.MAX_SAFE_INTEGER, isNumeric ? +vv : new Date(vv).getTime())
                   }
                 })
@@ -179,7 +180,7 @@ export function calculateTraitStats () {
               if (svc) {
                 c.measurements[id].forEach(v => {
                   v.values.forEach(vv => {
-                    if (vv !== undefined && vv !== null && vv.trim().length > 0) {
+                    if (vv !== undefined && vv !== null && `${vv}`.trim().length > 0) {
                       addValue(svc, isNumeric ? +vv : (new Date(vv).getTime() - (stats.minValue || 0)))
                     }
                   })

@@ -606,9 +606,13 @@
         gridProjection = undefined
       }
 
-      trialData.value = JSON.parse(JSON.stringify(getTrialDataCached()))
+      const cached = getTrialDataCached()
 
-      reset()
+      if (cached !== undefined) {
+        trialData.value = JSON.parse(JSON.stringify(cached))
+
+        reset()
+      }
     }
   }, { immediate: true })
 
